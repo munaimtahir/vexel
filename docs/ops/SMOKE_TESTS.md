@@ -133,7 +133,84 @@ curl -s http://127.0.0.1:3002/api/catalog/tests \
 
 ---
 
-## Phase 3+ Tests (Upcoming)
+## Phase 3 Tests — Admin Control Plane
+
+### 10. Login + /me
+```bash
+TOKEN=$(curl -s -X POST http://127.0.0.1:3002/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@vexel.system","password":"Admin@vexel123!"}' | jq -r .accessToken)
+
+curl -s http://127.0.0.1:3002/api/me \
+  -H "Authorization: Bearer $TOKEN" | jq .
+```
+**Expected:** `{ "id": "...", "email": "admin@vexel.system", "roles": [...], "isSuperAdmin": true }`
+
+### 11. Audit Entry Created After Admin Action
+```bash
+# Create a user (triggers AuditEvent)
+curl -s -X POST http://127.0.0.1:3002/api/users \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","firstName":"Test","lastName":"User","password":"Test@1234!","roleIds":[]}' | jq .
+
+# Check audit log
+curl -s "http://127.0.0.1:3002/api/audit-events?action=user.create&limit=5" \
+  -H "Authorization: Bearer $TOKEN" | jq .
+```
+**Expected:** Audit list contains 1 entry with `action: "user.create"` and a `correlationId`.
+
+### 12. Access Denied Without Token
+```bash
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3002/api/users
+```
+**Expected:** `401`
+
+### 13. Privilege Escalation Blocked
+```bash
+# As a non-super-admin, attempt to assign a privileged role
+# Should return 403 Forbidden
+```
+**Expected:** `403`
+
+### 14. Feature Flag Toggle (kill switch)
+```bash
+# Toggle LIMS module off
+curl -s -X PUT http://127.0.0.1:3002/api/feature-flags/module.lims \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"enabled":false}' | jq .
+
+# Read back
+curl -s http://127.0.0.1:3002/api/feature-flags \
+  -H "Authorization: Bearer $TOKEN" | jq '.[] | select(.key=="module.lims")'
+```
+**Expected:** `{ "key": "module.lims", "enabled": false }`
+
+### 15. Refresh Token Rotation
+```bash
+REFRESH=$(curl -s -X POST http://127.0.0.1:3002/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@vexel.system","password":"Admin@vexel123!"}' | jq -r .refreshToken)
+
+curl -s -X POST http://127.0.0.1:3002/api/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d "{\"refreshToken\":\"$REFRESH\"}" | jq .
+```
+**Expected:** New `accessToken` + new `refreshToken` returned; old refresh token is invalidated.
+
+---
+
+## Smoke Test Results Log
+
+| Date | Slice | API Health | Worker Health | PDF Health | Admin Load | Auth | Notes |
+|------|-------|-----------|--------------|-----------|-----------|------|-------|
+| Phase 2 | Skeleton | PASS (stub) | PASS (stub) | PASS (stub) | PASS | PASS (stub) | Stubs only — no DB yet |
+| Phase 3 | Admin Control Plane | pending | pending | pending | pending | pending | Real auth + RBAC + audit — run after `prisma migrate dev` + seed |
+
+---
+
+## Phase 4+ Tests (Upcoming)
 
 ### Workflow idempotency (publish)
 - Publish report twice
