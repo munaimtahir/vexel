@@ -3,12 +3,15 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 FROM base AS deps
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile --ignore-scripts || pnpm install --ignore-scripts
+COPY apps/worker/package.json ./
+RUN pnpm install --ignore-scripts
 
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY apps/worker/ .
+# Copy API prisma schema so we can generate the Prisma client
+COPY apps/api/prisma/schema.prisma ./prisma/schema.prisma
+RUN npx prisma generate
 RUN pnpm run build
 
 FROM node:20-alpine AS runtime

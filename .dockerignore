@@ -1,0 +1,22 @@
+# Root .dockerignore — only affects worker build (context: .)
+# Worker needs: apps/worker/ and apps/api/prisma/schema.prisma
+
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/.git
+**/coverage
+**/*.log
+**/playwright-report
+apps/e2e
+apps/admin
+apps/operator
+apps/pdf
+apps/api/src
+apps/api/test
+apps/api/prisma/migrations
+apps/api/prisma/seed.ts
+docs
+OUT
+packages

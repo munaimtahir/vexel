@@ -5,7 +5,7 @@ echo "🔄 Running Prisma migrations..."
 npx prisma migrate deploy
 
 echo "🌱 Running seed..."
-node -e "require('./dist/prisma/seed').main().catch(e => { console.error(e); process.exit(1); })" || true
+node_modules/.bin/ts-node --transpile-only prisma/seed.ts || true
 
 echo "🚀 Starting API..."
 exec node dist/main
