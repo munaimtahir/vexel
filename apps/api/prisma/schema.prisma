@@ -30,6 +30,13 @@ model Tenant {
   labOrders     LabOrder[]
   specimens     Specimen[]
   labResults    LabResult[]
+  parameters           Parameter[]
+  testParameterMappings TestParameterMapping[]
+  panelTestMappings    PanelTestMapping[]
+  referenceRanges      ReferenceRange[]
+  jobRuns              JobRun[]
+  documentTemplates    DocumentTemplate[]
+  documents            Document[]
 
   @@map("tenants")
 }
@@ -174,6 +181,8 @@ model CatalogTest {
 
   tenant    Tenant     @relation(fields: [tenantId], references: [id])
   labOrders LabOrder[]
+  parameterMappings TestParameterMapping[]
+  panelMappings     PanelTestMapping[]
 
   @@unique([tenantId, code])
   @@index([tenantId, isActive])
@@ -191,10 +200,108 @@ model CatalogPanel {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id])
+  tenant      Tenant           @relation(fields: [tenantId], references: [id])
+  testMappings PanelTestMapping[]
 
   @@unique([tenantId, code])
   @@map("catalog_panels")
+}
+
+model Parameter {
+  id          String   @id @default(uuid())
+  tenantId    String
+  code        String
+  name        String
+  unit        String?
+  dataType    String   @default("numeric")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant          Tenant                 @relation(fields: [tenantId], references: [id])
+  testMappings    TestParameterMapping[]
+  referenceRanges ReferenceRange[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, isActive])
+  @@map("parameters")
+}
+
+model TestParameterMapping {
+  id          String @id @default(uuid())
+  tenantId    String
+  testId      String
+  parameterId String
+  ordering    Int    @default(0)
+
+  tenant    Tenant      @relation(fields: [tenantId], references: [id])
+  test      CatalogTest @relation(fields: [testId], references: [id])
+  parameter Parameter   @relation(fields: [parameterId], references: [id])
+
+  @@unique([tenantId, testId, parameterId])
+  @@index([tenantId, testId])
+  @@map("test_parameter_mappings")
+}
+
+model PanelTestMapping {
+  id       String @id @default(uuid())
+  tenantId String
+  panelId  String
+  testId   String
+  ordering Int    @default(0)
+
+  tenant Tenant       @relation(fields: [tenantId], references: [id])
+  panel  CatalogPanel @relation(fields: [panelId], references: [id])
+  test   CatalogTest  @relation(fields: [testId], references: [id])
+
+  @@unique([tenantId, panelId, testId])
+  @@index([tenantId, panelId])
+  @@map("panel_test_mappings")
+}
+
+model ReferenceRange {
+  id           String   @id @default(uuid())
+  tenantId     String
+  parameterId  String
+  testId       String?
+  gender       String?
+  ageMinYears  Int?
+  ageMaxYears  Int?
+  lowValue     Float?
+  highValue    Float?
+  criticalLow  Float?
+  criticalHigh Float?
+  unit         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  parameter Parameter @relation(fields: [parameterId], references: [id])
+
+  @@index([tenantId, parameterId])
+  @@map("reference_ranges")
+}
+
+model JobRun {
+  id            String    @id @default(uuid())
+  tenantId      String
+  type          String
+  status        String    @default("queued")
+  payloadHash   String?
+  correlationId String
+  startedAt     DateTime?
+  finishedAt    DateTime?
+  resultSummary Json?
+  errorSummary  String?
+  createdBy     String
+  createdAt     DateTime  @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, type, payloadHash])
+  @@index([tenantId, type, status])
+  @@index([tenantId, createdAt])
+  @@map("job_runs")
 }
 
 // ─── Audit (append-only — no updates, no deletes) ─────────────────────────
@@ -317,4 +424,53 @@ model LabResult {
 
   @@index([tenantId])
   @@map("lab_results")
+}
+
+// ─── Documents ────────────────────────────────────────────────────────────
+
+model DocumentTemplate {
+  id          String   @id @default(uuid())
+  tenantId    String
+  type        String   // RECEIPT | LAB_REPORT
+  templateKey String   // e.g. "receipt_v1", "lab_report_v1"
+  version     Int      @default(1)
+  config      Json?    // template-level config overrides
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+  documents Document[]
+
+  @@unique([tenantId, type, version])
+  @@index([tenantId, type, isActive])
+  @@map("document_templates")
+}
+
+model Document {
+  id           String    @id @default(uuid())
+  tenantId     String
+  type         String    // RECEIPT | LAB_REPORT
+  templateId   String
+  payloadJson  Json
+  payloadHash  String    // sha256(canonical_json)
+  pdfHash      String?   // sha256(pdf_bytes); null until rendered
+  status       String    @default("DRAFT") // DRAFT | RENDERING | RENDERED | PUBLISHED | FAILED
+  version      Int       @default(1)
+  sourceRef    String?   // e.g. encounterId, orderId
+  sourceType   String?   // ENCOUNTER | ORDER
+  errorMessage String?
+  publishedAt  DateTime?
+  createdBy    String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id])
+  template DocumentTemplate @relation(fields: [templateId], references: [id])
+
+  @@unique([tenantId, type, payloadHash])
+  @@index([tenantId, status])
+  @@index([tenantId, sourceRef, sourceType])
+  @@index([tenantId, createdAt])
+  @@map("documents")
 }

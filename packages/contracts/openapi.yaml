@@ -249,6 +249,203 @@ components:
           type: string
           format: date-time
 
+    Parameter:
+      type: object
+      required: [id, tenantId, code, name, dataType, isActive]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        unit:
+          type: string
+        dataType:
+          type: string
+          enum: [numeric, text, boolean, coded]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    TestParameterMapping:
+      type: object
+      required: [id, testId, parameterId]
+      properties:
+        id:
+          type: string
+        testId:
+          type: string
+        parameterId:
+          type: string
+        ordering:
+          type: integer
+          default: 0
+
+    PanelTestMapping:
+      type: object
+      required: [id, panelId, testId]
+      properties:
+        id:
+          type: string
+        panelId:
+          type: string
+        testId:
+          type: string
+        ordering:
+          type: integer
+          default: 0
+
+    ReferenceRange:
+      type: object
+      required: [id, tenantId, parameterId]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        parameterId:
+          type: string
+        testId:
+          type: string
+        gender:
+          type: string
+          enum: [M, F]
+          nullable: true
+        ageMinYears:
+          type: integer
+          nullable: true
+        ageMaxYears:
+          type: integer
+          nullable: true
+        lowValue:
+          type: number
+          nullable: true
+        highValue:
+          type: number
+          nullable: true
+        criticalLow:
+          type: number
+          nullable: true
+        criticalHigh:
+          type: number
+          nullable: true
+        unit:
+          type: string
+
+    JobRun:
+      type: object
+      required: [id, tenantId, type, status, correlationId, createdBy, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        type:
+          type: string
+          enum: [catalog.import, catalog.export]
+        status:
+          type: string
+          enum: [queued, running, completed, failed]
+        payloadHash:
+          type: string
+          nullable: true
+        correlationId:
+          type: string
+        startedAt:
+          type: string
+          format: date-time
+          nullable: true
+        finishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        resultSummary:
+          type: object
+          nullable: true
+          properties:
+            created:
+              type: integer
+            updated:
+              type: integer
+            skipped:
+              type: integer
+            total:
+              type: integer
+        errorSummary:
+          type: string
+          nullable: true
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CatalogImportPayload:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            type: object
+            required: [code, name]
+            properties:
+              code:
+                type: string
+              name:
+                type: string
+              description:
+                type: string
+              sampleType:
+                type: string
+              turnaroundHours:
+                type: integer
+        parameters:
+          type: array
+          items:
+            type: object
+            required: [code, name]
+            properties:
+              code:
+                type: string
+              name:
+                type: string
+              unit:
+                type: string
+              dataType:
+                type: string
+                enum: [numeric, text, boolean, coded]
+        panels:
+          type: array
+          items:
+            type: object
+            required: [code, name]
+            properties:
+              code:
+                type: string
+              name:
+                type: string
+              description:
+                type: string
+        mappings:
+          type: array
+          items:
+            type: object
+            properties:
+              testCode:
+                type: string
+              parameterCode:
+                type: string
+              ordering:
+                type: integer
+
     AuditEvent:
       type: object
       required: [id, tenantId, action, createdAt]
@@ -1315,6 +1512,548 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CatalogPanel'
+
+  # ─── Catalog Parameters ───────────────────────────────────────────────────
+  /catalog/parameters:
+    get:
+      operationId: listParameters
+      summary: List parameters (tenant-scoped)
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Parameters list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Parameter'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createParameter
+      summary: Create a parameter
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, name]
+              properties:
+                code:
+                  type: string
+                name:
+                  type: string
+                unit:
+                  type: string
+                dataType:
+                  type: string
+                  enum: [numeric, text, boolean, coded]
+      responses:
+        "201":
+          description: Parameter created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parameter'
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /catalog/parameters/{parameterId}:
+    get:
+      operationId: getParameter
+      summary: Get parameter by ID
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: parameterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parameter'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updateParameter
+      summary: Update parameter
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: parameterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                unit:
+                  type: string
+                dataType:
+                  type: string
+                isActive:
+                  type: boolean
+      responses:
+        "200":
+          description: Parameter updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parameter'
+
+  /catalog/tests/{testId}/parameters:
+    get:
+      operationId: listTestParameters
+      summary: List parameter mappings for a test
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Test parameter mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TestParameterMapping'
+    post:
+      operationId: addTestParameter
+      summary: Add parameter mapping to test
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [parameterId]
+              properties:
+                parameterId:
+                  type: string
+                ordering:
+                  type: integer
+      responses:
+        "201":
+          description: Mapping created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestParameterMapping'
+
+  /catalog/tests/{testId}/parameters/{parameterId}:
+    delete:
+      operationId: removeTestParameter
+      summary: Remove parameter mapping from test
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: parameterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Mapping removed
+
+  /catalog/panels/{panelId}/tests:
+    get:
+      operationId: listPanelTests
+      summary: List test mappings for a panel
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Panel test mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PanelTestMapping'
+    post:
+      operationId: addPanelTest
+      summary: Add test mapping to panel
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [testId]
+              properties:
+                testId:
+                  type: string
+                ordering:
+                  type: integer
+      responses:
+        "201":
+          description: Mapping created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PanelTestMapping'
+
+  /catalog/panels/{panelId}/tests/{testId}:
+    delete:
+      operationId: removePanelTest
+      summary: Remove test mapping from panel
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Mapping removed
+
+  # ─── Catalog Reference Ranges ──────────────────────────────────────────────
+  /catalog/reference-ranges:
+    get:
+      operationId: listReferenceRanges
+      summary: List reference ranges (tenant-scoped)
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: parameterId
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Reference ranges
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReferenceRange'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createReferenceRange
+      summary: Create reference range
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferenceRange'
+      responses:
+        "201":
+          description: Reference range created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceRange'
+
+  /catalog/reference-ranges/{id}:
+    put:
+      operationId: updateReferenceRange
+      summary: Update reference range
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferenceRange'
+      responses:
+        "200":
+          description: Reference range updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceRange'
+    delete:
+      operationId: deleteReferenceRange
+      summary: Delete reference range
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── Catalog Import/Export Jobs ────────────────────────────────────────────
+  /catalog/import-jobs:
+    post:
+      operationId: createImportJob
+      summary: Start a catalog import job (idempotent by payloadHash)
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogImportPayload'
+      responses:
+        "201":
+          description: Import job created or existing returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+        "403":
+          description: Feature disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: listImportJobs
+      summary: List import jobs
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Import jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobRun'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /catalog/import-jobs/{id}:
+    get:
+      operationId: getImportJob
+      summary: Get import job by ID
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Import job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /catalog/import-jobs/{id}:retry:
+    post:
+      operationId: retryImportJob
+      summary: Retry a failed import job
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Job re-queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+        "409":
+          description: Job is not in failed state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /catalog/export-jobs:
+    post:
+      operationId: createExportJob
+      summary: Start a catalog export job
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Export job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+    get:
+      operationId: listExportJobs
+      summary: List export jobs
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Export jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobRun'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /catalog/export-jobs/{id}:
+    get:
+      operationId: getExportJob
+      summary: Get export job by ID
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Export job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   # ─── Audit Events ─────────────────────────────────────────────────────────
   /audit-events:

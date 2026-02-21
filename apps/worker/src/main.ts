@@ -1,5 +1,7 @@
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
+import { processCatalogImport } from './catalog-import.processor';
+import { processCatalogExport } from './catalog-export.processor';
 
 const REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6379';
 
@@ -10,25 +12,33 @@ const connection = new IORedis(REDIS_URL, {
 connection.on('connect', () => console.log('✅ Worker connected to Redis'));
 connection.on('error', (err) => console.error('❌ Redis error:', err.message));
 
-// Placeholder jobs queue processor
+// Legacy jobs queue
 const jobsWorker = new Worker(
   'jobs',
   async (job) => {
     console.log(`[worker] Processing job ${job.id} (${job.name})`);
-    // TODO: implement actual job handlers (PDF render, imports, nightly jobs)
     await new Promise((r) => setTimeout(r, 100));
     console.log(`[worker] Job ${job.id} completed`);
   },
   { connection },
 );
 
-jobsWorker.on('completed', (job) => console.log(`[worker] Job ${job.id} completed`));
-jobsWorker.on('failed', (job, err) => console.error(`[worker] Job ${job?.id} failed: ${err.message}`));
+// Catalog import processor
+const catalogImportWorker = new Worker('catalog-import', processCatalogImport, { connection });
 
-console.log('🚀 Vexel Worker running. Listening on queue: jobs');
+// Catalog export processor
+const catalogExportWorker = new Worker('catalog-export', processCatalogExport, { connection });
 
-// Graceful shutdown
+jobsWorker.on('completed', (job) => console.log(`[jobs] Job ${job.id} completed`));
+jobsWorker.on('failed', (job, err) => console.error(`[jobs] Job ${job?.id} failed: ${err.message}`));
+catalogImportWorker.on('completed', (job) => console.log(`[catalog-import] Job ${job.id} completed`));
+catalogImportWorker.on('failed', (job, err) => console.error(`[catalog-import] Job ${job?.id} failed: ${err.message}`));
+catalogExportWorker.on('completed', (job) => console.log(`[catalog-export] Job ${job.id} completed`));
+catalogExportWorker.on('failed', (job, err) => console.error(`[catalog-export] Job ${job?.id} failed: ${err.message}`));
+
+console.log('🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export');
+
 process.on('SIGTERM', async () => {
-  await jobsWorker.close();
+  await Promise.all([jobsWorker.close(), catalogImportWorker.close(), catalogExportWorker.close()]);
   process.exit(0);
 });

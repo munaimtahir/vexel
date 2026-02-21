@@ -15,6 +15,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { RbacModule } from './rbac/rbac.module';
 import { PatientsModule } from './patients/patients.module';
 import { EncountersModule } from './encounters/encounters.module';
+import { DocumentsModule } from './documents/documents.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { EncountersModule } from './encounters/encounters.module';
     RbacModule,
     PatientsModule,
     EncountersModule,
+    DocumentsModule,
   ],
 })
 export class AppModule implements NestModule {

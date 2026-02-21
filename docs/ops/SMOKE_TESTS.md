@@ -294,3 +294,71 @@ curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3001/login
 ### Tenancy isolation (DB)
 - Create patient under Tenant A
 - Ensure Tenant B cannot access it (404)
+
+## Phase 5 — Catalog Domain + Job Engine
+
+### 16. Create Catalog Test
+```
+POST /api/catalog/tests
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "code": "CBC",
+  "name": "Complete Blood Count",
+  "department": "Hematology"
+}
+```
+Expected: `201` with `{ id, code: "CBC", name: "Complete Blood Count", tenantId, isActive: true }`
+
+---
+
+### 17. Import Job — Idempotency
+```
+# First call
+POST /api/catalog/import-jobs
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "tests": [{ "code": "CBC", "name": "Complete Blood Count" }]
+}
+
+# Second call — identical payload
+POST /api/catalog/import-jobs
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "tests": [{ "code": "CBC", "name": "Complete Blood Count" }]
+}
+```
+Expected: Both calls return the **same** `JobRun.id` (idempotent by payloadHash). Status: `queued`.
+
+---
+
+### 18. Export Job
+```
+# Start export
+POST /api/catalog/export-jobs
+Authorization: Bearer <token>
+
+# Poll until completed
+GET /api/catalog/export-jobs/{id}
+Authorization: Bearer <token>
+```
+Expected: Status transitions `queued → running → completed`. `resultSummary` contains exported item counts.
+
+---
+
+### 19. Retry Failed Job
+```
+# Manually set job to failed (or simulate via DB)
+# Then:
+POST /api/catalog/import-jobs/{id}:retry
+Authorization: Bearer <token>
+```
+Expected:
+- `200` with `{ status: "queued" }`
+- `AuditEvent` written with `action: "catalog.import.retry"`, `entityId: <jobRunId>`
+- If job is NOT in `failed` state: `409 Conflict`

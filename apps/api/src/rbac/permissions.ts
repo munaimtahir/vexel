@@ -45,6 +45,10 @@ export enum Permission {
   ENCOUNTER_MANAGE = 'encounter.manage',
   RESULT_ENTER = 'result.enter',
   RESULT_VERIFY = 'result.verify',
+
+  // Documents
+  DOCUMENT_GENERATE = 'document.generate',
+  DOCUMENT_PUBLISH = 'document.publish',
 }
 
 export const ALL_PERMISSIONS = Object.values(Permission);
