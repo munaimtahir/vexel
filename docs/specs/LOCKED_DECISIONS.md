@@ -39,9 +39,10 @@ Backend:
 - PDF: **separate service** (**.NET + QuestPDF**)
 
 Frontend:
-- Operator App: **React + Vite**
-- Admin App: **React + Vite** (separate app)
+- Operator App: **Next.js (App Router)**
+- Admin App: **Next.js (App Router)** (separate app)
 - Both must use generated SDK from the OpenAPI contract.
+- Next.js apps are API clients only (NO direct DB/Prisma usage).
 
 Deployment:
 - Docker Compose for single-host

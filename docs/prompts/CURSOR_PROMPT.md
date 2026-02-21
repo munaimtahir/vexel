@@ -22,8 +22,8 @@ TASK
    - apps/api (NestJS)
    - apps/worker (BullMQ)
    - apps/pdf (.NET QuestPDF)
-   - apps/operator (React+Vite)
-   - apps/admin (React+Vite)
+   - apps/operator (Next.js App Router)
+   - apps/admin (Next.js App Router)
    - packages/contracts (openapi.yaml + generator)
    - packages/sdk (generated client)
 2) LOCK the core data model (Prisma) for:

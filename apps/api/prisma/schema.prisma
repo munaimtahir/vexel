@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── System / Platform ────────────────────────────────────────────────────
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  domains   String[]
+  status    String   @default("trial") // active | suspended | trial
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  config        TenantConfig?
+  users         User[]
+  featureFlags  TenantFeature[]
+  auditEvents   AuditEvent[]
+  catalogTests  CatalogTest[]
+  catalogPanels CatalogPanel[]
+
+  @@map("tenants")
+}
+
+model TenantConfig {
+  id           String  @id @default(uuid())
+  tenantId     String  @unique
+  brandName    String?
+  logoUrl      String?
+  primaryColor String?
+  headerText   String?
+  footerText   String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@map("tenant_configs")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  tenantId     String
+  email        String
+  firstName    String
+  lastName     String
+  passwordHash String
+  status       String   @default("active") // active | disabled | pending
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant      Tenant       @relation(fields: [tenantId], references: [id])
+  userRoles   UserRole[]
+  auditEvents AuditEvent[]
+
+  @@unique([tenantId, email])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  description String?
+  permissions String[]
+  createdAt   DateTime @default(now())
+
+  userRoles UserRole[]
+
+  @@unique([tenantId, name])
+  @@map("roles")
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model TenantFeature {
+  id          String  @id @default(uuid())
+  tenantId    String
+  key         String
+  enabled     Boolean @default(false)
+  description String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, key])
+  @@map("tenant_features")
+}
+
+// ─── Catalog ──────────────────────────────────────────────────────────────
+
+model CatalogTest {
+  id              String   @id @default(uuid())
+  tenantId        String
+  code            String
+  name            String
+  description     String?
+  sampleType      String?
+  turnaroundHours Int?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, code])
+  @@map("catalog_tests")
+}
+
+model CatalogPanel {
+  id          String   @id @default(uuid())
+  tenantId    String
+  code        String
+  name        String
+  description String?
+  testIds     String[]
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, code])
+  @@map("catalog_panels")
+}
+
+// ─── Audit ────────────────────────────────────────────────────────────────
+
+model AuditEvent {
+  id            String   @id @default(uuid())
+  tenantId      String
+  actorUserId   String?
+  action        String
+  entityType    String?
+  entityId      String?
+  correlationId String?
+  before        Json?
+  after         Json?
+  createdAt     DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  actor  User?  @relation(fields: [actorUserId], references: [id])
+
+  @@map("audit_events")
+}

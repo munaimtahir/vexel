@@ -4,8 +4,8 @@
 1) **API** (NestJS)
 2) **Worker** (BullMQ)
 3) **PDF service** (.NET + QuestPDF)
-4) **Operator UI** (React/Vite)
-5) **Admin UI** (React/Vite)
+4) **Operator UI** (Next.js App Router)
+5) **Admin UI** (Next.js App Router)
 6) Postgres + Redis
 7) Caddy reverse proxy (TLS termination)
 
@@ -13,10 +13,15 @@
 - `apps/api` — NestJS API (OpenAPI server)
 - `apps/worker` — BullMQ workers (jobs: PDF render, imports, nightly jobs)
 - `apps/pdf` — PDF renderer service (QuestPDF)
-- `apps/operator` — Operator workflow UI (React/Vite)
-- `apps/admin` — Back Office UI (React/Vite)
+- `apps/operator` — Operator workflow UI (Next.js App Router)
+- `apps/admin` — Back Office UI (Next.js App Router)
 - `packages/contracts` — `openapi.yaml` + generator scripts
 - `packages/sdk` — generated TS client (imported by both frontends)
+
+## Frontend rules (locked)
+- All Next.js apps are API clients only (NO direct DB/Prisma usage).
+- All API calls MUST use generated SDK from canonical OpenAPI.
+- No ad-hoc fetch/axios payloads to backend endpoints.
 
 ## Contract-first enforcement
 - `packages/contracts/openapi.yaml` is canonical.

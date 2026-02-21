@@ -2,12 +2,1276 @@ openapi: 3.1.0
 info:
   title: Vexel Health API (LIMS-first)
   version: 0.1.0
+  description: |
+    Contract-first OpenAPI spec for Vexel Health Platform.
+    All admin endpoints require bearerAuth.
+    All requests should include X-Correlation-ID header.
+    Tenant is resolved server-side (Host header in prod, x-tenant-id in dev when enabled).
+
 servers:
   - url: /api
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    CorrelationId:
+      name: X-Correlation-ID
+      in: header
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: Client-supplied correlation ID. If not provided, server generates one.
+    PageParam:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  schemas:
+    Error:
+      type: object
+      required: [statusCode, message]
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+        error:
+          type: string
+        correlationId:
+          type: string
+
+    Pagination:
+      type: object
+      required: [page, limit, total, totalPages]
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded, down]
+        version:
+          type: string
+        uptime:
+          type: number
+        services:
+          type: object
+          additionalProperties:
+            type: string
+
+    TokenResponse:
+      type: object
+      required: [accessToken, refreshToken, expiresIn]
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+        tokenType:
+          type: string
+          default: Bearer
+
+    UserSummary:
+      type: object
+      required: [id, email, tenantId, status]
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        tenantId:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, disabled, pending]
+        createdAt:
+          type: string
+          format: date-time
+
+    TenantSummary:
+      type: object
+      required: [id, name, status]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        domains:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, suspended, trial]
+        createdAt:
+          type: string
+          format: date-time
+
+    TenantConfig:
+      type: object
+      properties:
+        brandName:
+          type: string
+        logoUrl:
+          type: string
+        primaryColor:
+          type: string
+        headerText:
+          type: string
+        footerText:
+          type: string
+
+    Role:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+
+    FeatureFlag:
+      type: object
+      required: [key, enabled]
+      properties:
+        key:
+          type: string
+        enabled:
+          type: boolean
+        description:
+          type: string
+
+    CatalogTest:
+      type: object
+      required: [id, tenantId, code, name]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sampleType:
+          type: string
+        turnaroundHours:
+          type: integer
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    CatalogPanel:
+      type: object
+      required: [id, tenantId, code, name]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        testIds:
+          type: array
+          items:
+            type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    AuditEvent:
+      type: object
+      required: [id, tenantId, action, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        actorUserId:
+          type: string
+        action:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        correlationId:
+          type: string
+        before:
+          type: object
+          nullable: true
+        after:
+          type: object
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    Job:
+      type: object
+      required: [id, queue, status]
+      properties:
+        id:
+          type: string
+        queue:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [waiting, active, completed, failed, delayed]
+        data:
+          type: object
+        failedReason:
+          type: string
+          nullable: true
+        attemptsMade:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+          nullable: true
+
 paths:
+  # ─── Health ───────────────────────────────────────────────────────────────
   /health:
     get:
-      summary: Health check
+      operationId: getHealth
+      summary: API health check
+      security: []
+      tags: [Health]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
       responses:
         "200":
-          description: OK
+          description: Service is healthy
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+  /health/worker:
+    get:
+      operationId: getWorkerHealth
+      summary: Worker health check
+      security: []
+      tags: [Health]
+      responses:
+        "200":
+          description: Worker is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+  /health/pdf:
+    get:
+      operationId: getPdfHealth
+      summary: PDF service health check
+      security: []
+      tags: [Health]
+      responses:
+        "200":
+          description: PDF service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+  # ─── Auth ─────────────────────────────────────────────────────────────────
+  /auth/login:
+    post:
+      operationId: login
+      summary: Login (admin or operator)
+      security: []
+      tags: [Auth]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/refresh:
+    post:
+      operationId: refreshToken
+      summary: Refresh access token
+      security: []
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        "200":
+          description: Tokens refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        "401":
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/logout:
+    post:
+      operationId: logout
+      summary: Logout (revoke refresh token)
+      tags: [Auth]
+      responses:
+        "204":
+          description: Logged out successfully
+
+  /me:
+    get:
+      operationId: getMe
+      summary: Get current authenticated user
+      tags: [Auth]
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummary'
+
+  # ─── Tenants ──────────────────────────────────────────────────────────────
+  /tenants:
+    get:
+      operationId: listTenants
+      summary: List tenants (super-admin only)
+      tags: [Tenants]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: List of tenants
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TenantSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createTenant
+      summary: Create a new tenant (super-admin only)
+      tags: [Tenants]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, domains]
+              properties:
+                name:
+                  type: string
+                domains:
+                  type: array
+                  items:
+                    type: string
+                status:
+                  type: string
+                  enum: [active, suspended, trial]
+                  default: trial
+      responses:
+        "201":
+          description: Tenant created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantSummary'
+        "409":
+          description: Domain already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tenants/{tenantId}:
+    get:
+      operationId: getTenant
+      summary: Get tenant by ID
+      tags: [Tenants]
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tenant detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantSummary'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      operationId: updateTenant
+      summary: Update tenant
+      tags: [Tenants]
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                domains:
+                  type: array
+                  items:
+                    type: string
+                status:
+                  type: string
+                  enum: [active, suspended, trial]
+      responses:
+        "200":
+          description: Updated tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantSummary'
+
+  /tenants/{tenantId}/config:
+    get:
+      operationId: getTenantConfig
+      summary: Get tenant branding/config
+      tags: [Tenants]
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tenant config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantConfig'
+    patch:
+      operationId: updateTenantConfig
+      summary: Update tenant branding/config
+      tags: [Tenants]
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantConfig'
+      responses:
+        "200":
+          description: Updated config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantConfig'
+
+  /tenants/{tenantId}/feature-flags:
+    get:
+      operationId: getTenantFeatureFlags
+      summary: Get feature flags for a tenant
+      tags: [FeatureFlags]
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Feature flags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeatureFlag'
+    put:
+      operationId: setTenantFeatureFlags
+      summary: Set feature flags for a tenant
+      tags: [FeatureFlags]
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                required: [key, enabled]
+                properties:
+                  key:
+                    type: string
+                  enabled:
+                    type: boolean
+      responses:
+        "200":
+          description: Updated feature flags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeatureFlag'
+
+  # ─── Users ────────────────────────────────────────────────────────────────
+  /users:
+    get:
+      operationId: listUsers
+      summary: List users (tenant-scoped)
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, disabled, pending]
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createUser
+      summary: Create a new user (tenant-scoped)
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, firstName, lastName, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                password:
+                  type: string
+                roles:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummary'
+        "409":
+          description: Email already in use within tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/{userId}:
+    get:
+      operationId: getUser
+      summary: Get user by ID
+      tags: [Users]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummary'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      operationId: updateUser
+      summary: Update user (name, status)
+      tags: [Users]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                status:
+                  type: string
+                  enum: [active, disabled]
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummary'
+
+  /users/{userId}/roles:
+    get:
+      operationId: getUserRoles
+      summary: Get roles assigned to user
+      tags: [Users]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+    put:
+      operationId: setUserRoles
+      summary: Set roles for user (replaces current assignment)
+      tags: [Users]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [roleIds]
+              properties:
+                roleIds:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: Updated roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+
+  # ─── Roles ────────────────────────────────────────────────────────────────
+  /roles:
+    get:
+      operationId: listRoles
+      summary: List roles (tenant-scoped)
+      tags: [Roles]
+      responses:
+        "200":
+          description: Roles list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+    post:
+      operationId: createRole
+      summary: Create a role
+      tags: [Roles]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                permissions:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "201":
+          description: Role created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+
+  /roles/{roleId}:
+    patch:
+      operationId: updateRole
+      summary: Update a role
+      tags: [Roles]
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                permissions:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: Updated role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+
+  # ─── Feature Flags (global / system) ──────────────────────────────────────
+  /feature-flags:
+    get:
+      operationId: listFeatureFlags
+      summary: List all feature flag keys and their descriptions
+      tags: [FeatureFlags]
+      responses:
+        "200":
+          description: All feature flags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeatureFlag'
+
+  /feature-flags/{key}:
+    put:
+      operationId: setFeatureFlag
+      summary: Enable or disable a feature flag system-wide
+      tags: [FeatureFlags]
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [enabled]
+              properties:
+                enabled:
+                  type: boolean
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureFlag'
+
+  # ─── Catalog ──────────────────────────────────────────────────────────────
+  /catalog/tests:
+    get:
+      operationId: listCatalogTests
+      summary: List catalog tests (tenant-scoped)
+      tags: [Catalog]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Catalog tests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CatalogTest'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createCatalogTest
+      summary: Create a catalog test
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, name]
+              properties:
+                code:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                sampleType:
+                  type: string
+                turnaroundHours:
+                  type: integer
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogTest'
+
+  /catalog/tests/{testId}:
+    get:
+      operationId: getCatalogTest
+      summary: Get catalog test
+      tags: [Catalog]
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Catalog test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogTest'
+    patch:
+      operationId: updateCatalogTest
+      summary: Update catalog test
+      tags: [Catalog]
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                sampleType:
+                  type: string
+                turnaroundHours:
+                  type: integer
+                isActive:
+                  type: boolean
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogTest'
+    delete:
+      operationId: deleteCatalogTest
+      summary: Delete (deactivate) catalog test
+      tags: [Catalog]
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /catalog/panels:
+    get:
+      operationId: listCatalogPanels
+      summary: List catalog panels (tenant-scoped)
+      tags: [Catalog]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Catalog panels
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CatalogPanel'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createCatalogPanel
+      summary: Create a catalog panel
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, name]
+              properties:
+                code:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                testIds:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPanel'
+
+  # ─── Audit Events ─────────────────────────────────────────────────────────
+  /audit-events:
+    get:
+      operationId: listAuditEvents
+      summary: List audit events (with filters)
+      tags: [Audit]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: tenantId
+          in: query
+          schema:
+            type: string
+        - name: actorUserId
+          in: query
+          schema:
+            type: string
+        - name: entityType
+          in: query
+          schema:
+            type: string
+        - name: entityId
+          in: query
+          schema:
+            type: string
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: correlationId
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Audit events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditEvent'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  # ─── Jobs ─────────────────────────────────────────────────────────────────
+  /jobs:
+    get:
+      operationId: listJobs
+      summary: List jobs across all queues
+      tags: [Jobs]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: queue
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [waiting, active, completed, failed, delayed]
+      responses:
+        "200":
+          description: Jobs list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Job'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /jobs/failed:
+    get:
+      operationId: listFailedJobs
+      summary: List failed jobs
+      tags: [Jobs]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Failed jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Job'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /jobs/failed-count:
+    get:
+      operationId: getFailedJobsCount
+      summary: Get count of failed jobs (for dashboard)
+      tags: [Jobs]
+      responses:
+        "200":
+          description: Failed jobs count
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [count]
+                properties:
+                  count:
+                    type: integer
+
+  /jobs/{jobId}:retry:
+    post:
+      operationId: retryJob
+      summary: Retry a failed job (audited command)
+      tags: [Jobs]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Job re-queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        "404":
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: Job is not in a failed state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
