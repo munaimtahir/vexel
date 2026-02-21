@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vexel
+      POSTGRES_PASSWORD: vexel
+      POSTGRES_DB: vexel
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  api:
+    image: vexel-api:dev
+    depends_on: [postgres, redis]
+    ports:
+      - "127.0.0.1:3002:3000"
+    environment:
+      DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
+      REDIS_URL: redis://redis:6379
+      TENANCY_DEV_HEADER_ENABLED: "true"
+
+  worker:
+    image: vexel-worker:dev
+    depends_on: [postgres, redis]
+    environment:
+      DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
+      REDIS_URL: redis://redis:6379
+
+  pdf:
+    image: vexel-pdf:dev
+    ports:
+      - "127.0.0.1:5002:8080"
+
+volumes:
+  pgdata:

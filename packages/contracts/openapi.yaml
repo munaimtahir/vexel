@@ -1,0 +1,13 @@
+openapi: 3.1.0
+info:
+  title: Vexel Health API (LIMS-first)
+  version: 0.1.0
+servers:
+  - url: /api
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: OK
