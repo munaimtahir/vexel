@@ -2,6 +2,7 @@ import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
 import { processCatalogImport } from './catalog-import.processor';
 import { processCatalogExport } from './catalog-export.processor';
+import { processDocumentRender } from './document-render.processor';
 
 const REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6379';
 
@@ -29,16 +30,21 @@ const catalogImportWorker = new Worker('catalog-import', processCatalogImport, {
 // Catalog export processor
 const catalogExportWorker = new Worker('catalog-export', processCatalogExport, { connection });
 
+// Document render processor
+const documentRenderWorker = new Worker('document-render', processDocumentRender, { connection });
+
 jobsWorker.on('completed', (job) => console.log(`[jobs] Job ${job.id} completed`));
 jobsWorker.on('failed', (job, err) => console.error(`[jobs] Job ${job?.id} failed: ${err.message}`));
 catalogImportWorker.on('completed', (job) => console.log(`[catalog-import] Job ${job.id} completed`));
 catalogImportWorker.on('failed', (job, err) => console.error(`[catalog-import] Job ${job?.id} failed: ${err.message}`));
 catalogExportWorker.on('completed', (job) => console.log(`[catalog-export] Job ${job.id} completed`));
 catalogExportWorker.on('failed', (job, err) => console.error(`[catalog-export] Job ${job?.id} failed: ${err.message}`));
+documentRenderWorker.on('completed', (job) => console.log(`[document-render] Job ${job.id} completed`));
+documentRenderWorker.on('failed', (job, err) => console.error(`[document-render] Job ${job?.id} failed: ${err.message}`));
 
-console.log('🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export');
+console.log('🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render');
 
 process.on('SIGTERM', async () => {
-  await Promise.all([jobsWorker.close(), catalogImportWorker.close(), catalogExportWorker.close()]);
+  await Promise.all([jobsWorker.close(), catalogImportWorker.close(), catalogExportWorker.close(), documentRenderWorker.close()]);
   process.exit(0);
 });

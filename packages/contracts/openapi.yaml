@@ -677,6 +677,183 @@ components:
           type: string
           nullable: true
 
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        type:
+          type: string
+          enum: [RECEIPT, LAB_REPORT]
+        templateId:
+          type: string
+        payloadHash:
+          type: string
+        pdfHash:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [DRAFT, RENDERING, RENDERED, PUBLISHED, FAILED]
+        version:
+          type: integer
+        sourceRef:
+          type: string
+          nullable: true
+        sourceType:
+          type: string
+          nullable: true
+        errorMessage:
+          type: string
+          nullable: true
+        publishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    DocumentTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        type:
+          type: string
+          enum: [RECEIPT, LAB_REPORT]
+        templateKey:
+          type: string
+        version:
+          type: integer
+        config:
+          type: object
+          nullable: true
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ReceiptGenerateRequest:
+      type: object
+      required: [receiptNumber, patientName, patientMrn, issuedAt, items, subtotal, tax, grandTotal]
+      properties:
+        receiptNumber:
+          type: string
+        patientName:
+          type: string
+        patientMrn:
+          type: string
+        issuedAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            type: object
+            required: [description, quantity, unitPrice, total]
+            properties:
+              description:
+                type: string
+              quantity:
+                type: number
+              unitPrice:
+                type: number
+              total:
+                type: number
+        subtotal:
+          type: number
+        tax:
+          type: number
+        grandTotal:
+          type: number
+        sourceRef:
+          type: string
+          nullable: true
+        sourceType:
+          type: string
+          nullable: true
+
+    ReportGenerateRequest:
+      type: object
+      required: [reportNumber, patientName, patientMrn, encounterId, tests]
+      properties:
+        reportNumber:
+          type: string
+        patientName:
+          type: string
+        patientMrn:
+          type: string
+        patientDob:
+          type: string
+          nullable: true
+        patientGender:
+          type: string
+          nullable: true
+        encounterId:
+          type: string
+        orderedBy:
+          type: string
+          nullable: true
+        tests:
+          type: array
+          items:
+            type: object
+            required: [testCode, testName, parameters]
+            properties:
+              testCode:
+                type: string
+              testName:
+                type: string
+              parameters:
+                type: array
+                items:
+                  type: object
+                  required: [parameterCode, parameterName, value]
+                  properties:
+                    parameterCode:
+                      type: string
+                    parameterName:
+                      type: string
+                    value:
+                      type: string
+                    unit:
+                      type: string
+                      nullable: true
+                    referenceRange:
+                      type: string
+                      nullable: true
+                    flag:
+                      type: string
+                      enum: [normal, high, low, critical]
+                      nullable: true
+        verifiedBy:
+          type: string
+          nullable: true
+        verifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+        sourceRef:
+          type: string
+          nullable: true
+        sourceType:
+          type: string
+          nullable: true
+
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
   /health:

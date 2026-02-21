@@ -124,6 +124,33 @@ export async function main() {
 
   console.log('✅ Super-admin user:', superAdmin.email);
   console.log('   Password: Admin@vexel123!');
+
+  // Seed default DocumentTemplates for system tenant
+  await prisma.documentTemplate.upsert({
+    where: { tenantId_type_version: { tenantId: systemTenant.id, type: 'RECEIPT', version: 1 } },
+    create: {
+      tenantId: systemTenant.id,
+      type: 'RECEIPT',
+      templateKey: 'receipt_v1',
+      version: 1,
+      isActive: true,
+    },
+    update: {},
+  });
+
+  await prisma.documentTemplate.upsert({
+    where: { tenantId_type_version: { tenantId: systemTenant.id, type: 'LAB_REPORT', version: 1 } },
+    create: {
+      tenantId: systemTenant.id,
+      type: 'LAB_REPORT',
+      templateKey: 'lab_report_v1',
+      version: 1,
+      isActive: true,
+    },
+    update: {},
+  });
+  console.log('✅ Default DocumentTemplates seeded');
+
   console.log('');
   console.log('🎉 Seed complete');
 }
