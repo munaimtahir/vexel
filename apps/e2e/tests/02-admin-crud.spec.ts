@@ -79,7 +79,7 @@ test.describe('Admin CRUD', () => {
 
     // Each toggle is a <button aria-label="Toggle <key>">
     const firstToggle = page.getByRole('button', { name: /Toggle module\./i }).first();
-    await expect(firstToggle).toBeVisible();
+    await expect(firstToggle).toBeVisible({ timeout: 15_000 });
   });
 
   test('toggle a feature flag and verify state changes', async ({ page }) => {
@@ -90,6 +90,7 @@ test.describe('Admin CRUD', () => {
 
     // Pick the first module toggle
     const toggle = page.getByRole('button', { name: /Toggle module\./i }).first();
+    await expect(toggle).toBeVisible({ timeout: 15_000 });
     const initialBg = await toggle.evaluate((el) => (el as HTMLButtonElement).style.background);
 
     await toggle.click();

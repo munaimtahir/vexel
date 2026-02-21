@@ -1,59 +1,62 @@
 # E2E Run Results
 
-**Date/Time:** 2026-02-21T20:18:40Z  
-**Git SHA:** 399fd6f6a29deef7b02ca6c9c677c90adaa377f3
+**Timestamp:** 2026-02-21T20:28:57Z  
+**Git SHA:** 99922f9  
+**Total:** 25/25 passed  
+**Duration:** ~28s  
 
-## Docker Service Status
+## Test Results
 
-```
-NAME               IMAGE                COMMAND                  SERVICE    CREATED              STATUS                        PORTS
-vexel-admin-1      vexel-admin          "docker-entrypoint.s…"   admin      About a minute ago   Up About a minute             127.0.0.1:9023->3001/tcp
-vexel-api-1        vexel-api            "./docker-entrypoint…"   api        About a minute ago   Up About a minute (healthy)   127.0.0.1:9021->3000/tcp
-vexel-operator-1   vexel-operator       "docker-entrypoint.s…"   operator   29 minutes ago       Up 29 minutes                 127.0.0.1:9024->3000/tcp
-vexel-pdf-1        vexel-pdf            "dotnet VexelPdf.dll"    pdf        15 minutes ago       Up 15 minutes (healthy)       127.0.0.1:9022->8080/tcp
-vexel-postgres-1   postgres:16-alpine   "docker-entrypoint.s…"   postgres   57 minutes ago       Up 57 minutes (healthy)       127.0.0.1:5433->5432/tcp
-vexel-redis-1      redis:7-alpine       "docker-entrypoint.s…"   redis      57 minutes ago       Up 57 minutes (healthy)       127.0.0.1:6380->6379/tcp
-vexel-worker-1     vexel-worker         "docker-entrypoint.s…"   worker     57 minutes ago       Up 57 minutes                 
-```
+| # | Test | Status |
+|---|------|--------|
+| 1 | Authentication › operator /login page loads | ✅ PASS |
+| 2 | Authentication › login with valid credentials redirects to /encounters | ✅ PASS |
+| 3 | Authentication › invalid credentials show error message | ✅ PASS |
+| 4 | Authentication › accessing /encounters without auth redirects to /login | ✅ PASS |
+| 5 | Authentication › /encounters loads after successful login | ✅ PASS |
+| 6 | Admin CRUD › admin login and navigate to /admin/tenants | ✅ PASS |
+| 7 | Admin CRUD › tenant list displays at least one tenant | ✅ PASS |
+| 8 | Admin CRUD › create a new test user via UI and verify in list | ✅ PASS |
+| 9 | Admin CRUD › feature flags page loads with toggles | ✅ PASS |
+| 10 | Admin CRUD › toggle a feature flag and verify state changes | ✅ PASS |
+| 11 | Patient management › create patient via UI and see in list | ✅ PASS |
+| 12 | Patient management › patients list page loads with table headers | ✅ PASS |
+| 13 | Patient management › duplicate MRN shows 409 error | ✅ PASS |
+| 14 | Encounter management › create encounter and navigate to detail | ✅ PASS |
+| 15 | Encounter management › encounter detail page shows patient identity header | ✅ PASS |
+| 16 | Encounter management › encounters list page loads with headers | ✅ PASS |
+| 17 | LIMS workflow › enter results and submit, status updates to resulted | ✅ PASS |
+| 18 | LIMS workflow › verify results via modal confirm, transitions to verified | ✅ PASS |
+| 19 | LIMS workflow › publish page is accessible after verified status | ✅ PASS |
+| 20 | Document pipeline › generate report, poll until RENDERED, publish and download | ✅ PASS |
+| 21 | Document pipeline › generate report twice returns same document ID (idempotency) | ✅ PASS |
+| 22 | Document pipeline › document status transitions: QUEUED/RENDERING → RENDERED | ✅ PASS |
+| 23 | Tenant isolation › encounter created under system tenant not accessible with different tenant header | ✅ PASS |
+| 24 | Tenant isolation › patient created under system tenant not accessible with spoofed tenant header | ✅ PASS |
+| 25 | Tenant isolation › cross-tenant list endpoint does not leak records | ✅ PASS |
 
-## Health Checks
+## Stack Health at Run Time
 
-- API:      {"status":"ok","version":"0.1.0","uptime":89.91206976,"services":{"api":"ok"}} ✅ OK
-- PDF:      {"status":"ok","version":"0.1.0","services":{"pdf":"ok"}} ✅ OK
-- Admin:    ✅ reachable
-- Operator: ✅ reachable
+| Service | Status |
+|---------|--------|
+| postgres | healthy |
+| redis | healthy |
+| api (NestJS) | healthy |
+| worker (BullMQ) | running |
+| pdf (.NET QuestPDF) | healthy |
+| admin (Next.js) | running |
+| operator (Next.js) | running |
 
-## E2E Test Results
+## Fixes Applied During This Run
 
-**25 / 25 passed** ✅
+1. **Test selector robustness**: Added `.first()` on locators that can match multiple elements (encounter cell, "resulted" status badge, toggle buttons with timeout)
+2. **Admin feature flags timeout**: Increased `toBeVisible` timeout to 15s under concurrent load
+3. **Encounter test**: Use `selectOption({ value: patient.id })` instead of checking option visibility
+4. **Containers rebuilt**: API, admin, operator rebuilt with committed code to ensure all deployed fixes take effect
 
-### Spec Files
+## Services at Test Time
 
-| File | Result |
-|------|--------|
-| 01-auth.spec.ts | ✅ 5/5 |
-| 02-admin-crud.spec.ts | ✅ 5/5 |
-| 03-operator-patient.spec.ts | ✅ 3/3 |
-| 04-operator-encounter.spec.ts | ✅ 3/3 |
-| 05-operator-workflow.spec.ts | ✅ 3/3 |
-| 06-document-pipeline.spec.ts | ✅ 3/3 |
-| 07-tenant-isolation.spec.ts | ✅ 3/3 |
-
-## Fixes Applied
-
-1. **Operator/Admin login form**: Added `htmlFor`/`id` attributes so `getByLabel` selectors work (rebuilt images)
-2. **encounters.service.ts**: `orderLab` now accepts `{ tests: [{ code }] }` format; `collectSpecimen` makes `labOrderId`, `barcode`, `type` optional with auto-detection
-3. **patients.service.ts**: Default sort changed to `createdAt: 'desc'` so newest patients appear first in list
-4. **documents.service.ts**: `generateFromEncounter` idempotency fixed — checks for existing document before creating; uses deterministic `issuedAt`
-5. **seed.ts**: Added GLU and CBC catalog tests for E2E workflow setup
-6. **Prisma migration**: Added `20260221030725_add_document_templates` for missing `document_templates` table
-7. **docker-compose.yml**: Fixed PDF healthcheck to use `curl` instead of `wget` (not available in .NET container)
-8. **apps/pdf/Dockerfile**: Added `curl` installation for healthcheck
-9. **admin/feature-flags/page.tsx**: Fixed API endpoint to use `/feature-flags` (correct path)
-10. **admin/users/page.tsx**: Added `htmlFor`/`id` for user creation form fields
-11. **05-operator-workflow.spec.ts**: Fixed strict mode violation by using `.first()` on ambiguous locator
-
-## Seed Credentials
-
-- Email: admin@vexel.system
-- Password: Admin@vexel123!
+- API: `http://127.0.0.1:9021`
+- Admin: `http://127.0.0.1:9023`  
+- Operator: `http://127.0.0.1:9024`
+- PDF: `http://127.0.0.1:9022`

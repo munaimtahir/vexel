@@ -41,7 +41,7 @@ test.describe('Operator — Encounter management', () => {
     await expect(page).toHaveURL(/\/encounters$/);
 
     // The encounter list shows the newly created encounter row
-    await expect(page.getByRole('cell', { name: /enc patient/i })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('cell', { name: /enc patient/i }).first()).toBeVisible({ timeout: 10_000 });
   });
 
   test('encounter detail page shows patient identity header', async ({ authedPage: page }) => {
