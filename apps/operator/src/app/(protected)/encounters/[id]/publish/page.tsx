@@ -46,7 +46,7 @@ export default function PublishPage() {
     if (pollRef.current) clearInterval(pollRef.current);
     pollRef.current = setInterval(async () => {
       const api = getApiClient(getToken() ?? undefined);
-      const { data } = await api.GET('/documents/{documentId}', { params: { path: { documentId: docId } } });
+      const { data } = await api.GET('/documents/{id}', { params: { path: { id: docId } } });
       if (data) {
         setDocument(data);
         const status = (data as any).status;
@@ -108,8 +108,8 @@ export default function PublishPage() {
     setActionError('');
     try {
       const api = getApiClient(getToken() ?? undefined);
-      const { data, error: apiError } = await api.POST('/documents/{documentId}:publish', {
-        params: { path: { documentId: document.id } },
+      const { data, error: apiError } = await api.POST('/documents/{id}:publish', {
+        params: { path: { id: document.id } },
       });
       if (apiError || !data) { setActionError('Failed to publish document'); return; }
       setDocument(data);
@@ -123,8 +123,8 @@ export default function PublishPage() {
   const handleDownload = async () => {
     if (!document) return;
     const api = getApiClient(getToken() ?? undefined);
-    const { data, error: apiError } = await api.GET('/documents/{documentId}/download', {
-      params: { path: { documentId: document.id } },
+    const { data, error: apiError } = await api.GET('/documents/{id}/download', {
+      params: { path: { id: document.id } },
     });
     if (apiError || !data) { setActionError('Download not available yet'); return; }
     const url = (data as any).url ?? (data as any).signedUrl;
