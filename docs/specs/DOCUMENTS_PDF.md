@@ -29,3 +29,14 @@ Unique key:
 ## Storage backend
 - MVP: LOCAL filesystem
 - Later: S3/MinIO (same interface; no refactor in business logic)
+
+## Trigger Rule (Option A)
+
+- **Generate**: Triggered manually by operator when encounter status is `verified`.
+  - Builds canonical `LabReportPayload` from encounter + patient + lab orders + results.
+  - Computes `payloadHash`; idempotent: same encounter + same results = same document.
+  - Enqueues `document-render` BullMQ job.
+- **Publish**: Triggered manually by operator after document status is `RENDERED`.
+  - Marks document `PUBLISHED`. Idempotent.
+- Automatic regeneration: if lab results change before PUBLISHED, a new payloadHash is computed and a new Document record is created (previous remains in DB as historical artifact).
+

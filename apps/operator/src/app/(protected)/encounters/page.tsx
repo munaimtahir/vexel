@@ -1,10 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 export default function EncountersPage() {
+  const router = useRouter();
   const [encounters, setEncounters] = useState<any[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -67,7 +69,7 @@ export default function EncountersPage() {
             </thead>
             <tbody>
               {encounters.map((enc: any) => (
-                <tr key={enc.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                <tr key={enc.id} style={{ borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }} onClick={() => router.push(`/encounters/${enc.id}`)}>
                   <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace', color: '#475569' }}>{enc.id.slice(0, 8)}…</td>
                   <td style={{ padding: '12px 16px', fontSize: '14px', color: '#1e293b' }}>
                     {enc.patient ? `${enc.patient.firstName} ${enc.patient.lastName}` : enc.patientId.slice(0, 8)}

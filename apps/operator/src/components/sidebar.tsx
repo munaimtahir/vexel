@@ -26,24 +26,42 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
         {NAV_ITEMS.map((item) => {
           const isActive = currentPath.startsWith(item.href);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '10px 20px',
-                color: isActive ? '#f1f5f9' : '#94a3b8',
-                background: isActive ? '#334155' : 'transparent',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontWeight: isActive ? 600 : 400,
-              }}
-            >
-              <span>{item.icon}</span>
-              {item.label}
-            </Link>
+            <div key={item.href}>
+              <Link
+                href={item.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '10px 20px',
+                  color: isActive ? '#f1f5f9' : '#94a3b8',
+                  background: isActive ? '#334155' : 'transparent',
+                  textDecoration: 'none',
+                  fontSize: '14px',
+                  fontWeight: isActive ? 600 : 400,
+                }}
+              >
+                <span>{item.icon}</span>
+                {item.label}
+              </Link>
+              {item.href === '/patients' && (
+                <Link
+                  href="/patients/new"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 20px 8px 44px',
+                    color: currentPath === '/patients/new' ? '#f1f5f9' : '#64748b',
+                    background: currentPath === '/patients/new' ? '#334155' : 'transparent',
+                    textDecoration: 'none',
+                    fontSize: '13px',
+                  }}
+                >
+                  + New Patient
+                </Link>
+              )}
+            </div>
           );
         })}
       </nav>

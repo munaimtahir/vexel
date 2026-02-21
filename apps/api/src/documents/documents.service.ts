@@ -4,6 +4,7 @@ import {
   ConflictException,
   BadRequestException,
 } from '@nestjs/common';
+import { LabReportPayload } from './canonical';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { PrismaService } from '../prisma/prisma.service';
@@ -187,5 +188,68 @@ export class DocumentsService {
       orderBy: { createdAt: 'desc' },
       take: limit,
     });
+  }
+
+  async generateFromEncounter(
+    tenantId: string,
+    encounterId: string,
+    actorUserId: string,
+    correlationId: string,
+  ) {
+    const encounter = await this.prisma.encounter.findFirst({
+      where: { id: encounterId, tenantId },
+      include: {
+        patient: true,
+        labOrders: {
+          include: {
+            test: true,
+            result: true,
+            specimen: true,
+          },
+        },
+      },
+    });
+    if (!encounter) throw new NotFoundException('Encounter not found');
+    if (!['verified', 'published'].includes(encounter.status)) {
+      throw new ConflictException('Encounter must be verified before generating report');
+    }
+
+    const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+
+    const payload: LabReportPayload = {
+      reportNumber: `RPT-${encounterId.slice(0, 8).toUpperCase()}`,
+      issuedAt: new Date().toISOString(),
+      patientName: `${encounter.patient.firstName} ${encounter.patient.lastName}`,
+      patientMrn: encounter.patient.mrn,
+      patientDob: encounter.patient.dateOfBirth?.toISOString().split('T')[0],
+      patientGender: encounter.patient.gender ?? undefined,
+      encounterId,
+      tests: encounter.labOrders.map((order) => ({
+        testCode: (order as any).test?.code ?? order.id,
+        testName: (order as any).test?.name ?? 'Unknown',
+        parameters: (order as any).result ? [{
+          parameterCode: 'result',
+          parameterName: 'Result',
+          value: (order as any).result.value,
+          unit: (order as any).result.unit ?? undefined,
+          referenceRange: (order as any).result.referenceRange ?? undefined,
+          flag: (order as any).result.flag ?? undefined,
+        }] : [],
+      })),
+      tenantName: tenantConfig?.brandName ?? tenantId,
+      tenantLogoUrl: tenantConfig?.logoUrl ?? undefined,
+      reportHeader: tenantConfig?.reportHeader ?? undefined,
+      reportFooter: tenantConfig?.reportFooter ?? undefined,
+    };
+
+    return this.generateDocument(
+      tenantId,
+      'LAB_REPORT',
+      payload as unknown as Record<string, unknown>,
+      encounterId,
+      'ENCOUNTER',
+      actorUserId,
+      correlationId,
+    );
   }
 }

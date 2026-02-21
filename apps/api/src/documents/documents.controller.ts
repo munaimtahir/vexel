@@ -59,6 +59,15 @@ export class DocumentsController {
     @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
     const user = (req as any).user;
+    if (body.encounterId) {
+      const result = await this.svc.generateFromEncounter(
+        user.tenantId,
+        body.encounterId,
+        user.userId,
+        correlationId ?? '',
+      );
+      return res.status(result.created ? HttpStatus.CREATED : HttpStatus.OK).json(result.document);
+    }
     const { sourceRef, sourceType, ...payload } = body;
     const result = await this.svc.generateDocument(
       user.tenantId,

@@ -29,6 +29,12 @@ export default function PatientsPage() {
           <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b', margin: 0 }}>Patients</h2>
           {pagination && <p style={{ color: '#64748b', margin: '4px 0 0', fontSize: '14px' }}>{pagination.total} total</p>}
         </div>
+        <Link
+          href="/patients/new"
+          style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
+        >
+          + New Patient
+        </Link>
       </div>
 
       {loading && <p style={{ color: '#64748b' }}>Loading patients...</p>}
