@@ -1,37 +1,60 @@
-import { Controller, Get, Post, Patch, Put, Param, Body, Query, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller, Get, Post, Patch, Put, Param, Body,
+  Query, UseGuards, HttpCode, HttpStatus, Req, Headers,
+} from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from '../rbac/permissions.guard';
+import { RequirePermissions } from '../rbac/require-permissions.decorator';
+import { Permission } from '../rbac/permissions';
 import { TenantsService } from './tenants.service';
+import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
+import { Request } from 'express';
 
 @ApiTags('Tenants')
 @Controller('tenants')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class TenantsController {
   constructor(private readonly svc: TenantsService) {}
 
   @Get()
+  @RequirePermissions(Permission.TENANT_READ)
   listTenants(@Query() q: any) { return this.svc.list(q); }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createTenant(@Body() body: any) { return this.svc.create(body); }
+  @RequirePermissions(Permission.TENANT_CREATE)
+  createTenant(
+    @Req() req: Request, @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) cid?: string,
+  ) {
+    return this.svc.create(body, (req as any).user.userId, cid);
+  }
 
   @Get(':id')
+  @RequirePermissions(Permission.TENANT_READ)
   getTenant(@Param('id') id: string) { return this.svc.getById(id); }
 
   @Patch(':id')
-  updateTenant(@Param('id') id: string, @Body() body: any) { return this.svc.update(id, body); }
+  @RequirePermissions(Permission.TENANT_UPDATE)
+  updateTenant(
+    @Req() req: Request, @Param('id') id: string, @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) cid?: string,
+  ) {
+    return this.svc.update(id, body, (req as any).user.userId, cid);
+  }
 
   @Get(':id/config')
+  @RequirePermissions(Permission.BRANDING_READ)
   getConfig(@Param('id') id: string) { return this.svc.getConfig(id); }
 
   @Patch(':id/config')
-  updateConfig(@Param('id') id: string, @Body() body: any) { return this.svc.updateConfig(id, body); }
-
-  @Get(':id/feature-flags')
-  getFlags(@Param('id') id: string) { return this.svc.getFeatureFlags(id); }
-
-  @Put(':id/feature-flags')
-  setFlags(@Param('id') id: string, @Body() body: any) { return this.svc.setFeatureFlags(id, body); }
+  @RequirePermissions(Permission.BRANDING_WRITE)
+  updateConfig(
+    @Req() req: Request, @Param('id') id: string, @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) cid?: string,
+  ) {
+    return this.svc.updateConfig(id, body, (req as any).user.userId, cid);
+  }
 }

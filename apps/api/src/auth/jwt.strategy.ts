@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly prisma: PrismaService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -13,6 +14,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return { userId: payload.sub, email: payload.email, roles: payload.roles };
+    const userRoles = await this.prisma.userRole.findMany({
+      where: { userId: payload.sub },
+      include: { role: { include: { rolePermissions: true } } },
+    });
+
+    const permissions = userRoles.flatMap((ur) =>
+      ur.role.rolePermissions.map((rp) => rp.permission),
+    );
+
+    return {
+      userId: payload.sub,
+      email: payload.email,
+      tenantId: payload.tenantId,
+      roles: payload.roles,
+      isSuperAdmin: payload.isSuperAdmin ?? false,
+      permissions,
+    };
   }
 }

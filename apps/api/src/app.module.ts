@@ -1,6 +1,7 @@
 import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
 import { CorrelationIdMiddleware } from './common/correlation-id.middleware';
 import { TenantResolverMiddleware } from './tenant/tenant-resolver.middleware';
+import { PrismaModule } from './prisma/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './auth/auth.module';
 import { TenantModule } from './tenant/tenant.module';
@@ -11,9 +12,11 @@ import { FeatureFlagsModule } from './feature-flags/feature-flags.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { AuditModule } from './audit/audit.module';
 import { JobsModule } from './jobs/jobs.module';
+import { RbacModule } from './rbac/rbac.module';
 
 @Module({
   imports: [
+    PrismaModule,
     HealthModule,
     AuthModule,
     TenantModule,
@@ -24,6 +27,7 @@ import { JobsModule } from './jobs/jobs.module';
     CatalogModule,
     AuditModule,
     JobsModule,
+    RbacModule,
   ],
 })
 export class AppModule implements NestModule {
@@ -38,8 +42,6 @@ export class AppModule implements NestModule {
         { path: 'api/health', method: RequestMethod.GET },
         { path: 'api/health/(.*)', method: RequestMethod.GET },
         { path: 'api/auth/(.*)', method: RequestMethod.ALL },
-        { path: 'api/tenants', method: RequestMethod.ALL },
-        { path: 'api/tenants/(.*)', method: RequestMethod.ALL },
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }

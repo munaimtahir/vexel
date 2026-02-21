@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { href: '/tenants', label: 'Tenants', icon: '🏢' },
   { href: '/users', label: 'Users & Roles', icon: '👥' },
   { href: '/feature-flags', label: 'Feature Flags', icon: '🚩' },
+  { href: '/branding', label: 'Branding', icon: '🎨' },
   { href: '/catalog', label: 'Catalog', icon: '🧪' },
   { href: '/audit', label: 'Audit Log', icon: '📋' },
   { href: '/jobs', label: 'Jobs', icon: '⚙️' },

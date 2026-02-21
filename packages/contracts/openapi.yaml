@@ -126,6 +126,8 @@ components:
         status:
           type: string
           enum: [active, disabled, pending]
+        isSuperAdmin:
+          type: boolean
         createdAt:
           type: string
           format: date-time
@@ -162,6 +164,12 @@ components:
           type: string
         footerText:
           type: string
+        reportHeader:
+          type: string
+          description: Header text printed on generated PDF reports
+        reportFooter:
+          type: string
+          description: Footer text printed on generated PDF reports
 
     Role:
       type: object
@@ -175,8 +183,12 @@ components:
           type: string
         permissions:
           type: array
+          description: List of permission keys assigned to this role
           items:
             type: string
+        isSystem:
+          type: boolean
+          description: True for built-in system roles that cannot be deleted
 
     FeatureFlag:
       type: object
@@ -292,6 +304,32 @@ components:
           type: string
           format: date-time
           nullable: true
+
+    PermissionKey:
+      type: string
+      enum:
+        - admin.super
+        - tenant.read
+        - tenant.create
+        - tenant.update
+        - user.read
+        - user.create
+        - user.update
+        - user.disable
+        - role.read
+        - role.create
+        - role.update
+        - role.delete
+        - role.assign
+        - feature_flag.read
+        - feature_flag.set
+        - catalog.read
+        - catalog.write
+        - audit.read
+        - job.read
+        - job.retry
+        - branding.read
+        - branding.write
 
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
@@ -897,6 +935,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Role'
+
+  /roles/permissions:
+    get:
+      operationId: listPermissions
+      summary: List all available system permissions
+      tags: [Roles]
+      responses:
+        "200":
+          description: All permission keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 
   # ─── Feature Flags (global / system) ──────────────────────────────────────
   /feature-flags:

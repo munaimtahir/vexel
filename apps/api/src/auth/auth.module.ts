@@ -5,9 +5,11 @@ import { AuthController, MeController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports: [
+    PrismaModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET ?? 'vexel-dev-secret-change-in-production',
@@ -16,6 +18,6 @@ import { JwtStrategy } from './jwt.strategy';
   ],
   controllers: [AuthController, MeController],
   providers: [AuthService, JwtAuthGuard, JwtStrategy],
-  exports: [JwtAuthGuard, AuthService],
+  exports: [JwtAuthGuard, AuthService, JwtModule],
 })
 export class AuthModule {}

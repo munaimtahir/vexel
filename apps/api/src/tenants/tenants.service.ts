@@ -1,32 +1,48 @@
 import { Injectable } from '@nestjs/common';
+import { TenantService } from '../tenant/tenant.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class TenantsService {
-  list(q: any) {
-    return { data: [], pagination: { page: 1, limit: 20, total: 0, totalPages: 0 } };
+  constructor(
+    private readonly tenantService: TenantService,
+    private readonly audit: AuditService,
+  ) {}
+
+  async list(q: any) { return this.tenantService.list(q.page, q.limit); }
+
+  async create(body: any, actorUserId: string, correlationId?: string) {
+    const tenant = await this.tenantService.create(body);
+    await this.audit.log({
+      tenantId: tenant.id, actorUserId, action: 'tenant.create',
+      entityType: 'Tenant', entityId: tenant.id,
+      after: { name: tenant.name, status: tenant.status }, correlationId,
+    });
+    return tenant;
   }
-  create(body: any) {
-    return { id: 'stub', ...body, status: 'trial', createdAt: new Date().toISOString() };
+
+  async getById(id: string) { return this.tenantService.findById(id); }
+
+  async update(id: string, body: any, actorUserId: string, correlationId?: string) {
+    const before = await this.tenantService.findById(id);
+    const updated = await this.tenantService.update(id, body);
+    await this.audit.log({
+      tenantId: id, actorUserId, action: 'tenant.update',
+      entityType: 'Tenant', entityId: id,
+      before: { name: before?.name, status: before?.status },
+      after: body, correlationId,
+    });
+    return updated;
   }
-  getById(id: string) {
-    return { id, name: 'Stub Tenant', domains: [], status: 'active', createdAt: new Date().toISOString() };
-  }
-  update(id: string, body: any) {
-    return { id, ...body, createdAt: new Date().toISOString() };
-  }
-  getConfig(id: string) {
-    return { brandName: null, logoUrl: null, primaryColor: null, headerText: null, footerText: null };
-  }
-  updateConfig(id: string, body: any) {
-    return body;
-  }
-  getFeatureFlags(id: string) {
-    return [
-      { key: 'module.lims', enabled: false, description: 'LIMS module' },
-      { key: 'lims.auto_verify', enabled: false, description: 'Auto-verify LIMS results' },
-    ];
-  }
-  setFeatureFlags(id: string, body: any[]) {
-    return body.map(f => ({ ...f, description: '' }));
+
+  async getConfig(id: string) { return this.tenantService.getConfig(id); }
+
+  async updateConfig(id: string, body: any, actorUserId: string, correlationId?: string) {
+    const updated = await this.tenantService.updateConfig(id, body);
+    await this.audit.log({
+      tenantId: id, actorUserId, action: 'tenant.config.update',
+      entityType: 'TenantConfig', entityId: id, after: body, correlationId,
+    });
+    return updated;
   }
 }

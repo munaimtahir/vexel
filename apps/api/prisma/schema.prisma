@@ -12,19 +12,32 @@ datasource db {
 model Tenant {
   id        String   @id @default(uuid())
   name      String
-  domains   String[]
   status    String   @default("trial") // active | suspended | trial
+  isSuperAdmin Boolean @default(false)  // system tenant for super-admins
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  domains       TenantDomain[]
   config        TenantConfig?
   users         User[]
   featureFlags  TenantFeature[]
   auditEvents   AuditEvent[]
   catalogTests  CatalogTest[]
   catalogPanels CatalogPanel[]
+  roles         Role[]
 
   @@map("tenants")
+}
+
+model TenantDomain {
+  id       String @id @default(uuid())
+  tenantId String
+  domain   String @unique  // globally unique — one domain maps to one tenant
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([domain])
+  @@map("tenant_domains")
 }
 
 model TenantConfig {
@@ -33,8 +46,11 @@ model TenantConfig {
   brandName    String?
   logoUrl      String?
   primaryColor String?
+  reportHeader String?
+  reportFooter String?
   headerText   String?
   footerText   String?
+  updatedAt    DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
@@ -49,15 +65,33 @@ model User {
   lastName     String
   passwordHash String
   status       String   @default("active") // active | disabled | pending
+  isSuperAdmin Boolean  @default(false)    // super-admin bypasses all RBAC
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  tenant      Tenant       @relation(fields: [tenantId], references: [id])
-  userRoles   UserRole[]
-  auditEvents AuditEvent[]
+  tenant        Tenant         @relation(fields: [tenantId], references: [id])
+  userRoles     UserRole[]
+  refreshTokens RefreshToken[]
+  auditEvents   AuditEvent[]
 
   @@unique([tenantId, email])
+  @@index([tenantId, status])
   @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique  // hashed token stored
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
 }
 
 model Role {
@@ -65,18 +99,36 @@ model Role {
   tenantId    String
   name        String
   description String?
-  permissions String[]
+  isSystem    Boolean  @default(false)  // system roles cannot be deleted
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  userRoles UserRole[]
+  tenant          Tenant           @relation(fields: [tenantId], references: [id])
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
 
   @@unique([tenantId, name])
+  @@index([tenantId])
   @@map("roles")
 }
 
+// System-defined permission keys
+// Stored as strings so schema doesn't need to change when adding new permissions
+model RolePermission {
+  roleId     String
+  permission String  // matches Permission enum values
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([roleId, permission])
+  @@map("role_permissions")
+}
+
 model UserRole {
-  userId String
-  roleId String
+  userId    String
+  roleId    String
+  grantedBy String?  // userId who granted this role
+  grantedAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
   role Role @relation(fields: [roleId], references: [id])
@@ -86,15 +138,18 @@ model UserRole {
 }
 
 model TenantFeature {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   tenantId    String
-  key         String
-  enabled     Boolean @default(false)
+  key         String   // e.g. module.lims, module.printing
+  enabled     Boolean  @default(false)
   description String?
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?  // userId who last changed it
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@unique([tenantId, key])
+  @@index([tenantId])
   @@map("tenant_features")
 }
 
@@ -115,6 +170,7 @@ model CatalogTest {
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@unique([tenantId, code])
+  @@index([tenantId, isActive])
   @@map("catalog_tests")
 }
 
@@ -135,22 +191,27 @@ model CatalogPanel {
   @@map("catalog_panels")
 }
 
-// ─── Audit ────────────────────────────────────────────────────────────────
+// ─── Audit (append-only — no updates, no deletes) ─────────────────────────
 
 model AuditEvent {
   id            String   @id @default(uuid())
   tenantId      String
   actorUserId   String?
-  action        String
+  action        String   // e.g. user.create, role.assign, feature_flag.set
   entityType    String?
   entityId      String?
   correlationId String?
   before        Json?
   after         Json?
+  metadata      Json?    // extra context (e.g. IP, user-agent)
   createdAt     DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
   actor  User?  @relation(fields: [actorUserId], references: [id])
 
+  @@index([tenantId, createdAt])
+  @@index([tenantId, actorUserId])
+  @@index([tenantId, entityType, entityId])
+  @@index([correlationId])
   @@map("audit_events")
 }
