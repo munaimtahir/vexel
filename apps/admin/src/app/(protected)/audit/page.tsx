@@ -35,7 +35,39 @@ export default function AuditPage() {
       <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: '#1e293b' }}>Audit Log</h1>
 
       <div style={{ background: 'white', padding: '16px 20px', borderRadius: '8px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        {(['action', 'entityType', 'actorUserId'] as const).map((field) => (
+        <div>
+          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Action</label>
+          <select
+            value={filters.action}
+            onChange={(e) => setFilters({ ...filters, action: e.target.value, page: 1 })}
+            style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', minWidth: '180px' }}
+          >
+            <option value="">All actions</option>
+            <optgroup label="Auth">
+              <option value="auth.login">auth.login</option>
+              <option value="auth.logout">auth.logout</option>
+            </optgroup>
+            <optgroup label="Documents">
+              <option value="document.generate">document.generate</option>
+              <option value="document.publish">document.publish</option>
+              <option value="document.rendered">document.rendered</option>
+              <option value="document.render_failed">document.render_failed</option>
+            </optgroup>
+            <optgroup label="Encounters">
+              <option value="encounter.register">encounter.register</option>
+              <option value="encounter.order-lab">encounter.order-lab</option>
+              <option value="encounter.result">encounter.result</option>
+              <option value="encounter.verify">encounter.verify</option>
+            </optgroup>
+            <optgroup label="Admin">
+              <option value="user.create">user.create</option>
+              <option value="role.assign">role.assign</option>
+              <option value="feature_flag.set">feature_flag.set</option>
+              <option value="branding.update">branding.update</option>
+            </optgroup>
+          </select>
+        </div>
+        {(['entityType', 'actorUserId'] as const).map((field) => (
           <div key={field}>
             <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px', textTransform: 'capitalize' }}>{field}</label>
             <input

@@ -47,7 +47,10 @@ export default function BrandingPage() {
   return (
     <div>
       <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: '#1e293b' }}>Branding &amp; Config</h1>
-      <p style={{ color: '#64748b', marginBottom: '32px' }}>Customize the look and report headers for this tenant.</p>
+      <p style={{ color: '#64748b', marginBottom: '8px' }}>Customize the look and report headers for this tenant.</p>
+      <p style={{ color: '#3b82f6', fontSize: '13px', marginBottom: '24px', background: '#eff6ff', padding: '8px 12px', borderRadius: '6px', borderLeft: '3px solid #3b82f6' }}>
+        ℹ️ <strong>brandName</strong>, <strong>logoUrl</strong>, <strong>reportHeader</strong>, and <strong>reportFooter</strong> are injected into all generated PDF documents (receipts and lab reports).
+      </p>
       <div style={{ background: 'white', padding: '24px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', maxWidth: '600px' }}>
         <form onSubmit={handleSave} style={{ display: 'grid', gap: '16px' }}>
           {fields.map(({ key, label, placeholder }) => (

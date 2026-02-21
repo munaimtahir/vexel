@@ -15,6 +15,7 @@ const SYSTEM_PERMISSIONS = [
   'job.read', 'job.retry',
   'branding.read', 'branding.write',
   'patient.manage', 'encounter.manage', 'result.enter', 'result.verify',
+  'document.generate', 'document.publish',
 ];
 
 const DEFAULT_FEATURE_FLAGS = [

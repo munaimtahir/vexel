@@ -2775,3 +2775,213 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  # ─── Documents ────────────────────────────────────────────────────────────
+  /documents/receipt:generate:
+    post:
+      operationId: generateReceipt
+      summary: Generate a receipt document (idempotent by payload hash)
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptGenerateRequest'
+      responses:
+        "200":
+          description: Existing document returned (idempotent — same payloadHash)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "201":
+          description: New document created and queued for render
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /documents/report:generate:
+    post:
+      operationId: generateReport
+      summary: Generate a lab report document (idempotent by payload hash)
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportGenerateRequest'
+      responses:
+        "200":
+          description: Existing document returned (idempotent — same payloadHash)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "201":
+          description: New document created and queued for render
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /documents:
+    get:
+      operationId: listDocuments
+      summary: List documents for the current tenant
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [DRAFT, RENDERING, RENDERED, PUBLISHED, FAILED]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Documents list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      summary: Get a document by ID
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Document details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /documents/{id}:publish:
+    post:
+      operationId: publishDocument
+      summary: Publish a RENDERED document (idempotent)
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Document published (or already published)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Document not in RENDERED status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /documents/{id}/download:
+    get:
+      operationId: downloadDocument
+      summary: Download PDF bytes or redirect to signed URL
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: PDF download or placeholder response
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: object
+                properties:
+                  documentId:
+                    type: string
+                  pdfHash:
+                    type: string
+                    nullable: true
+                  message:
+                    type: string
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'

@@ -362,3 +362,75 @@ Expected:
 - `200` with `{ status: "queued" }`
 - `AuditEvent` written with `action: "catalog.import.retry"`, `entityId: <jobRunId>`
 - If job is NOT in `failed` state: `409 Conflict`
+
+---
+
+## Phase 5 — Document Pipeline
+
+### 20. Generate Receipt (idempotency)
+```bash
+TOKEN=<your_bearer_token>
+
+# First generate
+curl -s -X POST http://127.0.0.1:3002/api/documents/receipt:generate \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"receiptNumber":"RCP-001","patientName":"John Doe","patientMrn":"MRN001","issuedAt":"2026-01-01T00:00:00Z","items":[],"subtotal":0,"tax":0,"grandTotal":0}' | jq .
+```
+Expected: `201 Created` with `{ id, status: "RENDERING", payloadHash: "..." }`
+
+```bash
+# Second generate with identical payload
+curl -s -X POST http://127.0.0.1:3002/api/documents/receipt:generate \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"receiptNumber":"RCP-001","patientName":"John Doe","patientMrn":"MRN001","issuedAt":"2026-01-01T00:00:00Z","items":[],"subtotal":0,"tax":0,"grandTotal":0}' | jq .
+```
+Expected: `200 OK` — same `Document.id` returned (idempotent, not a new record).
+
+---
+
+### 21. Document Status Lifecycle
+```bash
+DOC_ID=<id from smoke test 20>
+
+# Poll status
+curl -s http://127.0.0.1:3002/api/documents/$DOC_ID \
+  -H "Authorization: Bearer $TOKEN" | jq .status
+```
+Expected status sequence: `DRAFT` → `RENDERING` → `RENDERED` (after worker processes the job and PDF service responds).
+
+---
+
+### 22. Publish Document
+```bash
+# After document reaches RENDERED status:
+curl -s -X POST http://127.0.0.1:3002/api/documents/$DOC_ID:publish \
+  -H "Authorization: Bearer $TOKEN" | jq .status
+```
+Expected: `"PUBLISHED"`
+
+```bash
+# Publish again — idempotent, no error:
+curl -s -X POST http://127.0.0.1:3002/api/documents/$DOC_ID:publish \
+  -H "Authorization: Bearer $TOKEN" | jq .status
+```
+Expected: `"PUBLISHED"` (no `409`)
+
+---
+
+### 23. Hash Reproducibility
+```bash
+# Generate same payload twice and compare payloadHash values
+HASH_1=$(curl -s -X POST http://127.0.0.1:3002/api/documents/receipt:generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"receiptNumber":"RCP-HASH-TEST","patientName":"Hash Test","patientMrn":"MRN-HASH","issuedAt":"2026-06-01T00:00:00Z","items":[],"subtotal":0,"tax":0,"grandTotal":0}' | jq -r .payloadHash)
+
+HASH_2=$(curl -s -X POST http://127.0.0.1:3002/api/documents/receipt:generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"grandTotal":0,"issuedAt":"2026-06-01T00:00:00Z","items":[],"patientMrn":"MRN-HASH","patientName":"Hash Test","receiptNumber":"RCP-HASH-TEST","subtotal":0,"tax":0}' | jq -r .payloadHash)
+
+# Keys in different order — hashes must match
+[ "$HASH_1" = "$HASH_2" ] && echo "✅ Hash reproducibility OK" || echo "❌ Hash mismatch"
+```
+Expected: `✅ Hash reproducibility OK`
