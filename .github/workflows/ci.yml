@@ -62,3 +62,37 @@ jobs:
         run: cd apps/api && npm ci
       - name: Run unit tests
         run: cd apps/api && npm test -- --passWithNoTests --testPathPattern="spec.ts$"
+
+  e2e:
+    name: Playwright E2E Tests
+    runs-on: ubuntu-latest
+    needs: [api-unit-tests]
+    # Disabled until Docker stack is deployed in CI.
+    # Remove `if: false` and add a docker-compose up step to enable.
+    if: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        run: pnpm --filter @vexel/e2e exec playwright install --with-deps chromium
+      - name: Run E2E tests
+        run: pnpm --filter @vexel/e2e test
+        env:
+          CI: true
+          API_BASE: http://127.0.0.1:9021
+          OPERATOR_BASE: http://127.0.0.1:9024
+          ADMIN_BASE: http://127.0.0.1:9025
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/e2e/playwright-report/
+          retention-days: 7
