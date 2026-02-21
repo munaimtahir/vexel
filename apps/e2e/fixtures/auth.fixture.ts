@@ -34,8 +34,12 @@ async function injectTokens(
   await page.goto(baseURL);
   await page.evaluate(
     ({ at, rt }) => {
-      localStorage.setItem('accessToken', at);
-      localStorage.setItem('refreshToken', rt);
+      // Operator app keys
+      localStorage.setItem('vexel_operator_token', at);
+      localStorage.setItem('vexel_operator_refresh', rt);
+      // Admin app keys
+      localStorage.setItem('vexel_admin_token', at);
+      localStorage.setItem('vexel_admin_refresh', rt);
     },
     { at: accessToken, rt: refreshToken },
   );

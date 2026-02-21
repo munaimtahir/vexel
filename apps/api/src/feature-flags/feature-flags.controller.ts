@@ -9,7 +9,7 @@ import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request } from 'express';
 
 @ApiTags('FeatureFlags')
-@Controller('tenants/:tenantId/feature-flags')
+@Controller('feature-flags')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class FeatureFlagsController {

@@ -26,7 +26,7 @@ async function writeAudit(
         entityType: 'Document',
         entityId: documentId,
         correlationId,
-        after: extra ?? null,
+        after: (extra ?? null) as any,
       },
     });
   } catch (err) {

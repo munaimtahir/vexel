@@ -40,14 +40,14 @@ async function setupWorkflowEncounter() {
   // The order body may need a testId — use a known catalog test code or placeholder
   const testCode = process.env.E2E_TEST_CODE || 'GLU'; // Glucose, expected in seed data
   await apiPost(
-    `/encounters/${encounter.id}:order`,
+    `/encounters/${encounter.id}:order-lab`,
     { tests: [{ code: testCode }] },
     accessToken,
   );
 
   // Collect specimen (command)
   await apiPostRaw(
-    `/encounters/${encounter.id}:collect`,
+    `/encounters/${encounter.id}:collect-specimen`,
     {},
     accessToken,
   );
@@ -60,7 +60,7 @@ test.describe('Operator — Full LIMS workflow', () => {
     const { encounter } = await setupWorkflowEncounter();
 
     await page.goto(`/encounters/${encounter.id}/results`);
-    await expect(page.getByRole('heading', { name: /Enter Results/i })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('heading', { name: /Lab Order Results/i })).toBeVisible({ timeout: 10_000 });
 
     // Wait for form to load (spinner gone)
     await expect(page.locator('text=Loading encounter...')).not.toBeVisible({ timeout: 10_000 });
@@ -79,7 +79,7 @@ test.describe('Operator — Full LIMS workflow', () => {
     await page.waitForURL(`**/encounters/${encounter.id}`, { timeout: 15_000 });
 
     // Status badge must now show "resulted"
-    await expect(page.locator('text=resulted')).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('text=resulted').first()).toBeVisible({ timeout: 10_000 });
 
     // "Verify Results" action link is now present
     await expect(page.getByRole('link', { name: 'Verify Results' })).toBeVisible();

@@ -8,7 +8,7 @@ const REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6379';
 
 const connection = new IORedis(REDIS_URL, {
   maxRetriesPerRequest: null,
-});
+}) as any;
 
 connection.on('connect', () => console.log('✅ Worker connected to Redis'));
 connection.on('error', (err) => console.error('❌ Redis error:', err.message));

@@ -16,6 +16,7 @@ export default function BrandingPage() {
       const meRes = await api.GET('/me');
       const tid = meRes.data?.tenantId ?? 'system';
       setTenantId(tid);
+      // @ts-ignore - dynamic tenant path pending in openapi contract
       const { data } = await api.GET(`/tenants/${tid}/config` as any);
       setConfig(data ?? {});
       setLoading(false);
@@ -27,6 +28,7 @@ export default function BrandingPage() {
     e.preventDefault();
     setSaving(true); setSaved(false);
     const api = getApiClient(getToken() ?? undefined);
+    // @ts-ignore - dynamic tenant path pending in openapi contract
     await api.PATCH(`/tenants/${tenantId}/config` as any, { body: config });
     setSaving(false); setSaved(true);
     setTimeout(() => setSaved(false), 3000);

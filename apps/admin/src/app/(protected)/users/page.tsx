@@ -60,8 +60,9 @@ export default function UsersPage() {
           <form onSubmit={handleCreate} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             {(['email', 'firstName', 'lastName', 'password'] as const).map((field) => (
               <div key={field}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', textTransform: 'capitalize' }}>{field}</label>
+                <label htmlFor={`user-${field}`} style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', textTransform: 'capitalize' }}>{field}</label>
                 <input
+                  id={`user-${field}`}
                   type={field === 'password' ? 'password' : field === 'email' ? 'email' : 'text'}
                   value={form[field]}
                   onChange={(e) => setForm({ ...form, [field]: e.target.value })}

@@ -84,28 +84,28 @@ export default function NewPatientPage() {
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div style={fieldStyle}>
-              <label style={labelStyle}>First Name *</label>
-              <input name="firstName" required value={form.firstName} onChange={handleChange} style={inputStyle} />
+              <label htmlFor="firstName" style={labelStyle}>First Name *</label>
+              <input id="firstName" name="firstName" required value={form.firstName} onChange={handleChange} style={inputStyle} />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle}>Last Name *</label>
-              <input name="lastName" required value={form.lastName} onChange={handleChange} style={inputStyle} />
+              <label htmlFor="lastName" style={labelStyle}>Last Name *</label>
+              <input id="lastName" name="lastName" required value={form.lastName} onChange={handleChange} style={inputStyle} />
             </div>
           </div>
 
           <div style={fieldStyle}>
-            <label style={labelStyle}>MRN *</label>
-            <input name="mrn" required value={form.mrn} onChange={handleChange} style={inputStyle} placeholder="e.g. MRN-001" />
+            <label htmlFor="mrn" style={labelStyle}>MRN *</label>
+            <input id="mrn" name="mrn" required value={form.mrn} onChange={handleChange} style={inputStyle} placeholder="e.g. MRN-001" />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div style={fieldStyle}>
-              <label style={labelStyle}>Date of Birth</label>
-              <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleChange} style={inputStyle} />
+              <label htmlFor="dateOfBirth" style={labelStyle}>Date of Birth</label>
+              <input id="dateOfBirth" name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleChange} style={inputStyle} />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle}>Gender</label>
-              <select name="gender" value={form.gender} onChange={handleChange} style={inputStyle}>
+              <label htmlFor="gender" style={labelStyle}>Gender</label>
+              <select id="gender" name="gender" value={form.gender} onChange={handleChange} style={inputStyle}>
                 <option value="">Select...</option>
                 <option value="M">Male</option>
                 <option value="F">Female</option>
@@ -115,8 +115,8 @@ export default function NewPatientPage() {
           </div>
 
           <div style={fieldStyle}>
-            <label style={labelStyle}>Phone</label>
-            <input name="phone" type="tel" value={form.phone} onChange={handleChange} style={inputStyle} />
+            <label htmlFor="phone" style={labelStyle}>Phone</label>
+            <input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} style={inputStyle} />
           </div>
 
           {error && <p style={{ color: '#ef4444', marginBottom: '16px', fontSize: '14px' }}>{error}</p>}

@@ -4,7 +4,7 @@
  * Allowed in test helpers (not in app code — see guardrails).
  */
 
-export const API_BASE = process.env.API_BASE || 'http://127.0.0.1:9021';
+export const API_BASE = (process.env.API_BASE || 'http://127.0.0.1:9021') + '/api';
 
 export interface LoginResult {
   accessToken: string;

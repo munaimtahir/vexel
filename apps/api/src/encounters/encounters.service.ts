@@ -73,7 +73,7 @@ export class EncountersService {
   async orderLab(
     tenantId: string,
     encounterId: string,
-    body: { testId: string; priority?: string },
+    body: { testId?: string; tests?: Array<{ code: string }>; priority?: string },
     actorUserId: string,
     correlationId?: string,
   ) {
@@ -83,17 +83,28 @@ export class EncountersService {
       throw new ConflictException(`Cannot order lab for encounter in status '${encounter.status}'`);
     }
 
-    // Verify test exists in tenant catalog
-    const test = await this.prisma.catalogTest.findFirst({ where: { id: body.testId, tenantId } });
-    if (!test) throw new NotFoundException('Catalog test not found');
+    // Resolve test: support { testId } OR { tests: [{ code }] }
+    let resolvedTestId: string;
+    if (body.testId) {
+      const test = await this.prisma.catalogTest.findFirst({ where: { id: body.testId, tenantId } });
+      if (!test) throw new NotFoundException('Catalog test not found');
+      resolvedTestId = test.id;
+    } else if (body.tests?.length) {
+      const code = body.tests[0].code;
+      const test = await this.prisma.catalogTest.findFirst({ where: { code, tenantId } });
+      if (!test) throw new NotFoundException(`Catalog test not found: ${code}`);
+      resolvedTestId = test.id;
+    } else {
+      throw new NotFoundException('No test specified');
+    }
 
     const newStatus = 'lab_ordered';
     const [labOrder, updatedEncounter] = await this.prisma.$transaction([
       this.prisma.labOrder.create({
         data: {
-          tenantId,
-          encounterId,
-          testId: body.testId,
+          tenant: { connect: { id: tenantId } },
+          encounter: { connect: { id: encounterId } },
+          test: { connect: { id: resolvedTestId } },
           priority: body.priority ?? 'routine',
           status: 'ordered',
         },
@@ -112,7 +123,7 @@ export class EncountersService {
   async collectSpecimen(
     tenantId: string,
     encounterId: string,
-    body: { labOrderId: string; barcode: string; type: string },
+    body: { labOrderId?: string; barcode?: string; type?: string },
     actorUserId: string,
     correlationId?: string,
   ) {
@@ -122,21 +133,27 @@ export class EncountersService {
       throw new ConflictException(`Cannot collect specimen for encounter in status '${encounter.status}'`);
     }
 
-    const labOrder = await this.prisma.labOrder.findFirst({ where: { id: body.labOrderId, encounterId, tenantId } });
-    if (!labOrder) throw new NotFoundException('Lab order not found in this encounter');
+    // If no labOrderId provided, find the first ordered lab order
+    const labOrderId = body.labOrderId ?? (
+      await this.prisma.labOrder.findFirst({ where: { encounterId, tenantId, status: 'ordered' } })
+    )?.id;
+    if (!labOrderId) throw new NotFoundException('Lab order not found in this encounter');
+
+    const barcode = body.barcode ?? `BC-${Date.now()}`;
+    const specimenType = body.type ?? 'blood';
 
     const [, updatedEncounter] = await this.prisma.$transaction([
       this.prisma.specimen.create({
         data: {
           tenantId,
-          labOrderId: body.labOrderId,
-          barcode: body.barcode,
-          type: body.type,
+          labOrderId,
+          barcode,
+          type: specimenType,
           status: 'collected',
           collectedAt: new Date(),
         },
       }),
-      this.prisma.labOrder.update({ where: { id: body.labOrderId }, data: { status: 'specimen_collected' } }),
+      this.prisma.labOrder.update({ where: { id: labOrderId }, data: { status: 'specimen_collected' } }),
       this.prisma.encounter.update({
         where: { id: encounterId },
         data: { status: 'specimen_collected' },
@@ -144,7 +161,7 @@ export class EncountersService {
       }),
     ]).then(([_spec, _order, enc]) => [_spec, enc]);
 
-    await this.audit.log({ tenantId, actorUserId, action: 'encounter.collect-specimen', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: 'specimen_collected', barcode: body.barcode }, correlationId });
+    await this.audit.log({ tenantId, actorUserId, action: 'encounter.collect-specimen', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: 'specimen_collected', barcode }, correlationId });
     return updatedEncounter;
   }
 

@@ -38,8 +38,8 @@ export class CatalogJobsService {
     private readonly featureFlags: FeatureFlagsService,
   ) {
     const conn = getRedisConnection();
-    this.importQueue = new Queue('catalog-import', { connection: conn });
-    this.exportQueue = new Queue('catalog-export', { connection: conn });
+    this.importQueue = new Queue('catalog-import', { connection: conn as any });
+    this.exportQueue = new Queue('catalog-export', { connection: conn as any });
   }
 
   async createImportJob(tenantId: string, payload: any, actorUserId: string, correlationId: string) {

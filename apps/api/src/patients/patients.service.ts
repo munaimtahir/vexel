@@ -16,7 +16,7 @@ export class PatientsService {
     if (mrn) where.mrn = mrn;
 
     const [data, total] = await Promise.all([
-      this.prisma.patient.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { lastName: 'asc' } }),
+      this.prisma.patient.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { createdAt: 'desc' } }),
       this.prisma.patient.count({ where }),
     ]);
     return { data, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };

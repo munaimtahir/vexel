@@ -31,10 +31,8 @@ test.describe('Operator — Encounter management', () => {
     // Wait for patient dropdown to be populated
     await expect(page.locator('text=Loading patients...')).not.toBeVisible({ timeout: 10_000 });
 
-    // Select the patient we just created — option text: "Enc Patient — MRN: ENC-..."
-    const patientOption = page.getByRole('option', { name: new RegExp(`ENC-${suffix}`) });
-    await expect(patientOption).toBeVisible({ timeout: 8_000 });
-    await page.getByRole('combobox').selectOption({ label: await patientOption.textContent() ?? '' });
+    // Select the patient we just created by value (patient ID)
+    await page.getByRole('combobox').selectOption({ value: patient.id });
 
     await page.getByRole('button', { name: 'Register Encounter' }).click();
 

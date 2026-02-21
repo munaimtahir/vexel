@@ -126,6 +126,19 @@ export async function main() {
   console.log('✅ Super-admin user:', superAdmin.email);
   console.log('   Password: Admin@vexel123!');
 
+  // Seed minimal catalog tests for E2E testing
+  await prisma.catalogTest.upsert({
+    where: { tenantId_code: { tenantId: 'system', code: 'GLU' } },
+    update: {},
+    create: { tenantId: 'system', code: 'GLU', name: 'Glucose', isActive: true },
+  });
+  await prisma.catalogTest.upsert({
+    where: { tenantId_code: { tenantId: 'system', code: 'CBC' } },
+    update: {},
+    create: { tenantId: 'system', code: 'CBC', name: 'Complete Blood Count', isActive: true },
+  });
+  console.log('✅ Catalog tests seeded (GLU, CBC)');
+
   // Seed default DocumentTemplates for system tenant
   await prisma.documentTemplate.upsert({
     where: { tenantId_type_version: { tenantId: systemTenant.id, type: 'RECEIPT', version: 1 } },

@@ -7,6 +7,7 @@ import { Permission } from '../rbac/permissions';
 import { EncountersService } from './encounters.service';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request } from 'express';
+import { getTenantId } from '../common/tenant-context';
 
 @ApiTags('Encounters')
 @Controller('encounters')
@@ -15,10 +16,14 @@ import { Request } from 'express';
 export class EncountersController {
   constructor(private readonly svc: EncountersService) {}
 
+  private resolveTenantId(req: Request): string {
+    return getTenantId(req) ?? (req as any).user.tenantId;
+  }
+
   @Get()
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   list(@Req() req: Request, @Query() q: any) {
-    return this.svc.list((req as any).user.tenantId, q);
+    return this.svc.list(this.resolveTenantId(req), q);
   }
 
   @Post()
@@ -26,13 +31,13 @@ export class EncountersController {
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   register(@Req() req: Request, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
-    return this.svc.register(user.tenantId, body, user.userId, correlationId);
+    return this.svc.register(this.resolveTenantId(req), body, user.userId, correlationId);
   }
 
   @Get(':id')
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   getById(@Req() req: Request, @Param('id') id: string) {
-    return this.svc.getById((req as any).user.tenantId, id);
+    return this.svc.getById(this.resolveTenantId(req), id);
   }
 
   @Post(':id\\:order-lab')
@@ -40,7 +45,7 @@ export class EncountersController {
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   orderLab(@Req() req: Request, @Param('id') id: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
-    return this.svc.orderLab(user.tenantId, id, body, user.userId, correlationId);
+    return this.svc.orderLab(this.resolveTenantId(req), id, body, user.userId, correlationId);
   }
 
   @Post(':id\\:collect-specimen')
@@ -48,7 +53,7 @@ export class EncountersController {
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   collectSpecimen(@Req() req: Request, @Param('id') id: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
-    return this.svc.collectSpecimen(user.tenantId, id, body, user.userId, correlationId);
+    return this.svc.collectSpecimen(this.resolveTenantId(req), id, body, user.userId, correlationId);
   }
 
   @Post(':id\\:result')
@@ -56,7 +61,7 @@ export class EncountersController {
   @RequirePermissions(Permission.RESULT_ENTER)
   enterResult(@Req() req: Request, @Param('id') id: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
-    return this.svc.enterResult(user.tenantId, id, body, user.userId, correlationId);
+    return this.svc.enterResult(this.resolveTenantId(req), id, body, user.userId, correlationId);
   }
 
   @Post(':id\\:verify')
@@ -64,7 +69,7 @@ export class EncountersController {
   @RequirePermissions(Permission.RESULT_VERIFY)
   verify(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
-    return this.svc.verify(user.tenantId, id, user.userId, correlationId);
+    return this.svc.verify(this.resolveTenantId(req), id, user.userId, correlationId);
   }
 
   @Post(':id\\:cancel')
@@ -72,6 +77,6 @@ export class EncountersController {
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   cancel(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
-    return this.svc.cancel(user.tenantId, id, user.userId, correlationId);
+    return this.svc.cancel(this.resolveTenantId(req), id, user.userId, correlationId);
   }
 }

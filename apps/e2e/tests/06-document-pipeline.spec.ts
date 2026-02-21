@@ -28,8 +28,8 @@ async function setupVerifiedEncounter() {
   );
 
   const testCode = process.env.E2E_TEST_CODE || 'GLU';
-  await apiPost(`/encounters/${encounter.id}:order`, { tests: [{ code: testCode }] }, accessToken);
-  await apiPostRaw(`/encounters/${encounter.id}:collect`, {}, accessToken);
+  await apiPost(`/encounters/${encounter.id}:order-lab`, { tests: [{ code: testCode }] }, accessToken);
+  await apiPostRaw(`/encounters/${encounter.id}:collect-specimen`, {}, accessToken);
 
   const enc = await apiGet<{ labOrders: Array<{ id: string }> }>(
     `/encounters/${encounter.id}`,

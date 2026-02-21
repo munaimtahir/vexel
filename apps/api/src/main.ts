@@ -6,6 +6,13 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Allow browser clients (admin/operator apps) to reach the API
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-tenant-id'],
+  });
+
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(

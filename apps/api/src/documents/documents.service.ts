@@ -27,7 +27,7 @@ export class DocumentsService {
     private readonly audit: AuditService,
   ) {
     this.renderQueue = new Queue(DOCUMENT_RENDER_QUEUE, {
-      connection: getRedisConnection(),
+      connection: getRedisConnection() as any,
     });
   }
 
@@ -214,11 +214,20 @@ export class DocumentsService {
       throw new ConflictException('Encounter must be verified before generating report');
     }
 
+    // Idempotency: return existing non-failed document for this encounter
+    const existingDoc = await this.prisma.document.findFirst({
+      where: { tenantId, sourceRef: encounterId, sourceType: 'ENCOUNTER', type: 'LAB_REPORT', status: { not: 'FAILED' } },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (existingDoc) return { document: existingDoc, created: false };
+
     const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
 
+    // Use encounter's updatedAt as deterministic issuedAt
+    const issuedAt = encounter.updatedAt.toISOString();
     const payload: LabReportPayload = {
       reportNumber: `RPT-${encounterId.slice(0, 8).toUpperCase()}`,
-      issuedAt: new Date().toISOString(),
+      issuedAt,
       patientName: `${encounter.patient.firstName} ${encounter.patient.lastName}`,
       patientMrn: encounter.patient.mrn,
       patientDob: encounter.patient.dateOfBirth?.toISOString().split('T')[0],

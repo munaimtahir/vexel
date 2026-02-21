@@ -20,8 +20,8 @@ export default function FeatureFlagsPage() {
 
   async function loadFlags() {
     const api = getApiClient(getToken() ?? undefined);
-    const { data } = await api.GET('/feature-flags');
-    setFlags(data ?? []);
+    const { data } = await api.GET('/feature-flags' as any);
+    setFlags((data as any) ?? []);
     setLoading(false);
   }
 

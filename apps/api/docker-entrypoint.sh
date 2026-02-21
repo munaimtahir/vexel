@@ -5,7 +5,7 @@ echo "🔄 Running Prisma migrations..."
 npx prisma migrate deploy
 
 echo "🌱 Running seed..."
-node_modules/.bin/ts-node --transpile-only prisma/seed.ts || true
+node dist/prisma/seed.js || true
 
 echo "🚀 Starting API..."
-exec node dist/main
+exec node dist/src/main

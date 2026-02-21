@@ -15,7 +15,7 @@ export class JobsService {
   private readonly queue: Queue;
 
   constructor(private readonly audit: AuditService) {
-    this.queue = new Queue(QUEUE_NAME, { connection: getRedisConnection() });
+    this.queue = new Queue(QUEUE_NAME, { connection: getRedisConnection() as any });
   }
 
   async list(q: { page?: number; limit?: number; status?: string }) {

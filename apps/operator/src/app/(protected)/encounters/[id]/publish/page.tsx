@@ -46,6 +46,7 @@ export default function PublishPage() {
     if (pollRef.current) clearInterval(pollRef.current);
     pollRef.current = setInterval(async () => {
       const api = getApiClient(getToken() ?? undefined);
+      // @ts-ignore - documents paths pending in openapi contract
       const { data } = await api.GET('/documents/{id}', { params: { path: { id: docId } } });
       if (data) {
         setDocument(data);
@@ -88,6 +89,7 @@ export default function PublishPage() {
           }] : [],
         })),
       };
+      // @ts-ignore - documents paths pending in openapi contract
       const { data, error: apiError } = await api.POST('/documents/report:generate', { body: body as any });
       if (apiError || !data) { setActionError('Failed to generate report'); return; }
       setDocument(data);
@@ -108,6 +110,7 @@ export default function PublishPage() {
     setActionError('');
     try {
       const api = getApiClient(getToken() ?? undefined);
+      // @ts-ignore - documents paths pending in openapi contract
       const { data, error: apiError } = await api.POST('/documents/{id}:publish', {
         params: { path: { id: document.id } },
       });
@@ -123,6 +126,7 @@ export default function PublishPage() {
   const handleDownload = async () => {
     if (!document) return;
     const api = getApiClient(getToken() ?? undefined);
+    // @ts-ignore - documents paths pending in openapi contract
     const { data, error: apiError } = await api.GET('/documents/{id}/download', {
       params: { path: { id: document.id } },
     });
