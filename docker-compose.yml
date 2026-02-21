@@ -35,7 +35,7 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "127.0.0.1:3002:3000"
+      - "127.0.0.1:9021:3000"
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
@@ -43,6 +43,7 @@ services:
       TENANCY_DEV_HEADER_ENABLED: "true"
       JWT_SECRET: vexel-dev-secret-change-in-production
       DEFAULT_TENANT_ID: system
+      PDF_SERVICE_URL: http://pdf:8080
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
       interval: 10s
@@ -63,13 +64,14 @@ services:
       NODE_ENV: development
       DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
       REDIS_URL: redis://redis:6379
+      PDF_SERVICE_URL: http://pdf:8080
 
   pdf:
     build:
       context: ./apps/pdf
       dockerfile: Dockerfile
     ports:
-      - "127.0.0.1:5002:8080"
+      - "127.0.0.1:9022:8080"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health/pdf || exit 1"]
       interval: 10s
@@ -85,20 +87,20 @@ services:
       api:
         condition: service_healthy
     ports:
-      - "127.0.0.1:3001:3001"
+      - "127.0.0.1:9023:3001"
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: http://api:3000
+      NEXT_PUBLIC_API_URL: https://vexel.alshifalab.pk
 
   operator:
     build:
       context: ./apps/operator
       dockerfile: Dockerfile
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:9024:3000"
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: http://api:3000
+      NEXT_PUBLIC_API_URL: https://vexel.alshifalab.pk
 
 volumes:
   pgdata:
