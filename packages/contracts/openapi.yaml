@@ -325,11 +325,160 @@ components:
         - feature_flag.set
         - catalog.read
         - catalog.write
+        - catalog.manage
         - audit.read
         - job.read
         - job.retry
         - branding.read
         - branding.write
+        - patient.manage
+        - encounter.manage
+        - result.enter
+        - result.verify
+
+    Patient:
+      type: object
+      required: [id, tenantId, firstName, lastName, mrn, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        mrn:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Encounter:
+      type: object
+      required: [id, tenantId, patientId, status, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        patientId:
+          type: string
+        status:
+          type: string
+          enum: [registered, lab_ordered, specimen_collected, resulted, verified, cancelled]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        patient:
+          $ref: '#/components/schemas/Patient'
+        labOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabOrder'
+
+    LabOrder:
+      type: object
+      required: [id, tenantId, encounterId, testId, status, priority, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        encounterId:
+          type: string
+        testId:
+          type: string
+        status:
+          type: string
+          enum: [ordered, specimen_collected, processing, resulted, verified, cancelled]
+        priority:
+          type: string
+          enum: [routine, stat, urgent]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        specimen:
+          $ref: '#/components/schemas/Specimen'
+        result:
+          $ref: '#/components/schemas/LabResult'
+
+    Specimen:
+      type: object
+      required: [id, tenantId, labOrderId, barcode, type, status, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        labOrderId:
+          type: string
+        barcode:
+          type: string
+        type:
+          type: string
+        collectedAt:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum: [pending, collected, received, rejected]
+        createdAt:
+          type: string
+          format: date-time
+
+    LabResult:
+      type: object
+      required: [id, tenantId, labOrderId, value, resultedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        labOrderId:
+          type: string
+        value:
+          type: string
+        unit:
+          type: string
+          nullable: true
+        referenceRange:
+          type: string
+          nullable: true
+        flag:
+          type: string
+          enum: [normal, high, low, critical]
+          nullable: true
+        resultedAt:
+          type: string
+          format: date-time
+        resultedBy:
+          type: string
+          nullable: true
+        verifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+        verifiedBy:
+          type: string
+          nullable: true
 
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
@@ -1324,6 +1473,388 @@ paths:
                 $ref: '#/components/schemas/Error'
         "409":
           description: Job is not in a failed state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Patients ─────────────────────────────────────────────────────────────
+  /patients:
+    get:
+      operationId: listPatients
+      summary: List patients (tenant-scoped)
+      tags: [Patients]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: lastName
+          in: query
+          schema:
+            type: string
+        - name: mrn
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Patients list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Patient'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createPatient
+      summary: Create a patient record
+      tags: [Patients]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [firstName, lastName, mrn]
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  format: date
+                gender:
+                  type: string
+                mrn:
+                  type: string
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        "409":
+          description: MRN already exists in tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /patients/{patientId}:
+    get:
+      operationId: getPatient
+      summary: Get patient by ID
+      tags: [Patients]
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Patient record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      operationId: updatePatient
+      summary: Update patient record
+      tags: [Patients]
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  format: date
+                gender:
+                  type: string
+      responses:
+        "200":
+          description: Updated patient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Encounters ───────────────────────────────────────────────────────────
+  /encounters:
+    get:
+      operationId: listEncounters
+      summary: List encounters (tenant-scoped)
+      tags: [Encounters]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: patientId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounters list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Encounter'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createEncounter
+      summary: Register a new encounter
+      tags: [Encounters]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patientId]
+              properties:
+                patientId:
+                  type: string
+      responses:
+        "201":
+          description: Encounter registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+
+  /encounters/{encounterId}:
+    get:
+      operationId: getEncounter
+      summary: Get encounter by ID
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:order-lab:
+    post:
+      operationId: orderLab
+      summary: Add a lab order to encounter
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [testId]
+              properties:
+                testId:
+                  type: string
+                priority:
+                  type: string
+                  enum: [routine, stat, urgent]
+                  default: routine
+      responses:
+        "200":
+          description: Lab ordered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:collect-specimen:
+    post:
+      operationId: collectSpecimen
+      summary: Mark specimen as collected
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [labOrderId, barcode, type]
+              properties:
+                labOrderId:
+                  type: string
+                barcode:
+                  type: string
+                type:
+                  type: string
+      responses:
+        "200":
+          description: Specimen collected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:result:
+    post:
+      operationId: enterResult
+      summary: Enter lab result
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [labOrderId, value]
+              properties:
+                labOrderId:
+                  type: string
+                value:
+                  type: string
+                unit:
+                  type: string
+                referenceRange:
+                  type: string
+                flag:
+                  type: string
+                  enum: [normal, high, low, critical]
+      responses:
+        "200":
+          description: Result entered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:verify:
+    post:
+      operationId: verifyEncounter
+      summary: Verify lab results (requires result.verify permission)
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounter verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:cancel:
+    post:
+      operationId: cancelEncounter
+      summary: Cancel encounter
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounter cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
           content:
             application/json:
               schema:

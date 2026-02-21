@@ -84,10 +84,21 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
 
     const before = { firstName: user.firstName, lastName: user.lastName, status: user.status };
-    const updated = await this.prisma.user.update({
-      where: { id: userId },
-      data: body,
-      include: { userRoles: { include: { role: true } } },
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const u = await tx.user.update({
+        where: { id: userId },
+        data: body,
+        include: { userRoles: { include: { role: true } } },
+      });
+      // Revoke all refresh tokens if user is being disabled
+      if (body.status === 'disabled') {
+        await tx.refreshToken.updateMany({
+          where: { userId, revokedAt: null },
+          data: { revokedAt: new Date() },
+        });
+      }
+      return u;
     });
 
     await this.audit.log({

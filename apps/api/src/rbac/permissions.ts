@@ -27,6 +27,7 @@ export enum Permission {
   // Catalog
   CATALOG_READ = 'catalog.read',
   CATALOG_WRITE = 'catalog.write',
+  CATALOG_MANAGE = 'catalog.manage',
 
   // Audit
   AUDIT_READ = 'audit.read',
@@ -38,6 +39,12 @@ export enum Permission {
   // Branding
   BRANDING_READ = 'branding.read',
   BRANDING_WRITE = 'branding.write',
+
+  // LIMS — Patients & Encounters
+  PATIENT_MANAGE = 'patient.manage',
+  ENCOUNTER_MANAGE = 'encounter.manage',
+  RESULT_ENTER = 'result.enter',
+  RESULT_VERIFY = 'result.verify',
 }
 
 export const ALL_PERMISSIONS = Object.values(Permission);

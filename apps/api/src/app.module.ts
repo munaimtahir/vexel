@@ -13,6 +13,8 @@ import { CatalogModule } from './catalog/catalog.module';
 import { AuditModule } from './audit/audit.module';
 import { JobsModule } from './jobs/jobs.module';
 import { RbacModule } from './rbac/rbac.module';
+import { PatientsModule } from './patients/patients.module';
+import { EncountersModule } from './encounters/encounters.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { RbacModule } from './rbac/rbac.module';
     AuditModule,
     JobsModule,
     RbacModule,
+    PatientsModule,
+    EncountersModule,
   ],
 })
 export class AppModule implements NestModule {

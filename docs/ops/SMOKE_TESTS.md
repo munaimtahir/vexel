@@ -207,6 +207,76 @@ curl -s -X POST http://127.0.0.1:3002/api/auth/refresh \
 |------|-------|-----------|--------------|-----------|-----------|------|-------|
 | Phase 2 | Skeleton | PASS (stub) | PASS (stub) | PASS (stub) | PASS | PASS (stub) | Stubs only — no DB yet |
 | Phase 3 | Admin Control Plane | pending | pending | pending | pending | pending | Real auth + RBAC + audit — run after `prisma migrate dev` + seed |
+| Phase 4 | LIMS Scaffold | pending | pending | pending | pending | pending | Run after docker compose up with new migration |
+
+---
+
+## Phase 4 Tests — LIMS Scaffold
+
+### 16. Patient Create + Retrieve (tenant-scoped)
+```bash
+TOKEN=$(curl -s -X POST http://127.0.0.1:3002/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@vexel.system","password":"Admin@vexel123!"}' | jq -r .accessToken)
+
+PATIENT=$(curl -s -X POST http://127.0.0.1:3002/api/patients \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"John","lastName":"Doe","mrn":"MRN-001","gender":"M"}' | jq .)
+echo $PATIENT | jq .id
+```
+**Expected:** `201` response with `id`, `tenantId`, `mrn="MRN-001"`
+
+### 17. Register Encounter → Order Lab (state machine)
+```bash
+PATIENT_ID=$(echo $PATIENT | jq -r .id)
+
+# Register encounter
+ENC=$(curl -s -X POST http://127.0.0.1:3002/api/encounters \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"patientId\":\"$PATIENT_ID\"}" | jq .)
+echo $ENC | jq .status
+# Expected: "registered"
+
+ENC_ID=$(echo $ENC | jq -r .id)
+```
+**Expected:** `201` response with `status: "registered"`
+
+### 18. Invalid Transition Returns 409
+```bash
+# Try to verify a registered encounter (invalid transition)
+curl -s -o /dev/null -w "%{http_code}" \
+  -X POST http://127.0.0.1:3002/api/encounters/$ENC_ID:verify \
+  -H "Authorization: Bearer $TOKEN"
+```
+**Expected:** `409 Conflict`
+
+### 19. Catalog Test CRUD (tenant-scoped + audit)
+```bash
+TEST=$(curl -s -X POST http://127.0.0.1:3002/api/catalog/tests \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"code":"CBC","name":"Complete Blood Count","sampleType":"blood","turnaroundHours":2}' | jq .)
+echo $TEST | jq .id
+# Check audit log
+curl -s "http://127.0.0.1:3002/api/audit-events?action=catalog.test.create&limit=5" \
+  -H "Authorization: Bearer $TOKEN" | jq .data[0].action
+```
+**Expected:** Test created with `id`; audit event `action: "catalog.test.create"` present.
+
+### 20. Session Revocation on User Disable
+```bash
+# Disable a user and verify their sessions are revoked
+# (refresh token should return 401 after disable)
+```
+**Expected:** Refresh token returns `401` after user is disabled.
+
+### 21. Operator App Loads
+```bash
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3001/login
+```
+**Expected:** `200`
 
 ---
 

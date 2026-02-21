@@ -25,6 +25,11 @@ model Tenant {
   catalogTests  CatalogTest[]
   catalogPanels CatalogPanel[]
   roles         Role[]
+  encounters    Encounter[]
+  patients      Patient[]
+  labOrders     LabOrder[]
+  specimens     Specimen[]
+  labResults    LabResult[]
 
   @@map("tenants")
 }
@@ -167,7 +172,8 @@ model CatalogTest {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id])
+  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+  labOrders LabOrder[]
 
   @@unique([tenantId, code])
   @@index([tenantId, isActive])
@@ -214,4 +220,101 @@ model AuditEvent {
   @@index([tenantId, entityType, entityId])
   @@index([correlationId])
   @@map("audit_events")
+}
+
+// ─── LIMS ──────────────────────────────────────────────────────────────────
+
+model Patient {
+  id          String    @id @default(uuid())
+  tenantId    String
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime?
+  gender      String?
+  mrn         String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant     Tenant      @relation(fields: [tenantId], references: [id])
+  encounters Encounter[]
+
+  @@unique([tenantId, mrn])
+  @@index([tenantId, lastName])
+  @@map("patients")
+}
+
+model Encounter {
+  id        String   @id @default(uuid())
+  tenantId  String
+  patientId String
+  status    String   @default("registered") // registered | lab_ordered | specimen_collected | resulted | verified | cancelled
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+  patient   Patient    @relation(fields: [patientId], references: [id])
+  labOrders LabOrder[]
+
+  @@index([tenantId, status])
+  @@index([tenantId, patientId])
+  @@map("encounters")
+}
+
+model LabOrder {
+  id          String   @id @default(uuid())
+  tenantId    String
+  encounterId String
+  testId      String
+  status      String   @default("ordered") // ordered | specimen_collected | processing | resulted | verified | cancelled
+  priority    String   @default("routine") // routine | stat | urgent
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant      @relation(fields: [tenantId], references: [id])
+  encounter Encounter   @relation(fields: [encounterId], references: [id])
+  test      CatalogTest @relation(fields: [testId], references: [id])
+  specimen  Specimen?
+  result    LabResult?
+
+  @@index([tenantId, status])
+  @@index([tenantId, encounterId])
+  @@map("lab_orders")
+}
+
+model Specimen {
+  id         String    @id @default(uuid())
+  tenantId   String
+  labOrderId String    @unique
+  barcode    String
+  type       String
+  collectedAt DateTime?
+  status     String    @default("pending") // pending | collected | received | rejected
+  createdAt  DateTime  @default(now())
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  labOrder LabOrder @relation(fields: [labOrderId], references: [id])
+
+  @@unique([tenantId, barcode])
+  @@index([tenantId, barcode])
+  @@map("specimens")
+}
+
+model LabResult {
+  id             String    @id @default(uuid())
+  tenantId       String
+  labOrderId     String    @unique
+  value          String
+  unit           String?
+  referenceRange String?
+  flag           String?   // normal | high | low | critical
+  resultedAt     DateTime  @default(now())
+  resultedBy     String?
+  verifiedAt     DateTime?
+  verifiedBy     String?
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  labOrder LabOrder @relation(fields: [labOrderId], references: [id])
+
+  @@index([tenantId])
+  @@map("lab_results")
 }

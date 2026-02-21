@@ -10,10 +10,11 @@ const SYSTEM_PERMISSIONS = [
   'role.read', 'role.create', 'role.update', 'role.delete',
   'role.assign',
   'feature_flag.read', 'feature_flag.set',
-  'catalog.read', 'catalog.write',
+  'catalog.read', 'catalog.write', 'catalog.manage',
   'audit.read',
   'job.read', 'job.retry',
   'branding.read', 'branding.write',
+  'patient.manage', 'encounter.manage', 'result.enter', 'result.verify',
 ];
 
 const DEFAULT_FEATURE_FLAGS = [
@@ -26,7 +27,7 @@ const DEFAULT_FEATURE_FLAGS = [
   { key: 'lims.print_results', enabled: false, description: 'Allow printing results from LIMS' },
 ];
 
-async function main() {
+export async function main() {
   console.log('🌱 Seeding database...');
 
   // Create system tenant
