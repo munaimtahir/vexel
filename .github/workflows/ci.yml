@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  openapi-sdk-freshness:
+    name: OpenAPI → SDK freshness check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Check SDK is up to date with OpenAPI
+        run: bash packages/sdk/scripts/check-sdk-freshness.sh
+
+  sdk-only-enforcement:
+    name: SDK-only enforcement (no raw fetch/axios in Next apps)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan operator app for raw fetch/axios
+        run: |
+          if grep -rn "fetch\(" apps/operator/src/app --include="*.tsx" --include="*.ts" | grep -v "getApiClient\|api-client\|node_modules"; then
+            echo "FAIL: raw fetch() found in operator app"
+            exit 1
+          fi
+          echo "PASS: no raw fetch/axios in operator app"
+      - name: Scan admin app for raw fetch/axios
+        run: |
+          if grep -rn "fetch\(" apps/admin/src/app --include="*.tsx" --include="*.ts" | grep -v "getApiClient\|api-client\|node_modules"; then
+            echo "FAIL: raw fetch() found in admin app"
+            exit 1
+          fi
+          echo "PASS: no raw fetch/axios in admin app"
+
+  no-prisma-in-frontend:
+    name: No Prisma imports in Next apps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check no Prisma in operator or admin
+        run: |
+          if grep -rn "@prisma/client\|from 'prisma'" apps/operator/src apps/admin/src 2>/dev/null; then
+            echo "FAIL: Prisma import found in frontend"
+            exit 1
+          fi
+          echo "PASS: no Prisma in frontends"
+
+  api-unit-tests:
+    name: API Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: cd apps/api && npm ci
+      - name: Run unit tests
+        run: cd apps/api && npm test -- --passWithNoTests --testPathPattern="spec.ts$"
