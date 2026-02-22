@@ -178,7 +178,8 @@ export class DocumentsService {
   }
 
   async listDocuments(tenantId: string, filters: { status?: string; limit?: number; sourceRef?: string; sourceType?: string }) {
-    const { status, limit = 20, sourceRef, sourceType } = filters;
+    const { status, sourceRef, sourceType } = filters;
+    const limit = filters.limit !== undefined ? Number(filters.limit) : 20;
     const where: any = { tenantId };
     if (status) where.status = status;
     if (sourceRef) where.sourceRef = sourceRef;
