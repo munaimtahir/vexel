@@ -177,13 +177,17 @@ export class DocumentsService {
     return this.storage.download((doc as any).storageKey);
   }
 
-  async listDocuments(tenantId: string, filters: { status?: string; limit?: number; sourceRef?: string; sourceType?: string }) {
-    const { status, sourceRef, sourceType } = filters;
+  async listDocuments(tenantId: string, filters: { status?: string; limit?: number; sourceRef?: string; sourceType?: string; encounterId?: string; docType?: string }) {
+    const { status, sourceType, encounterId, docType } = filters;
     const limit = filters.limit !== undefined ? Number(filters.limit) : 20;
     const where: any = { tenantId };
     if (status) where.status = status;
+    // Support encounterId as shorthand for sourceRef=encounterId + sourceType=ENCOUNTER
+    const sourceRef = filters.sourceRef ?? (encounterId ? encounterId : undefined);
     if (sourceRef) where.sourceRef = sourceRef;
-    if (sourceType) where.sourceType = sourceType;
+    if (encounterId && !filters.sourceType) where.sourceType = 'ENCOUNTER';
+    else if (sourceType) where.sourceType = sourceType;
+    if (docType) where.type = docType;
     return this.prisma.document.findMany({
       where,
       orderBy: { createdAt: 'desc' },

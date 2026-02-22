@@ -176,6 +176,11 @@ model CatalogTest {
   sampleType      String?
   turnaroundHours Int?
   isActive        Boolean  @default(true)
+  externalId      String?
+  userCode        String?
+  loincCode       String?
+  department      String?
+  method          String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -185,6 +190,7 @@ model CatalogTest {
   panelMappings     PanelTestMapping[]
 
   @@unique([tenantId, code])
+  @@unique([tenantId, externalId], name: "tenant_test_externalId")
   @@index([tenantId, isActive])
   @@map("catalog_tests")
 }
@@ -195,8 +201,10 @@ model CatalogPanel {
   code        String
   name        String
   description String?
-  testIds     String[]
   isActive    Boolean  @default(true)
+  externalId  String?
+  userCode    String?
+  loincCode   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -204,35 +212,47 @@ model CatalogPanel {
   testMappings PanelTestMapping[]
 
   @@unique([tenantId, code])
+  @@unique([tenantId, externalId], name: "tenant_panel_externalId")
   @@map("catalog_panels")
 }
 
 model Parameter {
-  id          String   @id @default(uuid())
-  tenantId    String
-  code        String
-  name        String
-  unit        String?
-  dataType    String   @default("numeric")
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(uuid())
+  tenantId      String
+  code          String
+  name          String
+  unit          String?
+  dataType      String   @default("numeric")
+  isActive      Boolean  @default(true)
+  externalId    String?
+  userCode      String?
+  loincCode     String?
+  resultType    String   @default("numeric")
+  defaultUnit   String?
+  decimals      Int?
+  allowedValues String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   tenant          Tenant                 @relation(fields: [tenantId], references: [id])
   testMappings    TestParameterMapping[]
   referenceRanges ReferenceRange[]
 
   @@unique([tenantId, code])
+  @@unique([tenantId, externalId], name: "tenant_param_externalId")
   @@index([tenantId, isActive])
   @@map("parameters")
 }
 
 model TestParameterMapping {
-  id          String @id @default(uuid())
-  tenantId    String
-  testId      String
-  parameterId String
-  ordering    Int    @default(0)
+  id           String  @id @default(uuid())
+  tenantId     String
+  testId       String
+  parameterId  String
+  ordering     Int     @default(0)
+  displayOrder Int     @default(0)
+  isRequired   Boolean @default(true)
+  unitOverride String?
 
   tenant    Tenant      @relation(fields: [tenantId], references: [id])
   test      CatalogTest @relation(fields: [testId], references: [id])
@@ -244,11 +264,12 @@ model TestParameterMapping {
 }
 
 model PanelTestMapping {
-  id       String @id @default(uuid())
-  tenantId String
-  panelId  String
-  testId   String
-  ordering Int    @default(0)
+  id           String @id @default(uuid())
+  tenantId     String
+  panelId      String
+  testId       String
+  ordering     Int    @default(0)
+  displayOrder Int    @default(0)
 
   tenant Tenant       @relation(fields: [tenantId], references: [id])
   panel  CatalogPanel @relation(fields: [panelId], references: [id])

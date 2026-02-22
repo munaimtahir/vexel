@@ -1,0 +1,7 @@
+{
+  "data": [
+    { "id": "param-001", "tenantId": "tenant-001", "code": "HB", "name": "Hemoglobin", "unit": "g/dL", "dataType": "numeric", "isActive": true, "createdAt": "2026-02-22T08:00:00Z" },
+    { "id": "param-002", "tenantId": "tenant-001", "code": "WBC", "name": "White Blood Cells", "unit": "10^9/L", "dataType": "numeric", "isActive": true, "createdAt": "2026-02-22T08:00:00Z" }
+  ],
+  "pagination": { "page": 1, "limit": 20, "total": 2, "totalPages": 1 }
+}

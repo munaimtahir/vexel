@@ -82,17 +82,14 @@ export default function EncounterDetailPage() {
     if (!document) return;
     setDownloadError('');
     try {
-      const token = getToken();
-      const apiBase = (process.env.NEXT_PUBLIC_API_URL ?? '') + '/api';
-      const res = await fetch(`${apiBase}/documents/${document.id}/download`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'x-tenant-id': 'system',
-        },
+      const client = getApiClient(getToken() ?? undefined);
+      // @ts-ignore – /documents/{id}/download not yet in SDK types
+      const { data: blob, error: dlError } = await client.GET('/documents/{id}/download', {
+        params: { path: { id: document.id } },
+        parseAs: 'blob',
       });
-      if (!res.ok) { setDownloadError('Download failed'); return; }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
+      if (dlError || !blob) { setDownloadError('Download failed'); return; }
+      const url = URL.createObjectURL(blob as Blob);
       const a = window.document.createElement('a');
       a.href = url;
       a.download = `report-${document.id}.pdf`;

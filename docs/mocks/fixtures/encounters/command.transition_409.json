@@ -1,0 +1,1 @@
+{ "_status": 409, "statusCode": 409, "message": "Invalid workflow transition: encounter is not in the required state for this command", "error": "Conflict", "correlationId": "mock-corr-409" }

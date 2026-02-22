@@ -35,11 +35,11 @@ async function injectTokens(
   await page.evaluate(
     ({ at, rt }) => {
       // Operator app keys
-      localStorage.setItem('vexel_operator_token', at);
-      localStorage.setItem('vexel_operator_refresh', rt);
+      localStorage.setItem('vexel_token', at);
+      localStorage.setItem('vexel_refresh', rt);
       // Admin app keys
-      localStorage.setItem('vexel_admin_token', at);
-      localStorage.setItem('vexel_admin_refresh', rt);
+      localStorage.setItem('vexel_token', at);
+      localStorage.setItem('vexel_refresh', rt);
     },
     { at: accessToken, rt: refreshToken },
   );

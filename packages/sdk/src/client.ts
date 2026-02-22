@@ -5,6 +5,7 @@ export interface ApiClientOptions {
   baseUrl: string;
   token?: string;
   correlationId?: string;
+  headers?: Record<string, string>;
 }
 
 export type ApiClient = ReturnType<typeof createFetchClient<paths>>;
@@ -14,13 +15,15 @@ export type ApiClient = ReturnType<typeof createFetchClient<paths>>;
  * This is the only sanctioned way for frontends to call the Vexel API.
  */
 export function createApiClient(options: ApiClientOptions): ApiClient {
-  const { baseUrl, token } = options;
+  const { baseUrl, token, correlationId, headers: extraHeaders } = options;
 
   const client = createFetchClient<paths>({
     baseUrl,
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(correlationId ? { 'x-correlation-id': correlationId } : {}),
+      ...(extraHeaders ?? {}),
     },
   });
 

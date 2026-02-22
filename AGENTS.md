@@ -171,35 +171,28 @@ Documents must be read in this order to understand the rebuild correctly:
 
 ---
 
-## Admin-First Scope
+## UX + Contract First Scope
 
-### Why Admin First?
-Stop "building in a vacuum." The Admin App is your **Back Office** for:
-- Observing real data
-- Managing configuration (tenants, users, feature flags, catalogs)
-- Troubleshooting (audit logs, failed jobs)
-- Safely running admin-only operations
+### Why UX + Contract First?
+Build against a deterministic contract before the backend is complete. This eliminates "building in a vacuum" and ensures the frontend is verifiable independently.
 
-### Admin v1 "Done" Means:
-1. **Admin App UI** (Next.js) is running and accessible.
-2. **Admin API endpoints** are implemented and tested.
-3. **Admin pages** are scaffolded and functional:
-   - `/admin/login`
-   - `/admin/dashboard` (health, tenant selector, recent audit events, failed jobs count)
-   - `/admin/tenants` (create/edit tenant config)
-   - `/admin/users` (create user, assign roles/permissions)
-   - `/admin/feature-flags` (enable/disable features per tenant)
-   - `/admin/catalog` (manage tests, parameters, panels)
-   - `/admin/audit` (read-only audit explorer with filters)
-   - `/admin/jobs` (read-only queue/job dashboard + retry failed jobs)
-4. **Docker stack boots cleanly**: Postgres, Redis, API, Worker, PDF, Admin UI.
-5. **Smoke tests pass**: health checks, basic tenancy isolation, idempotency check.
-6. **Seed data exists**: 1 tenant, 1 admin user, feature flags.
+### The 5-Step Workflow
+1. **Feature + Workflow lock** — Define scope, flows, and state machine. Document in `docs/specs/`.
+2. **OpenAPI lock + SDK regen** — Contract is canonical. All endpoints defined first. SDK regenerated. Frontends use only `@vexel/sdk`.
+3. **Frontend in Mock Mode** — UI built against Prism mock + scenario gateway. `NEXT_PUBLIC_API_URL=http://127.0.0.1:9031`. Deterministic scenarios for happy path + errors.
+4. **Backend implementation** — Implements the locked contract exactly. No contract changes without going back to step 2.
+5. **Full-stack verification** — Smoke tests pass in real mode. Release gate matrix all PASS.
 
-### Admin Non-Goals (MVP)
-- No operator workflow in Admin App.
-- No result entry in Admin App.
-- Admin edits config only; state changes must call Command endpoints.
+### What Mock Mode Gives You
+- Frontend development decoupled from backend schedule
+- Deterministic error scenario testing (409 transitions, 403 permissions, 422 validation)
+- CI can run UI tests without a real backend
+- `pnpm dev:ui-mock` starts admin+operator against the mock gateway
+
+### Non-Goals (MVP)
+- No operator workflow in Admin App (Admin edits config only)
+- No result entry in Admin App
+- State changes must call Command endpoints — never direct CRUD
 
 ---
 
@@ -305,10 +298,13 @@ Stop "building in a vacuum." The Admin App is your **Back Office** for:
 
 ---
 
-## Build Order (Locked)
+## Build Order (locked)
 
-1. **Admin App + Admin APIs** (Back Office first)
-2. **Vertical slices end-to-end** (backend + UI + docs + smoke tests per feature)
+1. **Auth unification** — One identity system, one auth issuer, shared session across all apps
+2. **OpenAPI + SDK baseline** — All contract gaps fixed, single SDK regen pass
+3. **Catalog domain** — Parameters/Tests/Panels with mappings, import/export, Admin UI
+4. **Operator workflow UI** — Full 7-page workflow built in mock mode first, then wired to real backend
+5. **Full-stack verification** — MVP Release Gate Audit passes all blocking gates
 
 ---
 

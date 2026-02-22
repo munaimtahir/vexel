@@ -1,0 +1,6 @@
+{
+  "id": "enc-001", "tenantId": "tenant-001", "patientId": "pat-001",
+  "status": "specimen_collected", "createdAt": "2026-02-22T10:00:00Z", "updatedAt": "2026-02-22T10:30:00Z",
+  "patient": { "id": "pat-001", "tenantId": "tenant-001", "firstName": "Ahmed", "lastName": "Khan", "mrn": "MRN001", "dateOfBirth": "1985-03-15", "gender": "M", "createdAt": "2026-02-22T09:00:00Z", "updatedAt": "2026-02-22T09:00:00Z" },
+  "labOrders": [{ "id": "lo-001", "tenantId": "tenant-001", "encounterId": "enc-001", "testId": "test-001", "status": "specimen_collected", "priority": "routine", "createdAt": "2026-02-22T10:05:00Z", "updatedAt": "2026-02-22T10:30:00Z", "specimen": { "barcode": "BC001", "type": "Blood", "status": "collected" }, "result": null }]
+}

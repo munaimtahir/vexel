@@ -390,6 +390,473 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/parameters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List parameters (tenant-scoped) */
+        get: operations["listParameters"];
+        put?: never;
+        /** Create a parameter */
+        post: operations["createParameter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/parameters/{parameterId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get parameter by ID */
+        get: operations["getParameter"];
+        /** Update parameter */
+        put: operations["updateParameter"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/tests/{testId}/parameters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List parameter mappings for a test */
+        get: operations["listTestParameters"];
+        put?: never;
+        /** Add parameter mapping to test */
+        post: operations["addTestParameter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/tests/{testId}/parameters/{parameterId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove parameter mapping from test */
+        delete: operations["removeTestParameter"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/panels/{panelId}/tests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List test mappings for a panel */
+        get: operations["listPanelTests"];
+        put?: never;
+        /** Add test mapping to panel */
+        post: operations["addPanelTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/panels/{panelId}/tests/{testId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove test mapping from panel */
+        delete: operations["removePanelTest"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/tests/{testId}/definition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get complete ordered test definition (for operator use) */
+        get: operations["getTestDefinition"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/panels/{panelId}/definition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get complete ordered panel definition (for operator use) */
+        get: operations["getPanelDefinition"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/tests/{testId}/parameters:bulk": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Bulk update ordered parameter mappings for a test */
+        put: operations["bulkUpdateTestParameters"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/panels/{panelId}/tests:bulk": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Bulk update ordered test mappings for a panel */
+        put: operations["bulkUpdatePanelTests"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/import-jobs/{id}:validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dry-run validate an import job (preview diff) */
+        post: operations["validateCatalogImportJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/import-jobs/{id}:apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply a validated import job */
+        post: operations["applyCatalogImportJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/import-jobs/{id}/errors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download import job errors as JSON */
+        get: operations["getCatalogImportJobErrors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/export-jobs/{id}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download completed export file */
+        get: operations["downloadCatalogExport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/templates/workbook.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download all-in-one XLSX workbook template */
+        get: operations["downloadCatalogWorkbookTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/templates/parameters.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download parameters CSV template */
+        get: operations["downloadParametersTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/templates/tests.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download tests CSV template */
+        get: operations["downloadTestsTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/templates/test-parameters.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download test-parameters mapping CSV template */
+        get: operations["downloadTestParametersTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/templates/panels.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download panels CSV template */
+        get: operations["downloadPanelsTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/templates/panel-tests.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download panel-tests mapping CSV template */
+        get: operations["downloadPanelTestsTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/reference-ranges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List reference ranges (tenant-scoped) */
+        get: operations["listReferenceRanges"];
+        put?: never;
+        /** Create reference range */
+        post: operations["createReferenceRange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/reference-ranges/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update reference range */
+        put: operations["updateReferenceRange"];
+        post?: never;
+        /** Delete reference range */
+        delete: operations["deleteReferenceRange"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/import-jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List import jobs */
+        get: operations["listImportJobs"];
+        put?: never;
+        /** Start a catalog import job (idempotent by payloadHash) */
+        post: operations["createImportJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/import-jobs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get import job by ID */
+        get: operations["getImportJob"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/import-jobs/{id}:retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry a failed import job */
+        post: operations["retryImportJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/export-jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List export jobs */
+        get: operations["listExportJobs"];
+        put?: never;
+        /** Start a catalog export job */
+        post: operations["createExportJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/export-jobs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get export job by ID */
+        get: operations["getExportJob"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/audit-events": {
         parameters: {
             query?: never;
@@ -631,6 +1098,108 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/documents/receipt:generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate a receipt document (idempotent by payload hash) */
+        post: operations["generateReceipt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/documents/report:generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate a lab report document (idempotent by payload hash) */
+        post: operations["generateReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List documents for the current tenant */
+        get: operations["listDocuments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/documents/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a document by ID */
+        get: operations["getDocument"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/documents/{id}:publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish a RENDERED document (idempotent) */
+        post: operations["publishDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/documents/{id}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download PDF bytes or redirect to signed URL */
+        get: operations["downloadDocument"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -721,6 +1290,14 @@ export interface components {
             isActive?: boolean;
             /** Format: date-time */
             createdAt?: string;
+            externalId?: string | null;
+            userCode?: string | null;
+            loincCode?: string | null;
+            department?: string | null;
+            specimenType?: string | null;
+            method?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
         };
         CatalogPanel: {
             id: string;
@@ -728,10 +1305,211 @@ export interface components {
             code: string;
             name: string;
             description?: string;
-            testIds?: string[];
             isActive?: boolean;
             /** Format: date-time */
             createdAt?: string;
+            externalId?: string | null;
+            userCode?: string | null;
+            loincCode?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        Parameter: {
+            id: string;
+            tenantId: string;
+            code: string;
+            name: string;
+            unit?: string;
+            /** @enum {string} */
+            dataType: "numeric" | "text" | "boolean" | "coded";
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** @description Tenant-unique import identity key */
+            externalId?: string | null;
+            /** @description Tenant-specific daily-use local code */
+            userCode?: string | null;
+            /** @description LOINC code for this parameter */
+            loincCode?: string | null;
+            /**
+             * @description Data type (renamed from dataType for clarity)
+             * @enum {string}
+             */
+            resultType?: "numeric" | "text" | "boolean" | "enum";
+            /** @description UCUM unit string; required for numeric resultType */
+            defaultUnit?: string | null;
+            /** @description Decimal places for numeric results */
+            decimals?: number | null;
+            /** @description Allowed values for enum resultType */
+            allowedValues?: string[] | null;
+        };
+        TestParameterMapping: {
+            id: string;
+            testId: string;
+            parameterId: string;
+            /** @default 0 */
+            displayOrder: number;
+            /** @default true */
+            isRequired: boolean;
+            /** @description UCUM unit override for this test context */
+            unitOverride?: string | null;
+        };
+        PanelTestMapping: {
+            id: string;
+            panelId: string;
+            testId: string;
+            /** @default 0 */
+            displayOrder: number;
+        };
+        /** @description Complete ordered test definition for operator use */
+        TestDefinition: {
+            id: string;
+            tenantId: string;
+            code?: string;
+            name: string;
+            externalId?: string | null;
+            userCode?: string | null;
+            loincCode?: string | null;
+            department?: string | null;
+            specimenType?: string | null;
+            method?: string | null;
+            isActive?: boolean;
+            /** @description Ordered parameters for this test */
+            parameters: components["schemas"]["TestDefinitionParameter"][];
+        };
+        TestDefinitionParameter: {
+            parameterId: string;
+            name: string;
+            userCode?: string | null;
+            loincCode?: string | null;
+            /** @enum {string} */
+            resultType?: "numeric" | "text" | "boolean" | "enum";
+            /** @description unitOverride if set, else defaultUnit */
+            effectiveUnit?: string | null;
+            decimals?: number | null;
+            allowedValues?: string[] | null;
+            displayOrder: number;
+            isRequired?: boolean;
+        };
+        /** @description Complete ordered panel definition for operator use */
+        PanelDefinition: {
+            id: string;
+            tenantId: string;
+            code?: string;
+            name: string;
+            externalId?: string | null;
+            userCode?: string | null;
+            loincCode?: string | null;
+            isActive?: boolean;
+            /** @description Ordered tests in this panel */
+            tests: components["schemas"]["PanelDefinitionTest"][];
+        };
+        PanelDefinitionTest: {
+            testId: string;
+            name: string;
+            userCode?: string | null;
+            loincCode?: string | null;
+            displayOrder: number;
+            parameters?: components["schemas"]["TestDefinitionParameter"][];
+        };
+        ImportJob: {
+            id: string;
+            tenantId: string;
+            /** @enum {string} */
+            status: "pending" | "validating" | "validated" | "applying" | "applied" | "failed";
+            /** @enum {string} */
+            mode?: "CREATE_ONLY" | "UPSERT_PATCH";
+            summary?: {
+                inserted?: number;
+                updated?: number;
+                skipped?: number;
+                errors?: number;
+            } | null;
+            errorCount?: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            completedAt?: string | null;
+        };
+        ExportJob: {
+            id: string;
+            tenantId: string;
+            /** @enum {string} */
+            status: "pending" | "processing" | "completed" | "failed";
+            /** @enum {string} */
+            format?: "xlsx" | "csv";
+            downloadUrl?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            completedAt?: string | null;
+        };
+        ReferenceRange: {
+            id: string;
+            tenantId: string;
+            parameterId: string;
+            testId?: string;
+            /** @enum {string|null} */
+            gender?: "M" | "F" | null;
+            ageMinYears?: number | null;
+            ageMaxYears?: number | null;
+            lowValue?: number | null;
+            highValue?: number | null;
+            criticalLow?: number | null;
+            criticalHigh?: number | null;
+            unit?: string;
+        };
+        JobRun: {
+            id: string;
+            tenantId: string;
+            /** @enum {string} */
+            type: "catalog.import" | "catalog.export";
+            /** @enum {string} */
+            status: "queued" | "running" | "completed" | "failed";
+            payloadHash?: string | null;
+            correlationId: string;
+            /** Format: date-time */
+            startedAt?: string | null;
+            /** Format: date-time */
+            finishedAt?: string | null;
+            resultSummary?: {
+                created?: number;
+                updated?: number;
+                skipped?: number;
+                total?: number;
+            } | null;
+            errorSummary?: string | null;
+            createdBy: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        CatalogImportPayload: {
+            tests?: {
+                code: string;
+                name: string;
+                description?: string;
+                sampleType?: string;
+                turnaroundHours?: number;
+            }[];
+            parameters?: {
+                code: string;
+                name: string;
+                unit?: string;
+                /** @enum {string} */
+                dataType?: "numeric" | "text" | "boolean" | "coded";
+            }[];
+            panels?: {
+                code: string;
+                name: string;
+                description?: string;
+            }[];
+            mappings?: {
+                testCode?: string;
+                parameterCode?: string;
+                ordering?: number;
+            }[];
         };
         AuditEvent: {
             id: string;
@@ -794,8 +1572,13 @@ export interface components {
             tenantId: string;
             encounterId: string;
             testId: string;
-            /** @enum {string} */
-            status: "ordered" | "specimen_collected" | "processing" | "resulted" | "verified" | "cancelled";
+            /** @description Resolved test definition (populated when available) */
+            test?: {
+                id?: string;
+                code?: string;
+                name?: string;
+                loincCode?: string | null;
+            } | null;
             /** @enum {string} */
             priority: "routine" | "stat" | "urgent";
             /** Format: date-time */
@@ -834,8 +1617,126 @@ export interface components {
             verifiedAt?: string | null;
             verifiedBy?: string | null;
         };
+        Document: {
+            id?: string;
+            tenantId?: string;
+            /** @enum {string} */
+            type?: "RECEIPT" | "LAB_REPORT";
+            templateId?: string;
+            payloadHash?: string;
+            pdfHash?: string | null;
+            /** @enum {string} */
+            status?: "DRAFT" | "RENDERING" | "RENDERED" | "PUBLISHED" | "FAILED";
+            version?: number;
+            sourceRef?: string | null;
+            sourceType?: string | null;
+            errorMessage?: string | null;
+            /** Format: date-time */
+            publishedAt?: string | null;
+            createdBy?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        DocumentTemplate: {
+            id?: string;
+            tenantId?: string;
+            /** @enum {string} */
+            type?: "RECEIPT" | "LAB_REPORT";
+            templateKey?: string;
+            version?: number;
+            config?: Record<string, never> | null;
+            isActive?: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        ReceiptGenerateRequest: {
+            receiptNumber: string;
+            patientName: string;
+            patientMrn: string;
+            /** Format: date-time */
+            issuedAt: string;
+            items: {
+                description: string;
+                quantity: number;
+                unitPrice: number;
+                total: number;
+            }[];
+            subtotal: number;
+            tax: number;
+            grandTotal: number;
+            sourceRef?: string | null;
+            sourceType?: string | null;
+        };
+        ReportGenerateRequest: {
+            reportNumber: string;
+            patientName: string;
+            patientMrn: string;
+            patientDob?: string | null;
+            patientGender?: string | null;
+            encounterId: string;
+            orderedBy?: string | null;
+            tests: {
+                testCode: string;
+                testName: string;
+                parameters: {
+                    parameterCode: string;
+                    parameterName: string;
+                    value: string;
+                    unit?: string | null;
+                    referenceRange?: string | null;
+                    /** @enum {string|null} */
+                    flag?: "normal" | "high" | "low" | "critical" | null;
+                }[];
+            }[];
+            verifiedBy?: string | null;
+            /** Format: date-time */
+            verifiedAt?: string | null;
+            sourceRef?: string | null;
+            sourceType?: string | null;
+        };
     };
-    responses: never;
+    responses: {
+        /** @description Unauthorized */
+        Unauthorized: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description Forbidden */
+        Forbidden: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description Not found */
+        NotFound: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description Internal server error */
+        InternalServerError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+    };
     parameters: {
         /** @description Client-supplied correlation ID. If not provided, server generates one. */
         CorrelationId: string;
@@ -1589,6 +2490,9 @@ export interface operations {
             query?: {
                 page?: components["parameters"]["PageParam"];
                 limit?: components["parameters"]["LimitParam"];
+                /** @description Search by name, userCode, externalId, or loincCode */
+                search?: string;
+                isActive?: boolean;
             };
             header?: never;
             path?: never;
@@ -1719,6 +2623,9 @@ export interface operations {
             query?: {
                 page?: components["parameters"]["PageParam"];
                 limit?: components["parameters"]["LimitParam"];
+                /** @description Search by name, userCode, externalId, or loincCode */
+                search?: string;
+                isActive?: boolean;
             };
             header?: never;
             path?: never;
@@ -1765,6 +2672,907 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CatalogPanel"];
+                };
+            };
+        };
+    };
+    listParameters: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                /** @description Search by name, userCode, externalId, or loincCode */
+                search?: string;
+                isActive?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Parameters list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["Parameter"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code: string;
+                    name: string;
+                    unit?: string;
+                    /** @enum {string} */
+                    dataType?: "numeric" | "text" | "boolean" | "coded";
+                };
+            };
+        };
+        responses: {
+            /** @description Parameter created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Parameter"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parameterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Parameter */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Parameter"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parameterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    unit?: string;
+                    dataType?: string;
+                    isActive?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Parameter updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Parameter"];
+                };
+            };
+        };
+    };
+    listTestParameters: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Test parameter mappings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestParameterMapping"][];
+                };
+            };
+        };
+    };
+    addTestParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    parameterId: string;
+                    displayOrder?: number;
+                };
+            };
+        };
+        responses: never;
+    };
+    removeTestParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+                parameterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Mapping removed */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    listPanelTests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Panel test mappings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanelTestMapping"][];
+                };
+            };
+        };
+    };
+    addPanelTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    testId: string;
+                    displayOrder?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Mapping created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanelTestMapping"];
+                };
+            };
+        };
+    };
+    removePanelTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Mapping removed */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getTestDefinition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Test definition with ordered parameters */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestDefinition"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getPanelDefinition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Panel definition with ordered tests and parameters */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanelDefinition"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+        };
+    };
+    bulkUpdateTestParameters: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @default MERGE_UPSERT
+                     * @enum {string}
+                     */
+                    mode: "MERGE_UPSERT" | "REPLACE";
+                    items: {
+                        parameterId?: string;
+                        parameterExternalId?: string;
+                        parameterUserCode?: string;
+                        displayOrder: number;
+                        /** @default true */
+                        isRequired?: boolean;
+                        unitOverride?: string | null;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Updated mappings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestParameterMapping"][];
+                };
+            };
+        };
+    };
+    bulkUpdatePanelTests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @default MERGE_UPSERT
+                     * @enum {string}
+                     */
+                    mode: "MERGE_UPSERT" | "REPLACE";
+                    items: {
+                        testId?: string;
+                        testExternalId?: string;
+                        testUserCode?: string;
+                        displayOrder: number;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Updated mappings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanelTestMapping"][];
+                };
+            };
+        };
+    };
+    validateCatalogImportJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Validation result with diff preview */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportJob"];
+                };
+            };
+        };
+    };
+    applyCatalogImportJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Applied import job */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportJob"];
+                };
+            };
+        };
+    };
+    getCatalogImportJobErrors: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Error list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>[];
+                };
+            };
+        };
+    };
+    downloadCatalogExport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export file download */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    downloadCatalogWorkbookTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description XLSX workbook template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    downloadParametersTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
+    downloadTestsTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
+    downloadTestParametersTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
+    downloadPanelsTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
+    downloadPanelTestsTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
+    listReferenceRanges: {
+        parameters: {
+            query?: {
+                parameterId?: string;
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reference ranges */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ReferenceRange"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    createReferenceRange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReferenceRange"];
+            };
+        };
+        responses: {
+            /** @description Reference range created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferenceRange"];
+                };
+            };
+        };
+    };
+    updateReferenceRange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReferenceRange"];
+            };
+        };
+        responses: {
+            /** @description Reference range updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferenceRange"];
+                };
+            };
+        };
+    };
+    deleteReferenceRange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    listImportJobs: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Import jobs */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["JobRun"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    createImportJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CatalogImportPayload"];
+            };
+        };
+        responses: {
+            /** @description Import job created or existing returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            /** @description Feature disabled */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getImportJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Import job */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    retryImportJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Job re-queued */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            /** @description Job is not in failed state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listExportJobs: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export jobs */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["JobRun"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    createExportJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export job created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+        };
+    };
+    getExportJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export job */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
         };
@@ -2327,6 +4135,214 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+        };
+    };
+    generateReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiptGenerateRequest"];
+            };
+        };
+        responses: {
+            /** @description Existing document returned (idempotent — same payloadHash) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            /** @description New document created and queued for render */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    generateReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportGenerateRequest"];
+            };
+        };
+        responses: {
+            /** @description Existing document returned (idempotent — same payloadHash) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            /** @description New document created and queued for render */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    listDocuments: {
+        parameters: {
+            query?: {
+                status?: "DRAFT" | "RENDERING" | "RENDERED" | "PUBLISHED" | "FAILED";
+                limit?: number;
+                /** @description Filter documents by encounter ID */
+                encounterId?: string;
+                /** @description Filter by document type */
+                docType?: "RECEIPT" | "LAB_REPORT";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Documents list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"][];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Document details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    publishDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Document published (or already published) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Document not in RENDERED status */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    downloadDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF download or placeholder response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                    "application/json": {
+                        documentId?: string;
+                        pdfHash?: string | null;
+                        message?: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
         };
     };
 }

@@ -1,0 +1,1 @@
+{ "id": "enc-002", "tenantId": "tenant-001", "patientId": "pat-001", "status": "registered", "createdAt": "2026-02-22T11:00:00Z", "updatedAt": "2026-02-22T11:00:00Z", "patient": null, "labOrders": [] }

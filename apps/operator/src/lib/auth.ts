@@ -1,5 +1,5 @@
-export const TOKEN_KEY = 'vexel_operator_token';
-export const REFRESH_KEY = 'vexel_operator_refresh';
+export const TOKEN_KEY = 'vexel_token';
+export const REFRESH_KEY = 'vexel_refresh';
 
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { isAuthenticated, getToken } from '@/lib/auth';
 import Sidebar from '@/components/sidebar';
+import QueryProvider from '@/components/query-provider';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -26,11 +27,13 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar currentPath={pathname} />
-      <main style={{ flex: 1, padding: '32px', background: '#f8fafc', overflowY: 'auto' }}>
-        {children}
-      </main>
-    </div>
+    <QueryProvider>
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
+        <Sidebar currentPath={pathname} />
+        <main style={{ flex: 1, padding: '32px', background: '#f8fafc', overflowY: 'auto' }}>
+          {children}
+        </main>
+      </div>
+    </QueryProvider>
   );
 }

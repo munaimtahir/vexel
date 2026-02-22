@@ -4,7 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
-import IdentityHeader from '@/components/identity-header';
+import EncounterSummaryCard from '@/components/encounter-summary-card';
 
 interface OrderForm {
   value: string;
@@ -25,6 +25,7 @@ export default function ResultEntryPage() {
   const [error, setError] = useState('');
   const [forms, setForms] = useState<Record<string, OrderForm>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [allSaved, setAllSaved] = useState(false);
 
   useEffect(() => {
     const api = getApiClient(getToken() ?? undefined);
@@ -57,6 +58,7 @@ export default function ResultEntryPage() {
     setSubmitting(true);
     const api = getApiClient(getToken() ?? undefined);
     const orders: any[] = encounter?.labOrders ?? [];
+    let hasError = false;
 
     for (const order of orders) {
       const f = forms[order.id];
@@ -77,14 +79,15 @@ export default function ResultEntryPage() {
           ...prev,
           [order.id]: { ...prev[order.id], status: apiError ? 'error' : 'success', errorMsg: apiError ? 'Submit failed' : '' },
         }));
+        if (apiError) hasError = true;
       } catch {
         setForms((prev) => ({ ...prev, [order.id]: { ...prev[order.id], status: 'error', errorMsg: 'Submit failed' } }));
+        hasError = true;
       }
     }
 
     setSubmitting(false);
-    const allOk = Object.values(forms).every((f) => f.status !== 'error');
-    if (allOk) router.push(`/encounters/${id}`);
+    if (!hasError) setAllSaved(true);
   };
 
   if (loading) return <p style={{ color: '#64748b' }}>Loading encounter...</p>;
@@ -92,6 +95,30 @@ export default function ResultEntryPage() {
   if (!encounter) return null;
 
   const orders: any[] = encounter.labOrders ?? [];
+
+  if (encounter.status !== 'specimen_collected') {
+    return (
+      <div>
+        <div style={{ marginBottom: '16px' }}>
+          <Link href={`/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Back to Encounter</Link>
+        </div>
+        <EncounterSummaryCard encounter={encounter} />
+        <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '8px', padding: '16px 20px' }}>
+          <p style={{ margin: 0, color: '#92400e', fontWeight: 500 }}>
+            ⚠ Encounter must be in <strong>specimen_collected</strong> status to enter results. Current: <strong>{encounter.status}</strong>
+          </p>
+          <p style={{ margin: '8px 0 0' }}>
+            {encounter.status === 'lab_ordered' && (
+              <Link href={`/encounters/${id}/sample`} style={{ color: '#92400e', fontWeight: 600 }}>→ Collect Sample first</Link>
+            )}
+            {encounter.status !== 'lab_ordered' && (
+              <Link href={`/encounters/${id}`} style={{ color: '#92400e', fontWeight: 600 }}>← Return to encounter</Link>
+            )}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const inputStyle: React.CSSProperties = {
     padding: '8px 10px',
@@ -110,12 +137,16 @@ export default function ResultEntryPage() {
         <span style={{ fontSize: '14px', color: '#64748b' }}>Enter Results</span>
       </div>
 
-      <IdentityHeader
-        patient={encounter.patient}
-        encounterId={encounter.id}
-        status={encounter.status}
-        createdAt={encounter.createdAt}
-      />
+      <EncounterSummaryCard encounter={encounter} />
+
+      {allSaved && (
+        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '16px 20px', marginBottom: '16px' }}>
+          <p style={{ margin: '0 0 8px', color: '#15803d', fontWeight: 600 }}>✓ Results saved</p>
+          <Link href={`/encounters/${id}/verify`} style={{ color: '#15803d', fontWeight: 600, fontSize: '14px' }}>
+            → Proceed to Verify
+          </Link>
+        </div>
+      )}
 
       <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '24px' }}>
         <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Lab Order Results</h3>
@@ -137,7 +168,7 @@ export default function ResultEntryPage() {
                 {f.status === 'error' && <span style={{ color: '#ef4444', fontSize: '13px' }}>{f.errorMsg}</span>}
                 {f.status === 'submitting' && <span style={{ color: '#94a3b8', fontSize: '13px' }}>Submitting...</span>}
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Value *</label>
                   <input
@@ -169,6 +200,15 @@ export default function ResultEntryPage() {
                     <option value="critical">Critical</option>
                   </select>
                 </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Notes</label>
+                  <input
+                    value={f.notes}
+                    onChange={(e) => updateForm(order.id, 'notes', e.target.value)}
+                    style={inputStyle}
+                    placeholder="Optional"
+                  />
+                </div>
               </div>
             </div>
           );
@@ -181,7 +221,7 @@ export default function ResultEntryPage() {
               disabled={submitting}
               style={{ flex: 1, padding: '12px', background: submitting ? '#94a3b8' : '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer' }}
             >
-              {submitting ? 'Submitting Results...' : 'Submit Results'}
+              {submitting ? 'Submitting Results...' : 'Save All Results'}
             </button>
             <button
               onClick={() => router.push(`/encounters/${id}`)}

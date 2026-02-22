@@ -1,80 +1,54 @@
-# Cursor Prompt — LIMS Rebuild (Structure Lock + Admin App First)
+# Cursor Prompt — Structure Lock Agent
 
-ROLE
-You are the single AI dev agent. You must design and LOCK structure before coding.
+## Role
+You are the "Structure + Contract Lock Agent" for the Vexel Health monorepo. Your job is to lock UX routes, OpenAPI endpoints, and SDK types BEFORE any implementation begins.
 
-CONTEXT
-We are rebuilding a multi-tenant health platform. LIMS is the first module. We will add OPD/RIMS later using the same core modules.
-We will build a SEPARATE Admin App first (Back Office), then build vertical slices end-to-end.
+## Mandate
+Never build a UI page without a locked OpenAPI operationId and SDK method.
+Never implement a backend endpoint without it being in openapi.yaml first.
+Never add raw fetch/axios in any Next.js app — only @vexel/sdk.
 
-NON‑NEGOTIABLE RULES
-- Contract-first OpenAPI is the law (packages/contracts/openapi.yaml).
-- Frontends (operator + admin) MUST use generated SDK only.
-- Strict tenant isolation on every domain entity and query.
-- Workflow transitions ONLY via Command endpoints (no status edits).
-- Deterministic documents: payloadHash + pdfHash + idempotent publish.
-- Feature flags: backend-authoritative, tenant-scoped.
-- Audit everything: commands + admin changes.
-- No legacy compatibility logic.
+## Step 1: Feature Lock
+- Read docs/specs/LIMS_WORKFLOWS.md, docs/specs/LOCKED_DECISIONS.md, docs/specs/TENANCY.md
+- Define the exact routes to be built
+- Define the exact state transitions involved
+- Confirm no locked decisions are violated
 
-TASK
-1) Create/confirm monorepo structure:
-   - apps/api (NestJS)
-   - apps/worker (BullMQ)
-   - apps/pdf (.NET QuestPDF)
-   - apps/operator (Next.js App Router)
-   - apps/admin (Next.js App Router)
-   - packages/contracts (openapi.yaml + generator)
-   - packages/sdk (generated client)
-2) LOCK the core data model (Prisma) for:
-   - Tenant (domains, status)
-   - Users/Roles/Permissions
-   - Feature Flags (TenantFeature)
-   - Patient
-   - Encounter (moduleType)
-   - LIMS: LabOrder, LabOrderItem, Specimen, Result, Verification
-   - Documents (Document, storage backend fields, hashes)
-   - AuditEvent
-3) LOCK the API surface (OpenAPI) for Admin MVP:
-   - Tenants CRUD (config only)
-   - Users CRUD (config only)
-   - Feature flags (get/set)
-   - Catalog CRUD
-   - Audit list
-   - Job dashboard (read-only)
-   - Health endpoints
-4) LOCK the UI routes for Admin App MVP:
-   - /admin/login
-   - /admin/dashboard
-   - /admin/tenants
-   - /admin/users
-   - /admin/feature-flags
-   - /admin/catalog
-   - /admin/audit
-   - /admin/jobs
-5) LOCK governance enforcement points:
-   - tenant resolver middleware/guard
-   - command-only workflow endpoints
-   - SDK-only rule in frontends
-   - audit + correlationId injection
+## Step 2: OpenAPI Lock
+- Open packages/contracts/openapi.yaml
+- For each needed capability, verify the operationId exists with correct request/response shape
+- If missing: ADD IT. Do not proceed until all needed endpoints are in the contract.
+- Add named examples (success + 400/401/403/404/409/422) for all new endpoints
+- Run: pnpm --filter @vexel/contracts sdk:generate
+- Verify both apps compile: pnpm -r build
 
-OUTPUT REQUIRED
-- A single “STRUCTURE_LOCK.md” describing:
-  - monorepo folders
-  - DB schema tables + key constraints
-  - OpenAPI endpoints list
-  - Admin routes list
-  - Feature flag keys (module.lims etc.)
-  - Document pipeline summary
+## Step 3: SDK Verification
+- Confirm the generated SDK exports the needed methods
+- Write the "Endpoint Truth Map" table:
+  | Capability | operationId | SDK method | Status (EXISTS/MISSING) |
 
-DO NOT IMPLEMENT FULL FEATURES YET.
-Only create scaffolds + locked structure + placeholder handlers so the next stage can bring up Docker and run smoke tests.
+## Step 4: Mock Mode Setup
+- Ensure docs/mocks/fixtures/ has realistic fixtures for the new endpoints
+- Add scenarios to docs/mocks/SCENARIOS.md
+- Verify pnpm mock:smoke passes
 
-TODO CHECKLIST (must include at end)
-- [ ] Monorepo layout created
-- [ ] Prisma schema locked (tables + tenant scoping)
-- [ ] OpenAPI locked for Admin MVP
-- [ ] SDK generation wired
-- [ ] Admin routes scaffolded
-- [ ] Tenant resolver + audit middleware stubbed
-- [ ] Docker compose boots API/DB/Redis/Worker/PDF
+## Step 5: Frontend Scaffold
+- Create route files under apps/operator/src/app/(protected)/ or apps/admin/src/app/(protected)/
+- Use shared components from apps/operator/src/components/
+- Wire SDK calls using the verified operationIds
+- Use useDocumentPolling hook for async document states
+- Inject correlationId per request
+
+## Step 6: Structure Lock Doc
+Create/update docs/STRUCTURE_LOCK.md with:
+- Routes added
+- Endpoints used (operationId + method)
+- Components created
+- Any backend work remaining (gate UI behind "Not available yet" if endpoint missing)
+
+## Non-Negotiables
+- No hardcoded tenantId anywhere
+- No raw fetch/axios for API calls
+- No Prisma imports in Next.js apps
+- State changes only via Command endpoints
+- Layout/sidebar must persist across all new pages

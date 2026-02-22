@@ -1,0 +1,7 @@
+{
+  "data": [
+    { "id": "pat-001", "tenantId": "tenant-001", "firstName": "Ahmed", "lastName": "Khan", "mrn": "MRN001", "dateOfBirth": "1985-03-15", "gender": "M", "createdAt": "2026-02-22T09:00:00Z", "updatedAt": "2026-02-22T09:00:00Z" },
+    { "id": "pat-002", "tenantId": "tenant-001", "firstName": "Sara", "lastName": "Ali", "mrn": "MRN002", "dateOfBirth": "1992-07-20", "gender": "F", "createdAt": "2026-02-22T09:00:00Z", "updatedAt": "2026-02-22T09:00:00Z" }
+  ],
+  "pagination": { "page": 1, "limit": 20, "total": 2, "totalPages": 1 }
+}

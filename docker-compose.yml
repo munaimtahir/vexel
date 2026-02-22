@@ -132,6 +132,32 @@ services:
     environment:
       NODE_ENV: production
 
+  mock-api:
+    image: stoplight/prism:4
+    command: mock -h 0.0.0.0 /openapi.yaml
+    volumes:
+      - ./packages/contracts/openapi.yaml:/openapi.yaml:ro
+    ports:
+      - "127.0.0.1:9030:4010"
+    profiles:
+      - mock
+
+  mock-gateway:
+    image: node:20-alpine
+    working_dir: /app
+    command: node server.js
+    volumes:
+      - ./scripts/mock-gateway:/app
+      - ./docs/mocks/fixtures:/app/fixtures:ro
+    ports:
+      - "127.0.0.1:9031:3000"
+    environment:
+      PRISM_URL: http://mock-api:4010
+    depends_on:
+      - mock-api
+    profiles:
+      - mock
+
 volumes:
   pgdata:
   minio_data:

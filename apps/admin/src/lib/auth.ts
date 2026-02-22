@@ -3,8 +3,8 @@
  * Tokens stored in localStorage (client) and cookies (server-side reads).
  */
 
-export const TOKEN_KEY = 'vexel_admin_token';
-export const REFRESH_KEY = 'vexel_admin_refresh';
+export const TOKEN_KEY = 'vexel_token';
+export const REFRESH_KEY = 'vexel_refresh';
 
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;

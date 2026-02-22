@@ -7,11 +7,13 @@
 import { createApiClient } from '@vexel/sdk';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
+const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-export function getApiClient(token?: string) {
+export function getApiClient(token?: string, correlationId?: string) {
   return createApiClient({
     baseUrl: `${API_BASE}/api`,
     token,
+    correlationId: correlationId ?? genId(),
   });
 }
 

@@ -1,0 +1,11 @@
+{
+  "data": [
+    {
+      "id": "enc-001", "tenantId": "tenant-001", "patientId": "pat-001",
+      "status": "lab_ordered", "createdAt": "2026-02-22T10:00:00Z", "updatedAt": "2026-02-22T10:05:00Z",
+      "patient": { "id": "pat-001", "tenantId": "tenant-001", "firstName": "Ahmed", "lastName": "Khan", "mrn": "MRN001", "dateOfBirth": "1985-03-15", "gender": "M", "createdAt": "2026-02-22T09:00:00Z", "updatedAt": "2026-02-22T09:00:00Z" },
+      "labOrders": [{ "id": "lo-001", "tenantId": "tenant-001", "encounterId": "enc-001", "testId": "test-001", "status": "ordered", "priority": "routine", "createdAt": "2026-02-22T10:05:00Z", "updatedAt": "2026-02-22T10:05:00Z", "specimen": null, "result": null }]
+    }
+  ],
+  "pagination": { "page": 1, "limit": 20, "total": 1, "totalPages": 1 }
+}

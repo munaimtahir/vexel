@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { clearTokens } from '@/lib/auth';
 
 const NAV_ITEMS = [
+  { label: 'Worklist', href: '/worklist', icon: '📋' },
+  { label: 'New Registration', href: '/registrations/new', icon: '➕' },
   { label: 'Encounters', href: '/encounters', icon: '🏥' },
   { label: 'Patients', href: '/patients', icon: '👤' },
 ];

@@ -1,3 +1,42 @@
+# Smoke Tests
+
+## Section 1: UI Smoke in Mock Mode
+
+Run before backend is complete or for isolated UI verification.
+
+### Prerequisites
+- Docker installed, mock profile services built
+- `NEXT_PUBLIC_API_URL=http://127.0.0.1:9031` set (or use `pnpm dev:ui-mock`)
+
+### Start mock stack
+```bash
+pnpm mock:api          # starts Prism:9030 + gateway:9031
+pnpm dev:ui-mock       # starts admin+operator pointing to gateway
+```
+
+### Run smoke script
+```bash
+pnpm mock:smoke        # verifies 4 happy + 4 error scenarios
+```
+
+### Manual UI checks (mock mode)
+- [ ] Login with mock token → redirects to dashboard/encounters
+- [ ] Worklist loads with mock encounter data
+- [ ] Trigger 409 scenario → UI shows "wrong step" message
+- [ ] Trigger 403 scenario → UI shows permission message
+
+---
+
+## Section 2: Full Stack Smoke in Real Mode
+
+Run after backend changes or before release.
+
+### Prerequisites
+- Docker Compose stack running: `pnpm dev:full` or `docker compose up -d`
+- Database seeded with test tenant + admin user
+
+---
+
 # Smoke Tests (MVP)
 
 Run after each slice to verify the stack is healthy.

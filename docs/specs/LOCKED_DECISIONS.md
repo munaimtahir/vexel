@@ -49,6 +49,12 @@ Deployment:
 - Reverse proxy: **Caddy**
 - Internal services bind to **127.0.0.1** only
 
-## D) Build order (locked)
-1) Build **Admin App** first (Back Office) + Admin APIs.
-2) Then build vertical slices end-to-end: backend + UI + docs + smoke tests.
+## D) Development Workflow (locked)
+
+All new features follow this sequence:
+
+1. **Feature + Workflow lock** — Define the feature scope, user flows, and state machine changes. No code until this is locked.
+2. **OpenAPI lock + SDK regen** — Add/update all required endpoints and schemas in `packages/contracts/openapi.yaml`. Regenerate SDK. All frontends use only the generated SDK — never raw fetch/axios.
+3. **Frontend implementation in Mock Mode** — Build UI pages against deterministic mocks (Prism + scenario gateway). `NEXT_PUBLIC_API_URL` points to mock gateway (port 9031). Pages are complete and tested before backend is finished.
+4. **Backend implementation** — Implement backend endpoints to match the locked OpenAPI contract exactly. Must pass contract compliance check.
+5. **Full-stack verification** — Run smoke tests in real mode. All gates in the MVP Release Gate Matrix must pass before any release.
