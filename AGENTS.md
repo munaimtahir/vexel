@@ -1,5 +1,86 @@
 # AGENTS — Development Workflow for Vexel Health Platform Rebuild
 
+---
+
+## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-02-22)
+
+### Current State: Phases 2–7 COMPLETE. Application is LIVE.
+
+**Live URL:** https://vexel.alshifalab.pk  
+**Repo:** `git@github.com:munaimtahir/vexel.git` (SSH auth)  
+**HEAD commit:** `2729139` on `main`  
+**Server:** `/home/munaim/srv/apps/vexel/`
+
+#### Credentials (test)
+| User | Email | Password | Role |
+|------|-------|----------|------|
+| Super Admin | `admin@vexel.pk` | `admin123` | super-admin (all 29 permissions) |
+| System Admin | `admin@vexel.system` | `Admin@vexel123!` | super-admin |
+
+#### Live endpoints verified ✅
+- `https://vexel.alshifalab.pk/` → Operator app (307 → /encounters)
+- `https://vexel.alshifalab.pk/admin/login` → Admin app (200)
+- `https://vexel.alshifalab.pk/api/health` → `{"status":"ok"}`
+- `https://vexel.alshifalab.pk/api/auth/login` → JWT token on valid credentials
+
+#### Stack (Docker Compose — all 8 services healthy)
+| Service | Port | Image |
+|---------|------|-------|
+| postgres | 127.0.0.1:5433 | postgres:16-alpine |
+| redis | 127.0.0.1:6380 | redis:7-alpine |
+| api (NestJS) | 127.0.0.1:9021 | vexel-api |
+| pdf (.NET QuestPDF) | 127.0.0.1:9022 | vexel-pdf |
+| admin (Next.js) | 127.0.0.1:9023 | vexel-admin |
+| operator (Next.js) | 127.0.0.1:9024 | vexel-operator |
+| minio | 127.0.0.1:9025 (console) | minio/minio |
+| worker (BullMQ) | internal | vexel-worker |
+
+**To restart stack after VPS reboot:** `cd /home/munaim/srv/apps/vexel && docker compose up -d`
+
+#### Caddy routing (`/home/munaim/srv/proxy/caddy/Caddyfile`)
+- `/api/*` → preserve prefix → 9021
+- `/pdf/*` → strip prefix (handle_path) → 9022
+- `/admin/*` → preserve prefix → 9023 (Next.js has `basePath: '/admin'`)
+- catch-all `handle` → 9024 (Operator)
+
+#### Key architectural decisions locked
+- `NEXT_PUBLIC_API_URL` must be set as **build arg** (not runtime env) — baked into JS at build time
+- Admin app requires `basePath: '/admin'` in `apps/admin/next.config.ts`
+- Worker has its own PrismaClient (not an API client) — reads `DATABASE_URL` directly
+- API uses `app.setGlobalPrefix('api')` → all routes at `/api/*`
+- MinIO uses `forcePathStyle: true` for S3 client compatibility
+- Seed runs via `ts-node --transpile-only --skip-project prisma/seed.ts` (avoid tsconfig conflict)
+
+#### Known gotchas / bugs fixed
+- `GET /api/documents?limit=N` — limit arrives as string; must cast `Number(filters.limit)` ✅ fixed `2729139`
+- Admin 404 on `/admin/login` — was missing `basePath: '/admin'` ✅ fixed `ddf7f81`
+- Operator calling `127.0.0.1:9021` in browser — NEXT_PUBLIC_API_URL was wrong build arg ✅ fixed `ddf7f81`
+- Worker Dockerfile needs root build context (`.`) to access `apps/api/prisma/schema.prisma`
+- API seed: `nest build` does NOT compile `prisma/seed.ts`; use ts-node directly
+
+#### Phases completed
+| Phase | What was built |
+|-------|---------------|
+| 2 | Monorepo scaffold, OpenAPI 78 ops, Docker Compose, SDK generation |
+| 3 | Real auth (bcrypt+JWT+refresh), 29-permission RBAC, tenant resolver, audit service |
+| 4 | LIMS Prisma models, 6-command state machine, Catalog CRUD, BullMQ workers |
+| 5 | Deterministic doc pipeline (payloadHash=sha256(canonical_json)), DocumentTemplate |
+| 6 | Operator UI (5 pages), 36 integration tests, CI gates, Phase 6 PASS audit |
+| 7 | MinIO storage, QuestPDF real template, auto-publish on verify, 25/25 E2E pass |
+| Deploy | Caddy routing, port assignment, seed super-admin, `basePath` fix, `limit` cast fix |
+
+#### Remaining / future work
+- No blocking gaps. All 72 planned todos are done.
+- Potential next phase items:
+  - Full Playwright CI run (currently `if: false` — needs persistent env)
+  - Admin branding UI (TenantConfig fields exist, page scaffold exists, needs wiring)
+  - MinIO console Caddy route (port 9025, optional)
+  - Multi-order encounters (currently one order per encounter)
+  - Real logo rendering in QuestPDF (field exists, image loading not wired)
+  - RIMS / OPD modules (architecture ready, no features built)
+
+---
+
 ## Mission
 
 We are rebuilding the Vexel Health Platform from the ground up as a **multi-tenant health platform**. LIMS (Laboratory Information Management System) ships first, but the core architecture is designed to support additional modules (RIMS, OPD, etc.) without refactoring.
