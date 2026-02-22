@@ -72,7 +72,7 @@ describe('Document Idempotency', () => {
   beforeEach(() => {
     prisma = buildPrisma();
     audit = buildAudit();
-    service = new DocumentsService(prisma as any, audit as any);
+    service = new DocumentsService(prisma as any, audit as any, {} as any);
   });
 
   it('Test 1: generate twice with same encounter → same Document returned (created: false)', async () => {

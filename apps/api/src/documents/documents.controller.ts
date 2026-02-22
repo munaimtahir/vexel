@@ -107,7 +107,13 @@ export class DocumentsController {
 
   @Get(':id/download')
   @RequirePermissions(Permission.DOCUMENT_GENERATE)
-  download(@Req() req: Request, @Param('id') id: string) {
-    return this.svc.downloadDocument((req as any).user.tenantId, id);
+  async download(@Req() req: Request, @Param('id') id: string, @Res() res: Response) {
+    const tenantId = (req as any).user.tenantId;
+    const bytes = await this.svc.downloadDocument(tenantId, id);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="report-${id}.pdf"`,
+    });
+    res.send(bytes);
   }
 }

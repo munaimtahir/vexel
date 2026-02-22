@@ -455,6 +455,7 @@ model Document {
   payloadJson  Json
   payloadHash  String    // sha256(canonical_json)
   pdfHash      String?   // sha256(pdf_bytes); null until rendered
+  storageKey   String?   // MinIO object key e.g. {tenantId}/{documentId}/report.pdf
   status       String    @default("DRAFT") // DRAFT | RENDERING | RENDERED | PUBLISHED | FAILED
   version      Int       @default(1)
   sourceRef    String?   // e.g. encounterId, orderId

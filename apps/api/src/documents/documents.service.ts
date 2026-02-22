@@ -9,6 +9,7 @@ import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { StorageService } from '../storage/storage.service';
 import { payloadHash, canonicalJson } from './canonical';
 
 const DOCUMENT_RENDER_QUEUE = 'document-render';
@@ -25,6 +26,7 @@ export class DocumentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly storage: StorageService,
   ) {
     this.renderQueue = new Queue(DOCUMENT_RENDER_QUEUE, {
       connection: getRedisConnection() as any,
@@ -169,20 +171,18 @@ export class DocumentsService {
     return doc;
   }
 
-  async downloadDocument(tenantId: string, id: string) {
+  async downloadDocument(tenantId: string, id: string): Promise<Buffer> {
     const doc = await this.getDocument(tenantId, id);
-    // Full signed URL is Phase 6 — return placeholder
-    return {
-      documentId: doc.id,
-      pdfHash: doc.pdfHash,
-      message: 'download not yet implemented — coming in Phase 6',
-    };
+    if (!(doc as any).storageKey) throw new NotFoundException('PDF not yet generated for this document');
+    return this.storage.download((doc as any).storageKey);
   }
 
-  async listDocuments(tenantId: string, filters: { status?: string; limit?: number }) {
-    const { status, limit = 20 } = filters;
+  async listDocuments(tenantId: string, filters: { status?: string; limit?: number; sourceRef?: string; sourceType?: string }) {
+    const { status, limit = 20, sourceRef, sourceType } = filters;
     const where: any = { tenantId };
     if (status) where.status = status;
+    if (sourceRef) where.sourceRef = sourceRef;
+    if (sourceType) where.sourceType = sourceType;
     return this.prisma.document.findMany({
       where,
       orderBy: { createdAt: 'desc' },

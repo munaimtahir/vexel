@@ -1,8 +1,29 @@
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
+import { S3Client, CreateBucketCommand, HeadBucketCommand } from '@aws-sdk/client-s3';
 import { processCatalogImport } from './catalog-import.processor';
 import { processCatalogExport } from './catalog-export.processor';
 import { processDocumentRender } from './document-render.processor';
+
+async function ensureStorageBucket() {
+  const bucket = process.env.STORAGE_BUCKET ?? 'vexel-documents';
+  const s3 = new S3Client({
+    endpoint: process.env.STORAGE_ENDPOINT ?? 'http://minio:9000',
+    region: 'us-east-1',
+    credentials: {
+      accessKeyId: process.env.STORAGE_ACCESS_KEY ?? 'vexel',
+      secretAccessKey: process.env.STORAGE_SECRET_KEY ?? 'vexel_secret_2026',
+    },
+    forcePathStyle: true,
+  });
+  try {
+    await s3.send(new HeadBucketCommand({ Bucket: bucket }));
+    console.log(`✅ Storage bucket '${bucket}' exists`);
+  } catch {
+    await s3.send(new CreateBucketCommand({ Bucket: bucket }));
+    console.log(`✅ Storage bucket '${bucket}' created`);
+  }
+}
 
 const REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6379';
 
@@ -43,6 +64,9 @@ documentRenderWorker.on('completed', (job) => console.log(`[document-render] Job
 documentRenderWorker.on('failed', (job, err) => console.error(`[document-render] Job ${job?.id} failed: ${err.message}`));
 
 console.log('🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render');
+
+// Ensure MinIO bucket exists on startup
+ensureStorageBucket().catch((err) => console.error('Failed to ensure storage bucket:', err.message));
 
 process.on('SIGTERM', async () => {
   await Promise.all([jobsWorker.close(), catalogImportWorker.close(), catalogExportWorker.close(), documentRenderWorker.close()]);

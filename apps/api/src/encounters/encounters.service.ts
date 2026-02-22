@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { DocumentsService } from '../documents/documents.service';
 
 // Valid transitions: fromStatus → allowed toStatuses
 const VALID_TRANSITIONS: Record<string, string[]> = {
@@ -17,6 +18,7 @@ export class EncountersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly documentsService: DocumentsService,
   ) {}
 
   private async getEncounterOrThrow(tenantId: string, id: string) {
@@ -224,6 +226,20 @@ export class EncountersService {
     });
 
     await this.audit.log({ tenantId, actorUserId, action: 'encounter.verify', entityType: 'Encounter', entityId: encounterId, before: { status: 'resulted' }, after: { status: 'verified' }, correlationId });
+
+    // Auto-generate and publish lab report PDF
+    try {
+      await this.documentsService.generateFromEncounter(
+        tenantId,
+        encounterId,
+        actorUserId,
+        correlationId ?? crypto.randomUUID(),
+      );
+    } catch (err) {
+      // Non-fatal: document generation failure should not block verification
+      console.error('[encounters] Failed to auto-generate document after verify:', (err as Error).message);
+    }
+
     return updatedEncounter;
   }
 

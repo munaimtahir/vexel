@@ -16,6 +16,7 @@ import { RbacModule } from './rbac/rbac.module';
 import { PatientsModule } from './patients/patients.module';
 import { EncountersModule } from './encounters/encounters.module';
 import { DocumentsModule } from './documents/documents.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { DocumentsModule } from './documents/documents.module';
     PatientsModule,
     EncountersModule,
     DocumentsModule,
+    StorageModule,
   ],
 })
 export class AppModule implements NestModule {

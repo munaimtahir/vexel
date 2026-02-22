@@ -97,7 +97,7 @@ describe('DocumentsService', () => {
   beforeEach(() => {
     prisma = buildPrisma();
     audit = buildAudit();
-    service = new DocumentsService(prisma as any, audit as any);
+    service = new DocumentsService(prisma as any, audit as any, {} as any);
   });
 
   describe('generateDocument', () => {

@@ -25,6 +25,23 @@ services:
       timeout: 3s
       retries: 10
 
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: vexel
+      MINIO_ROOT_PASSWORD: vexel_secret_2026
+    volumes:
+      - minio_data:/data
+    ports:
+      - "127.0.0.1:9025:9001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
   api:
     build:
       context: ./apps/api
@@ -33,6 +50,8 @@ services:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     ports:
       - "127.0.0.1:9021:3000"
@@ -44,6 +63,10 @@ services:
       JWT_SECRET: vexel-dev-secret-change-in-production
       DEFAULT_TENANT_ID: system
       PDF_SERVICE_URL: http://pdf:8080
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_ACCESS_KEY: vexel
+      STORAGE_SECRET_KEY: vexel_secret_2026
+      STORAGE_BUCKET: vexel-documents
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
       interval: 10s
@@ -65,6 +88,10 @@ services:
       DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
       REDIS_URL: redis://redis:6379
       PDF_SERVICE_URL: http://pdf:8080
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_ACCESS_KEY: vexel
+      STORAGE_SECRET_KEY: vexel_secret_2026
+      STORAGE_BUCKET: vexel-documents
 
   pdf:
     build:
@@ -107,3 +134,4 @@ services:
 
 volumes:
   pgdata:
+  minio_data:

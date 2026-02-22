@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
@@ -15,7 +15,6 @@ const DOC_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 export default function PublishPage() {
-  const router = useRouter();
   const params = useParams();
   const id = params.id as string;
 
@@ -24,11 +23,33 @@ export default function PublishPage() {
   const [encounterError, setEncounterError] = useState('');
 
   const [document, setDocument] = useState<any>(null);
-  const [generating, setGenerating] = useState(false);
-  const [publishing, setPublishing] = useState(false);
-  const [actionError, setActionError] = useState('');
+  const [downloadError, setDownloadError] = useState('');
 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchDocument = async () => {
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      // @ts-ignore
+      const { data } = await api.GET('/documents', { params: { query: { sourceRef: id, sourceType: 'ENCOUNTER', limit: 1 } } });
+      if (data && Array.isArray(data) && data.length > 0) {
+        setDocument(data[0]);
+        return data[0];
+      }
+    } catch {}
+    return null;
+  };
+
+  const startPolling = () => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    pollRef.current = setInterval(async () => {
+      const doc = await fetchDocument();
+      if (doc && (doc.status === 'PUBLISHED' || doc.status === 'FAILED')) {
+        clearInterval(pollRef.current!);
+        pollRef.current = null;
+      }
+    }, 3000);
+  };
 
   useEffect(() => {
     const api = getApiClient(getToken() ?? undefined);
@@ -39,101 +60,40 @@ export default function PublishPage() {
       })
       .catch(() => setEncounterError('Failed to load encounter'))
       .finally(() => setLoadingEncounter(false));
+
+    fetchDocument().then((doc) => {
+      if (doc && doc.status !== 'PUBLISHED' && doc.status !== 'FAILED') {
+        startPolling();
+      }
+      if (!doc) startPolling();
+    });
+
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [id]);
 
-  const startPolling = (docId: string) => {
-    if (pollRef.current) clearInterval(pollRef.current);
-    pollRef.current = setInterval(async () => {
-      const api = getApiClient(getToken() ?? undefined);
-      // @ts-ignore - documents paths pending in openapi contract
-      const { data } = await api.GET('/documents/{id}', { params: { path: { id: docId } } });
-      if (data) {
-        setDocument(data);
-        const status = (data as any).status;
-        if (status === 'RENDERED' || status === 'PUBLISHED' || status === 'FAILED') {
-          clearInterval(pollRef.current!);
-          pollRef.current = null;
-        }
-      }
-    }, 3000);
-  };
-
-  const handleGenerate = async () => {
-    if (!encounter) return;
-    setGenerating(true);
-    setActionError('');
-    try {
-      const api = getApiClient(getToken() ?? undefined);
-      const orders: any[] = encounter.labOrders ?? [];
-      const body = {
-        reportNumber: `RPT-${id.slice(0, 8).toUpperCase()}`,
-        issuedAt: new Date().toISOString(),
-        patientName: `${encounter.patient.firstName} ${encounter.patient.lastName}`,
-        patientMrn: encounter.patient.mrn,
-        patientDob: encounter.patient.dateOfBirth
-          ? new Date(encounter.patient.dateOfBirth).toISOString().split('T')[0]
-          : undefined,
-        patientGender: encounter.patient.gender ?? undefined,
-        encounterId: id,
-        tests: orders.map((order: any) => ({
-          testCode: order.test?.code ?? order.id,
-          testName: order.test?.name ?? 'Unknown',
-          parameters: order.result ? [{
-            parameterCode: 'result',
-            parameterName: 'Result',
-            value: order.result.value,
-            unit: order.result.unit ?? undefined,
-            referenceRange: order.result.referenceRange ?? undefined,
-            flag: order.result.flag ?? undefined,
-          }] : [],
-        })),
-      };
-      // @ts-ignore - documents paths pending in openapi contract
-      const { data, error: apiError } = await api.POST('/documents/report:generate', { body: body as any });
-      if (apiError || !data) { setActionError('Failed to generate report'); return; }
-      setDocument(data);
-      const status = (data as any).status;
-      if (status !== 'RENDERED' && status !== 'PUBLISHED' && status !== 'FAILED') {
-        startPolling((data as any).id);
-      }
-    } catch {
-      setActionError('Failed to generate report');
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const handlePublish = async () => {
-    if (!document) return;
-    setPublishing(true);
-    setActionError('');
-    try {
-      const api = getApiClient(getToken() ?? undefined);
-      // @ts-ignore - documents paths pending in openapi contract
-      const { data, error: apiError } = await api.POST('/documents/{id}:publish', {
-        params: { path: { id: document.id } },
-      });
-      if (apiError || !data) { setActionError('Failed to publish document'); return; }
-      setDocument(data);
-    } catch {
-      setActionError('Failed to publish document');
-    } finally {
-      setPublishing(false);
-    }
-  };
-
   const handleDownload = async () => {
     if (!document) return;
-    const api = getApiClient(getToken() ?? undefined);
-    // @ts-ignore - documents paths pending in openapi contract
-    const { data, error: apiError } = await api.GET('/documents/{id}/download', {
-      params: { path: { id: document.id } },
-    });
-    if (apiError || !data) { setActionError('Download not available yet'); return; }
-    const url = (data as any).url ?? (data as any).signedUrl;
-    if (url) window.open(url, '_blank');
-    else setActionError('PDF download URL not available');
+    setDownloadError('');
+    try {
+      const token = getToken();
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL ?? '') + '/api';
+      const res = await fetch(`${apiBase}/documents/${document.id}/download`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'x-tenant-id': 'system',
+        },
+      });
+      if (!res.ok) { setDownloadError('Download failed'); return; }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = window.document.createElement('a');
+      a.href = url;
+      a.download = `report-${document.id}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setDownloadError('Download failed');
+    }
   };
 
   if (loadingEncounter) return <p style={{ color: '#64748b' }}>Loading encounter...</p>;
@@ -148,7 +108,7 @@ export default function PublishPage() {
       <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <Link href={`/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
         <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Publish Report</span>
+        <span style={{ fontSize: '14px', color: '#64748b' }}>Report Status</span>
       </div>
 
       <IdentityHeader
@@ -158,71 +118,33 @@ export default function PublishPage() {
         createdAt={encounter.createdAt}
       />
 
-      {actionError && (
-        <p style={{ color: '#ef4444', marginBottom: '16px', background: '#fee2e2', padding: '10px 16px', borderRadius: '6px', fontSize: '14px' }}>
-          {actionError}
-        </p>
-      )}
-
       <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '32px' }}>
         <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>Lab Report</h3>
         <p style={{ margin: '0 0 24px', color: '#64748b', fontSize: '14px' }}>
-          Generate and publish the official lab report PDF for this encounter.
+          Report is automatically generated and published when the encounter is verified.
         </p>
 
         {/* Document status */}
+        {!document && (
+          <p style={{ color: '#64748b', fontSize: '14px' }}>⏳ Waiting for report to be generated...</p>
+        )}
+
         {document && docColors && (
           <div style={{ marginBottom: '24px', padding: '12px 16px', borderRadius: '6px', background: docColors.bg, display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontWeight: 700, color: docColors.text }}>Document: </span>
+            <span style={{ fontWeight: 700, color: docColors.text }}>Status: </span>
             <span style={{ color: docColors.text, fontWeight: 600 }}>{docStatus}</span>
-            {docStatus === 'RENDERING' && <span style={{ color: docColors.text, fontSize: '13px' }}>⏳ Generating PDF...</span>}
+            {(docStatus === 'RENDERING' || docStatus === 'RENDERED') && <span style={{ color: docColors.text, fontSize: '13px' }}>⏳ Generating PDF...</span>}
             <span style={{ marginLeft: 'auto', fontSize: '12px', color: docColors.text, fontFamily: 'monospace' }}>{document.id?.slice(0, 8)}…</span>
           </div>
         )}
 
+        {downloadError && (
+          <p style={{ color: '#ef4444', marginBottom: '16px', background: '#fee2e2', padding: '10px 16px', borderRadius: '6px', fontSize: '14px' }}>
+            {downloadError}
+          </p>
+        )}
+
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-          {/* Step 1: Generate */}
-          {encounter.status === 'verified' && (!document || docStatus === 'FAILED') && (
-            <button
-              onClick={handleGenerate}
-              disabled={generating}
-              style={{ padding: '12px 28px', background: generating ? '#94a3b8' : '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: generating ? 'not-allowed' : 'pointer' }}
-            >
-              {generating ? 'Generating...' : '📄 Generate Lab Report'}
-            </button>
-          )}
-
-          {/* Retry on failure */}
-          {docStatus === 'FAILED' && (
-            <button
-              onClick={handleGenerate}
-              disabled={generating}
-              style={{ padding: '12px 24px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
-            >
-              Retry
-            </button>
-          )}
-
-          {/* Step 2: Publish (when RENDERED) */}
-          {docStatus === 'RENDERED' && (
-            <>
-              <button
-                onClick={handlePublish}
-                disabled={publishing}
-                style={{ padding: '12px 28px', background: publishing ? '#94a3b8' : '#7c3aed', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: publishing ? 'not-allowed' : 'pointer' }}
-              >
-                {publishing ? 'Publishing...' : '✅ Publish Document'}
-              </button>
-              <button
-                onClick={handleDownload}
-                style={{ padding: '12px 24px', background: 'white', color: '#3b82f6', border: '1px solid #93c5fd', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
-              >
-                ⬇ Download PDF
-              </button>
-            </>
-          )}
-
-          {/* Step 3: Download + Print (when PUBLISHED) */}
           {docStatus === 'PUBLISHED' && (
             <>
               <button
@@ -240,15 +162,9 @@ export default function PublishPage() {
             </>
           )}
         </div>
-
-        {encounter.status !== 'verified' && !document && (
-          <div style={{ marginTop: '16px', padding: '12px 16px', background: '#fef3c7', borderRadius: '6px', border: '1px solid #fcd34d' }}>
-            <p style={{ margin: 0, color: '#92400e', fontSize: '14px' }}>
-              ⚠ Encounter must be <strong>verified</strong> before generating a report. Current status: <strong>{encounter.status}</strong>
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
 }
+
+

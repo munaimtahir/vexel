@@ -2,6 +2,7 @@ import { Job } from 'bullmq';
 import { prisma } from './prisma';
 import * as https from 'https';
 import * as http from 'http';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL ?? 'http://pdf-service:5002';
 
@@ -9,6 +10,31 @@ interface RenderJobData {
   documentId: string;
   tenantId: string;
   correlationId: string;
+}
+
+function getS3Client() {
+  return new S3Client({
+    endpoint: process.env.STORAGE_ENDPOINT ?? 'http://minio:9000',
+    region: 'us-east-1',
+    credentials: {
+      accessKeyId: process.env.STORAGE_ACCESS_KEY ?? 'vexel',
+      secretAccessKey: process.env.STORAGE_SECRET_KEY ?? 'vexel_secret_2026',
+    },
+    forcePathStyle: true,
+  });
+}
+
+async function uploadToStorage(tenantId: string, documentId: string, bytes: Buffer): Promise<string> {
+  const bucket = process.env.STORAGE_BUCKET ?? 'vexel-documents';
+  const key = `${tenantId}/${documentId}/report.pdf`;
+  const s3 = getS3Client();
+  await s3.send(new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    Body: bytes,
+    ContentType: 'application/pdf',
+  }));
+  return key;
 }
 
 async function writeAudit(
@@ -111,15 +137,24 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
   });
 
   try {
-    const { pdfHash } = await postJson(`${PDF_SERVICE_URL}/render`, renderBody);
+    const { pdfHash, bytes } = await postJson(`${PDF_SERVICE_URL}/render`, renderBody);
 
+    // Upload to MinIO
+    const storageKey = await uploadToStorage(tenantId, documentId, bytes);
+
+    // Auto-publish after successful upload
     await prisma.document.update({
       where: { id: documentId },
-      data: { status: 'RENDERED', pdfHash: pdfHash || null },
+      data: {
+        status: 'PUBLISHED',
+        pdfHash: pdfHash || null,
+        storageKey,
+        publishedAt: new Date(),
+      },
     });
 
-    await writeAudit(tenantId, 'document.rendered', documentId, correlationId, { pdfHash });
-    console.log(`[document-render] Document ${documentId} rendered, hash=${pdfHash}`);
+    await writeAudit(tenantId, 'document.published', documentId, correlationId, { pdfHash, storageKey });
+    console.log(`[document-render] Document ${documentId} rendered and published, key=${storageKey}`);
   } catch (err) {
     const errorMessage = (err as Error).message;
     await prisma.document.update({

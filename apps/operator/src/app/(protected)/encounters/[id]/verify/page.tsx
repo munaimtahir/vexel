@@ -41,7 +41,7 @@ export default function VerifyPage() {
         return;
       }
       if (apiError) { setError('Failed to verify encounter'); setShowModal(false); return; }
-      router.push(`/encounters/${id}/publish`);
+      router.push(`/encounters/${id}`);
     } catch {
       setError('Failed to verify encounter');
       setShowModal(false);

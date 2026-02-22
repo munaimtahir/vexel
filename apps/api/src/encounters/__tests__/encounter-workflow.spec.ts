@@ -83,7 +83,7 @@ describe('Encounter State Machine', () => {
   beforeEach(() => {
     prisma = buildPrisma();
     audit = buildAudit();
-    service = new EncountersService(prisma as any, audit as any);
+    service = new EncountersService(prisma as any, audit as any, {} as any);
   });
 
   it('Test 1: full state progression register → lab_ordered → specimen_collected → resulted → verified', async () => {
