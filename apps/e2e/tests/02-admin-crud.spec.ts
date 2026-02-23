@@ -10,19 +10,19 @@ const ADMIN_EMAIL = process.env.OPERATOR_EMAIL || 'admin@vexel.system';
 const ADMIN_PASSWORD = process.env.OPERATOR_PASSWORD || 'Admin@vexel123!';
 
 async function adminLogin(page: import('@playwright/test').Page) {
-  await page.goto('/login');
+  await page.goto('/admin/login');
   await page.getByLabel('Email').fill(ADMIN_EMAIL);
   await page.getByLabel('Password').fill(ADMIN_PASSWORD);
   // Admin login button label is "Sign in" (lowercase 'i')
   await page.getByRole('button', { name: /sign in/i }).click();
-  await page.waitForURL('**/dashboard', { timeout: 15_000 });
+  await page.waitForURL('**/admin/dashboard', { timeout: 15_000 });
 }
 
 test.describe('Admin CRUD', () => {
   test('admin login and navigate to /admin/tenants', async ({ page }) => {
     await adminLogin(page);
 
-    await page.goto('/tenants');
+    await page.goto('/admin/tenants');
     await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible();
     // At minimum the seeded system tenant must appear
     await expect(page.locator('div').filter({ hasText: /system|vexel/i }).first()).toBeVisible();
@@ -30,7 +30,7 @@ test.describe('Admin CRUD', () => {
 
   test('tenant list displays at least one tenant', async ({ page }) => {
     await adminLogin(page);
-    await page.goto('/tenants');
+    await page.goto('/admin/tenants');
 
     // Wait for list to load (spinner disappears)
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
@@ -42,7 +42,7 @@ test.describe('Admin CRUD', () => {
 
   test('create a new test user via UI and verify in list', async ({ page }) => {
     await adminLogin(page);
-    await page.goto('/users');
+    await page.goto('/admin/users');
 
     await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
@@ -69,7 +69,7 @@ test.describe('Admin CRUD', () => {
 
   test('feature flags page loads with toggles', async ({ page }) => {
     await adminLogin(page);
-    await page.goto('/feature-flags');
+    await page.goto('/admin/feature-flags');
 
     await expect(page.getByRole('heading', { name: 'Feature Flags' })).toBeVisible();
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
@@ -84,7 +84,7 @@ test.describe('Admin CRUD', () => {
 
   test('toggle a feature flag and verify state changes', async ({ page }) => {
     await adminLogin(page);
-    await page.goto('/feature-flags');
+    await page.goto('/admin/feature-flags');
 
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
 

@@ -73,16 +73,13 @@ test.describe('Operator — Full LIMS workflow', () => {
 
     // Flag select defaults to "normal" — leave as-is
 
-    await page.getByRole('button', { name: 'Submit Results' }).click();
+    await page.getByRole('button', { name: 'Save All Results' }).click();
 
-    // After submission, redirects to encounter detail
-    await page.waitForURL(`**/encounters/${encounter.id}`, { timeout: 15_000 });
+    // After saving, the page shows a success banner with a Proceed to Verify link
+    await expect(page.locator('text=Results saved')).toBeVisible({ timeout: 10_000 });
 
-    // Status badge must now show "resulted"
-    await expect(page.locator('text=resulted').first()).toBeVisible({ timeout: 10_000 });
-
-    // "Verify Results" action link is now present
-    await expect(page.getByRole('link', { name: 'Verify Results' })).toBeVisible();
+    // "Proceed to Verify" link is now present
+    await expect(page.getByRole('link', { name: /Proceed to Verify/i })).toBeVisible();
   });
 
   test('verify results via modal confirm, transitions to verified', async ({ authedPage: page }) => {
@@ -107,21 +104,21 @@ test.describe('Operator — Full LIMS workflow', () => {
     await page.goto(`/encounters/${encounter.id}/verify`);
     await expect(page.locator('text=Loading encounter...')).not.toBeVisible({ timeout: 10_000 });
 
-    // The verify page shows a "Confirm Verify" button
-    const verifyBtn = page.getByRole('button', { name: 'Confirm Verify' });
-    await expect(verifyBtn).toBeVisible({ timeout: 8_000 });
-    await verifyBtn.click();
+    // The verify page shows a "Verify & Publish" button to open confirmation modal
+    const openModalBtn = page.getByRole('button', { name: 'Verify & Publish' });
+    await expect(openModalBtn).toBeVisible({ timeout: 8_000 });
+    await openModalBtn.click();
 
     // Confirmation modal appears
     const modal = page.locator('div').filter({ hasText: /Verify all results for/i }).last();
     await expect(modal).toBeVisible({ timeout: 5_000 });
 
     // Click the modal's "Confirm Verify" button
-    await page.getByRole('button', { name: 'Confirm Verify' }).last().click();
+    const verifyBtn = page.getByRole('button', { name: 'Confirm Verify' });
+    await verifyBtn.click();
 
-    // After verify, navigates to /publish
-    await page.waitForURL(`**/encounters/${encounter.id}/publish`, { timeout: 15_000 });
-    await expect(page).toHaveURL(/\/publish$/);
+    // After verify, the page shows "Report Published" or a Download link
+    await expect(page.locator('text=PUBLISHED').or(page.getByRole('link', { name: /Download/i })).first()).toBeVisible({ timeout: 30_000 });
   });
 
   test('publish page is accessible after verified status', async ({ authedPage: page }) => {
@@ -144,13 +141,14 @@ test.describe('Operator — Full LIMS workflow', () => {
     await page.goto(`/encounters/${encounter.id}/publish`);
     await expect(page.locator('text=Loading encounter...')).not.toBeVisible({ timeout: 10_000 });
 
-    // Publish page heading
-    await expect(page.locator('text=Publish Report')).toBeVisible();
+    // Publish page heading (auto-generated report status page)
+    await expect(page.locator('text=Lab Report')).toBeVisible();
 
-    // Generate Lab Report button is present for verified encounters
-    await expect(page.getByRole('button', { name: /Generate Lab Report/i })).toBeVisible();
+    // Report is auto-generated on verify — either waiting or already published
+    const statusOrWaiting = page.locator('text=Waiting for report').or(page.locator('text=RENDERED')).or(page.locator('text=PUBLISHED')).or(page.locator('text=RENDERING'));
+    await expect(statusOrWaiting.first()).toBeVisible({ timeout: 10_000 });
 
     // Encounter status badge on identity header shows "verified"
-    await expect(page.locator('text=verified')).toBeVisible();
+    await expect(page.getByText('verified', { exact: true }).first()).toBeVisible();
   });
 });

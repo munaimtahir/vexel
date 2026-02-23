@@ -48,46 +48,24 @@ async function setupVerifiedEncounter() {
 }
 
 test.describe('Document pipeline', () => {
-  test('generate report, poll until RENDERED, publish and download', async ({ authedPage: page }) => {
+  test('report auto-generated on verify and downloadable from publish page', async ({ authedPage: page }) => {
+    test.setTimeout(90_000); // auto-generation can take up to 60s
     const { encounter } = await setupVerifiedEncounter();
 
     await page.goto(`/encounters/${encounter.id}/publish`);
     await expect(page.locator('text=Loading encounter...')).not.toBeVisible({ timeout: 10_000 });
 
-    // Step 1: Generate
-    const generateBtn = page.getByRole('button', { name: /Generate Lab Report/i });
-    await expect(generateBtn).toBeVisible();
-    await generateBtn.click();
+    // The publish page shows "Lab Report" heading and auto-polls
+    await expect(page.locator('text=Lab Report')).toBeVisible({ timeout: 5_000 });
 
-    // Step 2: Poll — the UI polls every 3s internally.
-    // We wait for the RENDERED status badge to appear.
-    await expect(page.locator('text=RENDERED')).toBeVisible({ timeout: 60_000 });
+    // Report is auto-generated when encounter is verified — poll until PUBLISHED
+    await expect(page.getByText('PUBLISHED', { exact: true })).toBeVisible({ timeout: 60_000 });
 
-    // Step 3: Publish Document
-    const publishBtn = page.getByRole('button', { name: /Publish Document/i });
-    await expect(publishBtn).toBeVisible();
-    await publishBtn.click();
-
-    // Status should transition to PUBLISHED
-    await expect(page.locator('text=PUBLISHED')).toBeVisible({ timeout: 15_000 });
-
-    // Step 4: Download PDF — opens in new tab; we intercept the click and check URL
+    // Download PDF button should be visible once published
     const downloadBtn = page.getByRole('button', { name: /Download PDF/i });
     await expect(downloadBtn).toBeVisible();
-
-    // Intercept new page / popup for download
-    const [popup] = await Promise.all([
-      page.waitForEvent('popup', { timeout: 10_000 }).catch(() => null),
-      downloadBtn.click(),
-    ]);
-
-    // If a popup was opened, it should be a PDF URL or a signed URL pointing to PDF storage
-    if (popup) {
-      const url = popup.url();
-      expect(url).toBeTruthy();
-      await popup.close();
-    }
-    // TODO: If using direct download (not popup), assert download content-type = application/pdf
+    await downloadBtn.click();
+    // Download is triggered via blob URL — no popup expected
   });
 
   test('generate report twice returns same document ID (idempotency)', async ({ authedPage: page }) => {
@@ -126,6 +104,7 @@ test.describe('Document pipeline', () => {
   });
 
   test('document status transitions: QUEUED/RENDERING → RENDERED', async ({}) => {
+    test.setTimeout(60_000); // rendering can take up to 30s
     const { encounter, accessToken } = await setupVerifiedEncounter();
 
     const enc = await apiGet<{ patient: { firstName: string; lastName: string; mrn: string }; labOrders: Array<{ id: string; test?: { code: string; name: string }; result?: { value: string } }> }>(
@@ -146,14 +125,14 @@ test.describe('Document pipeline', () => {
       accessToken,
     );
 
-    expect(['QUEUED', 'RENDERING', 'RENDERED']).toContain(doc.status);
+    expect(['QUEUED', 'RENDERING', 'RENDERED', 'PUBLISHED']).toContain(doc.status);
 
-    if (doc.status !== 'RENDERED') {
+    if (doc.status !== 'RENDERED' && doc.status !== 'PUBLISHED') {
       const rendered = await waitForDocumentRendered(doc.id, accessToken, {
-        maxPolls: 15,
+        maxPolls: 20,
         delayMs: 2000,
       });
-      expect((rendered as any).status).toBe('RENDERED');
+      expect(['RENDERED', 'PUBLISHED']).toContain((rendered as any).status);
     }
   });
 });

@@ -88,7 +88,7 @@ jobs:
           CI: true
           API_BASE: http://127.0.0.1:9021
           OPERATOR_BASE: http://127.0.0.1:9024
-          ADMIN_BASE: http://127.0.0.1:9025
+          ADMIN_BASE: http://127.0.0.1:9023
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
