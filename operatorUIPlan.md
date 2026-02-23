@@ -583,3 +583,49 @@ Thermal 80mm:
 - Tests block (test names, prices)
 - Payment block (total, discount, paid, due)
 - Tenant header/footer (small text, wrapped to 80mm width)
+
+---
+
+## Phase: LIMS Route Namespace (`/lims/*`) — PLANNED
+
+### Status
+All Wave 1–5 pages are BUILT and DEPLOYED (commit `2b345dd`).
+Next phase: move all LIMS pages under `/lims/*` namespace, add landing page.
+
+### Why
+- Future modules (Radiology, OPD) need `/radiology/*`, `/opd/*` without route collisions.
+- App needs a proper entry point (app-switcher landing page).
+
+### Target Routes
+All current operator pages move from `/foo` → `/lims/foo`:
+- `/worklist` → `/lims/worklist`
+- `/registrations/new` → `/lims/registrations/new`
+- `/sample-collection` → `/lims/sample-collection`
+- `/results` → `/lims/results`
+- `/results/[orderedTestId]` → `/lims/results/[orderedTestId]`
+- `/verification` → `/lims/verification`
+- `/verification/encounters/[encounterId]` → `/lims/verification/encounters/[encounterId]`
+- `/reports` → `/lims/reports`
+- `/encounters` → `/lims/encounters`
+- `/patients` → `/lims/patients`
+
+Old routes kept as redirect shims.
+
+### Landing Page
+- `(protected)/page.tsx`: full-screen app-switcher
+- Shows LIMS (enabled), Radiology (disabled), OPD (disabled)
+- Auto-redirects to `/lims/worklist` after 800ms
+
+### Layout Changes
+- `(protected)/layout.tsx`: auth guard only (no sidebar)
+- `(protected)/lims/layout.tsx`: NEW — LIMS sidebar with `/lims/*` links + module switcher header
+
+### Todo List
+| ID | Task |
+|----|------|
+| lims-landing | `(protected)/page.tsx` — app switcher + auto-redirect |
+| lims-layout | `(protected)/lims/layout.tsx` — LIMS sidebar |
+| lims-pages | Copy all LIMS pages to `(protected)/lims/*` |
+| lims-redirects | Replace old pages with redirect shims |
+| lims-links | Update internal links in new pages to `/lims/*` |
+| lims-deploy | Build + deploy + verify |
