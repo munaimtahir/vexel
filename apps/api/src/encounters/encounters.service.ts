@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { DocumentsService } from '../documents/documents.service';
@@ -7,7 +7,8 @@ import { DocumentsService } from '../documents/documents.service';
 const VALID_TRANSITIONS: Record<string, string[]> = {
   registered: ['lab_ordered', 'cancelled'],
   lab_ordered: ['specimen_collected', 'cancelled'],
-  specimen_collected: ['resulted', 'cancelled'],
+  specimen_collected: ['specimen_received', 'resulted', 'cancelled'],
+  specimen_received: ['resulted', 'cancelled'],
   resulted: ['verified', 'cancelled'],
   verified: [],
   cancelled: [],
@@ -20,6 +21,16 @@ export class EncountersService {
     private readonly audit: AuditService,
     private readonly documentsService: DocumentsService,
   ) {}
+
+  /** Throws ForbiddenException if module.lims is not enabled for the tenant. */
+  private async assertLimsEnabled(tenantId: string) {
+    const flag = await this.prisma.tenantFeature.findUnique({
+      where: { tenantId_key: { tenantId, key: 'module.lims' } },
+    });
+    if (!flag?.enabled) {
+      throw new ForbiddenException('module.lims feature is disabled for this tenant');
+    }
+  }
 
   private async getEncounterOrThrow(tenantId: string, id: string) {
     const encounter = await this.prisma.encounter.findFirst({
@@ -55,6 +66,7 @@ export class EncountersService {
   }
 
   async register(tenantId: string, body: { patientId: string }, actorUserId: string, correlationId?: string) {
+    await this.assertLimsEnabled(tenantId);
     // Verify patient exists in tenant
     const patient = await this.prisma.patient.findFirst({ where: { id: body.patientId, tenantId } });
     if (!patient) throw new NotFoundException('Patient not found');
@@ -79,6 +91,7 @@ export class EncountersService {
     actorUserId: string,
     correlationId?: string,
   ) {
+    await this.assertLimsEnabled(tenantId);
     const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
 
     if (!['registered', 'lab_ordered'].includes(encounter.status)) {
@@ -129,6 +142,7 @@ export class EncountersService {
     actorUserId: string,
     correlationId?: string,
   ) {
+    await this.assertLimsEnabled(tenantId);
     const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
 
     if (!VALID_TRANSITIONS[encounter.status]?.includes('specimen_collected')) {
@@ -174,6 +188,7 @@ export class EncountersService {
     actorUserId: string,
     correlationId?: string,
   ) {
+    await this.assertLimsEnabled(tenantId);
     const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
 
     if (!VALID_TRANSITIONS[encounter.status]?.includes('resulted')) {
@@ -208,6 +223,7 @@ export class EncountersService {
   }
 
   async verify(tenantId: string, encounterId: string, actorUserId: string, correlationId?: string) {
+    await this.assertLimsEnabled(tenantId);
     const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
 
     if (encounter.status !== 'resulted') {
@@ -244,6 +260,7 @@ export class EncountersService {
   }
 
   async cancel(tenantId: string, encounterId: string, actorUserId: string, correlationId?: string) {
+    await this.assertLimsEnabled(tenantId);
     const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
 
     if (!VALID_TRANSITIONS[encounter.status]?.includes('cancelled')) {

@@ -59,8 +59,8 @@ services:
       NODE_ENV: development
       DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
       REDIS_URL: redis://redis:6379
-      TENANCY_DEV_HEADER_ENABLED: "true"
-      JWT_SECRET: vexel-dev-secret-change-in-production
+      TENANCY_DEV_HEADER_ENABLED: "false"
+      JWT_SECRET: ${JWT_SECRET:-vexel-dev-secret-REPLACE-IN-PRODUCTION}
       DEFAULT_TENANT_ID: system
       PDF_SERVICE_URL: http://pdf:8080
       STORAGE_ENDPOINT: http://minio:9000
@@ -121,6 +121,12 @@ services:
     environment:
       NODE_ENV: production
       PORT: "3001"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   operator:
     build:
@@ -132,6 +138,12 @@ services:
       - "127.0.0.1:9024:3000"
     environment:
       NODE_ENV: production
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   mock-api:
     image: stoplight/prism:4

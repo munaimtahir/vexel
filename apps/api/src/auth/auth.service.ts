@@ -129,6 +129,12 @@ export class AuthService {
       data: { userId: user.id, token: newRefreshHash, expiresAt },
     });
 
+    await this.auditService.log({
+      tenantId: user.tenantId,
+      actorUserId: user.id,
+      action: 'auth.token_refresh',
+    });
+
     return { accessToken, refreshToken: newRefreshRaw, expiresIn: 3600, tokenType: 'Bearer' };
   }
 

@@ -14,10 +14,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const userRoles = await this.prisma.userRole.findMany({
-      where: { userId: payload.sub },
-      include: { role: { include: { rolePermissions: true } } },
-    });
+    // Load user + roles + permissions from DB on every request.
+    // isSuperAdmin is read from DB — never trusted from JWT claim.
+    const [user, userRoles] = await Promise.all([
+      this.prisma.user.findUnique({ where: { id: payload.sub }, select: { isSuperAdmin: true, status: true } }),
+      this.prisma.userRole.findMany({
+        where: { userId: payload.sub },
+        include: { role: { include: { rolePermissions: true } } },
+      }),
+    ]);
+
+    // Reject if user has been deactivated since token was issued
+    if (!user || user.status !== 'active') return null;
 
     const permissions = userRoles.flatMap((ur) =>
       ur.role.rolePermissions.map((rp) => rp.permission),
@@ -28,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       email: payload.email,
       tenantId: payload.tenantId,
       roles: payload.roles,
-      isSuperAdmin: payload.isSuperAdmin ?? false,
+      isSuperAdmin: user.isSuperAdmin,   // live DB value — not JWT claim
       permissions,
     };
   }
