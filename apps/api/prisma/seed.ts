@@ -126,6 +126,61 @@ export async function main() {
   console.log('✅ Super-admin user:', superAdmin.email);
   console.log('   Password: Admin@vexel123!');
 
+  // ── Demo roles ─────────────────────────────────────────────────────────────
+  const operatorRole = await prisma.role.upsert({
+    where: { tenantId_name: { tenantId: 'system', name: 'operator' } },
+    update: {},
+    create: {
+      tenantId: 'system',
+      name: 'operator',
+      description: 'Lab operator: registration, sample collection, result entry',
+      rolePermissions: {
+        create: [
+          'catalog.read', 'patient.manage', 'encounter.manage',
+          'result.enter', 'document.generate',
+        ].map((p) => ({ permission: p })),
+      },
+    },
+  });
+
+  const verifierRole = await prisma.role.upsert({
+    where: { tenantId_name: { tenantId: 'system', name: 'verifier' } },
+    update: {},
+    create: {
+      tenantId: 'system',
+      name: 'verifier',
+      description: 'Pathologist/verifier: verify results and publish reports',
+      rolePermissions: {
+        create: [
+          'catalog.read', 'encounter.manage', 'result.enter',
+          'result.verify', 'document.generate', 'document.publish',
+        ].map((p) => ({ permission: p })),
+      },
+    },
+  });
+  console.log('✅ Demo roles: operator, verifier');
+
+  // ── Demo users ─────────────────────────────────────────────────────────────
+  const demoUsers = [
+    { email: 'operator@demo.vexel.pk', firstName: 'Demo', lastName: 'Operator', password: 'Operator@demo123!', roleId: operatorRole.id },
+    { email: 'verifier@demo.vexel.pk', firstName: 'Demo', lastName: 'Verifier', password: 'Verifier@demo123!', roleId: verifierRole.id },
+  ];
+
+  for (const u of demoUsers) {
+    const hash = await bcrypt.hash(u.password, 12);
+    const created = await prisma.user.upsert({
+      where: { tenantId_email: { tenantId: 'system', email: u.email } },
+      update: {},
+      create: { tenantId: 'system', email: u.email, firstName: u.firstName, lastName: u.lastName, passwordHash: hash },
+    });
+    await prisma.userRole.upsert({
+      where: { userId_roleId: { userId: created.id, roleId: u.roleId } },
+      update: {},
+      create: { userId: created.id, roleId: u.roleId, grantedBy: superAdmin.id },
+    });
+    console.log(`✅ Demo user: ${u.email}  password: ${u.password}`);
+  }
+
   // Seed minimal catalog tests for E2E testing
   await prisma.catalogTest.upsert({
     where: { tenantId_code: { tenantId: 'system', code: 'GLU' } },

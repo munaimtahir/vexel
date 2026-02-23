@@ -2,20 +2,25 @@
 
 ---
 
-## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-02-22)
+## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-02-23)
 
-### Current State: Phases 2–7 COMPLETE. Application is LIVE.
+### Current State: Catalog + Operator UI + Auth Unification COMPLETE. Application is LIVE.
 
 **Live URL:** https://vexel.alshifalab.pk  
 **Repo:** `git@github.com:munaimtahir/vexel.git` (SSH auth)  
-**HEAD commit:** `2729139` on `main`  
+**HEAD commit:** `18cead1` on `main`  
 **Server:** `/home/munaim/srv/apps/vexel/`
 
-#### Credentials (test)
-| User | Email | Password | Role |
-|------|-------|----------|------|
-| Super Admin | `admin@vexel.pk` | `admin123` | super-admin (all 29 permissions) |
-| System Admin | `admin@vexel.system` | `Admin@vexel123!` | super-admin |
+#### Credentials (demo — all verified ✅)
+| User | Email | Password | Role | Use For |
+|------|-------|----------|------|---------|
+| Super Admin | `admin@vexel.pk` | `admin123` | super-admin (29 perms) | Admin app |
+| System Admin | `admin@vexel.system` | `Admin@vexel123!` | super-admin (29 perms) | Admin app |
+| Demo Operator | `operator@demo.vexel.pk` | `Operator@demo123!` | operator (5 perms) | Operator app |
+| Demo Verifier | `verifier@demo.vexel.pk` | `Verifier@demo123!` | verifier (6 perms) | Operator app (verify step) |
+
+Operator permissions: `catalog.read, patient.manage, encounter.manage, result.enter, document.generate`  
+Verifier permissions: `catalog.read, encounter.manage, result.enter, result.verify, document.generate, document.publish`
 
 #### Live endpoints verified ✅
 - `https://vexel.alshifalab.pk/` → Operator app (307 → /encounters)
