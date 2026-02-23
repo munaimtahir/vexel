@@ -27,8 +27,14 @@ export default function DocumentsPage() {
     const query: any = { page: p, limit: LIMIT };
     if (status) query.status = status;
     const res = await api.GET('/documents' as any, { params: { query } });
-    setDocuments((res.data as any)?.data ?? []);
-    setTotal((res.data as any)?.total ?? 0);
+    const data = res.data;
+    if (Array.isArray(data)) {
+      setDocuments(data);
+      setTotal(data.length);
+    } else {
+      setDocuments((data as any)?.data ?? []);
+      setTotal((data as any)?.total ?? 0);
+    }
     setLoading(false);
   }
 
