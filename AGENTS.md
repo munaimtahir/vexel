@@ -8,7 +8,7 @@
 
 **Live URL:** https://vexel.alshifalab.pk  
 **Repo:** `git@github.com:munaimtahir/vexel.git` (SSH auth)  
-**HEAD commit:** `18cead1` on `main`  
+**HEAD commit:** `1074ca5` on `main`  
 **Server:** `/home/munaim/srv/apps/vexel/`
 
 #### Credentials (demo — all verified ✅)
@@ -73,6 +73,8 @@ Verifier permissions: `catalog.read, encounter.manage, result.enter, result.veri
 | 6 | Operator UI (5 pages), 36 integration tests, CI gates, Phase 6 PASS audit |
 | 7 | MinIO storage, QuestPDF real template, auto-publish on verify, 25/25 E2E pass |
 | Deploy | Caddy routing, port assignment, seed super-admin, `basePath` fix, `limit` cast fix |
+| Wave1-3 | Auth unification (unified token keys, HttpOnly cookie, CORS env-driven), catalog v2 (import/export, XLSX), Operator UI 15 routes, Admin Catalog UI 19 pages |
+| E2E Fix | 25/25 E2E green: CORS E2E origins, admin basePath paths, workflow UI selector updates, document pipeline tests |
 
 #### Remaining / future work
 - No blocking gaps. All 72 planned todos are done.
