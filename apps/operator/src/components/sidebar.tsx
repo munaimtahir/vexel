@@ -2,18 +2,31 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { clearTokens } from '@/lib/auth';
+import { useFeatureFlags, isVerificationVisible } from '@/hooks/use-feature-flags';
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { label: 'New Registration', href: '/registrations/new', icon: '➕' },
   { label: 'Sample Collection', href: '/sample-collection', icon: '🧪' },
   { label: 'Results', href: '/results', icon: '📋' },
-  { label: 'Verification', href: '/verification', icon: '✅' },
   { label: 'Encounters', href: '/encounters', icon: '🏥' },
   { label: 'Patients', href: '/patients', icon: '👤' },
 ];
 
 export default function Sidebar({ currentPath }: { currentPath: string }) {
   const router = useRouter();
+  const { flags } = useFeatureFlags();
+
+  const navItems = isVerificationVisible(flags)
+    ? [
+        ...BASE_NAV_ITEMS.slice(0, 3),
+        { label: 'Verification', href: '/verification', icon: '✅' },
+        ...BASE_NAV_ITEMS.slice(3),
+        { label: 'Reports', href: '/reports', icon: '📄' },
+      ]
+    : [
+        ...BASE_NAV_ITEMS,
+        { label: 'Reports', href: '/reports', icon: '📄' },
+      ];
 
   const handleLogout = () => {
     clearTokens();
@@ -27,28 +40,27 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
         <p style={{ fontSize: '12px', color: '#94a3b8', margin: '4px 0 0' }}>LIMS Workflow</p>
       </div>
       <nav style={{ flex: 1, padding: '16px 0' }}>
-        {NAV_ITEMS.map((item) => {
-          const isActive = currentPath.startsWith(item.href);
+        {navItems.map((item) => {
+          const isActive = currentPath === item.href || (item.href !== '/registrations/new' && currentPath.startsWith(item.href));
           return (
-            <div key={item.href}>
-              <Link
-                href={item.href}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '10px 20px',
-                  color: isActive ? '#f1f5f9' : '#94a3b8',
-                  background: isActive ? '#334155' : 'transparent',
-                  textDecoration: 'none',
-                  fontSize: '14px',
-                  fontWeight: isActive ? 600 : 400,
-                }}
-              >
-                <span>{item.icon}</span>
-                {item.label}
-              </Link>
-            </div>
+            <Link
+              key={item.href}
+              href={item.href}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '10px 20px',
+                color: isActive ? '#f1f5f9' : '#94a3b8',
+                background: isActive ? '#334155' : 'transparent',
+                textDecoration: 'none',
+                fontSize: '14px',
+                fontWeight: isActive ? 600 : 400,
+              }}
+            >
+              <span>{item.icon}</span>
+              {item.label}
+            </Link>
           );
         })}
       </nav>

@@ -2061,6 +2061,27 @@ paths:
                   type: string
 
   # ─── Feature Flags (global / system) ──────────────────────────────────────
+  /feature-flags/resolved:
+    get:
+      operationId: getResolvedFeatureFlags
+      summary: Get resolved feature flags for current tenant (JWT auth only — no special permission required)
+      description: Returns merged flag values (DB overrides + defaults) for the current tenant. Used by Operator/Admin UI for gating.
+      tags: [FeatureFlags]
+      responses:
+        "200":
+          description: Resolved flags as key-value map
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                example:
+                  lims.verification.enabled: true
+                  lims.verification.mode: { mode: "separate" }
+                  lims.operator.sample.receiveSeparate.enabled: false
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+
   /feature-flags:
     get:
       operationId: listFeatureFlags
@@ -3676,8 +3697,9 @@ paths:
 
   /encounters/{encounterId}:verify:
     post:
-      operationId: verifyEncounter
-      summary: Verify lab results (requires result.verify permission)
+      operationId: verifyEncounterLegacy
+      deprecated: true
+      summary: "(deprecated) Verify lab results — use POST /verification/encounters/{encounterId}:verify instead"
       tags: [Encounters]
       parameters:
         - name: encounterId

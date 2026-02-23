@@ -10,6 +10,7 @@ export default function JobsPage() {
   const [failedDocs, setFailedDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [retrying, setRetrying] = useState<string | null>(null);
+  const [expandedJob, setExpandedJob] = useState<string | null>(null);
 
   async function load() {
     const api = getApiClient(getToken() ?? undefined);
@@ -39,6 +40,14 @@ export default function JobsPage() {
     setRetrying(null);
   }
 
+  async function handleDocRetry(docId: string) {
+    setRetrying(docId);
+    const api = getApiClient(getToken() ?? undefined);
+    await api.POST('/documents/{id}:publish' as any, { params: { path: { id: docId } } });
+    await load();
+    setRetrying(null);
+  }
+
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -50,19 +59,16 @@ export default function JobsPage() {
         {failedJobs.length === 0 ? (
           <div style={{ background: '#f0fdf4', padding: '16px 20px', borderRadius: '8px', color: '#166534', fontSize: '14px' }}>✓ No failed jobs</div>
         ) : (
-          <JobTable jobs={failedJobs} onRetry={handleRetry} retrying={retrying} />
+          <JobTable jobs={failedJobs} onRetry={handleRetry} retrying={retrying} expanded={expandedJob} onExpand={setExpandedJob} />
         )}
       </section>
 
       <section style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px', color: '#b45309' }}>Document Renders — Failed ({failedDocs.length})</h2>
-        <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '12px' }}>
-          ℹ️ Retry for failed document renders is coming in Phase 6.
-        </p>
+        <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: '#b45309' }}>Document Renders — Failed ({failedDocs.length})</h2>
         {failedDocs.length === 0 ? (
           <div style={{ background: '#f0fdf4', padding: '16px 20px', borderRadius: '8px', color: '#166534', fontSize: '14px' }}>✓ No failed document renders</div>
         ) : (
-          <DocRenderTable docs={failedDocs} />
+          <DocRenderTable docs={failedDocs} onRetry={handleDocRetry} retrying={retrying} />
         )}
       </section>
 
@@ -80,7 +86,7 @@ export default function JobsPage() {
         {jobs.length === 0 ? (
           <p style={{ color: '#94a3b8', fontSize: '14px' }}>No jobs found.</p>
         ) : (
-          <JobTable jobs={jobs} onRetry={handleRetry} retrying={retrying} />
+          <JobTable jobs={jobs} onRetry={handleRetry} retrying={retrying} expanded={expandedJob} onExpand={setExpandedJob} />
         )}
       </section>
     </div>

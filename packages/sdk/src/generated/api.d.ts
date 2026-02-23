@@ -301,6 +301,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/feature-flags/resolved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get resolved feature flags for current tenant (JWT auth only — no special permission required)
+         * @description Returns merged flag values (DB overrides + defaults) for the current tenant. Used by Operator/Admin UI for gating.
+         */
+        get: operations["getResolvedFeatureFlags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/feature-flags": {
         parameters: {
             query?: never;
@@ -1073,8 +1093,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Verify lab results (requires result.verify permission) */
-        post: operations["verifyEncounter"];
+        /**
+         * (deprecated) Verify lab results — use POST /verification/encounters/{encounterId}:verify instead
+         * @deprecated
+         */
+        post: operations["verifyEncounterLegacy"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2806,6 +2829,29 @@ export interface operations {
             };
         };
     };
+    getResolvedFeatureFlags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Resolved flags as key-value map */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
     listFeatureFlags: {
         parameters: {
             query?: never;
@@ -4451,7 +4497,7 @@ export interface operations {
             };
         };
     };
-    verifyEncounter: {
+    verifyEncounterLegacy: {
         parameters: {
             query?: never;
             header?: never;

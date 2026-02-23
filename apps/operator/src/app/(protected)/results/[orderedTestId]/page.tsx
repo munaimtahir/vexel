@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { useFeatureFlags, showSubmitAndVerify, showSubmitOnly } from '@/hooks/use-feature-flags';
 
 const SPECIMEN_READY_STATUSES = ['specimen_collected', 'specimen_received', 'partial_resulted', 'resulted', 'verified'];
 
@@ -101,6 +102,7 @@ export default function ResultsEntryPage() {
   const params = useParams();
   const orderedTestId = params.orderedTestId as string;
   const router = useRouter();
+  const { flags } = useFeatureFlags();
 
   const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -585,20 +587,24 @@ export default function ResultsEntryPage() {
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
-        <button
-          onClick={handleSubmit}
-          disabled={!specimenReady || submitting}
-          style={{ ...btnBase, background: specimenReady ? '#2563eb' : '#93c5fd', color: 'white', opacity: submitting ? 0.7 : 1 }}
-        >
-          {submitting ? 'Submitting…' : 'Submit'}
-        </button>
-        <button
-          onClick={handleSubmitAndVerify}
-          disabled={!specimenReady || verifying || verifyStatus !== 'idle'}
-          style={{ ...btnBase, background: specimenReady && verifyStatus === 'idle' ? '#16a34a' : '#86efac', color: 'white', opacity: verifying ? 0.7 : 1 }}
-        >
-          {verifying ? 'Verifying…' : 'Submit & Verify'}
-        </button>
+        {showSubmitOnly(flags) && (
+          <button
+            onClick={handleSubmit}
+            disabled={!specimenReady || submitting}
+            style={{ ...btnBase, background: specimenReady ? '#2563eb' : '#93c5fd', color: 'white', opacity: submitting ? 0.7 : 1 }}
+          >
+            {submitting ? 'Submitting…' : 'Submit'}
+          </button>
+        )}
+        {showSubmitAndVerify(flags) && (
+          <button
+            onClick={handleSubmitAndVerify}
+            disabled={!specimenReady || verifying || verifyStatus !== 'idle'}
+            style={{ ...btnBase, background: specimenReady && verifyStatus === 'idle' ? '#16a34a' : '#86efac', color: 'white', opacity: verifying ? 0.7 : 1 }}
+          >
+            {verifying ? 'Verifying…' : 'Submit & Verify'}
+          </button>
+        )}
       </div>
 
       {/* Toast */}

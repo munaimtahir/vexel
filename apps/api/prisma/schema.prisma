@@ -89,7 +89,7 @@ model User {
   refreshTokens RefreshToken[]
   auditEvents   AuditEvent[]
 
-  @@unique([email])
+  @@unique([tenantId, email])
   @@index([tenantId, status])
   @@map("users")
 }

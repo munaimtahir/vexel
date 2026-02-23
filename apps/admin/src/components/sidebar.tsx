@@ -6,7 +6,13 @@ import { logout } from '@/lib/auth';
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: '📊' },
   { href: '/tenants', label: 'Tenants', icon: '🏢' },
-  { href: '/users', label: 'Users & Roles', icon: '👥' },
+  {
+    href: '/users', label: 'Users & Roles', icon: '👥',
+    children: [
+      { href: '/users', label: 'Users' },
+      { href: '/roles', label: 'Roles' },
+    ],
+  },
   { href: '/feature-flags', label: 'Feature Flags', icon: '🚩' },
   { href: '/branding', label: 'Branding', icon: '🎨' },
   {
@@ -15,9 +21,18 @@ const NAV_ITEMS = [
       { href: '/catalog/tests', label: 'Tests' },
       { href: '/catalog/parameters', label: 'Parameters' },
       { href: '/catalog/panels', label: 'Panels' },
+      { href: '/catalog/reference-ranges', label: 'Reference Ranges' },
       { href: '/catalog/import-export', label: 'Import / Export' },
     ],
   },
+  {
+    href: '/patients', label: 'Patients', icon: '🏥',
+    children: [
+      { href: '/patients', label: 'Patients' },
+      { href: '/encounters', label: 'Encounters' },
+    ],
+  },
+  { href: '/documents', label: 'Documents', icon: '📄' },
   { href: '/audit', label: 'Audit Log', icon: '📋' },
   { href: '/jobs', label: 'Jobs', icon: '⚙️' },
   { href: '/system/health', label: 'System Health', icon: '❤️' },

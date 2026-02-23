@@ -10,12 +10,21 @@ import { Request } from 'express';
 
 @ApiTags('FeatureFlags')
 @Controller('feature-flags')
-@UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class FeatureFlagsController {
   constructor(private readonly svc: FeatureFlagsService) {}
 
+  /** Resolved flags for current tenant — JWT auth only, no special permission required.
+   *  Used by Operator/Admin UI for feature gating (sidebar, button visibility). */
+  @Get('resolved')
+  @UseGuards(JwtAuthGuard)
+  getResolvedFlags(@Req() req: Request) {
+    const user = (req as any).user;
+    return this.svc.getResolvedFlags(user.tenantId);
+  }
+
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions(Permission.FEATURE_FLAG_READ)
   listFlags(@Req() req: Request) {
     const user = (req as any).user;
@@ -23,14 +32,19 @@ export class FeatureFlagsController {
   }
 
   @Put(':key')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions(Permission.FEATURE_FLAG_SET)
   setFlag(
     @Req() req: Request,
     @Param('key') key: string,
-    @Body() body: { enabled: boolean },
+    @Body() body: { enabled: boolean; variantJson?: string },
     @Headers(CORRELATION_ID_HEADER) cid?: string,
   ) {
     const user = (req as any).user;
+    if (body.variantJson) {
+      const variant = JSON.parse(body.variantJson);
+      return this.svc.setVariantForTenant(user.tenantId, key, variant, user.userId, cid);
+    }
     return this.svc.setForTenant(user.tenantId, [{ key, enabled: body.enabled }], user.userId, cid);
   }
 }
