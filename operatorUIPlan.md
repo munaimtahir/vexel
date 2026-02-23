@@ -63,6 +63,14 @@ All Prisma schema changes written and migrated via `migrate deploy`. Prisma clie
 
 ## What Still Needs to Be Done
 
+**ALL WAVES COMPLETE** — commit `caffe7d` on `main`.
+
+See below for the full spec (preserved for reference) in case any page needs adjustment.
+
+---
+
+## Completed Features (all committed)
+
 ### WAVE 2 — OpenAPI + SDK (in_progress, partially started)
 
 **File:** `packages/contracts/openapi.yaml`
