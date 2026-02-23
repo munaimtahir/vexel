@@ -2,9 +2,9 @@
  * Auth utilities for Operator app.
  * Re-exports from shared SDK.
  */
-import { getTokens, getToken, setTokens, clearTokens, isAuthenticated } from '@vexel/sdk';
+import { getTokens, getToken, setTokens, clearTokens, isAuthenticated, decodeJwt } from '@vexel/sdk';
 
-export { getTokens, getToken, setTokens, clearTokens, isAuthenticated };
+export { getTokens, getToken, setTokens, clearTokens, isAuthenticated, decodeJwt };
 
 // App-specific domain logic (can be sourced from env in prod)
 const SHARED_DOMAIN = process.env.NEXT_PUBLIC_AUTH_DOMAIN;
