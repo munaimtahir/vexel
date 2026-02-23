@@ -115,6 +115,36 @@ export class CatalogJobsService {
     return job;
   }
 
+  async validateImportJob(tenantId: string, id: string) {
+    const job = await this.getImportJob(tenantId, id);
+    // Return current job state with validation summary
+    return {
+      jobId: job.id,
+      status: job.status,
+      validationStatus: job.status === 'failed' ? 'failed' : job.status === 'done' ? 'applied' : 'pending',
+      resultSummary: job.resultSummary ?? null,
+      errorSummary: job.errorSummary ?? null,
+    };
+  }
+
+  async applyImportJob(tenantId: string, id: string, actorUserId: string, correlationId: string) {
+    const job = await this.getImportJob(tenantId, id);
+    if (!['failed', 'queued'].includes(job.status)) {
+      throw new ConflictException(`Job ${id} cannot be applied in status '${job.status}'`);
+    }
+    return this.retryImportJob(tenantId, id, actorUserId, correlationId);
+  }
+
+  async getImportJobErrors(tenantId: string, id: string) {
+    const job = await this.getImportJob(tenantId, id);
+    return {
+      jobId: job.id,
+      status: job.status,
+      errorSummary: job.errorSummary ?? null,
+      resultSummary: job.resultSummary ?? null,
+    };
+  }
+
   async createExportJob(tenantId: string, actorUserId: string, correlationId: string) {
     const job = await this.prisma.jobRun.create({
       data: {

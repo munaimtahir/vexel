@@ -222,6 +222,7 @@ model Parameter {
   code          String
   name          String
   unit          String?
+  ucumCode      String?  // UCUM unit code (e.g. "mg/dL", "mmol/L")
   dataType      String   @default("numeric")
   isActive      Boolean  @default(true)
   externalId    String?
@@ -255,8 +256,8 @@ model TestParameterMapping {
   unitOverride String?
 
   tenant    Tenant      @relation(fields: [tenantId], references: [id])
-  test      CatalogTest @relation(fields: [testId], references: [id])
-  parameter Parameter   @relation(fields: [parameterId], references: [id])
+  test      CatalogTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  parameter Parameter   @relation(fields: [parameterId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, testId, parameterId])
   @@index([tenantId, testId])
@@ -272,8 +273,8 @@ model PanelTestMapping {
   displayOrder Int    @default(0)
 
   tenant Tenant       @relation(fields: [tenantId], references: [id])
-  panel  CatalogPanel @relation(fields: [panelId], references: [id])
-  test   CatalogTest  @relation(fields: [testId], references: [id])
+  panel  CatalogPanel @relation(fields: [panelId], references: [id], onDelete: Cascade)
+  test   CatalogTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, panelId, testId])
   @@index([tenantId, panelId])
@@ -375,7 +376,7 @@ model Encounter {
   id        String   @id @default(uuid())
   tenantId  String
   patientId String
-  status    String   @default("registered") // registered | lab_ordered | specimen_collected | resulted | verified | cancelled
+  status    String   @default("registered") // registered | lab_ordered | specimen_collected | specimen_received | resulted | verified | cancelled
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -410,14 +411,15 @@ model LabOrder {
 }
 
 model Specimen {
-  id         String    @id @default(uuid())
-  tenantId   String
-  labOrderId String    @unique
-  barcode    String
-  type       String
+  id          String    @id @default(uuid())
+  tenantId    String
+  labOrderId  String    @unique
+  barcode     String
+  type        String
   collectedAt DateTime?
-  status     String    @default("pending") // pending | collected | received | rejected
-  createdAt  DateTime  @default(now())
+  receivedAt  DateTime? // set when specimen arrives at lab (specimen_received step)
+  status      String    @default("pending") // pending | collected | received | rejected
+  createdAt   DateTime  @default(now())
 
   tenant   Tenant   @relation(fields: [tenantId], references: [id])
   labOrder LabOrder @relation(fields: [labOrderId], references: [id])
@@ -433,6 +435,7 @@ model LabResult {
   labOrderId     String    @unique
   value          String
   unit           String?
+  ucumCode       String?   // UCUM unit code for interoperability
   referenceRange String?
   flag           String?   // normal | high | low | critical
   resultedAt     DateTime  @default(now())

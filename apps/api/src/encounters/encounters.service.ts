@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { DocumentsService } from '../documents/documents.service';
@@ -132,6 +133,41 @@ export class EncountersService {
     ]);
 
     await this.audit.log({ tenantId, actorUserId, action: 'encounter.order-lab', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: newStatus, labOrderId: labOrder.id }, correlationId });
+
+    // Auto-generate RECEIPT document after order finalization (non-fatal)
+    try {
+      const test = await this.prisma.catalogTest.findUnique({ where: { id: resolvedTestId } });
+      const patient = (updatedEncounter as any).patient;
+      const receiptPayload = {
+        receiptNumber: `RCP-${labOrder.id.slice(0, 8).toUpperCase()}`,
+        issuedAt: new Date().toISOString(),
+        patientName: patient ? `${patient.firstName} ${patient.lastName}` : 'Unknown',
+        patientMrn: patient?.mrn ?? '',
+        items: [{
+          description: test?.name ?? 'Lab Test',
+          quantity: 1,
+          unitPrice: 0,
+          total: 0,
+        }],
+        subtotal: 0,
+        tax: 0,
+        grandTotal: 0,
+        encounterId,
+      };
+      await this.documentsService.generateDocument(
+        tenantId,
+        'RECEIPT',
+        receiptPayload as unknown as Record<string, unknown>,
+        encounterId,
+        'ENCOUNTER',
+        actorUserId,
+        correlationId ?? crypto.randomUUID(),
+      );
+    } catch (err) {
+      // Non-fatal: receipt generation failure must not block order placement
+      console.error('[encounters] Failed to auto-generate receipt after order-lab:', (err as Error).message);
+    }
+
     return updatedEncounter;
   }
 
@@ -178,6 +214,43 @@ export class EncountersService {
     ]).then(([_spec, _order, enc]) => [_spec, enc]);
 
     await this.audit.log({ tenantId, actorUserId, action: 'encounter.collect-specimen', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: 'specimen_collected', barcode }, correlationId });
+    return updatedEncounter;
+  }
+
+  async receiveSpecimen(
+    tenantId: string,
+    encounterId: string,
+    body: { labOrderId?: string; receivedAt?: string },
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    await this.assertLimsEnabled(tenantId);
+    const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
+
+    if (!VALID_TRANSITIONS[encounter.status]?.includes('specimen_received')) {
+      throw new ConflictException(`Cannot receive specimen for encounter in status '${encounter.status}'`);
+    }
+
+    const specimen = await this.prisma.specimen.findFirst({
+      where: { labOrder: { encounterId, tenantId }, tenantId },
+    });
+    if (!specimen) throw new NotFoundException('No specimen found for this encounter');
+
+    const receivedAt = body.receivedAt ? new Date(body.receivedAt) : new Date();
+
+    const [, updatedEncounter] = await this.prisma.$transaction([
+      this.prisma.specimen.update({
+        where: { id: specimen.id },
+        data: { status: 'received', receivedAt },
+      }),
+      this.prisma.encounter.update({
+        where: { id: encounterId },
+        data: { status: 'specimen_received' },
+        include: { patient: true, labOrders: { include: { specimen: true, result: true } } },
+      }),
+    ]);
+
+    await this.audit.log({ tenantId, actorUserId, action: 'encounter.receive-specimen', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: 'specimen_received', receivedAt: receivedAt.toISOString() }, correlationId });
     return updatedEncounter;
   }
 

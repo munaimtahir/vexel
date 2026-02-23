@@ -35,6 +35,27 @@ export class CatalogJobsController {
     return this.svc.getImportJob((req as any).user.tenantId, id);
   }
 
+  @Post('import-jobs/:id\\:validate')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.CATALOG_READ)
+  validateImportJob(@Req() req: Request, @Param('id') id: string) {
+    return this.svc.validateImportJob((req as any).user.tenantId, id);
+  }
+
+  @Post('import-jobs/:id\\:apply')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  applyImportJob(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.applyImportJob(user.tenantId, id, user.userId, correlationId ?? 'manual');
+  }
+
+  @Get('import-jobs/:id/errors')
+  @RequirePermissions(Permission.CATALOG_READ)
+  getImportJobErrors(@Req() req: Request, @Param('id') id: string) {
+    return this.svc.getImportJobErrors((req as any).user.tenantId, id);
+  }
+
   @Post('import-jobs/:id\\:retry')
   @RequirePermissions(Permission.JOB_RETRY)
   retryImportJob(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {

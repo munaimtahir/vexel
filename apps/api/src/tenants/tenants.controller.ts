@@ -8,6 +8,7 @@ import { PermissionsGuard } from '../rbac/permissions.guard';
 import { RequirePermissions } from '../rbac/require-permissions.decorator';
 import { Permission } from '../rbac/permissions';
 import { TenantsService } from './tenants.service';
+import { FeatureFlagsService } from '../feature-flags/feature-flags.service';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request } from 'express';
 
@@ -16,7 +17,10 @@ import { Request } from 'express';
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class TenantsController {
-  constructor(private readonly svc: TenantsService) {}
+  constructor(
+    private readonly svc: TenantsService,
+    private readonly featureFlags: FeatureFlagsService,
+  ) {}
 
   @Get()
   @RequirePermissions(Permission.TENANT_READ)
@@ -56,5 +60,22 @@ export class TenantsController {
     @Headers(CORRELATION_ID_HEADER) cid?: string,
   ) {
     return this.svc.updateConfig(id, body, (req as any).user.userId, cid);
+  }
+
+  @Get(':id/feature-flags')
+  @RequirePermissions(Permission.FEATURE_FLAG_READ)
+  getTenantFeatureFlags(@Param('id') id: string) {
+    return this.featureFlags.listForTenant(id);
+  }
+
+  @Put(':id/feature-flags')
+  @RequirePermissions(Permission.FEATURE_FLAG_SET)
+  setTenantFeatureFlags(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() body: { flags: Array<{ key: string; enabled: boolean }> },
+    @Headers(CORRELATION_ID_HEADER) cid?: string,
+  ) {
+    return this.featureFlags.setForTenant(id, body.flags, (req as any).user.userId, cid);
   }
 }

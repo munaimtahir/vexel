@@ -56,6 +56,14 @@ export class EncountersController {
     return this.svc.collectSpecimen(this.resolveTenantId(req), id, body, user.userId, correlationId);
   }
 
+  @Post(':id\\:receive-specimen')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  receiveSpecimen(@Req() req: Request, @Param('id') id: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.receiveSpecimen(this.resolveTenantId(req), id, body, user.userId, correlationId);
+  }
+
   @Post(':id\\:result')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.RESULT_ENTER)

@@ -4,7 +4,7 @@ import * as https from 'https';
 import * as http from 'http';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
-const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL ?? 'http://pdf-service:5002';
+const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
 
 interface RenderJobData {
   documentId: string;
@@ -142,15 +142,21 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
     // Upload to MinIO
     const storageKey = await uploadToStorage(tenantId, documentId, bytes);
 
-    // Auto-publish after successful upload
+    // Transition to RENDERED first (preserves state machine integrity)
     await prisma.document.update({
       where: { id: documentId },
       data: {
-        status: 'PUBLISHED',
+        status: 'RENDERED',
         pdfHash: pdfHash || null,
         storageKey,
-        publishedAt: new Date(),
       },
+    });
+    await writeAudit(tenantId, 'document.rendered', documentId, correlationId, { pdfHash, storageKey });
+
+    // Auto-publish: transition RENDERED → PUBLISHED
+    await prisma.document.update({
+      where: { id: documentId },
+      data: { status: 'PUBLISHED', publishedAt: new Date() },
     });
 
     await writeAudit(tenantId, 'document.published', documentId, correlationId, { pdfHash, storageKey });

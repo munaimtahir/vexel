@@ -28,6 +28,7 @@ function makeEncounter(status: string, tenantId = 'tenant-a') {
 function buildPrisma(encounterStatus = 'registered', tenantId = 'tenant-a') {
   const enc = makeEncounter(encounterStatus, tenantId);
   return {
+    tenantFeature: { findUnique: jest.fn().mockResolvedValue({ key: 'module.lims', enabled: true }) },
     patient: { findFirst: jest.fn().mockResolvedValue({ id: 'pat-1', tenantId }) },
     encounter: {
       findFirst: jest.fn().mockResolvedValue(enc),
@@ -38,7 +39,7 @@ function buildPrisma(encounterStatus = 'registered', tenantId = 'tenant-a') {
       count: jest.fn().mockResolvedValue(0),
       findMany: jest.fn().mockResolvedValue([]),
     },
-    catalogTest: { findFirst: jest.fn().mockResolvedValue({ id: 'test-1', tenantId }) },
+    catalogTest: { findFirst: jest.fn().mockResolvedValue({ id: 'test-1', tenantId }), findUnique: jest.fn().mockResolvedValue({ id: 'test-1', tenantId, name: 'Test', code: 'TEST' }) },
     labOrder: {
       create: jest.fn().mockResolvedValue({ id: 'lo-1' }),
       findFirst: jest.fn().mockResolvedValue({ id: 'lo-1', encounterId: 'enc-1', tenantId }),
@@ -83,7 +84,11 @@ describe('Encounter State Machine', () => {
   beforeEach(() => {
     prisma = buildPrisma();
     audit = buildAudit();
-    service = new EncountersService(prisma as any, audit as any, {} as any);
+    const docsMock = {
+      generateFromEncounter: jest.fn().mockResolvedValue({ document: {}, created: false }),
+      generateDocument: jest.fn().mockResolvedValue({ document: {}, created: true }),
+    };
+    service = new EncountersService(prisma as any, audit as any, docsMock as any);
   });
 
   it('Test 1: full state progression register → lab_ordered → specimen_collected → resulted → verified', async () => {
