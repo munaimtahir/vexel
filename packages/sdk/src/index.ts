@@ -11,4 +11,5 @@
  */
 
 export { createApiClient, type ApiClient } from './client';
+export * from './auth';
 export type { paths, components, operations } from './generated/api';

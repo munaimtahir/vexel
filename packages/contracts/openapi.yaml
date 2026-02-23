@@ -828,11 +828,23 @@ components:
           type: string
           format: date
           nullable: true
+        ageYears:
+          type: integer
+          nullable: true
         gender:
           type: string
           nullable: true
         mrn:
           type: string
+        mobile:
+          type: string
+          nullable: true
+        cnic:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -850,9 +862,13 @@ components:
           type: string
         patientId:
           type: string
+        encounterCode:
+          type: string
+          nullable: true
+          description: "LIMS Order ID e.g. VXL-2602-001"
         status:
           type: string
-          enum: [registered, lab_ordered, specimen_collected, resulted, verified, cancelled]
+          enum: [registered, lab_ordered, specimen_collected, specimen_received, partial_resulted, resulted, verified, cancelled]
         createdAt:
           type: string
           format: date-time
@@ -865,10 +881,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LabOrder'
+        specimenItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecimenItem'
 
     LabOrder:
       type: object
-      required: [id, tenantId, encounterId, testId, status, priority, createdAt]
+      required: [id, tenantId, encounterId, testId, status, resultStatus, priority, createdAt]
       properties:
         id:
           type: string
@@ -878,6 +898,9 @@ components:
           type: string
         testId:
           type: string
+        testNameSnapshot:
+          type: string
+          nullable: true
         test:
           type: object
           description: Resolved test definition (populated when available)
@@ -889,12 +912,29 @@ components:
               type: string
             name:
               type: string
+            specimenType:
+              type: string
+              nullable: true
             loincCode:
               type: string
               nullable: true
+        status:
+          type: string
+          enum: [ordered, specimen_collected, processing, resulted, verified, cancelled]
+        resultStatus:
+          type: string
+          enum: [PENDING, SUBMITTED]
+          default: PENDING
         priority:
           type: string
           enum: [routine, stat, urgent]
+        submittedAt:
+          type: string
+          format: date-time
+          nullable: true
+        submittedById:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -903,8 +943,10 @@ components:
           format: date-time
         specimen:
           $ref: '#/components/schemas/Specimen'
-        result:
-          $ref: '#/components/schemas/LabResult'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabResult'
 
     Specimen:
       type: object
@@ -933,7 +975,7 @@ components:
 
     LabResult:
       type: object
-      required: [id, tenantId, labOrderId, value, resultedAt]
+      required: [id, tenantId, labOrderId, value, enteredAt]
       properties:
         id:
           type: string
@@ -941,6 +983,12 @@ components:
           type: string
         labOrderId:
           type: string
+        parameterId:
+          type: string
+          nullable: true
+        parameterNameSnapshot:
+          type: string
+          nullable: true
         value:
           type: string
         unit:
@@ -953,10 +1001,13 @@ components:
           type: string
           enum: [normal, high, low, critical]
           nullable: true
-        resultedAt:
+        locked:
+          type: boolean
+          default: false
+        enteredAt:
           type: string
           format: date-time
-        resultedBy:
+        enteredById:
           type: string
           nullable: true
         verifiedAt:
@@ -966,6 +1017,251 @@ components:
         verifiedBy:
           type: string
           nullable: true
+
+    SpecimenItem:
+      type: object
+      required: [id, tenantId, encounterId, catalogSpecimenType, status, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        encounterId:
+          type: string
+        catalogSpecimenType:
+          type: string
+          description: "Exact specimen type e.g. 'EDTA Blood', 'Urine'"
+        status:
+          type: string
+          enum: [PENDING, COLLECTED, POSTPONED, RECEIVED]
+        barcode:
+          type: string
+          nullable: true
+        collectedAt:
+          type: string
+          format: date-time
+          nullable: true
+        collectedById:
+          type: string
+          nullable: true
+        postponedAt:
+          type: string
+          format: date-time
+          nullable: true
+        postponeReason:
+          type: string
+          nullable: true
+        receivedAt:
+          type: string
+          format: date-time
+          nullable: true
+        receivedById:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    TestParameter:
+      type: object
+      description: A catalog parameter definition with current value for results entry
+      properties:
+        parameterId:
+          type: string
+        name:
+          type: string
+        unit:
+          type: string
+          nullable: true
+        dataType:
+          type: string
+          enum: [number, text, select, boolean]
+          default: number
+        allowedValues:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: For dataType=select
+        referenceRange:
+          type: string
+          nullable: true
+        value:
+          type: string
+          nullable: true
+          description: Current entered value (if any)
+        flag:
+          type: string
+          enum: [normal, high, low, critical]
+          nullable: true
+        locked:
+          type: boolean
+          default: false
+          description: True if test submitted and value is non-empty
+
+    OrderedTestDetail:
+      type: object
+      description: Full detail for one test (LabOrder) including parameter schema and current values
+      required: [id, encounterId, testId, testName, resultStatus]
+      properties:
+        id:
+          type: string
+          description: LabOrder ID (orderedTestId)
+        encounterId:
+          type: string
+        encounterCode:
+          type: string
+          nullable: true
+        testId:
+          type: string
+        testName:
+          type: string
+        resultStatus:
+          type: string
+          enum: [PENDING, SUBMITTED]
+        submittedAt:
+          type: string
+          format: date-time
+          nullable: true
+        patient:
+          $ref: '#/components/schemas/Patient'
+        specimenStatus:
+          type: string
+          description: "Status of the specimen for entry gating"
+          nullable: true
+        parameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestParameter'
+
+    OrderedTestSummary:
+      type: object
+      description: Row item for results worklist
+      required: [id, encounterId, testName, resultStatus, createdAt]
+      properties:
+        id:
+          type: string
+          description: LabOrder ID
+        encounterId:
+          type: string
+        encounterCode:
+          type: string
+          nullable: true
+        testId:
+          type: string
+        testName:
+          type: string
+        resultStatus:
+          type: string
+          enum: [PENDING, SUBMITTED]
+        submittedAt:
+          type: string
+          format: date-time
+          nullable: true
+        filledCount:
+          type: integer
+          description: Number of parameters with values entered
+        totalCount:
+          type: integer
+          description: Total number of parameters in this test
+        specimenStatus:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        patient:
+          $ref: '#/components/schemas/Patient'
+
+    VerificationEncounterSummary:
+      type: object
+      description: Row item for verification worklist
+      required: [encounterId, submittedTestsCount, createdAt]
+      properties:
+        encounterId:
+          type: string
+        encounterCode:
+          type: string
+          nullable: true
+        submittedTestsCount:
+          type: integer
+        oldestSubmittedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        patient:
+          $ref: '#/components/schemas/Patient'
+
+    VerificationTestCard:
+      type: object
+      description: One test with only filled parameters for verification preview
+      required: [labOrderId, testName, resultStatus]
+      properties:
+        labOrderId:
+          type: string
+        testName:
+          type: string
+        resultStatus:
+          type: string
+          enum: [SUBMITTED, VERIFIED]
+        submittedAt:
+          type: string
+          format: date-time
+          nullable: true
+        filledParameters:
+          type: array
+          items:
+            type: object
+            properties:
+              parameterId:
+                type: string
+                nullable: true
+              name:
+                type: string
+              value:
+                type: string
+              unit:
+                type: string
+                nullable: true
+              referenceRange:
+                type: string
+                nullable: true
+              flag:
+                type: string
+                enum: [normal, high, low, critical]
+                nullable: true
+
+    SampleCollectionEncounter:
+      type: object
+      description: Row item for sample collection worklist
+      required: [encounterId, pendingCount, totalCount, createdAt]
+      properties:
+        encounterId:
+          type: string
+        encounterCode:
+          type: string
+          nullable: true
+        pendingCount:
+          type: integer
+        totalCount:
+          type: integer
+        testsCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        patient:
+          $ref: '#/components/schemas/Patient'
+        specimenItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecimenItem'
 
     Document:
       type: object
@@ -3049,6 +3345,11 @@ paths:
           in: query
           schema:
             type: string
+        - name: mobile
+          in: query
+          schema:
+            type: string
+          description: Search by mobile number (exact or partial match)
       responses:
         "200":
           description: Patients list
@@ -3073,7 +3374,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [firstName, lastName, mrn]
+              required: [firstName, lastName]
               properties:
                 firstName:
                   type: string
@@ -3082,10 +3383,19 @@ paths:
                 dateOfBirth:
                   type: string
                   format: date
+                ageYears:
+                  type: integer
                 gender:
+                  type: string
+                mobile:
+                  type: string
+                cnic:
+                  type: string
+                address:
                   type: string
                 mrn:
                   type: string
+                  description: "If omitted, server generates from tenant prefix"
       responses:
         "201":
           description: Created
@@ -3628,6 +3938,517 @@ paths:
                     nullable: true
                   message:
                     type: string
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Sample Collection ────────────────────────────────────────────
+
+  /sample-collection/worklist:
+    get:
+      operationId: getSampleCollectionWorklist
+      summary: List encounters with pending specimen items
+      tags: [SampleCollection]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [PENDING, POSTPONED, RECEIVED]
+            default: PENDING
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: "Default: 3 days ago"
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by MRN, patient name, or encounter code
+      responses:
+        "200":
+          description: Sample collection worklist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SampleCollectionEncounter'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /encounters/{encounterId}:collect-specimens:
+    post:
+      operationId: collectSpecimens
+      summary: Batch collect specimen items for an encounter
+      tags: [SampleCollection]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                specimenItemIds:
+                  type: array
+                  items:
+                    type: string
+                  description: "IDs of SpecimenItems to collect; empty = collect all PENDING"
+      responses:
+        "200":
+          description: Specimens collected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid state or no pending specimens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /encounters/{encounterId}:postpone-specimen:
+    post:
+      operationId: postponeSpecimen
+      summary: Postpone a specimen item with a reason
+      tags: [SampleCollection]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [specimenItemId, reason]
+              properties:
+                specimenItemId:
+                  type: string
+                reason:
+                  type: string
+                  minLength: 3
+      responses:
+        "200":
+          description: Specimen postponed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecimenItem'
+        "409":
+          description: Specimen not in postponable state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /encounters/{encounterId}:receive-specimens:
+    post:
+      operationId: receiveSpecimens
+      summary: Batch receive specimen items (requires lims.operator.sample.receiveSeparate.enabled)
+      tags: [SampleCollection]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                specimenItemIds:
+                  type: array
+                  items:
+                    type: string
+                  description: "IDs of SpecimenItems to receive; empty = receive all COLLECTED"
+      responses:
+        "200":
+          description: Specimens received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "403":
+          description: Feature flag disabled for tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Results (test-level) ─────────────────────────────────────────
+
+  /results/tests/pending:
+    get:
+      operationId: getPendingTests
+      summary: List tests pending result entry
+      tags: [Results]
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by MRN, patient name, order code, or test name
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Pending tests worklist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderedTestSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /results/tests/submitted:
+    get:
+      operationId: getSubmittedTests
+      summary: List tests submitted for verification
+      tags: [Results]
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Submitted tests list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderedTestSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /results/tests/{orderedTestId}:
+    get:
+      operationId: getOrderedTestDetail
+      summary: Get test detail with parameter schema and current values
+      tags: [Results]
+      parameters:
+        - name: orderedTestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ordered test with parameter values and lock state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderedTestDetail'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /results/tests/{orderedTestId}:save:
+    post:
+      operationId: saveTestResults
+      summary: Save draft result values for a test (does not change status)
+      tags: [Results]
+      parameters:
+        - name: orderedTestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [values]
+              properties:
+                values:
+                  type: array
+                  items:
+                    type: object
+                    required: [parameterId, value]
+                    properties:
+                      parameterId:
+                        type: string
+                      value:
+                        type: string
+      responses:
+        "200":
+          description: Values saved; test still in current status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderedTestDetail'
+        "403":
+          description: Sample not collected; entry blocked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+
+  /results/tests/{orderedTestId}:submit:
+    post:
+      operationId: submitTestResults
+      summary: Submit test results for verification (locks non-empty values)
+      tags: [Results]
+      parameters:
+        - name: orderedTestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Optional — submit without saving new values
+      responses:
+        "200":
+          description: Test submitted; non-empty values locked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderedTestDetail'
+        "403":
+          description: Sample not collected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+
+  /results/tests/{orderedTestId}:submit-and-verify:
+    post:
+      operationId: submitAndVerifyTest
+      summary: Submit + verify + trigger publish in one command (requires result.verify permission)
+      tags: [Results]
+      parameters:
+        - name: orderedTestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Optional body; command is idempotent
+      responses:
+        "200":
+          description: Test submitted and verified; document pipeline enqueued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderedTest:
+                    $ref: '#/components/schemas/OrderedTestDetail'
+                  documentJobId:
+                    type: string
+                    nullable: true
+        "403":
+          description: Insufficient permissions or sample not collected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+
+  # ─── Verification ─────────────────────────────────────────────────
+
+  /verification/encounters/pending:
+    get:
+      operationId: getVerificationQueue
+      summary: List encounters with submitted tests pending verification
+      tags: [Verification]
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Verification queue
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VerificationEncounterSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /verification/encounters/{encounterId}:
+    get:
+      operationId: getVerificationEncounterDetail
+      summary: Get encounter with submitted tests for verification (only filled parameters)
+      tags: [Verification]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounter verification detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encounter:
+                    $ref: '#/components/schemas/Encounter'
+                  patient:
+                    $ref: '#/components/schemas/Patient'
+                  submittedTestsCount:
+                    type: integer
+                  pendingVerificationCount:
+                    type: integer
+                  testCards:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VerificationTestCard'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /verification/encounters/{encounterId}:verify:
+    post:
+      operationId: verifyEncounter
+      summary: Verify all submitted tests for an encounter and trigger publish
+      tags: [Verification]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: No body required
+      responses:
+        "200":
+          description: Encounter verified; document pipeline enqueued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encounterId:
+                    type: string
+                  status:
+                    type: string
+                  documentJobId:
+                    type: string
+                    nullable: true
+        "409":
+          description: No submitted tests to verify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         "401":
           $ref: '#/components/responses/Unauthorized'
         "403":

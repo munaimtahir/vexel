@@ -12,6 +12,7 @@ const STATUS_OPTIONS = [
   { value: 'registered', label: 'Registered' },
   { value: 'lab_ordered', label: 'Ordered' },
   { value: 'specimen_collected', label: 'Collected' },
+  { value: 'specimen_received', label: 'Received' },
   { value: 'resulted', label: 'Resulted' },
   { value: 'verified', label: 'Verified' },
   { value: 'cancelled', label: 'Cancelled' },
@@ -19,9 +20,10 @@ const STATUS_OPTIONS = [
 
 function nextActionLink(enc: any): { text: string; href: string; disabled?: boolean } {
   switch (enc.status) {
-    case 'registered':         return { text: 'View', href: `/encounters/${enc.id}` };
+    case 'registered':         return { text: 'Place Order', href: `/encounters/${enc.id}/order` };
     case 'lab_ordered':        return { text: 'Collect Sample', href: `/encounters/${enc.id}/sample` };
     case 'specimen_collected': return { text: 'Enter Results', href: `/encounters/${enc.id}/results` };
+    case 'specimen_received':  return { text: 'Enter Results', href: `/encounters/${enc.id}/results` };
     case 'resulted':           return { text: 'Verify', href: `/encounters/${enc.id}/verify` };
     case 'verified':           return { text: 'View Reports', href: `/encounters/${enc.id}/reports` };
     case 'cancelled':          return { text: 'Cancelled', href: '#', disabled: true };

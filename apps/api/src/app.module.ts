@@ -17,6 +17,9 @@ import { PatientsModule } from './patients/patients.module';
 import { EncountersModule } from './encounters/encounters.module';
 import { DocumentsModule } from './documents/documents.module';
 import { StorageModule } from './storage/storage.module';
+import { ResultsModule } from './results/results.module';
+import { SampleCollectionModule } from './sample-collection/sample-collection.module';
+import { VerificationModule } from './verification/verification.module';
 
 @Module({
   imports: [
@@ -36,6 +39,9 @@ import { StorageModule } from './storage/storage.module';
     EncountersModule,
     DocumentsModule,
     StorageModule,
+    ResultsModule,
+    SampleCollectionModule,
+    VerificationModule,
   ],
 })
 export class AppModule implements NestModule {

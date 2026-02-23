@@ -96,7 +96,7 @@ export default function ResultEntryPage() {
 
   const orders: any[] = encounter.labOrders ?? [];
 
-  if (encounter.status !== 'specimen_collected') {
+  if (encounter.status !== 'specimen_collected' && encounter.status !== 'specimen_received') {
     return (
       <div>
         <div style={{ marginBottom: '16px' }}>
@@ -105,7 +105,7 @@ export default function ResultEntryPage() {
         <EncounterSummaryCard encounter={encounter} />
         <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '8px', padding: '16px 20px' }}>
           <p style={{ margin: 0, color: '#92400e', fontWeight: 500 }}>
-            ⚠ Encounter must be in <strong>specimen_collected</strong> status to enter results. Current: <strong>{encounter.status}</strong>
+            ⚠ Encounter must be in <strong>specimen_collected</strong> or <strong>specimen_received</strong> status to enter results. Current: <strong>{encounter.status}</strong>
           </p>
           <p style={{ margin: '8px 0 0' }}>
             {encounter.status === 'lab_ordered' && (

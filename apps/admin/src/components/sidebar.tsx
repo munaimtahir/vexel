@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { logout } from '@/lib/auth';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: '📊' },
@@ -24,6 +25,12 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
 
   return (
     <aside style={{
@@ -91,6 +98,26 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <div style={{ padding: '0 16px' }}>
+        <button
+          onClick={handleLogout}
+          style={{
+            width: '100%',
+            padding: '10px 0',
+            background: 'transparent',
+            border: '1px solid #475569',
+            borderRadius: '6px',
+            color: '#94a3b8',
+            cursor: 'pointer',
+            fontSize: '14px',
+            transition: 'all 0.15s',
+          }}
+          onMouseOver={(e) => { e.currentTarget.style.color = '#f8fafc'; e.currentTarget.style.borderColor = '#64748b'; }}
+          onMouseOut={(e) => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.borderColor = '#475569'; }}
+        >
+          Sign Out
+        </button>
+      </div>
     </aside>
   );
 }

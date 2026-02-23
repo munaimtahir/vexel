@@ -39,7 +39,7 @@ export class EncountersService {
       include: {
         patient: true,
         labOrders: {
-          include: { specimen: true, result: true, test: true },
+          include: { specimen: true, results: true, test: true },
         },
       },
     });
@@ -56,7 +56,7 @@ export class EncountersService {
     const [data, total] = await Promise.all([
       this.prisma.encounter.findMany({
         where,
-        include: { patient: true, labOrders: { include: { specimen: true, result: true } } },
+        include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: 'desc' },
@@ -128,11 +128,60 @@ export class EncountersService {
       this.prisma.encounter.update({
         where: { id: encounterId },
         data: { status: newStatus },
-        include: { patient: true, labOrders: { include: { specimen: true, result: true } } },
+        include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
       }),
     ]);
 
     await this.audit.log({ tenantId, actorUserId, action: 'encounter.order-lab', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: newStatus, labOrderId: labOrder.id }, correlationId });
+
+    // Generate encounterCode if not already set on encounter
+    if (!updatedEncounter.encounterCode) {
+      try {
+        const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+        const prefix = tenantConfig?.orderPrefix ?? 'VX';
+        const now = new Date();
+        const yymm = `${String(now.getFullYear()).slice(-2)}${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const count = await this.prisma.labOrder.count({
+          where: { tenantId, createdAt: { gte: monthStart, lt: monthEnd } },
+        });
+        const seq = String(count).padStart(3, '0');
+        const encounterCode = `${prefix}L-${yymm}-${seq}`;
+        await this.prisma.encounter.update({
+          where: { id: encounterId },
+          data: { encounterCode },
+        });
+        (updatedEncounter as any).encounterCode = encounterCode;
+      } catch (err) {
+        console.error('[encounters] Failed to generate encounterCode:', (err as Error).message);
+      }
+    }
+
+    // Auto-create SpecimenItem for the test's specimenType
+    try {
+      const catalogTest = await this.prisma.catalogTest.findUnique({ where: { id: resolvedTestId } });
+      if (catalogTest?.specimenType) {
+        await this.prisma.specimenItem.upsert({
+          where: {
+            tenantId_encounterId_catalogSpecimenType: {
+              tenantId,
+              encounterId,
+              catalogSpecimenType: catalogTest.specimenType,
+            },
+          },
+          create: {
+            tenantId,
+            encounterId,
+            catalogSpecimenType: catalogTest.specimenType,
+            status: 'PENDING',
+          },
+          update: {},
+        });
+      }
+    } catch (err) {
+      console.error('[encounters] Failed to auto-create SpecimenItem:', (err as Error).message);
+    }
 
     // Auto-generate RECEIPT document after order finalization (non-fatal)
     try {
@@ -209,7 +258,7 @@ export class EncountersService {
       this.prisma.encounter.update({
         where: { id: encounterId },
         data: { status: 'specimen_collected' },
-        include: { patient: true, labOrders: { include: { specimen: true, result: true } } },
+        include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
       }),
     ]).then(([_spec, _order, enc]) => [_spec, enc]);
 
@@ -246,7 +295,7 @@ export class EncountersService {
       this.prisma.encounter.update({
         where: { id: encounterId },
         data: { status: 'specimen_received' },
-        include: { patient: true, labOrders: { include: { specimen: true, result: true } } },
+        include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
       }),
     ]);
 
@@ -280,14 +329,14 @@ export class EncountersService {
           unit: body.unit,
           referenceRange: body.referenceRange,
           flag: body.flag,
-          resultedBy: actorUserId,
+          enteredById: actorUserId,
         },
       }),
       this.prisma.labOrder.update({ where: { id: body.labOrderId }, data: { status: 'resulted' } }),
       this.prisma.encounter.update({
         where: { id: encounterId },
         data: { status: 'resulted' },
-        include: { patient: true, labOrders: { include: { specimen: true, result: true } } },
+        include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
       }),
     ]).then(([_res, _order, enc]) => [_res, enc]);
 
@@ -310,7 +359,7 @@ export class EncountersService {
       return tx.encounter.update({
         where: { id: encounterId },
         data: { status: 'verified' },
-        include: { patient: true, labOrders: { include: { specimen: true, result: true } } },
+        include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
       });
     });
 
@@ -343,7 +392,7 @@ export class EncountersService {
     const updatedEncounter = await this.prisma.encounter.update({
       where: { id: encounterId },
       data: { status: 'cancelled' },
-      include: { patient: true, labOrders: { include: { specimen: true, result: true } } },
+      include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
     });
 
     await this.audit.log({ tenantId, actorUserId, action: 'encounter.cancel', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: 'cancelled' }, correlationId });

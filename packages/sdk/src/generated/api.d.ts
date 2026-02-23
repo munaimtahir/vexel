@@ -1200,6 +1200,227 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sample-collection/worklist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List encounters with pending specimen items */
+        get: operations["getSampleCollectionWorklist"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounterId}:collect-specimens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Batch collect specimen items for an encounter */
+        post: operations["collectSpecimens"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounterId}:postpone-specimen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Postpone a specimen item with a reason */
+        post: operations["postponeSpecimen"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounterId}:receive-specimens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Batch receive specimen items (requires lims.operator.sample.receiveSeparate.enabled) */
+        post: operations["receiveSpecimens"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/results/tests/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List tests pending result entry */
+        get: operations["getPendingTests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/results/tests/submitted": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List tests submitted for verification */
+        get: operations["getSubmittedTests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/results/tests/{orderedTestId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get test detail with parameter schema and current values */
+        get: operations["getOrderedTestDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/results/tests/{orderedTestId}:save": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Save draft result values for a test (does not change status) */
+        post: operations["saveTestResults"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/results/tests/{orderedTestId}:submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit test results for verification (locks non-empty values) */
+        post: operations["submitTestResults"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/results/tests/{orderedTestId}:submit-and-verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit + verify + trigger publish in one command (requires result.verify permission) */
+        post: operations["submitAndVerifyTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/verification/encounters/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List encounters with submitted tests pending verification */
+        get: operations["getVerificationQueue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/verification/encounters/{encounterId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get encounter with submitted tests for verification (only filled parameters) */
+        get: operations["getVerificationEncounterDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/verification/encounters/{encounterId}:verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify all submitted tests for an encounter and trigger publish */
+        post: operations["verifyEncounter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1547,8 +1768,12 @@ export interface components {
             lastName: string;
             /** Format: date */
             dateOfBirth?: string | null;
+            ageYears?: number | null;
             gender?: string | null;
             mrn: string;
+            mobile?: string | null;
+            cnic?: string | null;
+            address?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -1558,35 +1783,50 @@ export interface components {
             id: string;
             tenantId: string;
             patientId: string;
+            /** @description LIMS Order ID e.g. VXL-2602-001 */
+            encounterCode?: string | null;
             /** @enum {string} */
-            status: "registered" | "lab_ordered" | "specimen_collected" | "resulted" | "verified" | "cancelled";
+            status: "registered" | "lab_ordered" | "specimen_collected" | "specimen_received" | "partial_resulted" | "resulted" | "verified" | "cancelled";
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt?: string;
             patient?: components["schemas"]["Patient"];
             labOrders?: components["schemas"]["LabOrder"][];
+            specimenItems?: components["schemas"]["SpecimenItem"][];
         };
         LabOrder: {
             id: string;
             tenantId: string;
             encounterId: string;
             testId: string;
+            testNameSnapshot?: string | null;
             /** @description Resolved test definition (populated when available) */
             test?: {
                 id?: string;
                 code?: string;
                 name?: string;
+                specimenType?: string | null;
                 loincCode?: string | null;
             } | null;
             /** @enum {string} */
+            status: "ordered" | "specimen_collected" | "processing" | "resulted" | "verified" | "cancelled";
+            /**
+             * @default PENDING
+             * @enum {string}
+             */
+            resultStatus: "PENDING" | "SUBMITTED";
+            /** @enum {string} */
             priority: "routine" | "stat" | "urgent";
+            /** Format: date-time */
+            submittedAt?: string | null;
+            submittedById?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt?: string;
             specimen?: components["schemas"]["Specimen"];
-            result?: components["schemas"]["LabResult"];
+            results?: components["schemas"]["LabResult"][];
         };
         Specimen: {
             id: string;
@@ -1605,17 +1845,146 @@ export interface components {
             id: string;
             tenantId: string;
             labOrderId: string;
+            parameterId?: string | null;
+            parameterNameSnapshot?: string | null;
             value: string;
             unit?: string | null;
             referenceRange?: string | null;
             /** @enum {string|null} */
             flag?: "normal" | "high" | "low" | "critical" | null;
+            /** @default false */
+            locked: boolean;
             /** Format: date-time */
-            resultedAt: string;
-            resultedBy?: string | null;
+            enteredAt: string;
+            enteredById?: string | null;
             /** Format: date-time */
             verifiedAt?: string | null;
             verifiedBy?: string | null;
+        };
+        SpecimenItem: {
+            id: string;
+            tenantId: string;
+            encounterId: string;
+            /** @description Exact specimen type e.g. 'EDTA Blood', 'Urine' */
+            catalogSpecimenType: string;
+            /** @enum {string} */
+            status: "PENDING" | "COLLECTED" | "POSTPONED" | "RECEIVED";
+            barcode?: string | null;
+            /** Format: date-time */
+            collectedAt?: string | null;
+            collectedById?: string | null;
+            /** Format: date-time */
+            postponedAt?: string | null;
+            postponeReason?: string | null;
+            /** Format: date-time */
+            receivedAt?: string | null;
+            receivedById?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        /** @description A catalog parameter definition with current value for results entry */
+        TestParameter: {
+            parameterId?: string;
+            name?: string;
+            unit?: string | null;
+            /**
+             * @default number
+             * @enum {string}
+             */
+            dataType: "number" | "text" | "select" | "boolean";
+            /** @description For dataType=select */
+            allowedValues?: string[] | null;
+            referenceRange?: string | null;
+            /** @description Current entered value (if any) */
+            value?: string | null;
+            /** @enum {string|null} */
+            flag?: "normal" | "high" | "low" | "critical" | null;
+            /**
+             * @description True if test submitted and value is non-empty
+             * @default false
+             */
+            locked: boolean;
+        };
+        /** @description Full detail for one test (LabOrder) including parameter schema and current values */
+        OrderedTestDetail: {
+            /** @description LabOrder ID (orderedTestId) */
+            id: string;
+            encounterId: string;
+            encounterCode?: string | null;
+            testId: string;
+            testName: string;
+            /** @enum {string} */
+            resultStatus: "PENDING" | "SUBMITTED";
+            /** Format: date-time */
+            submittedAt?: string | null;
+            patient?: components["schemas"]["Patient"];
+            /** @description Status of the specimen for entry gating */
+            specimenStatus?: string | null;
+            parameters?: components["schemas"]["TestParameter"][];
+        };
+        /** @description Row item for results worklist */
+        OrderedTestSummary: {
+            /** @description LabOrder ID */
+            id: string;
+            encounterId: string;
+            encounterCode?: string | null;
+            testId?: string;
+            testName: string;
+            /** @enum {string} */
+            resultStatus: "PENDING" | "SUBMITTED";
+            /** Format: date-time */
+            submittedAt?: string | null;
+            /** @description Number of parameters with values entered */
+            filledCount?: number;
+            /** @description Total number of parameters in this test */
+            totalCount?: number;
+            specimenStatus?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            patient?: components["schemas"]["Patient"];
+        };
+        /** @description Row item for verification worklist */
+        VerificationEncounterSummary: {
+            encounterId: string;
+            encounterCode?: string | null;
+            submittedTestsCount: number;
+            /** Format: date-time */
+            oldestSubmittedAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            patient?: components["schemas"]["Patient"];
+        };
+        /** @description One test with only filled parameters for verification preview */
+        VerificationTestCard: {
+            labOrderId: string;
+            testName: string;
+            /** @enum {string} */
+            resultStatus: "SUBMITTED" | "VERIFIED";
+            /** Format: date-time */
+            submittedAt?: string | null;
+            filledParameters?: {
+                parameterId?: string | null;
+                name?: string;
+                value?: string;
+                unit?: string | null;
+                referenceRange?: string | null;
+                /** @enum {string|null} */
+                flag?: "normal" | "high" | "low" | "critical" | null;
+            }[];
+        };
+        /** @description Row item for sample collection worklist */
+        SampleCollectionEncounter: {
+            encounterId: string;
+            encounterCode?: string | null;
+            pendingCount: number;
+            totalCount: number;
+            testsCount?: number;
+            /** Format: date-time */
+            createdAt: string;
+            patient?: components["schemas"]["Patient"];
+            specimenItems?: components["schemas"]["SpecimenItem"][];
         };
         Document: {
             id?: string;
@@ -3734,6 +4103,8 @@ export interface operations {
                 limit?: components["parameters"]["LimitParam"];
                 lastName?: string;
                 mrn?: string;
+                /** @description Search by mobile number (exact or partial match) */
+                mobile?: string;
             };
             header?: never;
             path?: never;
@@ -3769,8 +4140,13 @@ export interface operations {
                     lastName: string;
                     /** Format: date */
                     dateOfBirth?: string;
+                    ageYears?: number;
                     gender?: string;
-                    mrn: string;
+                    mobile?: string;
+                    cnic?: string;
+                    address?: string;
+                    /** @description If omitted, server generates from tenant prefix */
+                    mrn?: string;
                 };
             };
         };
@@ -4343,6 +4719,466 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+        };
+    };
+    getSampleCollectionWorklist: {
+        parameters: {
+            query?: {
+                status?: "PENDING" | "POSTPONED" | "RECEIVED";
+                /** @description Default: 3 days ago */
+                fromDate?: string;
+                toDate?: string;
+                /** @description Search by MRN, patient name, or encounter code */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sample collection worklist */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["SampleCollectionEncounter"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    collectSpecimens: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description IDs of SpecimenItems to collect; empty = collect all PENDING */
+                    specimenItemIds?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Specimens collected */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Encounter"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Invalid state or no pending specimens */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    postponeSpecimen: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    specimenItemId: string;
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Specimen postponed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpecimenItem"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Specimen not in postponable state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    receiveSpecimens: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description IDs of SpecimenItems to receive; empty = receive all COLLECTED */
+                    specimenItemIds?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Specimens received */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Encounter"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Feature flag disabled for tenant */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getPendingTests: {
+        parameters: {
+            query?: {
+                /** @description Search by MRN, patient name, order code, or test name */
+                search?: string;
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pending tests worklist */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["OrderedTestSummary"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getSubmittedTests: {
+        parameters: {
+            query?: {
+                search?: string;
+                fromDate?: string;
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Submitted tests list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["OrderedTestSummary"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getOrderedTestDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderedTestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ordered test with parameter values and lock state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderedTestDetail"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    saveTestResults: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderedTestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    values: {
+                        parameterId: string;
+                        value: string;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Values saved; test still in current status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderedTestDetail"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Sample not collected; entry blocked */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+        };
+    };
+    submitTestResults: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderedTestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Test submitted; non-empty values locked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderedTestDetail"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Sample not collected */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+        };
+    };
+    submitAndVerifyTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderedTestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Test submitted and verified; document pipeline enqueued */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        orderedTest?: components["schemas"]["OrderedTestDetail"];
+                        documentJobId?: string | null;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Insufficient permissions or sample not collected */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getVerificationQueue: {
+        parameters: {
+            query?: {
+                search?: string;
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Verification queue */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["VerificationEncounterSummary"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getVerificationEncounterDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Encounter verification detail */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        encounter?: components["schemas"]["Encounter"];
+                        patient?: components["schemas"]["Patient"];
+                        submittedTestsCount?: number;
+                        pendingVerificationCount?: number;
+                        testCards?: components["schemas"]["VerificationTestCard"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    verifyEncounter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Encounter verified; document pipeline enqueued */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        encounterId?: string;
+                        status?: string;
+                        documentJobId?: string | null;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description No submitted tests to verify */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
 }

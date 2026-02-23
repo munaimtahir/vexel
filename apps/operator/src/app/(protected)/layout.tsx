@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { isAuthenticated, getToken } from '@/lib/auth';
+import { isAuthenticated, getToken, decodeJwt } from '@/lib/auth';
 import Sidebar from '@/components/sidebar';
 import QueryProvider from '@/components/query-provider';
 
@@ -11,11 +11,21 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
+    const token = getToken();
+    if (!token) {
       router.replace('/login');
-    } else {
-      setChecked(true);
+      return;
     }
+
+    const payload = decodeJwt(token);
+    const hasAccess = payload?.isSuperAdmin || payload?.permissions?.includes('module.operator');
+
+    if (!hasAccess) {
+      router.replace('/login?error=no_operator_access');
+      return;
+    }
+
+    setChecked(true);
   }, [router]);
 
   if (!checked) {

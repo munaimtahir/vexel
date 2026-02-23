@@ -140,9 +140,41 @@ export default function EncounterDetailPage() {
         createdAt={encounter.createdAt}
       />
 
-      {/* Action Buttons */}
+      {/* Action Buttons — one primary CTA per status */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        {['registered', 'lab_ordered', 'specimen_collected'].includes(status) && (
+        {status === 'registered' && (
+          <Link
+            href={`/encounters/${id}/order`}
+            style={{ padding: '10px 20px', background: '#8b5cf6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
+          >
+            Place Lab Order
+          </Link>
+        )}
+        {status === 'lab_ordered' && (
+          <Link
+            href={`/encounters/${id}/sample`}
+            style={{ padding: '10px 20px', background: '#f59e0b', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
+          >
+            Collect Sample
+          </Link>
+        )}
+        {status === 'specimen_collected' && (
+          <>
+            <Link
+              href={`/encounters/${id}/receive`}
+              style={{ padding: '10px 20px', background: '#0ea5e9', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
+            >
+              Receive Specimen
+            </Link>
+            <Link
+              href={`/encounters/${id}/results`}
+              style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
+            >
+              Enter Results
+            </Link>
+          </>
+        )}
+        {status === 'specimen_received' && (
           <Link
             href={`/encounters/${id}/results`}
             style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
@@ -158,7 +190,15 @@ export default function EncounterDetailPage() {
             Verify Results
           </Link>
         )}
-        {status !== 'cancelled' && (
+        {status === 'verified' && (
+          <Link
+            href={`/encounters/${id}/reports`}
+            style={{ padding: '10px 20px', background: '#059669', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
+          >
+            View / Download Report
+          </Link>
+        )}
+        {status !== 'cancelled' && status !== 'verified' && (
           <button
             onClick={() => setShowCancelModal(true)}
             style={{ padding: '10px 20px', background: 'white', color: '#ef4444', border: '1px solid #fca5a5', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}

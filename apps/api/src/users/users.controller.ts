@@ -16,13 +16,15 @@ import { Request } from 'express';
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class UsersController {
-  constructor(private readonly svc: UsersService) {}
+  constructor(private readonly svc: UsersService) { }
 
   @Get()
   @RequirePermissions(Permission.USER_READ)
   listUsers(@Req() req: Request, @Query() q: any) {
-    const user = (req as any).user;
-    return this.svc.list(user.tenantId, q);
+    const actor = (req as any).user;
+    // Allow super-admin to specify target tenant, otherwise use actor's tenant
+    const targetTenantId = (actor.isSuperAdmin && q.tenantId) ? q.tenantId : actor.tenantId;
+    return this.svc.list(targetTenantId, q);
   }
 
   @Post()
@@ -33,14 +35,18 @@ export class UsersController {
     @Body() body: any,
     @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
-    const user = (req as any).user;
-    return this.svc.create(user.tenantId, body, user.userId, correlationId);
+    const actor = (req as any).user;
+    // Allow super-admin to specify target tenant, otherwise use actor's tenant
+    const targetTenantId = (actor.isSuperAdmin && body.tenantId) ? body.tenantId : actor.tenantId;
+    return this.svc.create(targetTenantId, body, actor.userId, correlationId);
   }
 
   @Get(':id')
   @RequirePermissions(Permission.USER_READ)
-  getUser(@Req() req: Request, @Param('id') id: string) {
-    return this.svc.getById((req as any).user.tenantId, id);
+  getUser(@Req() req: Request, @Param('id') id: string, @Query('tenantId') tid?: string) {
+    const actor = (req as any).user;
+    const targetTenantId = (actor.isSuperAdmin && tid) ? tid : actor.tenantId;
+    return this.svc.getById(targetTenantId, id);
   }
 
   @Patch(':id')

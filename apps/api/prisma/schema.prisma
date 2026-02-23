@@ -29,6 +29,7 @@ model Tenant {
   patients      Patient[]
   labOrders     LabOrder[]
   specimens     Specimen[]
+  specimenItems SpecimenItem[]
   labResults    LabResult[]
   parameters           Parameter[]
   testParameterMappings TestParameterMapping[]
@@ -53,16 +54,18 @@ model TenantDomain {
 }
 
 model TenantConfig {
-  id           String  @id @default(uuid())
-  tenantId     String  @unique
-  brandName    String?
-  logoUrl      String?
-  primaryColor String?
-  reportHeader String?
-  reportFooter String?
-  headerText   String?
-  footerText   String?
-  updatedAt    DateTime @updatedAt
+  id                 String  @id @default(uuid())
+  tenantId           String  @unique
+  brandName          String?
+  logoUrl            String?
+  primaryColor       String?
+  reportHeader       String?
+  reportFooter       String?
+  headerText         String?
+  footerText         String?
+  registrationPrefix String? // e.g. "VX" — 2-3 letters; server appends -YY-SEQ
+  orderPrefix        String? // e.g. "VX" — server appends module letter + YYMM + SEQ
+  updatedAt          DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
@@ -86,7 +89,7 @@ model User {
   refreshTokens RefreshToken[]
   auditEvents   AuditEvent[]
 
-  @@unique([tenantId, email])
+  @@unique([email])
   @@index([tenantId, status])
   @@map("users")
 }
@@ -154,6 +157,7 @@ model TenantFeature {
   tenantId    String
   key         String   // e.g. module.lims, module.printing
   enabled     Boolean  @default(false)
+  variantJson String?  // JSON string for variant-type flags e.g. {"mode":"separate"}
   description String?
   updatedAt   DateTime @updatedAt
   updatedBy   String?  // userId who last changed it
@@ -173,7 +177,9 @@ model CatalogTest {
   code            String
   name            String
   description     String?
-  sampleType      String?
+  sampleType      String?  // legacy field kept for compat
+  specimenType    String?  // exact specimen type e.g. "EDTA Blood", "Clot Blood", "Urine"
+  price           Decimal? @db.Decimal(10,2) // price in PKR
   turnaroundHours Int?
   isActive        Boolean  @default(true)
   externalId      String?
@@ -354,58 +360,73 @@ model AuditEvent {
 // ─── LIMS ──────────────────────────────────────────────────────────────────
 
 model Patient {
-  id          String    @id @default(uuid())
-  tenantId    String
-  firstName   String
-  lastName    String
-  dateOfBirth DateTime?
-  gender      String?
-  mrn         String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id               String    @id @default(uuid())
+  tenantId         String
+  firstName        String
+  lastName         String
+  dateOfBirth      DateTime?
+  ageYears         Int?      // alternate to DOB; stored if DOB not known
+  gender           String?
+  mrn              String    // Registration Number — server-generated, permanent
+  mobile           String?
+  cnic             String?   // National ID (optional)
+  address          String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   tenant     Tenant      @relation(fields: [tenantId], references: [id])
   encounters Encounter[]
 
   @@unique([tenantId, mrn])
   @@index([tenantId, lastName])
+  @@index([tenantId, mobile])
   @@map("patients")
 }
 
 model Encounter {
-  id        String   @id @default(uuid())
-  tenantId  String
-  patientId String
-  status    String   @default("registered") // registered | lab_ordered | specimen_collected | specimen_received | resulted | verified | cancelled
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  tenantId      String
+  patientId     String
+  encounterCode String?  // LIMS Order ID — server-generated e.g. VXL-2602-001
+  status        String   @default("registered")
+  // registered | lab_ordered | specimen_collected | specimen_received
+  // | partial_resulted | resulted | verified | cancelled
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  tenant    Tenant     @relation(fields: [tenantId], references: [id])
-  patient   Patient    @relation(fields: [patientId], references: [id])
-  labOrders LabOrder[]
+  tenant        Tenant         @relation(fields: [tenantId], references: [id])
+  patient       Patient        @relation(fields: [patientId], references: [id])
+  labOrders     LabOrder[]
+  specimenItems SpecimenItem[]
 
+  @@unique([tenantId, encounterCode])
   @@index([tenantId, status])
   @@index([tenantId, patientId])
   @@map("encounters")
 }
 
 model LabOrder {
-  id          String   @id @default(uuid())
-  tenantId    String
-  encounterId String
-  testId      String
-  status      String   @default("ordered") // ordered | specimen_collected | processing | resulted | verified | cancelled
-  priority    String   @default("routine") // routine | stat | urgent
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String    @id @default(uuid())
+  tenantId        String
+  encounterId     String
+  testId          String
+  testNameSnapshot String?  // snapshot at order time
+  status          String    @default("ordered") // ordered | specimen_collected | processing | resulted | verified | cancelled
+  resultStatus    String    @default("PENDING") // PENDING | SUBMITTED
+  priority        String    @default("routine") // routine | stat | urgent
+  submittedAt     DateTime?
+  submittedById   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   tenant    Tenant      @relation(fields: [tenantId], references: [id])
   encounter Encounter   @relation(fields: [encounterId], references: [id])
   test      CatalogTest @relation(fields: [testId], references: [id])
   specimen  Specimen?
-  result    LabResult?
+  results   LabResult[]
 
   @@index([tenantId, status])
+  @@index([tenantId, resultStatus])
   @@index([tenantId, encounterId])
   @@map("lab_orders")
 }
@@ -417,7 +438,7 @@ model Specimen {
   barcode     String
   type        String
   collectedAt DateTime?
-  receivedAt  DateTime? // set when specimen arrives at lab (specimen_received step)
+  receivedAt  DateTime?
   status      String    @default("pending") // pending | collected | received | rejected
   createdAt   DateTime  @default(now())
 
@@ -429,24 +450,56 @@ model Specimen {
   @@map("specimens")
 }
 
+// One SpecimenItem per unique catalogSpecimenType per encounter
+// Auto-created when lab order is placed; groups tests by specimen type
+model SpecimenItem {
+  id                  String    @id @default(uuid())
+  tenantId            String
+  encounterId         String
+  catalogSpecimenType String    // exact value from CatalogTest.specimenType e.g. "EDTA Blood"
+  status              String    @default("PENDING") // PENDING | COLLECTED | POSTPONED | RECEIVED
+  barcode             String?   // system-generated if barcode feature flag enabled
+  collectedAt         DateTime?
+  collectedById       String?
+  postponedAt         DateTime?
+  postponedById       String?
+  postponeReason      String?
+  receivedAt          DateTime?
+  receivedById        String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  encounter Encounter @relation(fields: [encounterId], references: [id])
+
+  @@unique([tenantId, encounterId, catalogSpecimenType])
+  @@index([tenantId, status])
+  @@index([tenantId, encounterId])
+  @@map("specimen_items")
+}
+
 model LabResult {
-  id             String    @id @default(uuid())
-  tenantId       String
-  labOrderId     String    @unique
-  value          String
-  unit           String?
-  ucumCode       String?   // UCUM unit code for interoperability
-  referenceRange String?
-  flag           String?   // normal | high | low | critical
-  resultedAt     DateTime  @default(now())
-  resultedBy     String?
-  verifiedAt     DateTime?
-  verifiedBy     String?
+  id                   String    @id @default(uuid())
+  tenantId             String
+  labOrderId           String
+  parameterId          String?   // null for legacy single-value results
+  parameterNameSnapshot String?  // snapshot at entry time
+  value                String
+  unit                 String?
+  ucumCode             String?
+  referenceRange       String?
+  flag                 String?   // normal | high | low | critical
+  locked               Boolean   @default(false) // true once test is submitted
+  enteredAt            DateTime  @default(now())
+  enteredById          String?
+  verifiedAt           DateTime?
+  verifiedBy           String?
 
   tenant   Tenant   @relation(fields: [tenantId], references: [id])
   labOrder LabOrder @relation(fields: [labOrderId], references: [id])
 
   @@index([tenantId])
+  @@index([tenantId, labOrderId])
   @@map("lab_results")
 }
 

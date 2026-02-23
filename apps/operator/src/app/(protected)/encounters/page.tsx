@@ -28,6 +28,7 @@ export default function EncountersPage() {
     registered: '#3b82f6',
     lab_ordered: '#8b5cf6',
     specimen_collected: '#f59e0b',
+    specimen_received: '#0ea5e9',
     resulted: '#10b981',
     verified: '#059669',
     cancelled: '#ef4444',

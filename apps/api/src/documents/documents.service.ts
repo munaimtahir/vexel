@@ -208,7 +208,7 @@ export class DocumentsService {
         labOrders: {
           include: {
             test: true,
-            result: true,
+            results: true,
             specimen: true,
           },
         },
@@ -241,13 +241,13 @@ export class DocumentsService {
       tests: encounter.labOrders.map((order) => ({
         testCode: (order as any).test?.code ?? order.id,
         testName: (order as any).test?.name ?? 'Unknown',
-        parameters: (order as any).result ? [{
+        parameters: (order as any).results?.[0] ? [{
           parameterCode: 'result',
           parameterName: 'Result',
-          value: (order as any).result.value,
-          unit: (order as any).result.unit ?? undefined,
-          referenceRange: (order as any).result.referenceRange ?? undefined,
-          flag: (order as any).result.flag ?? undefined,
+          value: (order as any).results[0].value,
+          unit: (order as any).results[0].unit ?? undefined,
+          referenceRange: (order as any).results[0].referenceRange ?? undefined,
+          flag: (order as any).results[0].flag ?? undefined,
         }] : [],
       })),
       tenantName: tenantConfig?.brandName ?? tenantId,

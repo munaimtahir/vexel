@@ -23,7 +23,13 @@ export class PatientsController {
   @Get()
   @RequirePermissions(Permission.PATIENT_MANAGE)
   list(@Req() req: Request, @Query() q: any) {
-    return this.svc.list(this.resolveTenantId(req), q);
+    return this.svc.list(this.resolveTenantId(req), {
+      page: q.page ? Number(q.page) : undefined,
+      limit: q.limit ? Number(q.limit) : undefined,
+      lastName: q.lastName,
+      mrn: q.mrn,
+      mobile: q.mobile,
+    });
   }
 
   @Post()

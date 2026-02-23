@@ -4,8 +4,10 @@ import { useRouter } from 'next/navigation';
 import { clearTokens } from '@/lib/auth';
 
 const NAV_ITEMS = [
-  { label: 'Worklist', href: '/worklist', icon: '📋' },
   { label: 'New Registration', href: '/registrations/new', icon: '➕' },
+  { label: 'Sample Collection', href: '/sample-collection', icon: '🧪' },
+  { label: 'Results', href: '/results', icon: '📋' },
+  { label: 'Verification', href: '/verification', icon: '✅' },
   { label: 'Encounters', href: '/encounters', icon: '🏥' },
   { label: 'Patients', href: '/patients', icon: '👤' },
 ];
@@ -46,23 +48,6 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
                 <span>{item.icon}</span>
                 {item.label}
               </Link>
-              {item.href === '/patients' && (
-                <Link
-                  href="/patients/new"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '8px 20px 8px 44px',
-                    color: currentPath === '/patients/new' ? '#f1f5f9' : '#64748b',
-                    background: currentPath === '/patients/new' ? '#334155' : 'transparent',
-                    textDecoration: 'none',
-                    fontSize: '13px',
-                  }}
-                >
-                  + New Patient
-                </Link>
-              )}
             </div>
           );
         })}

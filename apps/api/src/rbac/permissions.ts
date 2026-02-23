@@ -49,6 +49,10 @@ export enum Permission {
   // Documents
   DOCUMENT_GENERATE = 'document.generate',
   DOCUMENT_PUBLISH = 'document.publish',
+
+  // Module access
+  MODULE_ADMIN = 'module.admin',
+  MODULE_OPERATOR = 'module.operator',
 }
 
 export const ALL_PERMISSIONS = Object.values(Permission);
