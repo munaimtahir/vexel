@@ -1,13 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { isAuthenticated, getToken, decodeJwt } from '@/lib/auth';
-import Sidebar from '@/components/sidebar';
+import { useRouter } from 'next/navigation';
+import { getToken, decodeJwt } from '@/lib/auth';
 import QueryProvider from '@/components/query-provider';
 
+/** Auth guard only — no sidebar here. Sidebar lives in /lims/layout.tsx */
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pathname = usePathname();
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
@@ -16,34 +15,22 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       router.replace('/login');
       return;
     }
-
     const payload = decodeJwt(token);
     const hasAccess = payload?.isSuperAdmin || payload?.permissions?.includes('module.operator');
-
     if (!hasAccess) {
       router.replace('/login?error=no_operator_access');
       return;
     }
-
     setChecked(true);
   }, [router]);
 
   if (!checked) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#64748b' }}>Loading...</p>
+        <p style={{ color: '#64748b' }}>Loading…</p>
       </div>
     );
   }
 
-  return (
-    <QueryProvider>
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <Sidebar currentPath={pathname} />
-        <main style={{ flex: 1, padding: '32px', background: '#f8fafc', overflowY: 'auto' }}>
-          {children}
-        </main>
-      </div>
-    </QueryProvider>
-  );
+  return <QueryProvider>{children}</QueryProvider>;
 }

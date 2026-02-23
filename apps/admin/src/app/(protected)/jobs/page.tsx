@@ -15,10 +15,10 @@ export default function JobsPage() {
   async function load() {
     const api = getApiClient(getToken() ?? undefined);
     const [allRes, failedRes, importRes, exportRes, failedDocsRes] = await Promise.allSettled([
-      api.GET('/jobs' as any),
-      api.GET('/jobs/failed' as any),
-      api.GET('/catalog/import-jobs' as any),
-      api.GET('/catalog/export-jobs' as any),
+      api.GET('/jobs' as any, {}),
+      api.GET('/jobs/failed' as any, {}),
+      api.GET('/catalog/import-jobs' as any, {}),
+      api.GET('/catalog/export-jobs' as any, {}),
       api.GET('/documents' as any, { params: { query: { status: 'FAILED', limit: 10 } as any } }),
     ]);
     if (allRes.status === 'fulfilled') setJobs(allRes.value.data?.data ?? []);
@@ -93,13 +93,13 @@ export default function JobsPage() {
   );
 }
 
-function DocRenderTable({ docs }: { docs: any[] }) {
+function DocRenderTable({ docs, onRetry, retrying }: { docs: any[]; onRetry: (id: string) => void; retrying: string | null }) {
   return (
     <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
         <thead style={{ background: '#f8fafc' }}>
           <tr>
-            {['Document ID', 'Type', 'Status', 'Error', 'Created'].map((h) => (
+            {['Document ID', 'Type', 'Status', 'Error', 'Created', ''].map((h) => (
               <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: '#64748b', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
             ))}
           </tr>
@@ -112,10 +112,14 @@ function DocRenderTable({ docs }: { docs: any[] }) {
               <td style={{ padding: '10px 12px' }}>
                 <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: '#fee2e2', color: '#991b1b' }}>{d.status}</span>
               </td>
-              <td style={{ padding: '10px 12px', color: '#dc2626', fontSize: '12px', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {d.errorMessage ?? '—'}
-              </td>
+              <td style={{ padding: '10px 12px', color: '#dc2626', fontSize: '12px', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.errorMessage ?? '—'}</td>
               <td style={{ padding: '10px 12px', color: '#94a3b8', fontSize: '11px' }}>{new Date(d.createdAt).toLocaleString()}</td>
+              <td style={{ padding: '10px 12px' }}>
+                <button onClick={() => onRetry(d.id)} disabled={retrying === d.id}
+                  style={{ padding: '4px 10px', fontSize: '12px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: '4px', cursor: 'pointer' }}>
+                  {retrying === d.id ? '...' : 'Re-publish'}
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -124,7 +128,7 @@ function DocRenderTable({ docs }: { docs: any[] }) {
   );
 }
 
-function JobTable({ jobs, onRetry, retrying }: any) {
+function JobTable({ jobs, onRetry, retrying, expanded, onExpand }: any) {
   const statusColors: any = {
     failed: { bg: '#fee2e2', text: '#991b1b' },
     completed: { bg: '#dcfce7', text: '#166534' },
@@ -145,25 +149,46 @@ function JobTable({ jobs, onRetry, retrying }: any) {
         <tbody>
           {jobs.map((j: any) => {
             const colors = statusColors[j.status] ?? { bg: '#f1f5f9', text: '#475569' };
+            const isExpanded = expanded === j.id;
             return (
-              <tr key={j.id} style={{ borderTop: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: '#94a3b8' }}>{j.id.slice(0, 10)}…</td>
-                <td style={{ padding: '10px 12px' }}>{j.queue}</td>
-                <td style={{ padding: '10px 12px' }}>{j.name ?? '—'}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>{j.status}</span>
-                </td>
-                <td style={{ padding: '10px 12px', color: '#64748b' }}>{j.attemptsMade ?? 0}</td>
-                <td style={{ padding: '10px 12px', color: '#94a3b8', fontSize: '11px' }}>{j.createdAt ? new Date(j.createdAt).toLocaleString() : '—'}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  {j.status === 'failed' && (
-                    <button onClick={() => onRetry(j.id)} disabled={retrying === j.id}
-                      style={{ padding: '4px 10px', fontSize: '12px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: '4px', cursor: 'pointer' }}>
-                      {retrying === j.id ? 'Retrying...' : 'Retry'}
-                    </button>
-                  )}
-                </td>
-              </tr>
+              <>
+                <tr key={j.id} style={{ borderTop: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: '#94a3b8' }}>{j.id.slice(0, 10)}…</td>
+                  <td style={{ padding: '10px 12px' }}>{j.queue}</td>
+                  <td style={{ padding: '10px 12px' }}>{j.name ?? '—'}</td>
+                  <td style={{ padding: '10px 12px' }}>
+                    <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>{j.status}</span>
+                  </td>
+                  <td style={{ padding: '10px 12px', color: '#64748b' }}>{j.attemptsMade ?? 0}</td>
+                  <td style={{ padding: '10px 12px', color: '#94a3b8', fontSize: '11px' }}>{j.createdAt ? new Date(j.createdAt).toLocaleString() : '—'}</td>
+                  <td style={{ padding: '10px 12px' }}>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      {j.status === 'failed' && (
+                        <button onClick={() => onRetry(j.id)} disabled={retrying === j.id}
+                          style={{ padding: '4px 10px', fontSize: '12px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: '4px', cursor: 'pointer' }}>
+                          {retrying === j.id ? '...' : 'Retry'}
+                        </button>
+                      )}
+                      {(j.failedReason || j.stacktrace) && (
+                        <button onClick={() => onExpand(isExpanded ? null : j.id)}
+                          style={{ padding: '4px 10px', fontSize: '12px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: 'pointer' }}>
+                          {isExpanded ? 'Hide' : 'Details'}
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+                {isExpanded && (
+                  <tr style={{ borderTop: '1px solid #f1f5f9', background: '#fff7ed' }}>
+                    <td colSpan={7} style={{ padding: '12px 16px' }}>
+                      <div style={{ fontSize: '12px', color: '#c2410c', marginBottom: '6px', fontWeight: 600 }}>Failure Reason:</div>
+                      <pre style={{ fontSize: '11px', color: '#7c2d12', overflow: 'auto', maxHeight: '200px', margin: 0, background: '#fef3c7', padding: '10px', borderRadius: '4px' }}>
+                        {j.failedReason ?? ''}{j.stacktrace ? '\n\n' + (Array.isArray(j.stacktrace) ? j.stacktrace.join('\n') : j.stacktrace) : ''}
+                      </pre>
+                    </td>
+                  </tr>
+                )}
+              </>
             );
           })}
         </tbody>

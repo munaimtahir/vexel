@@ -8,19 +8,28 @@ export default function DashboardPage() {
   const [health, setHealth] = useState<any>(null);
   const [failedCount, setFailedCount] = useState<number | null>(null);
   const [recentAudit, setRecentAudit] = useState<any[]>([]);
+  const [domainStats, setDomainStats] = useState<{ patients: number | null; encounters: number | null; documents: number | null }>({ patients: null, encounters: null, documents: null });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       const api = getApiClient(getToken() ?? undefined);
-      const [healthRes, countRes, auditRes] = await Promise.allSettled([
+      const [healthRes, countRes, auditRes, pRes, eRes, dRes] = await Promise.allSettled([
         api.GET('/health'),
         api.GET('/jobs/failed-count'),
         api.GET('/audit-events', { params: { query: { limit: 10, page: 1 } } }),
+        api.GET('/patients' as any, { params: { query: { limit: 1, page: 1 } } }),
+        api.GET('/encounters' as any, { params: { query: { limit: 1, page: 1 } } }),
+        api.GET('/documents' as any, { params: { query: { limit: 1, page: 1 } } }),
       ]);
       if (healthRes.status === 'fulfilled') setHealth(healthRes.value.data);
       if (countRes.status === 'fulfilled') setFailedCount(countRes.value.data?.count ?? 0);
       if (auditRes.status === 'fulfilled') setRecentAudit(auditRes.value.data?.data ?? []);
+      setDomainStats({
+        patients: pRes.status === 'fulfilled' ? ((pRes.value.data as any)?.total ?? null) : null,
+        encounters: eRes.status === 'fulfilled' ? ((eRes.value.data as any)?.total ?? null) : null,
+        documents: dRes.status === 'fulfilled' ? ((dRes.value.data as any)?.total ?? null) : null,
+      });
       setLoading(false);
     }
     load();
@@ -31,10 +40,13 @@ export default function DashboardPage() {
   return (
     <div>
       <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: '#1e293b' }}>Dashboard</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         <StatCard title="API Status" value={health?.status ?? 'unknown'} ok={health?.status === 'ok'} href="/system/health" />
         <StatCard title="Failed Jobs" value={String(failedCount ?? '—')} ok={failedCount === 0} href="/jobs" />
-        <StatCard title="Uptime" value={health?.uptime ? `${Math.floor(health.uptime / 60)}m` : '—'} href="/system/health" />
+        <StatCard title="Uptime" value={health?.uptime ? `${Math.floor(health.uptime / 3600)}h ${Math.floor((health.uptime % 3600) / 60)}m` : '—'} href="/system/health" />
+        <StatCard title="Patients" value={domainStats.patients != null ? String(domainStats.patients) : '—'} href="/patients" />
+        <StatCard title="Encounters" value={domainStats.encounters != null ? String(domainStats.encounters) : '—'} href="/encounters" />
+        <StatCard title="Documents" value={domainStats.documents != null ? String(domainStats.documents) : '—'} href="/documents" />
       </div>
       <section style={{ background: 'white', borderRadius: '8px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>

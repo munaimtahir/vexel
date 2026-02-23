@@ -65,7 +65,8 @@ export function Sidebar() {
       </div>
       <nav style={{ flex: 1, padding: '16px 0' }}>
         {NAV_ITEMS.map((item) => {
-          const isParentActive = pathname === item.href || pathname.startsWith(item.href + '/');
+          const isParentActive = pathname === item.href || pathname.startsWith(item.href + '/')
+            || (item.children?.some((c) => pathname === c.href || pathname.startsWith(c.href + '/')) ?? false);
           return (
             <div key={item.href}>
               <Link
