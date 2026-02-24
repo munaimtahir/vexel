@@ -83,8 +83,30 @@ export class EncountersController {
   @Post(':id\\:cancel')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
-  cancel(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+  cancel(@Req() req: Request, @Param('id') id: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
-    return this.svc.cancel(this.resolveTenantId(req), id, user.userId, correlationId);
+    return this.svc.cancel(this.resolveTenantId(req), id, user.userId, correlationId, body?.reason);
+  }
+
+  @Get(':id/financials')
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  getFinancials(@Req() req: Request, @Param('id') id: string) {
+    return this.svc.getFinancials(this.resolveTenantId(req), id);
+  }
+
+  @Post(':id\\:collect-due')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  collectDue(@Req() req: Request, @Param('id') id: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.collectDue(this.resolveTenantId(req), id, body, user.userId, correlationId);
+  }
+
+  @Post(':id\\:apply-discount')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  applyDiscount(@Req() req: Request, @Param('id') id: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.applyDiscount(this.resolveTenantId(req), id, body, user.userId, correlationId);
   }
 }

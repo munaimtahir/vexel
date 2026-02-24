@@ -104,6 +104,7 @@ export default function WorklistPage() {
                 const action = nextActionLink(enc);
                 const p = enc.patient;
                 const name = p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : enc.patientId ?? '—';
+                const hasDue = (enc.labOrders ?? []).some((o: any) => Number(o.dueAmount) > 0);
                 return (
                   <tr key={enc.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '12px 16px', color: '#475569' }}>
@@ -120,6 +121,11 @@ export default function WorklistPage() {
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <EncounterStatusBadge status={enc.status} />
+                      {hasDue && enc.status !== 'cancelled' && (
+                        <span style={{ marginLeft: '6px', padding: '1px 7px', background: '#fee2e2', color: '#dc2626', borderRadius: '999px', fontSize: '11px', fontWeight: 700, verticalAlign: 'middle' }}>
+                          DUE
+                        </span>
+                      )}
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       {action.disabled ? (

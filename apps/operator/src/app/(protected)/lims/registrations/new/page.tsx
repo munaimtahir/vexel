@@ -179,7 +179,7 @@ export default function NewRegistrationPage() {
 
   const addTest = (t: any) => {
     if (selectedTests.some(x => x.id === t.id)) return;
-    setSelectedTests(prev => [...prev, { id: t.id, name: t.name, code: t.code ?? '', price: (t as any).price ?? null }]);
+    setSelectedTests(prev => [...prev, { id: t.id, name: t.name, code: t.code ?? '', price: Number((t as any).price) || null }]);
     setTestSearch('');
     setTestDropOpen(false);
     setTestDropIdx(-1);
@@ -292,11 +292,24 @@ export default function NewRegistrationPage() {
       if (encErr || !enc) { setSaveError('Failed to create encounter'); return; }
       const encounterId = (enc as any).id;
 
-      for (const test of selectedTests) {
+      const discountPctNum = parseFloat(discountPct) || 0;
+      for (let ti = 0; ti < selectedTests.length; ti++) {
+        const test = selectedTests[ti];
         // @ts-ignore
         await api.POST('/encounters/{encounterId}:order-lab', {
           params: { path: { encounterId } },
-          body: { testId: test.id, priority: 'routine' } as any,
+          body: {
+            testId: test.id,
+            priority: 'routine',
+            ...(ti === 0 ? {
+              totalAmount: total,
+              discountAmount: discPKRNum,
+              discountPct: discountPctNum,
+              payableAmount: total - discPKRNum,
+              amountPaid: paidNum,
+              dueAmount: Math.max(0, (total - discPKRNum) - paidNum),
+            } : {}),
+          } as any,
         });
       }
 

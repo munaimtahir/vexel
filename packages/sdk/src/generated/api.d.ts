@@ -1377,6 +1377,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/encounters/{encounterId}/financials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getEncounterFinancials"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounterId}:collect-due": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["collectDue"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounterId}:apply-discount": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["applyDiscount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/results/tests/pending": {
         parameters: {
             query?: never;
@@ -1950,8 +1998,40 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt?: string;
+            totalAmount?: number | null;
+            discountAmount?: number | null;
+            discountPct?: number | null;
+            payableAmount?: number | null;
+            amountPaid?: number | null;
+            dueAmount?: number | null;
             specimen?: components["schemas"]["Specimen"];
             results?: components["schemas"]["LabResult"][];
+        };
+        LabOrderFinancials: {
+            totalAmount?: number | null;
+            discountAmount?: number | null;
+            discountPct?: number | null;
+            payableAmount?: number | null;
+            amountPaid?: number | null;
+            dueAmount?: number | null;
+            /** Format: date-time */
+            cancelledAt?: string | null;
+            cancelReason?: string | null;
+        };
+        CashTransaction: {
+            id?: string;
+            /** @enum {string} */
+            type?: "PAYMENT" | "DISCOUNT" | "REFUND" | "DUE_RECEIVED" | "CANCELLATION_REFUND";
+            amount?: number;
+            actorUserId?: string;
+            reason?: string | null;
+            /** Format: date-time */
+            createdAt?: string;
+            actor?: {
+                id?: string;
+                firstName?: string;
+                lastName?: string;
+            };
         };
         Specimen: {
             id: string;
@@ -4658,6 +4738,12 @@ export interface operations {
                      * @enum {string}
                      */
                     priority?: "routine" | "stat" | "urgent";
+                    totalAmount?: number | null;
+                    discountAmount?: number | null;
+                    discountPct?: number | null;
+                    payableAmount?: number | null;
+                    amountPaid?: number | null;
+                    dueAmount?: number | null;
                 };
             };
         };
@@ -4803,7 +4889,13 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    reason?: string;
+                };
+            };
+        };
         responses: {
             /** @description Encounter cancelled */
             200: {
@@ -4811,7 +4903,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Encounter"];
+                    "application/json": {
+                        success?: boolean;
+                        status?: string;
+                    };
                 };
             };
             /** @description Invalid transition */
@@ -5184,6 +5279,119 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getEncounterFinancials: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        encounter?: {
+                            id?: string;
+                            encounterCode?: string | null;
+                            status?: string;
+                            patient?: {
+                                id?: string;
+                                firstName?: string;
+                                lastName?: string;
+                                mrn?: string;
+                                mobile?: string;
+                            };
+                            labOrders?: (components["schemas"]["LabOrderFinancials"] & {
+                                id?: string;
+                                status?: string;
+                                testNameSnapshot?: string | null;
+                            })[];
+                        };
+                        transactions?: components["schemas"]["CashTransaction"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    collectDue: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    amount: number;
+                    labOrderId?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        dueAmount?: number;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    applyDiscount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    discountAmount: number;
+                    reason: string;
+                    labOrderId?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        newPayable?: number;
+                        newDue?: number;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
         };
     };

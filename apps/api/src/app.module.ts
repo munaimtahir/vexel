@@ -20,6 +20,7 @@ import { StorageModule } from './storage/storage.module';
 import { ResultsModule } from './results/results.module';
 import { SampleCollectionModule } from './sample-collection/sample-collection.module';
 import { VerificationModule } from './verification/verification.module';
+import { CashModule } from './cash/cash.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { VerificationModule } from './verification/verification.module';
     ResultsModule,
     SampleCollectionModule,
     VerificationModule,
+    CashModule,
   ],
 })
 export class AppModule implements NestModule {

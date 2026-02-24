@@ -7,6 +7,7 @@ import { useFeatureFlags, isVerificationVisible } from '@/hooks/use-feature-flag
 const BASE_NAV_ITEMS = [
   { label: 'Worklist', href: '/lims/worklist', icon: '📋' },
   { label: 'New Registration', href: '/lims/registrations/new', icon: '➕' },
+  { label: 'Payments', href: '/lims/payments', icon: '💵' },
   { label: 'Sample Collection', href: '/lims/sample-collection', icon: '🧪' },
   { label: 'Results', href: '/lims/results', icon: '📊' },
   { label: 'Patients', href: '/lims/patients', icon: '👤' },

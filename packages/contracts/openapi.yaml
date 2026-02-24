@@ -986,12 +986,60 @@ components:
         updatedAt:
           type: string
           format: date-time
+        totalAmount:
+          type: number
+          nullable: true
+        discountAmount:
+          type: number
+          nullable: true
+        discountPct:
+          type: number
+          nullable: true
+        payableAmount:
+          type: number
+          nullable: true
+        amountPaid:
+          type: number
+          nullable: true
+        dueAmount:
+          type: number
+          nullable: true
         specimen:
           $ref: '#/components/schemas/Specimen'
         results:
           type: array
           items:
             $ref: '#/components/schemas/LabResult'
+
+    LabOrderFinancials:
+      type: object
+      properties:
+        totalAmount: { type: number, nullable: true }
+        discountAmount: { type: number, nullable: true }
+        discountPct: { type: number, nullable: true }
+        payableAmount: { type: number, nullable: true }
+        amountPaid: { type: number, nullable: true }
+        dueAmount: { type: number, nullable: true }
+        cancelledAt: { type: string, format: date-time, nullable: true }
+        cancelReason: { type: string, nullable: true }
+
+    CashTransaction:
+      type: object
+      properties:
+        id: { type: string }
+        type:
+          type: string
+          enum: [PAYMENT, DISCOUNT, REFUND, DUE_RECEIVED, CANCELLATION_REFUND]
+        amount: { type: number }
+        actorUserId: { type: string }
+        reason: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        actor:
+          type: object
+          properties:
+            id: { type: string }
+            firstName: { type: string }
+            lastName: { type: string }
 
     Specimen:
       type: object
@@ -3813,6 +3861,24 @@ paths:
                   type: string
                   enum: [routine, stat, urgent]
                   default: routine
+                totalAmount:
+                  type: number
+                  nullable: true
+                discountAmount:
+                  type: number
+                  nullable: true
+                discountPct:
+                  type: number
+                  nullable: true
+                payableAmount:
+                  type: number
+                  nullable: true
+                amountPaid:
+                  type: number
+                  nullable: true
+                dueAmount:
+                  type: number
+                  nullable: true
       responses:
         "200":
           description: Lab ordered
@@ -3947,13 +4013,24 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string }
       responses:
         "200":
           description: Encounter cancelled
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Encounter'
+                type: object
+                properties:
+                  success: { type: boolean }
+                  status: { type: string }
         "409":
           description: Invalid transition
           content:
@@ -4354,6 +4431,119 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Financial endpoints ───────────────────────────────────────────────────
+
+  /encounters/{encounterId}/financials:
+    get:
+      operationId: getEncounterFinancials
+      tags: [Encounters]
+      parameters:
+        - { name: encounterId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encounter:
+                    type: object
+                    properties:
+                      id: { type: string }
+                      encounterCode: { type: string, nullable: true }
+                      status: { type: string }
+                      patient:
+                        type: object
+                        properties:
+                          id: { type: string }
+                          firstName: { type: string }
+                          lastName: { type: string }
+                          mrn: { type: string }
+                          mobile: { type: string }
+                      labOrders:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/components/schemas/LabOrderFinancials'
+                            - type: object
+                              properties:
+                                id: { type: string }
+                                status: { type: string }
+                                testNameSnapshot: { type: string, nullable: true }
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CashTransaction'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /encounters/{encounterId}:collect-due:
+    post:
+      operationId: collectDue
+      tags: [Encounters]
+      parameters:
+        - { name: encounterId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount: { type: number }
+                labOrderId: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  dueAmount: { type: number }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /encounters/{encounterId}:apply-discount:
+    post:
+      operationId: applyDiscount
+      tags: [Encounters]
+      parameters:
+        - { name: encounterId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [discountAmount, reason]
+              properties:
+                discountAmount: { type: number }
+                reason: { type: string }
+                labOrderId: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  newPayable: { type: number }
+                  newDue: { type: number }
         "401":
           $ref: '#/components/responses/Unauthorized'
         "404":

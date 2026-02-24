@@ -38,6 +38,7 @@ model Tenant {
   jobRuns              JobRun[]
   documentTemplates    DocumentTemplate[]
   documents            Document[]
+  cashTransactions     CashTransaction[]
 
   @@map("tenants")
 }
@@ -73,21 +74,23 @@ model TenantConfig {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  tenantId     String
-  email        String
-  firstName    String
-  lastName     String
-  passwordHash String
-  status       String   @default("active") // active | disabled | pending
-  isSuperAdmin Boolean  @default(false)    // super-admin bypasses all RBAC
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id               String   @id @default(uuid())
+  tenantId         String
+  email            String
+  firstName        String
+  lastName         String
+  passwordHash     String
+  status           String   @default("active") // active | disabled | pending
+  isSuperAdmin     Boolean  @default(false)    // super-admin bypasses all RBAC
+  maxDiscountPct   Decimal? @db.Decimal(5,2)   // overrides role default when set
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  tenant        Tenant         @relation(fields: [tenantId], references: [id])
-  userRoles     UserRole[]
-  refreshTokens RefreshToken[]
-  auditEvents   AuditEvent[]
+  tenant           Tenant           @relation(fields: [tenantId], references: [id])
+  userRoles        UserRole[]
+  refreshTokens    RefreshToken[]
+  auditEvents      AuditEvent[]
+  cashTransactions CashTransaction[]
 
   @@unique([tenantId, email])
   @@index([tenantId, status])
@@ -110,13 +113,14 @@ model RefreshToken {
 }
 
 model Role {
-  id          String   @id @default(uuid())
-  tenantId    String
-  name        String
-  description String?
-  isSystem    Boolean  @default(false)  // system roles cannot be deleted
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String   @id @default(uuid())
+  tenantId          String
+  name              String
+  description       String?
+  isSystem          Boolean  @default(false)  // system roles cannot be deleted
+  maxDiscountPct    Decimal? @db.Decimal(5,2) // max % discount this role may apply
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   tenant          Tenant           @relation(fields: [tenantId], references: [id])
   userRoles       UserRole[]
@@ -390,10 +394,11 @@ model Encounter {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  tenant        Tenant         @relation(fields: [tenantId], references: [id])
-  patient       Patient        @relation(fields: [patientId], references: [id])
-  labOrders     LabOrder[]
-  specimenItems SpecimenItem[]
+  tenant           Tenant           @relation(fields: [tenantId], references: [id])
+  patient          Patient          @relation(fields: [patientId], references: [id])
+  labOrders        LabOrder[]
+  specimenItems    SpecimenItem[]
+  cashTransactions CashTransaction[]
 
   @@unique([tenantId, encounterCode])
   @@index([tenantId, status])
@@ -402,24 +407,34 @@ model Encounter {
 }
 
 model LabOrder {
-  id              String    @id @default(uuid())
-  tenantId        String
-  encounterId     String
-  testId          String
-  testNameSnapshot String?  // snapshot at order time
-  status          String    @default("ordered") // ordered | specimen_collected | processing | resulted | verified | cancelled
-  resultStatus    String    @default("PENDING") // PENDING | SUBMITTED
-  priority        String    @default("routine") // routine | stat | urgent
-  submittedAt     DateTime?
-  submittedById   String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id               String    @id @default(uuid())
+  tenantId         String
+  encounterId      String
+  testId           String
+  testNameSnapshot String?   // snapshot at order time
+  status           String    @default("ordered") // ordered | specimen_collected | processing | resulted | verified | cancelled
+  resultStatus     String    @default("PENDING") // PENDING | SUBMITTED
+  priority         String    @default("routine") // routine | stat | urgent
+  // Financials (captured at order time)
+  totalAmount      Decimal?  @db.Decimal(10,2)
+  discountAmount   Decimal?  @db.Decimal(10,2)
+  discountPct      Decimal?  @db.Decimal(5,2)
+  payableAmount    Decimal?  @db.Decimal(10,2)
+  amountPaid       Decimal?  @db.Decimal(10,2)
+  dueAmount        Decimal?  @db.Decimal(10,2)
+  submittedAt      DateTime?
+  submittedById    String?
+  cancelledAt      DateTime?
+  cancelReason     String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  tenant    Tenant      @relation(fields: [tenantId], references: [id])
-  encounter Encounter   @relation(fields: [encounterId], references: [id])
-  test      CatalogTest @relation(fields: [testId], references: [id])
-  specimen  Specimen?
-  results   LabResult[]
+  tenant           Tenant           @relation(fields: [tenantId], references: [id])
+  encounter        Encounter        @relation(fields: [encounterId], references: [id])
+  test             CatalogTest      @relation(fields: [testId], references: [id])
+  specimen         Specimen?
+  results          LabResult[]
+  cashTransactions CashTransaction[]
 
   @@index([tenantId, status])
   @@index([tenantId, resultStatus])
@@ -547,4 +562,29 @@ model Document {
   @@index([tenantId, sourceRef, sourceType])
   @@index([tenantId, createdAt])
   @@map("documents")
+}
+
+// Cash transaction log — immutable append-only ledger
+model CashTransaction {
+  id          String   @id @default(uuid())
+  tenantId    String
+  encounterId String
+  labOrderId  String?
+  type        String   // PAYMENT | DISCOUNT | REFUND | DUE_RECEIVED | CANCELLATION_REFUND
+  amount      Decimal  @db.Decimal(10,2) // always positive; type gives direction
+  actorUserId String
+  reason      String?  // required for DISCOUNT, CANCELLATION_REFUND
+  correlationId String?
+  createdAt   DateTime @default(now())
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  encounter Encounter @relation(fields: [encounterId], references: [id])
+  labOrder  LabOrder? @relation(fields: [labOrderId], references: [id])
+  actor     User      @relation(fields: [actorUserId], references: [id])
+
+  @@index([tenantId, encounterId])
+  @@index([tenantId, actorUserId])
+  @@index([tenantId, type])
+  @@index([tenantId, createdAt])
+  @@map("cash_transactions")
 }
