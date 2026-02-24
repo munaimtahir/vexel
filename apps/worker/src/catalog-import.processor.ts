@@ -8,10 +8,10 @@ export async function processCatalogImport(job: Job) {
     jobRunId: string;
     tenantId: string;
     payload: {
-      tests?: Array<{ code: string; name: string; description?: string; sampleType?: string; turnaroundHours?: number }>;
-      parameters?: Array<{ code: string; name: string; unit?: string; dataType?: string }>;
-      panels?: Array<{ code: string; name: string; description?: string }>;
-      mappings?: Array<{ testCode: string; parameterCode: string; ordering?: number }>;
+      tests?: Array<{ externalId: string; name: string; description?: string; sampleType?: string; turnaroundHours?: number }>;
+      parameters?: Array<{ externalId: string; name: string; unit?: string; dataType?: string }>;
+      panels?: Array<{ externalId: string; name: string; description?: string }>;
+      mappings?: Array<{ testExternalId: string; parameterExternalId: string; ordering?: number }>;
     };
     correlationId: string;
   };
@@ -31,7 +31,7 @@ export async function processCatalogImport(job: Job) {
       const chunk = tests.slice(i, i + CHUNK_SIZE);
       for (const t of chunk) {
         const existing = await prisma.catalogTest.findUnique({
-          where: { tenantId_code: { tenantId, code: t.code } },
+          where: { tenant_test_externalId: { tenantId, externalId: t.externalId } },
         });
         if (existing) {
           await prisma.catalogTest.update({ where: { id: existing.id }, data: { name: t.name, description: t.description, sampleType: t.sampleType, turnaroundHours: t.turnaroundHours } });
@@ -50,7 +50,7 @@ export async function processCatalogImport(job: Job) {
       const chunk = parameters.slice(i, i + CHUNK_SIZE);
       for (const p of chunk) {
         const existing = await prisma.parameter.findUnique({
-          where: { tenantId_code: { tenantId, code: p.code } },
+          where: { tenant_param_externalId: { tenantId, externalId: p.externalId } },
         });
         if (existing) {
           await prisma.parameter.update({ where: { id: existing.id }, data: { name: p.name, unit: p.unit, dataType: p.dataType } });
@@ -69,7 +69,7 @@ export async function processCatalogImport(job: Job) {
       const chunk = panels.slice(i, i + CHUNK_SIZE);
       for (const panel of chunk) {
         const existing = await prisma.catalogPanel.findUnique({
-          where: { tenantId_code: { tenantId, code: panel.code } },
+          where: { tenant_panel_externalId: { tenantId, externalId: panel.externalId } },
         });
         if (existing) {
           await prisma.catalogPanel.update({ where: { id: existing.id }, data: { name: panel.name, description: panel.description } });
@@ -85,8 +85,8 @@ export async function processCatalogImport(job: Job) {
     // Upsert test-parameter mappings
     const mappings = payload.mappings ?? [];
     for (const m of mappings) {
-      const test = await prisma.catalogTest.findUnique({ where: { tenantId_code: { tenantId, code: m.testCode } } });
-      const param = await prisma.parameter.findUnique({ where: { tenantId_code: { tenantId, code: m.parameterCode } } });
+      const test = await prisma.catalogTest.findUnique({ where: { tenant_test_externalId: { tenantId, externalId: m.testExternalId } } });
+      const param = await prisma.parameter.findUnique({ where: { tenant_param_externalId: { tenantId, externalId: m.parameterExternalId } } });
       if (!test || !param) { summary.skipped++; continue; }
 
       const existing = await prisma.testParameterMapping.findUnique({
