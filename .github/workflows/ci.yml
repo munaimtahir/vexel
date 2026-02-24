@@ -58,10 +58,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
       - name: Install dependencies
-        run: cd apps/api && npm ci
+        run: pnpm install --frozen-lockfile
       - name: Run unit tests
-        run: cd apps/api && npm test -- --passWithNoTests --testPathPattern="spec.ts$"
+        run: pnpm --filter @vexel/api test -- --passWithNoTests --testPathPattern="spec.ts$"
 
   e2e:
     name: Playwright E2E Tests
