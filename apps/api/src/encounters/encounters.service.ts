@@ -90,7 +90,7 @@ export class EncountersService {
   async orderLab(
     tenantId: string,
     encounterId: string,
-    body: { testId?: string; tests?: Array<{ code: string }>; priority?: string },
+    body: { testId?: string; tests?: Array<{ code?: string; externalId?: string }>; priority?: string },
     actorUserId: string,
     correlationId?: string,
   ) {
@@ -108,8 +108,8 @@ export class EncountersService {
       if (!test) throw new NotFoundException('Catalog test not found');
       resolvedTestId = test.id;
     } else if (body.tests?.length) {
-      const code = body.tests[0].code;
-      const test = await this.prisma.catalogTest.findFirst({ where: { code, tenantId } });
+      const code = body.tests[0].code ?? body.tests[0].externalId;
+      const test = await this.prisma.catalogTest.findFirst({ where: { tenantId, ...(code ? { externalId: code } : {}) } });
       if (!test) throw new NotFoundException(`Catalog test not found: ${code}`);
       resolvedTestId = test.id;
     } else {

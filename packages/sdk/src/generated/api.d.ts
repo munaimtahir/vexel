@@ -495,7 +495,8 @@ export interface paths {
         delete: operations["removeTestParameter"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update parameter mapping for a test */
+        patch: operations["updateTestParameterMapping"];
         trace?: never;
     };
     "/catalog/panels/{panelId}/tests": {
@@ -765,6 +766,74 @@ export interface paths {
         get: operations["downloadPanelTestsTemplate"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/tests/next-id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get next available test external ID */
+        get: operations["getNextTestId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/parameters/next-id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get next available parameter external ID */
+        get: operations["getNextParameterId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/panels/next-id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get next available panel external ID */
+        get: operations["getNextPanelId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/test-parameter-mappings/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import test-parameter mappings from CSV */
+        post: operations["importTestParameterMappings"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1543,7 +1612,6 @@ export interface components {
         CatalogTest: {
             id: string;
             tenantId: string;
-            code: string;
             name: string;
             description?: string;
             sampleType?: string;
@@ -1564,7 +1632,6 @@ export interface components {
         CatalogPanel: {
             id: string;
             tenantId: string;
-            code: string;
             name: string;
             description?: string;
             price?: number | null;
@@ -1580,7 +1647,6 @@ export interface components {
         Parameter: {
             id: string;
             tenantId: string;
-            code: string;
             name: string;
             unit?: string;
             /** @enum {string} */
@@ -1607,6 +1673,8 @@ export interface components {
             decimals?: number | null;
             /** @description Allowed values for enum resultType */
             allowedValues?: string[] | null;
+            /** @description Default value for this parameter */
+            defaultValue?: string | null;
         };
         TestParameterMapping: {
             id: string;
@@ -1617,6 +1685,16 @@ export interface components {
             /** @default true */
             isRequired: boolean;
             /** @description UCUM unit override for this test context */
+            unitOverride?: string | null;
+        };
+        TestParameterMappingResponse: {
+            id: string;
+            testId: string;
+            parameterId: string;
+            /** @default 0 */
+            displayOrder: number;
+            /** @default true */
+            isRequired: boolean;
             unitOverride?: string | null;
         };
         PanelTestMapping: {
@@ -1654,6 +1732,7 @@ export interface components {
             effectiveUnit?: string | null;
             decimals?: number | null;
             allowedValues?: string[] | null;
+            defaultValue?: string | null;
             displayOrder: number;
             isRequired?: boolean;
         };
@@ -2962,7 +3041,6 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    code: string;
                     name: string;
                     description?: string;
                     sampleType?: string;
@@ -3097,7 +3175,6 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    code: string;
                     name: string;
                     description?: string;
                     price?: number | null;
@@ -3196,11 +3273,11 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    code: string;
                     name: string;
                     unit?: string;
                     /** @enum {string} */
                     dataType?: "numeric" | "text" | "boolean" | "coded";
+                    defaultValue?: string | null;
                 };
             };
         };
@@ -3272,6 +3349,7 @@ export interface operations {
                     unit?: string;
                     dataType?: string;
                     isActive?: boolean;
+                    defaultValue?: string | null;
                 };
             };
         };
@@ -3346,6 +3424,37 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    updateTestParameterMapping: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+                parameterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    displayOrder?: number;
+                    isRequired?: boolean;
+                    unitOverride?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestParameterMappingResponse"];
+                };
             };
         };
     };
@@ -3750,6 +3859,106 @@ export interface operations {
                 };
                 content: {
                     "text/csv": string;
+                };
+            };
+        };
+    };
+    getNextTestId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        nextId?: string;
+                    };
+                };
+            };
+        };
+    };
+    getNextParameterId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        nextId?: string;
+                    };
+                };
+            };
+        };
+    };
+    getNextPanelId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        nextId?: string;
+                    };
+                };
+            };
+        };
+    };
+    importTestParameterMappings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description CSV text content (first col = test externalId, rest = param externalIds) */
+                    csv: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Import result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        imported?: number;
+                        skipped?: number;
+                        warnings?: {
+                            row?: number;
+                            message?: string;
+                        }[];
+                    };
                 };
             };
         };

@@ -4,7 +4,7 @@ import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 const emptyForm = () => ({
-  name: '', code: '', externalId: '', userCode: '', loincCode: '', price: '', isActive: true,
+  name: '', externalId: '', userCode: '', loincCode: '', price: '', isActive: true,
 });
 
 export default function PanelsPage() {
@@ -52,11 +52,17 @@ export default function PanelsPage() {
     setAllTests((res.data as any)?.data ?? []);
   }
 
-  function openCreate() { setEditingId(null); setForm(emptyForm()); setError(null); setDrawerOpen(true); }
+  async function openCreate() {
+    setEditingId(null); setForm(emptyForm()); setError(null); setDrawerOpen(true);
+    const api = getApiClient(getToken() ?? undefined);
+    const res = await api.GET('/catalog/panels/next-id' as any, {});
+    const nextId = (res.data as any)?.nextId ?? '';
+    setForm(f => ({ ...f, externalId: nextId }));
+  }
   function openEdit(p: any) {
     setEditingId(p.id);
     setForm({
-      name: p.name ?? '', code: p.code ?? '', externalId: p.externalId ?? '',
+      name: p.name ?? '', externalId: p.externalId ?? '',
       userCode: p.userCode ?? '', loincCode: p.loincCode ?? '', price: p.price != null ? String(p.price) : '', isActive: p.isActive !== false,
     });
     setError(null); setDrawerOpen(true);
@@ -72,7 +78,6 @@ export default function PanelsPage() {
     setSaving(true); setError(null);
     const api = getApiClient(getToken() ?? undefined);
     const body: any = { name: form.name, isActive: form.isActive };
-    if (form.code) body.code = form.code;
     if (form.externalId) body.externalId = form.externalId;
     if (form.userCode) body.userCode = form.userCode;
     if (form.loincCode) body.loincCode = form.loincCode;
@@ -140,8 +145,8 @@ export default function PanelsPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={labelStyle}>Code</label>
-                  <input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} style={inputStyle} />
+                  <label style={labelStyle}>Panel ID <span style={{ color: '#94a3b8', fontWeight: 400 }}>· Auto-generated</span></label>
+                  <input value={form.externalId} readOnly style={{ ...inputStyle, background: '#f8fafc', color: '#64748b', cursor: 'default' }} />
                 </div>
                 <div>
                   <label style={labelStyle}>User Code</label>
@@ -149,10 +154,6 @@ export default function PanelsPage() {
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={labelStyle}>External ID</label>
-                  <input value={form.externalId} onChange={(e) => setForm({ ...form, externalId: e.target.value })} style={inputStyle} />
-                </div>
                 <div>
                   <label style={labelStyle}>LOINC Code</label>
                   <input value={form.loincCode} onChange={(e) => setForm({ ...form, loincCode: e.target.value })} style={inputStyle} />

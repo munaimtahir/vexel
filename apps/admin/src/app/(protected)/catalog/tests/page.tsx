@@ -4,7 +4,7 @@ import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 const emptyForm = () => ({
-  name: '', code: '', externalId: '', userCode: '', loincCode: '',
+  name: '', externalId: '', userCode: '', loincCode: '',
   department: '', specimenType: '', method: '', price: '', isActive: true,
 });
 
@@ -53,11 +53,17 @@ export default function CatalogTestsPage() {
     setAllParams((res.data as any)?.data ?? []);
   }
 
-  function openCreate() { setEditingId(null); setForm(emptyForm()); setError(null); setDrawerOpen(true); }
+  async function openCreate() {
+    setEditingId(null); setForm(emptyForm()); setError(null); setDrawerOpen(true);
+    const api = getApiClient(getToken() ?? undefined);
+    const res = await api.GET('/catalog/tests/next-id' as any, {});
+    const nextId = (res.data as any)?.nextId ?? '';
+    setForm(f => ({ ...f, externalId: nextId }));
+  }
   function openEdit(t: any) {
     setEditingId(t.id);
     setForm({
-      name: t.name ?? '', code: t.code ?? '', externalId: t.externalId ?? '',
+      name: t.name ?? '', externalId: t.externalId ?? '',
       userCode: t.userCode ?? '', loincCode: t.loincCode ?? '',
       department: t.department ?? '', specimenType: t.specimenType ?? '',
       method: t.method ?? '', price: t.price != null ? String(t.price) : '', isActive: t.isActive !== false,
@@ -75,7 +81,6 @@ export default function CatalogTestsPage() {
     setSaving(true); setError(null);
     const api = getApiClient(getToken() ?? undefined);
     const body: any = { name: form.name, isActive: form.isActive };
-    if (form.code) body.code = form.code;
     if (form.externalId) body.externalId = form.externalId;
     if (form.userCode) body.userCode = form.userCode;
     if (form.loincCode) body.loincCode = form.loincCode;
@@ -121,6 +126,30 @@ export default function CatalogTestsPage() {
     await loadTestParams(selectedTest.id);
   }
 
+  async function reorderParam(parameterId: string, direction: 'up' | 'down') {
+    if (!selectedTest) return;
+    const sorted = [...testParams].sort((a: any, b: any) => (a.displayOrder ?? a.ordering ?? 0) - (b.displayOrder ?? b.ordering ?? 0));
+    const idx = sorted.findIndex((p: any) => (p.parameterId ?? p.id) === parameterId);
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (idx < 0 || swapIdx < 0 || swapIdx >= sorted.length) return;
+    const curr = sorted[idx];
+    const swap = sorted[swapIdx];
+    const currOrder = curr.displayOrder ?? curr.ordering ?? idx + 1;
+    const swapOrder = swap.displayOrder ?? swap.ordering ?? swapIdx + 1;
+    const api = getApiClient(getToken() ?? undefined);
+    await Promise.all([
+      api.PATCH('/catalog/tests/{testId}/parameters/{parameterId}' as any, {
+        params: { path: { testId: selectedTest.id, parameterId: curr.parameterId ?? curr.id } },
+        body: { displayOrder: swapOrder },
+      }),
+      api.PATCH('/catalog/tests/{testId}/parameters/{parameterId}' as any, {
+        params: { path: { testId: selectedTest.id, parameterId: swap.parameterId ?? swap.id } },
+        body: { displayOrder: currOrder },
+      }),
+    ]);
+    await loadTestParams(selectedTest.id);
+  }
+
   function handleSearch(val: string) { setSearch(val); setPage(1); load(1, val); }
   function handlePage(p: number) { setPage(p); load(p, search); }
   const totalPages = Math.ceil(total / LIMIT);
@@ -149,17 +178,13 @@ export default function CatalogTestsPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={labelStyle}>Code</label>
-                  <input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} style={inputStyle} />
+                  <label style={labelStyle}>Test ID <span style={{ color: '#94a3b8', fontWeight: 400 }}>· Auto-generated</span></label>
+                  <input value={form.externalId} readOnly style={{ ...inputStyle, background: '#f8fafc', color: '#64748b', cursor: 'default' }} />
                 </div>
                 <div>
                   <label style={labelStyle}>User Code</label>
                   <input value={form.userCode} onChange={(e) => setForm({ ...form, userCode: e.target.value })} style={inputStyle} />
                 </div>
-              </div>
-              <div>
-                <label style={labelStyle}>External ID</label>
-                <input value={form.externalId} onChange={(e) => setForm({ ...form, externalId: e.target.value })} style={inputStyle} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
@@ -290,17 +315,24 @@ export default function CatalogTestsPage() {
               <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '12px' }}>No parameters assigned.</p>
             ) : (
               <div style={{ marginBottom: '12px' }}>
-                {testParams
-                  .slice()
+                {[...testParams]
                   .sort((a: any, b: any) => (a.displayOrder ?? a.ordering ?? 0) - (b.displayOrder ?? b.ordering ?? 0))
-                  .map((tp: any) => (
-                    <div key={tp.parameterId ?? tp.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>
-                      <span style={{ fontSize: '11px', color: '#94a3b8', width: '20px', flexShrink: 0, textAlign: 'right' }}>#{tp.displayOrder ?? tp.ordering ?? '—'}</span>
-                      <span style={{ flex: 1, fontSize: '13px', color: '#1e293b' }}>{tp.parameter?.name ?? tp.name ?? tp.parameterId}</span>
-                      {tp.unitOverride && <span style={{ fontSize: '11px', color: '#6d28d9', fontFamily: 'monospace' }}>{tp.unitOverride}</span>}
-                      {tp.isRequired && <span style={{ fontSize: '10px', background: '#fef9c3', color: '#854d0e', padding: '1px 5px', borderRadius: '8px' }}>req</span>}
+                  .map((tp: any, idx: number, arr: any[]) => (
+                    <div key={tp.parameterId ?? tp.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>
+                      <span style={{ fontSize: '11px', color: '#94a3b8', width: '18px', flexShrink: 0, textAlign: 'right' }}>{idx + 1}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tp.parameter?.name ?? tp.name ?? tp.parameterId}</div>
+                        {tp.parameter?.externalId && <div style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'monospace' }}>{tp.parameter.externalId}</div>}
+                      </div>
+                      {tp.isRequired && <span style={{ fontSize: '10px', background: '#fef9c3', color: '#854d0e', padding: '1px 5px', borderRadius: '8px', flexShrink: 0 }}>req</span>}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                        <button onClick={() => reorderParam(tp.parameterId ?? tp.id, 'up')} disabled={idx === 0}
+                          style={{ padding: '1px 4px', fontSize: '10px', background: idx === 0 ? '#f1f5f9' : '#e0f2fe', color: idx === 0 ? '#94a3b8' : '#0369a1', border: 'none', borderRadius: '3px', cursor: idx === 0 ? 'default' : 'pointer', lineHeight: 1 }}>↑</button>
+                        <button onClick={() => reorderParam(tp.parameterId ?? tp.id, 'down')} disabled={idx === arr.length - 1}
+                          style={{ padding: '1px 4px', fontSize: '10px', background: idx === arr.length - 1 ? '#f1f5f9' : '#e0f2fe', color: idx === arr.length - 1 ? '#94a3b8' : '#0369a1', border: 'none', borderRadius: '3px', cursor: idx === arr.length - 1 ? 'default' : 'pointer', lineHeight: 1 }}>↓</button>
+                      </div>
                       <button onClick={() => removeParam(tp.parameterId ?? tp.id)}
-                        style={{ padding: '2px 7px', fontSize: '11px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                        style={{ padding: '2px 7px', fontSize: '11px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '4px', cursor: 'pointer', flexShrink: 0 }}>
                         ×
                       </button>
                     </div>

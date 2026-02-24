@@ -131,7 +131,7 @@ export default function ResultsEntryPage() {
       const initFlags: Record<string, string | null> = {};
       const params_list = (data as any).parameters ?? [];
       for (const p of params_list) {
-        initValues[p.parameterId] = p.value ?? '';
+        initValues[p.parameterId] = p.value ?? p.defaultValue ?? '';
         initFlags[p.parameterId] = p.flag ?? null;
       }
       setLocalValues(initValues);

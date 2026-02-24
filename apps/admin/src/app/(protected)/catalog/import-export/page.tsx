@@ -99,6 +99,13 @@ export default function ImportExportPage() {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
+  // Mapping import state
+  const mappingFileRef = useRef<HTMLInputElement>(null);
+  const [mappingFile, setMappingFile] = useState<File | null>(null);
+  const [mappingImporting, setMappingImporting] = useState(false);
+  const [mappingResult, setMappingResult] = useState<{ imported: number; skipped: number; warnings: { row?: number; message?: string }[] } | null>(null);
+  const [mappingError, setMappingError] = useState<string | null>(null);
+
   // Poll import job status
   useEffect(() => {
     if (!importJobId || !importing) return;
@@ -206,6 +213,26 @@ export default function ImportExportPage() {
     } catch (err: any) {
       setExportError(err.message ?? 'Export failed');
       setExporting(false);
+    }
+  }
+
+  async function handleMappingImport() {
+    if (!mappingFile) return;
+    setMappingImporting(true); setMappingError(null); setMappingResult(null);
+    try {
+      const csv = await mappingFile.text();
+      const api = getApiClient(getToken() ?? undefined);
+      const res = await api.POST('/catalog/test-parameter-mappings/import' as any, { body: { csv } });
+      if ((res as any).error) throw new Error((res as any).error?.message ?? 'Import failed');
+      setMappingResult({
+        imported: (res.data as any)?.imported ?? 0,
+        skipped: (res.data as any)?.skipped ?? 0,
+        warnings: (res.data as any)?.warnings ?? [],
+      });
+    } catch (err: any) {
+      setMappingError(err.message ?? 'Import failed');
+    } finally {
+      setMappingImporting(false);
     }
   }
 
@@ -352,6 +379,43 @@ export default function ImportExportPage() {
             {exportJob.resultSummary?.total != null && <span style={{ marginLeft: '8px', color: '#64748b' }}>({exportJob.resultSummary.total} items)</span>}
             {exportJob.status === 'completed' && (
               <button onClick={() => triggerExportDownload(exportJob)} style={{ marginLeft: '12px', padding: '3px 10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>⬇ Download</button>
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* Parameter Mappings Import section */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#1e293b' }}>🔗 Import Parameter Mappings</h2>
+        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
+          Upload a CSV where the first column is the test ID (e.g. <code style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '1px 4px', borderRadius: '3px' }}>t1</code>) and remaining columns are parameter IDs (e.g. <code style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '1px 4px', borderRadius: '3px' }}>p1, p2, p3</code>). Column order determines display order.
+        </p>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>File (.csv only)</label>
+          <input ref={mappingFileRef} type="file" accept=".csv"
+            onChange={(e) => { setMappingFile(e.target.files?.[0] ?? null); setMappingResult(null); setMappingError(null); }}
+            style={{ display: 'block', padding: '7px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }} />
+        </div>
+        <button onClick={handleMappingImport} disabled={mappingImporting || !mappingFile} style={btnStyle('#0369a1', mappingImporting || !mappingFile)}>
+          {mappingImporting ? '⏳ Importing…' : '▶ Import Mappings'}
+        </button>
+        {mappingError && (
+          <div style={{ marginTop: '12px', background: '#fee2e2', color: '#991b1b', padding: '10px 12px', borderRadius: '6px', fontSize: '13px' }}>{mappingError}</div>
+        )}
+        {mappingResult && (
+          <div style={{ marginTop: '12px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '12px 16px', fontSize: '13px' }}>
+            <div style={{ fontWeight: 600, color: '#166534', marginBottom: '6px' }}>
+              ✓ Imported {mappingResult.imported} mappings, Skipped {mappingResult.skipped} rows
+            </div>
+            {mappingResult.warnings.length > 0 && (
+              <div>
+                <div style={{ fontSize: '12px', color: '#92400e', fontWeight: 600, marginBottom: '4px' }}>Warnings:</div>
+                {mappingResult.warnings.map((w, i) => (
+                  <div key={i} style={{ fontSize: '12px', color: '#78350f' }}>
+                    {w.row != null ? `Row ${w.row}: ` : ''}{w.message}
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         )}

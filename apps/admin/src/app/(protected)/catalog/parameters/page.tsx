@@ -6,8 +6,8 @@ import { getToken } from '@/lib/auth';
 const RESULT_TYPES = ['numeric', 'text', 'boolean', 'enum'];
 
 const emptyForm = () => ({
-  name: '', code: '', externalId: '', userCode: '', resultType: 'numeric',
-  defaultUnit: '', decimals: '', allowedValues: '', loincCode: '', isActive: true,
+  name: '', externalId: '', userCode: '', resultType: 'numeric',
+  defaultUnit: '', decimals: '', allowedValues: '', loincCode: '', defaultValue: '', isActive: true,
 });
 
 export default function ParametersPage() {
@@ -34,15 +34,21 @@ export default function ParametersPage() {
 
   useEffect(() => { load(); }, []);
 
-  function openCreate() { setEditingId(null); setForm(emptyForm()); setError(null); setDrawerOpen(true); }
+  async function openCreate() {
+    setEditingId(null); setForm(emptyForm()); setError(null); setDrawerOpen(true);
+    const api = getApiClient(getToken() ?? undefined);
+    const res = await api.GET('/catalog/parameters/next-id' as any, {});
+    const nextId = (res.data as any)?.nextId ?? '';
+    setForm(f => ({ ...f, externalId: nextId }));
+  }
   function openEdit(p: any) {
     setEditingId(p.id);
     setForm({
-      name: p.name ?? '', code: p.code ?? '', externalId: p.externalId ?? '',
+      name: p.name ?? '', externalId: p.externalId ?? '',
       userCode: p.userCode ?? '', resultType: p.resultType ?? 'numeric',
       defaultUnit: p.defaultUnit ?? '', decimals: p.decimals != null ? String(p.decimals) : '',
       allowedValues: Array.isArray(p.allowedValues) ? p.allowedValues.join(', ') : (p.allowedValues ?? ''),
-      loincCode: p.loincCode ?? '', isActive: p.isActive !== false,
+      loincCode: p.loincCode ?? '', defaultValue: p.defaultValue ?? '', isActive: p.isActive !== false,
     });
     setError(null); setDrawerOpen(true);
   }
@@ -56,10 +62,10 @@ export default function ParametersPage() {
       resultType: form.resultType,
       isActive: form.isActive,
     };
-    if (form.code) body.code = form.code;
     if (form.externalId) body.externalId = form.externalId;
     if (form.userCode) body.userCode = form.userCode;
     if (form.loincCode) body.loincCode = form.loincCode;
+    if (form.defaultValue) body.defaultValue = form.defaultValue;
     if (form.resultType === 'numeric') {
       if (form.defaultUnit) body.defaultUnit = form.defaultUnit;
       if (form.decimals !== '') body.decimals = Number(form.decimals);
@@ -113,17 +119,13 @@ export default function ParametersPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={labelStyle}>Code</label>
-                  <input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} style={inputStyle} />
+                  <label style={labelStyle}>Parameter ID <span style={{ color: '#94a3b8', fontWeight: 400 }}>· Auto-generated</span></label>
+                  <input value={form.externalId} readOnly style={{ ...inputStyle, background: '#f8fafc', color: '#64748b', cursor: 'default' }} />
                 </div>
                 <div>
                   <label style={labelStyle}>User Code</label>
                   <input value={form.userCode} onChange={(e) => setForm({ ...form, userCode: e.target.value })} style={inputStyle} />
                 </div>
-              </div>
-              <div>
-                <label style={labelStyle}>External ID</label>
-                <input value={form.externalId} onChange={(e) => setForm({ ...form, externalId: e.target.value })} style={inputStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Result Type *</label>
@@ -152,6 +154,10 @@ export default function ParametersPage() {
               <div>
                 <label style={labelStyle}>LOINC Code</label>
                 <input value={form.loincCode} onChange={(e) => setForm({ ...form, loincCode: e.target.value })} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Default Value</label>
+                <input value={form.defaultValue} onChange={(e) => setForm({ ...form, defaultValue: e.target.value })} style={inputStyle} placeholder="Pre-fills result entry for this parameter" />
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="param-active" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} style={{ width: '16px', height: '16px' }} />

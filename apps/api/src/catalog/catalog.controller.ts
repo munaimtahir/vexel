@@ -36,6 +36,12 @@ export class CatalogController {
     return this.svc.createTest(user.tenantId, b, user.userId, correlationId);
   }
 
+  @Get('tests/next-id')
+  @RequirePermissions(Permission.CATALOG_READ)
+  async getNextTestId(@Req() req: Request) {
+    return this.svc.getNextId((req as any).user.tenantId, 'test');
+  }
+
   @Get('tests/:id')
   @RequirePermissions(Permission.CATALOG_READ)
   getTest(@Req() req: Request, @Param('id') id: string) {
@@ -90,6 +96,13 @@ export class CatalogController {
     return this.svc.bulkUpdateTestParameters(user.tenantId, testId, body, user.userId, correlationId);
   }
 
+  @Patch('tests/:testId/parameters/:parameterId')
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  async updateTestParameterMapping(@Req() req: Request, @Param('testId') testId: string, @Param('parameterId') parameterId: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.updateTestParameterMapping(user.tenantId, testId, parameterId, body, user.userId, correlationId);
+  }
+
   @Delete('tests/:testId/parameters/:parameterId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @RequirePermissions(Permission.CATALOG_MANAGE)
@@ -112,6 +125,12 @@ export class CatalogController {
   createPanel(@Req() req: Request, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
     return this.svc.createPanel(user.tenantId, b, user.userId, correlationId);
+  }
+
+  @Get('panels/next-id')
+  @RequirePermissions(Permission.CATALOG_READ)
+  async getNextPanelId(@Req() req: Request) {
+    return this.svc.getNextId((req as any).user.tenantId, 'panel');
   }
 
   @Get('panels/:panelId/definition')
@@ -171,6 +190,12 @@ export class CatalogController {
   createParameter(@Req() req: Request, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
     return this.svc.createParameter(user.tenantId, b, user.userId, correlationId);
+  }
+
+  @Get('parameters/next-id')
+  @RequirePermissions(Permission.CATALOG_READ)
+  async getNextParameterId(@Req() req: Request) {
+    return this.svc.getNextId((req as any).user.tenantId, 'parameter');
   }
 
   @Get('parameters/:id')
@@ -266,6 +291,13 @@ export class CatalogController {
     res.set('Content-Type', 'text/csv');
     res.set('Content-Disposition', 'attachment; filename="panel-tests-template.csv"');
     res.send(this.importExportSvc.generatePanelTestsCsv());
+  }
+
+  @Post('test-parameter-mappings/import')
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  async importTestParameterMappings(@Req() req: Request, @Body() body: { csv: string }, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.importTestParameterMappings(user.tenantId, body.csv, user.userId, correlationId);
   }
 
   @Post('import')

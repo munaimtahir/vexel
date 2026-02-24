@@ -18,25 +18,25 @@ export class CatalogImportExportService {
     const wb = new ExcelJS.Workbook();
 
     this._addSheet(wb, 'Parameters', [
-      'externalId', 'userCode', 'code', 'name', 'resultType', 'defaultUnit',
-      'decimals', 'allowedValues', 'loincCode', 'isActive',
-    ], [['PARAM-001', 'GLU', 'glucose', 'Glucose', 'numeric', 'mg/dL', '2', '', '2339-0', 'true']]);
+      'externalId', 'userCode', 'name', 'resultType', 'defaultUnit',
+      'decimals', 'allowedValues', 'loincCode', 'defaultValue', 'isActive',
+    ], [['p1', 'GLU', 'Glucose', 'numeric', 'mg/dL', '2', '', '2339-0', '', 'true']]);
 
     this._addSheet(wb, 'Tests', [
-      'externalId', 'userCode', 'code', 'name', 'department', 'specimenType', 'method', 'loincCode', 'price', 'isActive',
-    ], [['TEST-001', 'CBC', 'cbc', 'Complete Blood Count', 'Hematology', 'Whole Blood', 'Automated', '58410-2', '1200', 'true']]);
+      'externalId', 'userCode', 'name', 'department', 'specimenType', 'method', 'loincCode', 'price', 'isActive',
+    ], [['t1', 'CBC', 'Complete Blood Count', 'Hematology', 'Whole Blood', 'Automated', '58410-2', '1200', 'true']]);
 
     this._addSheet(wb, 'TestParameters', [
       'testExternalId', 'parameterExternalId', 'displayOrder', 'isRequired', 'unitOverride',
-    ], [['TEST-001', 'PARAM-001', '1', 'true', '']]);
+    ], [['t1', 'p1', '1', 'true', '']]);
 
     this._addSheet(wb, 'Panels', [
-      'externalId', 'userCode', 'code', 'name', 'loincCode', 'price', 'isActive',
-    ], [['PANEL-001', 'BASIC', 'basic_metabolic', 'Basic Metabolic Panel', '51990-0', '2000', 'true']]);
+      'externalId', 'userCode', 'name', 'loincCode', 'price', 'isActive',
+    ], [['g1', 'BASIC', 'Basic Metabolic Panel', '51990-0', '2000', 'true']]);
 
     this._addSheet(wb, 'PanelTests', [
       'panelExternalId', 'testExternalId', 'displayOrder',
-    ], [['PANEL-001', 'TEST-001', '1']]);
+    ], [['g1', 't1', '1']]);
 
     const notes = wb.addWorksheet('Notes');
     notes.getCell('A1').value = 'IMPORT NOTES';
@@ -71,36 +71,36 @@ export class CatalogImportExportService {
 
   generateParametersCsv(): string {
     return this._csv(
-      ['externalId', 'userCode', 'code', 'name', 'resultType', 'defaultUnit', 'decimals', 'allowedValues', 'loincCode', 'isActive'],
-      [['PARAM-001', 'GLU', 'glucose', 'Glucose', 'numeric', 'mg/dL', '2', '', '2339-0', 'true']],
+      ['externalId', 'userCode', 'name', 'resultType', 'defaultUnit', 'decimals', 'allowedValues', 'loincCode', 'defaultValue', 'isActive'],
+      [['p1', 'GLU', 'Glucose', 'numeric', 'mg/dL', '2', '', '2339-0', '', 'true']],
     );
   }
 
   generateTestsCsv(): string {
     return this._csv(
-      ['externalId', 'userCode', 'code', 'name', 'department', 'specimenType', 'method', 'loincCode', 'price', 'isActive'],
-      [['TEST-001', 'CBC', 'cbc', 'Complete Blood Count', 'Hematology', 'Whole Blood', 'Automated', '58410-2', '1200', 'true']],
+      ['externalId', 'userCode', 'name', 'department', 'specimenType', 'method', 'loincCode', 'price', 'isActive'],
+      [['t1', 'CBC', 'Complete Blood Count', 'Hematology', 'Whole Blood', 'Automated', '58410-2', '1200', 'true']],
     );
   }
 
   generateTestParametersCsv(): string {
     return this._csv(
       ['testExternalId', 'parameterExternalId', 'displayOrder', 'isRequired', 'unitOverride'],
-      [['TEST-001', 'PARAM-001', '1', 'true', '']],
+      [['t1', 'p1', '1', 'true', '']],
     );
   }
 
   generatePanelsCsv(): string {
     return this._csv(
-      ['externalId', 'userCode', 'code', 'name', 'loincCode', 'price', 'isActive'],
-      [['PANEL-001', 'BASIC', 'basic_metabolic', 'Basic Metabolic Panel', '51990-0', '2000', 'true']],
+      ['externalId', 'userCode', 'name', 'loincCode', 'price', 'isActive'],
+      [['g1', 'BASIC', 'Basic Metabolic Panel', '51990-0', '2000', 'true']],
     );
   }
 
   generatePanelTestsCsv(): string {
     return this._csv(
       ['panelExternalId', 'testExternalId', 'displayOrder'],
-      [['PANEL-001', 'TEST-001', '1']],
+      [['g1', 't1', '1']],
     );
   }
 
@@ -240,14 +240,40 @@ export class CatalogImportExportService {
     return result;
   }
 
+  private async _generateNextExternalId(tenantId: string, type: 'test' | 'parameter' | 'panel'): Promise<string> {
+    const prefix = type === 'test' ? 't' : type === 'parameter' ? 'p' : 'g';
+    let existingIds: string[];
+    if (type === 'test') {
+      const rows = await this.prisma.catalogTest.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
+      existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
+    } else if (type === 'parameter') {
+      const rows = await this.prisma.parameter.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
+      existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
+    } else {
+      const rows = await this.prisma.catalogPanel.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
+      existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
+    }
+    const pattern = new RegExp(`^${prefix}(\\d+)$`);
+    let max = 0;
+    for (const id of existingIds) {
+      const m = id.match(pattern);
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    }
+    return `${prefix}${max + 1}`;
+  }
+
   private async _importParameter(tenantId: string, row: Record<string, string>, rowNum: number, opts: { mode: string; validate: boolean }, result: any) {
-    const externalId = this._val(row, 'externalId');
-    const code = this._val(row, 'code');
-    if (!code) { result.errors.push({ row: rowNum, message: 'code is required' }); return; }
+    let externalId = this._val(row, 'externalId') ?? null;
+    if (externalId) {
+      if (!/^p\d+$/.test(externalId)) {
+        result.errors.push({ row: rowNum, message: `externalId must match p<number> format, got '${externalId}'` });
+        return;
+      }
+    }
 
     const existing = externalId
       ? await this.prisma.parameter.findFirst({ where: { tenantId, externalId } })
-      : await this.prisma.parameter.findUnique({ where: { tenantId_code: { tenantId, code } } });
+      : null;
 
     if (existing) {
       if (opts.mode === 'CREATE_ONLY') { result.skipped++; return; }
@@ -260,6 +286,7 @@ export class CatalogImportExportService {
         const defaultUnit = this._valOrNull(row, 'defaultUnit'); if (defaultUnit !== undefined) data.defaultUnit = defaultUnit;
         const decimals = this._val(row, 'decimals'); if (decimals !== undefined) data.decimals = decimals ? parseInt(decimals, 10) : null;
         const allowedValues = this._valOrNull(row, 'allowedValues'); if (allowedValues !== undefined) data.allowedValues = allowedValues;
+        const defaultValue = this._valOrNull(row, 'defaultValue'); if (defaultValue !== undefined) data.defaultValue = defaultValue;
         const isActive = this._val(row, 'isActive'); if (isActive !== undefined) data.isActive = isActive === 'true';
         await this.prisma.parameter.update({ where: { id: existing.id }, data });
       }
@@ -267,17 +294,21 @@ export class CatalogImportExportService {
     } else {
       const name = this._val(row, 'name');
       if (!name) { result.errors.push({ row: rowNum, message: 'name is required' }); return; }
+      if (!externalId) {
+        externalId = await this._generateNextExternalId(tenantId, 'parameter');
+      }
       if (!opts.validate) {
         await this.prisma.parameter.create({
           data: {
-            tenantId, code, name,
-            externalId: externalId ?? undefined,
+            tenantId, name,
+            externalId,
             userCode: this._valOrNull(row, 'userCode') ?? undefined,
             loincCode: this._valOrNull(row, 'loincCode') ?? undefined,
             resultType: this._val(row, 'resultType') ?? 'numeric',
             defaultUnit: this._valOrNull(row, 'defaultUnit') ?? undefined,
-            decimals: this._val(row, 'decimals') ? parseInt(this._val(row, 'decimals')!, 10) : undefined,
+            decimals: this._val(row, 'decimals') ? parseInt(this._val(row, 'decimals')!, 10) : 2,
             allowedValues: this._valOrNull(row, 'allowedValues') ?? undefined,
+            defaultValue: this._valOrNull(row, 'defaultValue') ?? undefined,
             isActive: this._val(row, 'isActive') !== 'false',
           },
         });
@@ -287,9 +318,13 @@ export class CatalogImportExportService {
   }
 
   private async _importTest(tenantId: string, row: Record<string, string>, rowNum: number, opts: { mode: string; validate: boolean }, result: any) {
-    const externalId = this._val(row, 'externalId');
-    const code = this._val(row, 'code');
-    if (!code) { result.errors.push({ row: rowNum, message: 'code is required' }); return; }
+    let externalId = this._val(row, 'externalId') ?? null;
+    if (externalId) {
+      if (!/^t\d+$/.test(externalId)) {
+        result.errors.push({ row: rowNum, message: `externalId must match t<number> format, got '${externalId}'` });
+        return;
+      }
+    }
     const priceRaw = this._val(row, 'price');
     let price: number | undefined;
     if (priceRaw !== undefined) {
@@ -303,7 +338,7 @@ export class CatalogImportExportService {
 
     const existing = externalId
       ? await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId } })
-      : await this.prisma.catalogTest.findUnique({ where: { tenantId_code: { tenantId, code } } });
+      : null;
 
     if (existing) {
       if (opts.mode === 'CREATE_ONLY') { result.skipped++; return; }
@@ -323,16 +358,19 @@ export class CatalogImportExportService {
     } else {
       const name = this._val(row, 'name');
       if (!name) { result.errors.push({ row: rowNum, message: 'name is required' }); return; }
+      if (!externalId) {
+        externalId = await this._generateNextExternalId(tenantId, 'test');
+      }
       if (!opts.validate) {
         await this.prisma.catalogTest.create({
           data: {
-            tenantId, code, name,
-            externalId: externalId ?? undefined,
+            tenantId, name,
+            externalId,
             userCode: this._valOrNull(row, 'userCode') ?? undefined,
             loincCode: this._valOrNull(row, 'loincCode') ?? undefined,
             department: this._valOrNull(row, 'department') ?? undefined,
             method: this._valOrNull(row, 'method') ?? undefined,
-            sampleType: this._valOrNull(row, 'specimenType') ?? undefined,
+            sampleType: this._valOrNull(row, 'specimenType') ?? 'Blood',
             price: price ?? undefined,
             isActive: this._val(row, 'isActive') !== 'false',
           },
@@ -343,9 +381,13 @@ export class CatalogImportExportService {
   }
 
   private async _importPanel(tenantId: string, row: Record<string, string>, rowNum: number, opts: { mode: string; validate: boolean }, result: any) {
-    const externalId = this._val(row, 'externalId');
-    const code = this._val(row, 'code');
-    if (!code) { result.errors.push({ row: rowNum, message: 'code is required' }); return; }
+    let externalId = this._val(row, 'externalId') ?? null;
+    if (externalId) {
+      if (!/^g\d+$/.test(externalId)) {
+        result.errors.push({ row: rowNum, message: `externalId must match g<number> format, got '${externalId}'` });
+        return;
+      }
+    }
     const priceRaw = this._val(row, 'price');
     let price: number | undefined;
     if (priceRaw !== undefined) {
@@ -359,7 +401,7 @@ export class CatalogImportExportService {
 
     const existing = externalId
       ? await this.prisma.catalogPanel.findFirst({ where: { tenantId, externalId } })
-      : await this.prisma.catalogPanel.findUnique({ where: { tenantId_code: { tenantId, code } } });
+      : null;
 
     if (existing) {
       if (opts.mode === 'CREATE_ONLY') { result.skipped++; return; }
@@ -376,11 +418,14 @@ export class CatalogImportExportService {
     } else {
       const name = this._val(row, 'name');
       if (!name) { result.errors.push({ row: rowNum, message: 'name is required' }); return; }
+      if (!externalId) {
+        externalId = await this._generateNextExternalId(tenantId, 'panel');
+      }
       if (!opts.validate) {
         await this.prisma.catalogPanel.create({
           data: {
-            tenantId, code, name,
-            externalId: externalId ?? undefined,
+            tenantId, name,
+            externalId,
             userCode: this._valOrNull(row, 'userCode') ?? undefined,
             loincCode: this._valOrNull(row, 'loincCode') ?? undefined,
             price: price ?? undefined,

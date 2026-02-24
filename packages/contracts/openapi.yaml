@@ -229,13 +229,11 @@ components:
 
     CatalogTest:
       type: object
-      required: [id, tenantId, code, name]
+      required: [id, tenantId, name]
       properties:
         id:
           type: string
         tenantId:
-          type: string
-        code:
           type: string
         name:
           type: string
@@ -279,13 +277,11 @@ components:
 
     CatalogPanel:
       type: object
-      required: [id, tenantId, code, name]
+      required: [id, tenantId, name]
       properties:
         id:
           type: string
         tenantId:
-          type: string
-        code:
           type: string
         name:
           type: string
@@ -316,13 +312,11 @@ components:
 
     Parameter:
       type: object
-      required: [id, tenantId, code, name, dataType, isActive]
+      required: [id, tenantId, name, dataType, isActive]
       properties:
         id:
           type: string
         tenantId:
-          type: string
-        code:
           type: string
         name:
           type: string
@@ -369,6 +363,10 @@ components:
             type: string
           description: Allowed values for enum resultType
           nullable: true
+        defaultValue:
+          type: string
+          description: Default value for this parameter
+          nullable: true
 
     TestParameterMapping:
       type: object
@@ -389,6 +387,26 @@ components:
         unitOverride:
           type: string
           description: UCUM unit override for this test context
+          nullable: true
+
+    TestParameterMappingResponse:
+      type: object
+      required: [id, testId, parameterId]
+      properties:
+        id:
+          type: string
+        testId:
+          type: string
+        parameterId:
+          type: string
+        displayOrder:
+          type: integer
+          default: 0
+        isRequired:
+          type: boolean
+          default: true
+        unitOverride:
+          type: string
           nullable: true
 
     PanelTestMapping:
@@ -476,6 +494,9 @@ components:
           type: array
           items:
             type: string
+          nullable: true
+        defaultValue:
+          type: string
           nullable: true
         displayOrder:
           type: integer
@@ -2192,10 +2213,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [code, name]
+              required: [name]
               properties:
-                code:
-                  type: string
                 name:
                   type: string
                 description:
@@ -2327,10 +2346,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [code, name]
+              required: [name]
               properties:
-                code:
-                  type: string
                 name:
                   type: string
                 description:
@@ -2439,10 +2456,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [code, name]
+              required: [name]
               properties:
-                code:
-                  type: string
                 name:
                   type: string
                 unit:
@@ -2450,6 +2465,9 @@ paths:
                 dataType:
                   type: string
                   enum: [numeric, text, boolean, coded]
+                defaultValue:
+                  type: string
+                  nullable: true
       responses:
         "201":
           description: Parameter created
@@ -2517,6 +2535,9 @@ paths:
                   type: string
                 isActive:
                   type: boolean
+                defaultValue:
+                  type: string
+                  nullable: true
       responses:
         "200":
           description: Parameter updated
@@ -2573,6 +2594,38 @@ paths:
                   type: integer
 
   /catalog/tests/{testId}/parameters/{parameterId}:
+    patch:
+      operationId: updateTestParameterMapping
+      summary: Update parameter mapping for a test
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: parameterId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                displayOrder: { type: integer }
+                isRequired: { type: boolean }
+                unitOverride: { type: string, nullable: true }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestParameterMappingResponse'
     delete:
       operationId: removeTestParameter
       summary: Remove parameter mapping from test
@@ -2997,6 +3050,96 @@ paths:
             text/csv:
               schema:
                 type: string
+
+  /catalog/tests/next-id:
+    get:
+      operationId: getNextTestId
+      summary: Get next available test external ID
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nextId:
+                    type: string
+
+  /catalog/parameters/next-id:
+    get:
+      operationId: getNextParameterId
+      summary: Get next available parameter external ID
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nextId:
+                    type: string
+
+  /catalog/panels/next-id:
+    get:
+      operationId: getNextPanelId
+      summary: Get next available panel external ID
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nextId:
+                    type: string
+
+  /catalog/test-parameter-mappings/import:
+    post:
+      operationId: importTestParameterMappings
+      summary: Import test-parameter mappings from CSV
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [csv]
+              properties:
+                csv:
+                  type: string
+                  description: CSV text content (first col = test externalId, rest = param externalIds)
+      responses:
+        '200':
+          description: Import result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imported: { type: integer }
+                  skipped: { type: integer }
+                  warnings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        row: { type: integer }
+                        message: { type: string }
 
   # ─── Catalog Reference Ranges ──────────────────────────────────────────────
   /catalog/reference-ranges:

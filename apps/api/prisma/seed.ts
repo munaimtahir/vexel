@@ -183,16 +183,16 @@ export async function main() {
 
   // Seed minimal catalog tests for E2E testing
   await prisma.catalogTest.upsert({
-    where: { tenantId_code: { tenantId: 'system', code: 'GLU' } },
+    where: { tenant_test_externalId: { tenantId: 'system', externalId: 't1' } },
     update: {},
-    create: { tenantId: 'system', code: 'GLU', name: 'Glucose', isActive: true },
+    create: { tenantId: 'system', externalId: 't1', name: 'Glucose', isActive: true },
   });
   await prisma.catalogTest.upsert({
-    where: { tenantId_code: { tenantId: 'system', code: 'CBC' } },
+    where: { tenant_test_externalId: { tenantId: 'system', externalId: 't2' } },
     update: {},
-    create: { tenantId: 'system', code: 'CBC', name: 'Complete Blood Count', isActive: true },
+    create: { tenantId: 'system', externalId: 't2', name: 'Complete Blood Count', isActive: true },
   });
-  console.log('✅ Catalog tests seeded (GLU, CBC)');
+  console.log('✅ Catalog tests seeded (t1=Glucose, t2=CBC)');
 
   // Seed default DocumentTemplates for system tenant
   await prisma.documentTemplate.upsert({

@@ -174,7 +174,6 @@ model TenantFeature {
 model CatalogTest {
   id              String   @id @default(uuid())
   tenantId        String
-  code            String
   name            String
   description     String?
   sampleType      String?  // legacy field kept for compat
@@ -195,7 +194,6 @@ model CatalogTest {
   parameterMappings TestParameterMapping[]
   panelMappings     PanelTestMapping[]
 
-  @@unique([tenantId, code])
   @@unique([tenantId, externalId], name: "tenant_test_externalId")
   @@index([tenantId, isActive])
   @@map("catalog_tests")
@@ -204,7 +202,6 @@ model CatalogTest {
 model CatalogPanel {
   id          String   @id @default(uuid())
   tenantId    String
-  code        String
   name        String
   description String?
   price       Decimal? @db.Decimal(10,2) // price in PKR
@@ -218,7 +215,6 @@ model CatalogPanel {
   tenant      Tenant           @relation(fields: [tenantId], references: [id])
   testMappings PanelTestMapping[]
 
-  @@unique([tenantId, code])
   @@unique([tenantId, externalId], name: "tenant_panel_externalId")
   @@map("catalog_panels")
 }
@@ -226,7 +222,6 @@ model CatalogPanel {
 model Parameter {
   id            String   @id @default(uuid())
   tenantId      String
-  code          String
   name          String
   unit          String?
   ucumCode      String?  // UCUM unit code (e.g. "mg/dL", "mmol/L")
@@ -239,6 +234,7 @@ model Parameter {
   defaultUnit   String?
   decimals      Int?
   allowedValues String?
+  defaultValue  String?  // pre-filled value shown in result entry
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -246,7 +242,6 @@ model Parameter {
   testMappings    TestParameterMapping[]
   referenceRanges ReferenceRange[]
 
-  @@unique([tenantId, code])
   @@unique([tenantId, externalId], name: "tenant_param_externalId")
   @@index([tenantId, isActive])
   @@map("parameters")

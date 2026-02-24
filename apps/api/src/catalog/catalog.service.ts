@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 
@@ -8,6 +8,33 @@ export class CatalogService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
   ) {}
+
+  // ─── Auto-ID Generation ───────────────────────────────────────────────────
+
+  async getNextId(tenantId: string, type: 'test' | 'parameter' | 'panel'): Promise<{ nextId: string }> {
+    const prefix = type === 'test' ? 't' : type === 'parameter' ? 'p' : 'g';
+    let existingIds: string[] = [];
+    if (type === 'test') {
+      const rows = await this.prisma.catalogTest.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
+      existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
+    } else if (type === 'parameter') {
+      const rows = await this.prisma.parameter.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
+      existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
+    } else {
+      const rows = await this.prisma.catalogPanel.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
+      existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
+    }
+    const pattern = new RegExp(`^${prefix}(\\d+)$`);
+    let max = 0;
+    for (const id of existingIds) {
+      const m = id.match(pattern);
+      if (m) {
+        const n = parseInt(m[1], 10);
+        if (n > max) max = n;
+      }
+    }
+    return { nextId: `${prefix}${max + 1}` };
+  }
 
   // ─── Tests ────────────────────────────────────────────────────────────────
 
@@ -34,7 +61,7 @@ export class CatalogService {
   async createTest(
     tenantId: string,
     body: {
-      code: string; name: string; description?: string; sampleType?: string;
+      name: string; description?: string; sampleType?: string;
       turnaroundHours?: number; externalId?: string; userCode?: string;
       loincCode?: string; department?: string; method?: string; specimenType?: string;
       price?: number;
@@ -42,9 +69,8 @@ export class CatalogService {
     actorUserId: string,
     correlationId?: string,
   ) {
-    const existing = await this.prisma.catalogTest.findUnique({ where: { tenantId_code: { tenantId, code: body.code } } });
-    if (existing) throw new ConflictException(`Test code '${body.code}' already exists in tenant`);
     if (body.externalId) {
+      if (!/^t\d+$/.test(body.externalId)) throw new BadRequestException(`Test externalId must match pattern t<number>, got '${body.externalId}'`);
       const dup = await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId: body.externalId } });
       if (dup) throw new ConflictException(`Test externalId '${body.externalId}' already exists in tenant`);
     }
@@ -80,6 +106,7 @@ export class CatalogService {
     const test = await this.prisma.catalogTest.findFirst({ where: { id, tenantId } });
     if (!test) throw new NotFoundException('Catalog test not found');
     if (body.externalId && body.externalId !== test.externalId) {
+      if (!/^t\d+$/.test(body.externalId)) throw new BadRequestException(`Test externalId must match pattern t<number>, got '${body.externalId}'`);
       const dup = await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId: body.externalId, NOT: { id } } });
       if (dup) throw new ConflictException(`Test externalId '${body.externalId}' already exists in tenant`);
     }
@@ -126,13 +153,12 @@ export class CatalogService {
 
   async createPanel(
     tenantId: string,
-    body: { code: string; name: string; description?: string; externalId?: string; userCode?: string; loincCode?: string; price?: number },
+    body: { name: string; description?: string; externalId?: string; userCode?: string; loincCode?: string; price?: number },
     actorUserId: string,
     correlationId?: string,
   ) {
-    const existing = await this.prisma.catalogPanel.findUnique({ where: { tenantId_code: { tenantId, code: body.code } } });
-    if (existing) throw new ConflictException(`Panel code '${body.code}' already exists in tenant`);
     if (body.externalId) {
+      if (!/^g\d+$/.test(body.externalId)) throw new BadRequestException(`Panel externalId must match pattern g<number>, got '${body.externalId}'`);
       const dup = await this.prisma.catalogPanel.findFirst({ where: { tenantId, externalId: body.externalId } });
       if (dup) throw new ConflictException(`Panel externalId '${body.externalId}' already exists in tenant`);
     }
@@ -140,8 +166,8 @@ export class CatalogService {
       const dup = await this.prisma.catalogPanel.findFirst({ where: { tenantId, userCode: body.userCode } });
       if (dup) throw new ConflictException(`Panel userCode '${body.userCode}' already exists in tenant`);
     }
-    const { ...createData } = body as any;
-    delete createData.testIds; // removed from schema
+    const createData: any = { ...body };
+    delete createData.testIds;
     const panel = await this.prisma.catalogPanel.create({ data: { tenantId, ...createData } });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel.create', entityType: 'CatalogPanel', entityId: panel.id, after: body, correlationId });
     return panel;
@@ -157,6 +183,7 @@ export class CatalogService {
     const panel = await this.prisma.catalogPanel.findFirst({ where: { id, tenantId } });
     if (!panel) throw new NotFoundException('Panel not found');
     if (body.externalId && body.externalId !== panel.externalId) {
+      if (!/^g\d+$/.test(body.externalId)) throw new BadRequestException(`Panel externalId must match pattern g<number>, got '${body.externalId}'`);
       const dup = await this.prisma.catalogPanel.findFirst({ where: { tenantId, externalId: body.externalId, NOT: { id } } });
       if (dup) throw new ConflictException(`Panel externalId '${body.externalId}' already exists in tenant`);
     }
@@ -194,16 +221,16 @@ export class CatalogService {
   async createParameter(
     tenantId: string,
     body: {
-      code: string; name: string; unit?: string; dataType?: string;
+      name: string; unit?: string; dataType?: string;
       externalId?: string; userCode?: string; loincCode?: string;
       resultType?: string; defaultUnit?: string; decimals?: number; allowedValues?: string;
+      defaultValue?: string;
     },
     actorUserId: string,
     correlationId?: string,
   ) {
-    const existing = await this.prisma.parameter.findUnique({ where: { tenantId_code: { tenantId, code: body.code } } });
-    if (existing) throw new ConflictException(`Parameter code '${body.code}' already exists in tenant`);
     if (body.externalId) {
+      if (!/^p\d+$/.test(body.externalId)) throw new BadRequestException(`Parameter externalId must match pattern p<number>, got '${body.externalId}'`);
       const dup = await this.prisma.parameter.findFirst({ where: { tenantId, externalId: body.externalId } });
       if (dup) throw new ConflictException(`Parameter externalId '${body.externalId}' already exists in tenant`);
     }
@@ -229,6 +256,7 @@ export class CatalogService {
       name?: string; unit?: string; dataType?: string; isActive?: boolean;
       externalId?: string; userCode?: string; loincCode?: string;
       resultType?: string; defaultUnit?: string; decimals?: number; allowedValues?: string;
+      defaultValue?: string;
     },
     actorUserId: string,
     correlationId?: string,
@@ -236,6 +264,7 @@ export class CatalogService {
     const param = await this.prisma.parameter.findFirst({ where: { id, tenantId } });
     if (!param) throw new NotFoundException('Parameter not found');
     if (body.externalId && body.externalId !== param.externalId) {
+      if (!/^p\d+$/.test(body.externalId)) throw new BadRequestException(`Parameter externalId must match pattern p<number>, got '${body.externalId}'`);
       const dup = await this.prisma.parameter.findFirst({ where: { tenantId, externalId: body.externalId, NOT: { id } } });
       if (dup) throw new ConflictException(`Parameter externalId '${body.externalId}' already exists in tenant`);
     }
@@ -287,6 +316,36 @@ export class CatalogService {
     return mapping;
   }
 
+  async updateTestParameterMapping(
+    tenantId: string,
+    testId: string,
+    parameterId: string,
+    body: { displayOrder?: number; isRequired?: boolean; unitOverride?: string | null },
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    await this.getTest(tenantId, testId);
+    await this.getParameter(tenantId, parameterId);
+    const displayOrder = body.displayOrder ?? 1;
+    const mapping = await this.prisma.testParameterMapping.upsert({
+      where: { tenantId_testId_parameterId: { tenantId, testId, parameterId } },
+      create: {
+        tenantId, testId, parameterId,
+        ordering: displayOrder,
+        displayOrder,
+        isRequired: body.isRequired ?? true,
+        unitOverride: body.unitOverride ?? null,
+      },
+      update: {
+        ...(body.displayOrder !== undefined && { displayOrder: body.displayOrder, ordering: body.displayOrder }),
+        ...(body.isRequired !== undefined && { isRequired: body.isRequired }),
+        ...(body.unitOverride !== undefined && { unitOverride: body.unitOverride }),
+      },
+    });
+    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameter.update', entityType: 'TestParameterMapping', entityId: mapping.id, after: { testId, parameterId, ...body }, correlationId });
+    return mapping;
+  }
+
   async removeTestParameterMapping(tenantId: string, testId: string, parameterId: string, actorUserId: string, correlationId?: string) {
     const mapping = await this.prisma.testParameterMapping.findUnique({
       where: { tenantId_testId_parameterId: { tenantId, testId, parameterId } },
@@ -294,6 +353,67 @@ export class CatalogService {
     if (!mapping) throw new NotFoundException('Mapping not found');
     await this.prisma.testParameterMapping.delete({ where: { tenantId_testId_parameterId: { tenantId, testId, parameterId } } });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameter.remove', entityType: 'TestParameterMapping', entityId: mapping.id, correlationId });
+  }
+
+  // ─── Import Test-Parameter Mappings from CSV ──────────────────────────────
+
+  async importTestParameterMappings(
+    tenantId: string,
+    csvText: string,
+    actorUserId: string,
+    correlationId?: string,
+  ): Promise<{ imported: number; skipped: number; warnings: Array<{ row: number; message: string }> }> {
+    const lines = csvText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    let imported = 0;
+    let skipped = 0;
+    const warnings: Array<{ row: number; message: string }> = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const rowNum = i + 1;
+      const cols = lines[i].split(',').map(c => c.trim());
+      const testExternalId = cols[0];
+      const paramCols = cols.slice(1);
+
+      if (!testExternalId || !/^t\d+$/.test(testExternalId)) {
+        warnings.push({ row: rowNum, message: `Invalid test_id format '${testExternalId}' — must match t<number>` });
+        skipped++;
+        continue;
+      }
+
+      const test = await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId: testExternalId } });
+      if (!test) {
+        warnings.push({ row: rowNum, message: `Test externalId '${testExternalId}' not found` });
+        skipped++;
+        continue;
+      }
+
+      for (let j = 0; j < paramCols.length; j++) {
+        const paramExternalId = paramCols[j];
+        if (!paramExternalId) continue;
+        const displayOrder = j + 1;
+
+        if (!/^p\d+$/.test(paramExternalId)) {
+          warnings.push({ row: rowNum, message: `Invalid parameter externalId '${paramExternalId}' at column ${j + 2} — must match p<number>` });
+          continue;
+        }
+
+        const param = await this.prisma.parameter.findFirst({ where: { tenantId, externalId: paramExternalId } });
+        if (!param) {
+          warnings.push({ row: rowNum, message: `Parameter externalId '${paramExternalId}' not found` });
+          continue;
+        }
+
+        await this.prisma.testParameterMapping.upsert({
+          where: { tenantId_testId_parameterId: { tenantId, testId: test.id, parameterId: param.id } },
+          create: { tenantId, testId: test.id, parameterId: param.id, ordering: displayOrder, displayOrder, isRequired: true, unitOverride: null },
+          update: { displayOrder, ordering: displayOrder },
+        });
+        imported++;
+      }
+    }
+
+    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameter_mappings.import', entityType: 'TestParameterMapping', entityId: tenantId, after: { imported, skipped, warningCount: warnings.length }, correlationId });
+    return { imported, skipped, warnings };
   }
 
   // ─── Panel-Test Mappings ──────────────────────────────────────────────────
@@ -357,6 +477,7 @@ export class CatalogService {
         effectiveUnit: m.unitOverride ?? m.parameter.defaultUnit,
         decimals: m.parameter.decimals,
         allowedValues: m.parameter.allowedValues,
+        defaultValue: m.parameter.defaultValue,
         displayOrder: m.displayOrder,
         isRequired: m.isRequired,
       })),
@@ -403,6 +524,7 @@ export class CatalogService {
           effectiveUnit: m.unitOverride ?? m.parameter.defaultUnit,
           decimals: m.parameter.decimals,
           allowedValues: m.parameter.allowedValues,
+          defaultValue: m.parameter.defaultValue,
           displayOrder: m.displayOrder,
           isRequired: m.isRequired,
         })),
