@@ -181,7 +181,8 @@ function FlagRow({ flag, saving, onToggle, labelOverride, descriptionOverride }:
       </div>
       <button onClick={() => onToggle(flag.key, !flag.enabled)} disabled={saving === flag.key}
         style={{ width: '48px', height: '26px', borderRadius: '13px', background: flag.enabled ? '#22c55e' : '#d1d5db', border: 'none', cursor: saving === flag.key ? 'wait' : 'pointer', transition: 'background 0.2s', position: 'relative', flexShrink: 0 }}
-        aria-label={`Toggle ${flag.key}`}>
+        aria-label={`Toggle ${flag.key}`}
+        aria-pressed={flag.enabled}>
         <span style={{ position: 'absolute', top: '3px', left: flag.enabled ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
       </button>
     </div>

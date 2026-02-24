@@ -91,17 +91,15 @@ test.describe('Admin CRUD', () => {
     // Pick the first module toggle
     const toggle = page.getByRole('button', { name: /Toggle module\./i }).first();
     await expect(toggle).toBeVisible({ timeout: 15_000 });
-    const initialBg = await toggle.evaluate((el) => (el as HTMLButtonElement).style.background);
+    const initialPressed = await toggle.getAttribute('aria-pressed');
 
     await toggle.click();
 
-    // Background should change (green ↔ grey)
-    await page.waitForTimeout(1500); // allow save to complete
-    const newBg = await toggle.evaluate((el) => (el as HTMLButtonElement).style.background);
-    expect(newBg).not.toBe(initialBg);
+    // aria-pressed should flip (true ↔ false)
+    await expect(toggle).toHaveAttribute('aria-pressed', initialPressed === 'true' ? 'false' : 'true', { timeout: 5_000 });
 
     // Toggle back to restore original state
     await toggle.click();
-    await page.waitForTimeout(1500);
+    await expect(toggle).toHaveAttribute('aria-pressed', initialPressed ?? 'true', { timeout: 5_000 });
   });
 });
