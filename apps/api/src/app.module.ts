@@ -21,6 +21,9 @@ import { ResultsModule } from './results/results.module';
 import { SampleCollectionModule } from './sample-collection/sample-collection.module';
 import { VerificationModule } from './verification/verification.module';
 import { CashModule } from './cash/cash.module';
+import { OpdModule } from './opd/opd.module';
+import { AppointmentsModule } from './appointments/appointments.module';
+import { BillingModule } from './billing/billing.module';
 
 @Module({
   imports: [
@@ -44,6 +47,9 @@ import { CashModule } from './cash/cash.module';
     SampleCollectionModule,
     VerificationModule,
     CashModule,
+    OpdModule,
+    AppointmentsModule,
+    BillingModule,
   ],
 })
 export class AppModule implements NestModule {

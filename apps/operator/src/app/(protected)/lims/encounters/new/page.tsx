@@ -41,24 +41,24 @@ export default function NewEncounterPage() {
   return (
     <div style={{ maxWidth: '560px' }}>
       <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b', margin: 0 }}>Register Encounter</h2>
-        <p style={{ color: '#64748b', margin: '4px 0 0' }}>Create a new patient encounter</p>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))', margin: 0 }}>Register Encounter</h2>
+        <p style={{ color: 'hsl(var(--muted-foreground))', margin: '4px 0 0' }}>Create a new patient encounter</p>
       </div>
 
-      <div style={{ background: 'white', padding: '32px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+      <div style={{ background: 'hsl(var(--card))', padding: '32px', borderRadius: '8px', border: '1px solid hsl(var(--border))' }}>
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '6px', color: '#374151' }}>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>
               Patient *
             </label>
             {loadingPatients ? (
-              <p style={{ color: '#94a3b8', fontSize: '14px' }}>Loading patients...</p>
+              <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '14px' }}>Loading patients...</p>
             ) : (
               <select
                 value={patientId}
                 onChange={(e) => setPatientId(e.target.value)}
                 required
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box', background: 'white' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box', background: 'hsl(var(--card))' }}
               >
                 <option value="">Select a patient...</option>
                 {patients.map((p: any) => (
@@ -69,24 +69,24 @@ export default function NewEncounterPage() {
               </select>
             )}
             {patients.length === 0 && !loadingPatients && (
-              <p style={{ color: '#f59e0b', fontSize: '12px', marginTop: '4px' }}>
-                No patients found. <a href="/lims/patients" style={{ color: '#3b82f6' }}>Create a patient first</a>.
+              <p style={{ color: 'hsl(var(--status-warning-fg))', fontSize: '12px', marginTop: '4px' }}>
+                No patients found. <a href="/lims/patients" style={{ color: 'hsl(var(--primary))' }}>Create a patient first</a>.
               </p>
             )}
           </div>
 
-          {error && <p style={{ color: '#ef4444', marginBottom: '16px', fontSize: '14px' }}>{error}</p>}
+          {error && <p style={{ color: 'hsl(var(--destructive))', marginBottom: '16px', fontSize: '14px' }}>{error}</p>}
 
           <div style={{ display: 'flex', gap: '12px' }}>
             <button
               type="submit" disabled={loading || loadingPatients}
-              style={{ flex: 1, padding: '10px', background: loading ? '#94a3b8' : '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
+              style={{ flex: 1, padding: '10px', background: loading ? 'hsl(var(--muted))' : 'hsl(var(--primary))', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
             >
               {loading ? 'Registering...' : 'Register Encounter'}
             </button>
             <button
               type="button" onClick={() => router.back()}
-              style={{ padding: '10px 20px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
+              style={{ padding: '10px 20px', background: 'hsl(var(--card))', color: 'hsl(var(--muted-foreground))', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
             >
               Cancel
             </button>

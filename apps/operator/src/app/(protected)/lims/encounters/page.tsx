@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { EncounterStatusBadge } from '@/components/status-badge';
 
 export default function EncountersPage() {
   const router = useRouter();
@@ -24,63 +25,53 @@ export default function EncountersPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const statusColor: Record<string, string> = {
-    registered: '#3b82f6',
-    lab_ordered: '#8b5cf6',
-    specimen_collected: '#f59e0b',
-    specimen_received: '#0ea5e9',
-    resulted: '#10b981',
-    verified: '#059669',
-    cancelled: '#ef4444',
-  };
-
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b', margin: 0 }}>Encounters</h2>
-          {pagination && <p style={{ color: '#64748b', margin: '4px 0 0', fontSize: '14px' }}>{pagination.total} total</p>}
+          <h2 className="text-2xl font-bold text-foreground">Encounters</h2>
+          {pagination && <p className="text-muted-foreground mt-1 text-sm">{pagination.total} total</p>}
         </div>
         <Link
           href="/lims/encounters/new"
-          style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
+          className="px-5 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-semibold hover:opacity-90 transition-opacity"
         >
           + New Encounter
         </Link>
       </div>
 
-      {loading && <p style={{ color: '#64748b' }}>Loading encounters...</p>}
-      {error && <p style={{ color: '#ef4444' }}>{error}</p>}
+      {loading && <p className="text-muted-foreground">Loading encounters…</p>}
+      {error && <p className="text-destructive">{error}</p>}
       {!loading && !error && encounters.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '48px', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-          <p style={{ color: '#64748b', fontSize: '16px' }}>No encounters yet.</p>
-          <Link href="/lims/encounters/new" style={{ color: '#3b82f6' }}>Register the first encounter →</Link>
+        <div className="text-center py-12 bg-card rounded-lg border border-border">
+          <p className="text-muted-foreground text-base">No encounters yet.</p>
+          <Link href="/lims/encounters/new" className="text-primary hover:underline">Register the first encounter →</Link>
         </div>
       )}
 
       {!loading && encounters.length > 0 && (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="bg-card rounded-lg border border-border overflow-hidden">
+          <table className="w-full border-collapse">
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+              <tr className="bg-muted/40 border-b border-border">
                 {['ID', 'Patient', 'Status', 'Created'].map((h) => (
-                  <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{h}</th>
+                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {encounters.map((enc: any) => (
-                <tr key={enc.id} style={{ borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }} onClick={() => router.push(`/lims/encounters/${enc.id}`)}>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace', color: '#475569' }}>{enc.id.slice(0, 8)}…</td>
-                  <td style={{ padding: '12px 16px', fontSize: '14px', color: '#1e293b' }}>
+                <tr
+                  key={enc.id}
+                  className="border-b border-border/50 cursor-pointer hover:bg-muted/30 transition-colors"
+                  onClick={() => router.push(`/lims/encounters/${enc.id}`)}
+                >
+                  <td className="px-4 py-3 text-xs text-muted-foreground font-mono">{enc.id.slice(0, 8)}…</td>
+                  <td className="px-4 py-3 text-sm text-foreground font-medium">
                     {enc.patient ? `${enc.patient.firstName} ${enc.patient.lastName}` : enc.patientId.slice(0, 8)}
                   </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{ padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 600, background: `${statusColor[enc.status] ?? '#94a3b8'}20`, color: statusColor[enc.status] ?? '#64748b' }}>
-                      {enc.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{new Date(enc.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3"><EncounterStatusBadge status={enc.status} /></td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{new Date(enc.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>

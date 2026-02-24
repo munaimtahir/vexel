@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
+import { FlagBadge as StatusFlagBadge } from '@/components/status-badge';
 
 const SPECIMEN_READY_STATUSES = ['specimen_collected', 'specimen_received', 'partial_resulted', 'resulted', 'verified'];
 
@@ -30,12 +31,6 @@ function patientLabel(p: any): string {
   return [age, gender].filter(Boolean).join('');
 }
 
-const FLAG_COLORS: Record<string, { bg: string; color: string; label: string }> = {
-  high:     { bg: '#fee2e2', color: '#dc2626', label: 'H' },
-  low:      { bg: '#dbeafe', color: '#2563eb', label: 'L' },
-  normal:   { bg: '#f0fdf4', color: '#16a34a', label: 'N' },
-  critical: { bg: '#fce7f3', color: '#9333ea', label: '!' },
-};
 const FLAG_CYCLE: (string | null)[] = [null, 'high', 'low', 'normal'];
 
 function FlagBadge({ flag, locked, onClick }: { flag: string | null; locked: boolean; onClick: () => void }) {
@@ -51,14 +46,14 @@ function FlagBadge({ flag, locked, onClick }: { flag: string | null; locked: boo
       >—</span>
     );
   }
-  const s = FLAG_COLORS[flag] ?? { bg: '#f1f5f9', color: '#64748b', label: flag.charAt(0).toUpperCase() };
   return (
     <span
       onClick={locked ? undefined : onClick}
       title={locked ? undefined : 'Click to cycle flag'}
-      className={cn('inline-block px-2 py-0.5 rounded text-xs font-bold select-none', locked ? 'cursor-default' : 'cursor-pointer')}
-      style={{ background: s.bg, color: s.color }}
-    >{s.label}</span>
+      className={cn('select-none', locked ? 'cursor-default' : 'cursor-pointer')}
+    >
+      <StatusFlagBadge flag={flag} />
+    </span>
   );
 }
 

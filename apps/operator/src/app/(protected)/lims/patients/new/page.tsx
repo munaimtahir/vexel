@@ -58,29 +58,29 @@ export default function NewPatientPage() {
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '10px 12px',
-    border: '1px solid #e2e8f0',
+    border: '1px solid hsl(var(--border))',
     borderRadius: '6px',
     fontSize: '14px',
     boxSizing: 'border-box',
-    background: 'white',
+    background: 'hsl(var(--card))',
   };
   const labelStyle: React.CSSProperties = {
     display: 'block',
     fontSize: '14px',
     fontWeight: 500,
     marginBottom: '6px',
-    color: '#374151',
+    color: 'hsl(var(--foreground))',
   };
   const fieldStyle: React.CSSProperties = { marginBottom: '20px' };
 
   return (
     <div style={{ maxWidth: '560px' }}>
       <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b', margin: 0 }}>New Patient</h2>
-        <p style={{ color: '#64748b', margin: '4px 0 0' }}>Register a new patient record</p>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))', margin: 0 }}>New Patient</h2>
+        <p style={{ color: 'hsl(var(--muted-foreground))', margin: '4px 0 0' }}>Register a new patient record</p>
       </div>
 
-      <div style={{ background: 'white', padding: '32px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+      <div style={{ background: 'hsl(var(--card))', padding: '32px', borderRadius: '8px', border: '1px solid hsl(var(--border))' }}>
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div style={fieldStyle}>
@@ -119,20 +119,20 @@ export default function NewPatientPage() {
             <input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} style={inputStyle} />
           </div>
 
-          {error && <p style={{ color: '#ef4444', marginBottom: '16px', fontSize: '14px' }}>{error}</p>}
+          {error && <p style={{ color: 'hsl(var(--destructive))', marginBottom: '16px', fontSize: '14px' }}>{error}</p>}
 
           <div style={{ display: 'flex', gap: '12px' }}>
             <button
               type="submit"
               disabled={loading}
-              style={{ flex: 1, padding: '10px', background: loading ? '#94a3b8' : '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
+              style={{ flex: 1, padding: '10px', background: loading ? 'hsl(var(--muted))' : 'hsl(var(--primary))', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
             >
               {loading ? 'Creating...' : 'Create Patient'}
             </button>
             <button
               type="button"
               onClick={() => router.back()}
-              style={{ padding: '10px 20px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
+              style={{ padding: '10px 20px', background: 'hsl(var(--card))', color: 'hsl(var(--muted-foreground))', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
             >
               Cancel
             </button>

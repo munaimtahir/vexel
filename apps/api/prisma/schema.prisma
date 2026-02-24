@@ -39,6 +39,17 @@ model Tenant {
   documentTemplates    DocumentTemplate[]
   documents            Document[]
   cashTransactions     CashTransaction[]
+  providers            Provider[]
+  providerSchedules    ProviderSchedule[]
+  appointments         Appointment[]
+  opdVisits            OPDVisit[]
+  opdVitals            OPDVitals[]
+  opdClinicalNotes     OPDClinicalNote[]
+  opdPrescriptions     OPDPrescription[]
+  opdPrescriptionItems OPDPrescriptionItem[]
+  invoices             Invoice[]
+  invoiceLines         InvoiceLine[]
+  payments             Payment[]
 
   @@map("tenants")
 }
@@ -374,8 +385,11 @@ model Patient {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  tenant     Tenant      @relation(fields: [tenantId], references: [id])
-  encounters Encounter[]
+  tenant       Tenant         @relation(fields: [tenantId], references: [id])
+  encounters   Encounter[]
+  appointments Appointment[]
+  opdVisits    OPDVisit[]
+  invoices     Invoice[]
 
   @@unique([tenantId, mrn])
   @@index([tenantId, lastName])
@@ -387,6 +401,7 @@ model Encounter {
   id            String   @id @default(uuid())
   tenantId      String
   patientId     String
+  moduleType    String   @default("LIMS") // LIMS | OPD
   encounterCode String?  // LIMS Order ID — server-generated e.g. VXL-2602-001
   status        String   @default("registered")
   // registered | lab_ordered | specimen_collected | specimen_received
@@ -399,9 +414,12 @@ model Encounter {
   labOrders        LabOrder[]
   specimenItems    SpecimenItem[]
   cashTransactions CashTransaction[]
+  opdVisits        OPDVisit[]
+  invoices         Invoice[]
 
   @@unique([tenantId, encounterCode])
   @@index([tenantId, status])
+  @@index([tenantId, moduleType, status])
   @@index([tenantId, patientId])
   @@map("encounters")
 }
@@ -512,6 +530,314 @@ model LabResult {
   @@index([tenantId])
   @@index([tenantId, labOrderId])
   @@map("lab_results")
+}
+
+// ─── OPD / Billing (MVP scaffold; contract-first endpoints come later) ──────
+
+model Provider {
+  id             String   @id @default(uuid())
+  tenantId       String
+  code           String?
+  displayName    String
+  specialty      String?
+  registrationNo String?
+  qualification  String?
+  phone          String?
+  email          String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant        Tenant             @relation(fields: [tenantId], references: [id])
+  schedules     ProviderSchedule[]
+  appointments  Appointment[]
+  opdVisits     OPDVisit[]
+  clinicalNotes OPDClinicalNote[]
+  prescriptions OPDPrescription[]
+
+  @@unique([tenantId, code], name: "tenant_provider_code")
+  @@unique([tenantId, registrationNo], name: "tenant_provider_registrationNo")
+  @@index([tenantId, isActive])
+  @@index([tenantId, displayName])
+  @@map("providers")
+}
+
+model ProviderSchedule {
+  id            String   @id @default(uuid())
+  tenantId      String
+  providerId    String
+  weekday       Int      // 0-6; interpretation locked at API layer
+  startTime     String   // HH:mm
+  endTime       String   // HH:mm
+  slotMinutes   Int      @default(15)
+  isActive      Boolean  @default(true)
+  effectiveFrom DateTime?
+  effectiveTo   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  provider  Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, providerId, weekday, startTime, endTime])
+  @@index([tenantId, providerId, weekday, isActive])
+  @@map("provider_schedules")
+}
+
+model Appointment {
+  id                    String   @id @default(uuid())
+  tenantId              String
+  patientId             String
+  providerId            String
+  appointmentCode       String?
+  status                String   @default("BOOKED") // BOOKED | CHECKED_IN | IN_CONSULTATION | COMPLETED | CANCELLED | NO_SHOW
+  scheduledAt           DateTime
+  durationMinutes       Int      @default(15)
+  reason                String?
+  notes                 String?
+  checkedInAt           DateTime?
+  consultationStartedAt DateTime?
+  completedAt           DateTime?
+  cancelledAt           DateTime?
+  cancelledReason       String?
+  noShowMarkedAt        DateTime?
+  bookedById            String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+  patient  Patient   @relation(fields: [patientId], references: [id])
+  provider Provider  @relation(fields: [providerId], references: [id])
+  opdVisits OPDVisit[]
+
+  @@unique([tenantId, appointmentCode])
+  @@index([tenantId, status, scheduledAt])
+  @@index([tenantId, patientId, scheduledAt])
+  @@index([tenantId, providerId, scheduledAt])
+  @@map("appointments")
+}
+
+model OPDVisit {
+  id                    String   @id @default(uuid())
+  tenantId              String
+  encounterId           String
+  patientId             String
+  providerId            String
+  appointmentId         String?
+  visitCode             String?
+  status                String   @default("REGISTERED") // REGISTERED | WAITING | IN_CONSULTATION | COMPLETED | CANCELLED
+  chiefComplaint        String?
+  queueNumber           String?
+  waitingAt             DateTime?
+  consultationStartedAt DateTime?
+  completedAt           DateTime?
+  cancelledAt           DateTime?
+  cancelledReason       String?
+  createdById           String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  tenant        Tenant             @relation(fields: [tenantId], references: [id])
+  encounter     Encounter          @relation(fields: [encounterId], references: [id])
+  patient       Patient            @relation(fields: [patientId], references: [id])
+  provider      Provider           @relation(fields: [providerId], references: [id])
+  appointment   Appointment?       @relation(fields: [appointmentId], references: [id])
+  vitals        OPDVitals[]
+  clinicalNotes OPDClinicalNote[]
+  prescriptions OPDPrescription[]
+  invoices      Invoice[]
+
+  @@unique([tenantId, encounterId])
+  @@unique([tenantId, appointmentId])
+  @@unique([tenantId, visitCode])
+  @@index([tenantId, status, createdAt])
+  @@index([tenantId, patientId, createdAt])
+  @@index([tenantId, providerId, createdAt])
+  @@index([tenantId, appointmentId])
+  @@map("opd_visits")
+}
+
+model OPDVitals {
+  id               String   @id @default(uuid())
+  tenantId         String
+  visitId          String
+  recordedAt       DateTime @default(now())
+  recordedById     String?
+  heightCm         Decimal? @db.Decimal(5,2)
+  weightKg         Decimal? @db.Decimal(5,2)
+  bmi              Decimal? @db.Decimal(5,2)
+  temperatureC     Decimal? @db.Decimal(4,1)
+  pulseBpm         Int?
+  systolicBp       Int?
+  diastolicBp      Int?
+  respiratoryRate  Int?
+  spo2Pct          Int?
+  bloodGlucoseMgDl Decimal? @db.Decimal(6,2)
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  tenant Tenant  @relation(fields: [tenantId], references: [id])
+  visit  OPDVisit @relation(fields: [visitId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, visitId, recordedAt])
+  @@map("opd_vitals")
+}
+
+model OPDClinicalNote {
+  id             String   @id @default(uuid())
+  tenantId       String
+  visitId        String
+  providerId     String
+  status         String   @default("DRAFT") // DRAFT | SIGNED
+  subjectiveJson Json?
+  objectiveJson  Json?
+  assessmentJson Json?
+  planJson       Json?
+  diagnosisText  String?
+  signedAt       DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  visit    OPDVisit @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  @@unique([tenantId, visitId])
+  @@index([tenantId, providerId, createdAt])
+  @@index([tenantId, status])
+  @@map("opd_clinical_notes")
+}
+
+model OPDPrescription {
+  id         String   @id @default(uuid())
+  tenantId   String
+  visitId    String
+  providerId String
+  status     String   @default("DRAFT") // DRAFT | SIGNED | PRINTED
+  notes      String?
+  signedAt   DateTime?
+  printedAt  DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant   Tenant                @relation(fields: [tenantId], references: [id])
+  visit    OPDVisit              @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  provider Provider              @relation(fields: [providerId], references: [id])
+  items    OPDPrescriptionItem[]
+
+  @@unique([tenantId, visitId])
+  @@index([tenantId, providerId, createdAt])
+  @@index([tenantId, status])
+  @@map("opd_prescriptions")
+}
+
+model OPDPrescriptionItem {
+  id             String   @id @default(uuid())
+  tenantId       String
+  prescriptionId String
+  sortOrder      Int      @default(0)
+  medicationText String
+  dosageText     String?
+  frequencyText  String?
+  durationText   String?
+  instructions   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant       Tenant          @relation(fields: [tenantId], references: [id])
+  prescription OPDPrescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, prescriptionId, sortOrder])
+  @@index([tenantId, prescriptionId])
+  @@map("opd_prescription_items")
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  tenantId       String
+  patientId      String
+  encounterId    String?
+  opdVisitId     String?
+  invoiceCode    String?
+  status         String   @default("DRAFT") // DRAFT | ISSUED | PARTIALLY_PAID | PAID | VOID
+  currency       String   @default("PKR")
+  subtotalAmount Decimal  @db.Decimal(10,2)
+  discountAmount Decimal  @default(0) @db.Decimal(10,2)
+  totalAmount    Decimal  @db.Decimal(10,2)
+  amountPaid     Decimal  @default(0) @db.Decimal(10,2)
+  amountDue      Decimal  @db.Decimal(10,2)
+  issuedAt       DateTime?
+  voidedAt       DateTime?
+  voidReason     String?
+  createdById    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+  patient   Patient    @relation(fields: [patientId], references: [id])
+  encounter Encounter? @relation(fields: [encounterId], references: [id])
+  opdVisit  OPDVisit?  @relation(fields: [opdVisitId], references: [id])
+  lines     InvoiceLine[]
+  payments  Payment[]
+
+  @@unique([tenantId, invoiceCode])
+  @@index([tenantId, status, createdAt])
+  @@index([tenantId, patientId, createdAt])
+  @@index([tenantId, opdVisitId])
+  @@index([tenantId, encounterId])
+  @@map("invoices")
+}
+
+model InvoiceLine {
+  id             String   @id @default(uuid())
+  tenantId       String
+  invoiceId      String
+  sortOrder      Int      @default(0)
+  lineType       String   @default("SERVICE") // SERVICE | ADJUSTMENT
+  description    String
+  quantity       Decimal  @default(1) @db.Decimal(10,2)
+  unitPrice      Decimal  @db.Decimal(10,2)
+  discountAmount Decimal  @default(0) @db.Decimal(10,2)
+  lineTotal      Decimal  @db.Decimal(10,2)
+  metadataJson   Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id])
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, invoiceId, sortOrder])
+  @@index([tenantId, invoiceId])
+  @@map("invoice_lines")
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  tenantId      String
+  invoiceId     String
+  paymentCode   String?
+  status        String   @default("POSTED") // POSTED | VOIDED
+  method        String   @default("CASH") // CASH | CARD | TRANSFER (future expansion)
+  amount        Decimal  @db.Decimal(10,2)
+  receivedAt    DateTime @default(now())
+  receivedById  String?
+  referenceNo   String?
+  note          String?
+  correlationId String?
+  voidedAt      DateTime?
+  voidReason    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id])
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, paymentCode])
+  @@index([tenantId, invoiceId, receivedAt])
+  @@index([tenantId, status])
+  @@index([tenantId, correlationId])
+  @@map("payments")
 }
 
 // ─── Documents ────────────────────────────────────────────────────────────

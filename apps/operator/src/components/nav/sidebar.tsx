@@ -10,25 +10,25 @@ import { useFeatureFlags } from '@/hooks/use-feature-flags';
 const STORAGE_KEY = 'vexel-sidebar-collapsed';
 
 const S = {
-  headerBg:      'hsl(205,32%,28%)',
-  bodyBg:        'hsl(205,30%,33%)',
-  footerBg:      'hsl(205,32%,26%)',
-  activeBg:      'rgba(196,138,94,0.17)',
-  activeBar:     '#C48A5E',
-  activeBarGlow: '0 0 10px rgba(196,138,94,0.65)',
-  activeText:    '#F2EAD8',
-  inactiveText:  '#7FABBE',
-  hoverText:     '#D0DBE4',
-  iconActive:    '#D4A882',
-  iconInactive:  '#4A6E82',
-  sectionLabel:  '#2C5268',
+  headerBg:      'hsl(215,44%,16%)',
+  bodyBg:        'hsl(215,42%,19%)',
+  footerBg:      'hsl(215,44%,14%)',
+  activeBg:      'rgba(249,115,22,0.14)',
+  activeBar:     'hsl(24,95%,53%)',
+  activeBarGlow: '0 0 10px rgba(249,115,22,0.55)',
+  activeText:    'hsl(215,10%,92%)',
+  inactiveText:  'hsl(215,22%,52%)',
+  hoverText:     'hsl(215,15%,78%)',
+  iconActive:    'hsl(24,85%,68%)',
+  iconInactive:  'hsl(215,25%,42%)',
+  sectionLabel:  'hsl(215,35%,36%)',
 };
 
 function GlowDivider() {
   return (
     <div style={{
       height: '1px',
-      background: 'linear-gradient(90deg, transparent 0%, rgba(196,138,94,0.55) 38%, rgba(135,175,196,0.35) 65%, transparent 100%)',
+      background: 'linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.45) 38%, rgba(100,140,200,0.25) 65%, transparent 100%)',
       flexShrink: 0,
     }} />
   );
@@ -98,7 +98,7 @@ export function Sidebar() {
       display: 'flex',
       flexDirection: 'column',
       background: S.bodyBg,
-      borderRight: '1px solid rgba(196,138,94,0.28)',
+      borderRight: '1px solid rgba(249,115,22,0.18)',
       transition: 'width 0.22s cubic-bezier(.4,0,.2,1), min-width 0.22s cubic-bezier(.4,0,.2,1)',
       position: 'sticky',
       top: 0,
@@ -118,7 +118,7 @@ export function Sidebar() {
         {/* Warm spotlight from top-left — terracotta glow */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at 25% -10%, rgba(196,138,94,0.25) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 25% -10%, rgba(249,115,22,0.18) 0%, transparent 60%)',
         }} />
 
         {/* Logo row */}
@@ -132,18 +132,18 @@ export function Sidebar() {
               width: collapsed ? '38px' : '36px',
               height: collapsed ? '38px' : '36px',
               borderRadius: '10px', flexShrink: 0,
-              background: 'linear-gradient(140deg, #D4956A 0%, #C07850 55%, #A86040 100%)',
+              background: 'linear-gradient(140deg, hsl(24,95%,62%) 0%, hsl(24,90%,52%) 55%, hsl(20,85%,44%) 100%)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 14px rgba(192,120,80,0.50), inset 0 1px 0 rgba(255,255,255,0.22)',
+              boxShadow: '0 4px 14px rgba(249,115,22,0.45), inset 0 1px 0 rgba(255,255,255,0.22)',
             }}>
-              <FlaskConical style={{ width: '17px', height: '17px', color: '#FBF0E8' }} />
+              <FlaskConical style={{ width: '17px', height: '17px', color: 'hsl(0,0%,100%)' }} />
             </div>
             {!collapsed && (
               <div>
-                <div style={{ fontSize: '15.5px', fontWeight: 800, color: '#EDE6DA', letterSpacing: '-0.025em', lineHeight: 1 }}>
+                <div style={{ fontSize: '15.5px', fontWeight: 800, color: 'hsl(215,10%,92%)', letterSpacing: '-0.025em', lineHeight: 1 }}>
                   Vexel
                 </div>
-                <div style={{ fontSize: '9px', fontWeight: 600, color: '#4A7A90', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '3px' }}>
+                <div style={{ fontSize: '9px', fontWeight: 600, color: 'hsl(215,28%,52%)', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '3px' }}>
                   Health Platform
                 </div>
               </div>
@@ -151,7 +151,7 @@ export function Sidebar() {
           </div>
           {!collapsed && (
             <button onClick={toggle} style={{ ...iconBtn, width: '26px', height: '26px' }}
-              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(196,138,94,0.5)'; el.style.background = 'rgba(196,138,94,0.15)'; }}
+              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(249,115,22,0.45)'; el.style.background = 'rgba(249,115,22,0.12)'; }}
               onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
               title="Collapse sidebar (Ctrl+B)">
               <ChevronLeft style={{ width: '13px', height: '13px' }} />
@@ -165,12 +165,12 @@ export function Sidebar() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: '5px',
               padding: '5px 12px', borderRadius: '99px',
-              background: 'rgba(196,138,94,0.22)',
-              border: '1px solid rgba(196,138,94,0.52)',
-              boxShadow: '0 0 12px rgba(196,138,94,0.18)',
+              background: 'rgba(249,115,22,0.18)',
+              border: '1px solid rgba(249,115,22,0.48)',
+              boxShadow: '0 0 12px rgba(249,115,22,0.15)',
             }}>
-              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#D4A882', boxShadow: '0 0 5px rgba(212,168,130,0.9)' }} />
-              <span style={{ fontSize: '10px', fontWeight: 700, color: '#E8D4BE', letterSpacing: '0.07em' }}>LIMS</span>
+              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'hsl(24,85%,68%)', boxShadow: '0 0 5px rgba(249,115,22,0.85)' }} />
+              <span style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(24,60%,90%)', letterSpacing: '0.07em' }}>LIMS</span>
             </div>
             {FUTURE_MODULES.map(m => (
               <div key={m.label} style={{
@@ -179,7 +179,7 @@ export function Sidebar() {
                 border: '1px solid rgba(255,255,255,0.08)',
                 cursor: 'not-allowed',
               }}>
-                <span style={{ fontSize: '10px', fontWeight: 500, color: '#3A6275', letterSpacing: '0.04em' }}>{m.label}</span>
+                <span style={{ fontSize: '10px', fontWeight: 500, color: 'hsl(215,28%,42%)', letterSpacing: '0.04em' }}>{m.label}</span>
               </div>
             ))}
           </div>
@@ -191,7 +191,7 @@ export function Sidebar() {
       {/* Expand button when collapsed */}
       {collapsed && (
         <button onClick={toggle} style={{ ...iconBtn, width: '32px', height: '32px', margin: '10px auto 6px' }}
-          onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(196,138,94,0.5)'; el.style.background = 'rgba(196,138,94,0.15)'; }}
+          onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(249,115,22,0.45)'; el.style.background = 'rgba(249,115,22,0.12)'; }}
           onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
           title="Expand sidebar (Ctrl+B)">
           <ChevronRight style={{ width: '13px', height: '13px' }} />
@@ -240,10 +240,10 @@ export function Sidebar() {
                   boxShadow: S.activeBarGlow,
                 }} />
               )}
-              <Icon style={{ width: '15px', height: '15px', flexShrink: 0, color: isActive ? S.iconActive : S.iconInactive, transition: 'color 0.15s' }} />
+              <Icon size={15} className="shrink-0 transition-colors" color={isActive ? S.iconActive : S.iconInactive} />
               {!collapsed && <span style={{ flex: 1 }}>{item.label}</span>}
               {!collapsed && isActive && (
-                <div style={{ width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0, background: '#C48A5E', boxShadow: '0 0 6px rgba(196,138,94,0.85)' }} />
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0, background: 'hsl(24,95%,53%)', boxShadow: '0 0 6px rgba(249,115,22,0.8)' }} />
               )}
             </Link>
           );
@@ -262,7 +262,7 @@ export function Sidebar() {
       }}>
         {collapsed ? (
           <button onClick={handleLogout} style={{ ...iconBtn, width: '36px', height: '36px' }}
-            onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = '#E88888'; el.style.borderColor = 'rgba(232,136,136,0.3)'; el.style.background = 'rgba(232,136,136,0.10)'; }}
+            onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(0,72%,72%)'; el.style.borderColor = 'rgba(220,80,80,0.3)'; el.style.background = 'rgba(220,80,80,0.10)'; }}
             onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
             title="Sign Out">
             <LogOut style={{ width: '14px', height: '14px' }} />
@@ -272,25 +272,25 @@ export function Sidebar() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden', flex: 1 }}>
               <div style={{
                 width: '32px', height: '32px', borderRadius: '9px', flexShrink: 0,
-                background: 'linear-gradient(135deg, #D4956A 0%, #B86A40 100%)',
+                background: 'linear-gradient(135deg, hsl(24,90%,56%) 0%, hsl(20,85%,44%) 100%)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '11.5px', fontWeight: 700, color: '#FBF0E8',
-                boxShadow: '0 2px 10px rgba(192,120,80,0.50), inset 0 1px 0 rgba(255,255,255,0.22)',
+                fontSize: '11.5px', fontWeight: 700, color: 'hsl(0,0%,100%)',
+                boxShadow: '0 2px 10px rgba(249,115,22,0.45), inset 0 1px 0 rgba(255,255,255,0.22)',
                 letterSpacing: '0.02em',
               }}>
                 {initials}
               </div>
               <div style={{ overflow: 'hidden', flex: 1 }}>
-                <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#DEDAD0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'capitalize', lineHeight: 1.3 }}>
+                <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'hsl(215,15%,85%)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'capitalize', lineHeight: 1.3 }}>
                   {userName || 'Operator'}
                 </div>
-                <div style={{ fontSize: '10px', color: '#3A6478', fontWeight: 500, marginTop: '2px', letterSpacing: '0.03em' }}>
+                <div style={{ fontSize: '10px', color: 'hsl(215,28%,42%)', fontWeight: 500, marginTop: '2px', letterSpacing: '0.03em' }}>
                   LIMS Operator
                 </div>
               </div>
             </div>
             <button onClick={handleLogout} style={{ ...iconBtn, width: '30px', height: '30px' }}
-              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = '#E88888'; el.style.borderColor = 'rgba(232,136,136,0.3)'; el.style.background = 'rgba(232,136,136,0.10)'; }}
+              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(0,72%,72%)'; el.style.borderColor = 'rgba(220,80,80,0.3)'; el.style.background = 'rgba(220,80,80,0.10)'; }}
               onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
               title="Sign Out">
               <LogOut style={{ width: '13px', height: '13px' }} />

@@ -37,8 +37,8 @@ export default function ReportsPage() {
 
   useEffect(() => { fetchData(); }, [id]);
 
-  if (loading) return <p style={{ color: '#64748b' }}>Loading...</p>;
-  if (error) return <p style={{ color: '#ef4444' }}>{error}</p>;
+  if (loading) return <p className="text-muted-foreground">Loading...</p>;
+  if (error) return <p className="text-destructive">{error}</p>;
   if (!encounter) return null;
 
   const labReports = documents.filter((d: any) => d.docType === 'LAB_REPORT' || d.docType === 'lab_report');
@@ -47,50 +47,50 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Link href="/lims/worklist" style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Worklist</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <Link href={`/lims/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>Encounter</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Reports</span>
+      <div className="mb-4 flex items-center gap-2">
+        <Link href="/lims/worklist" className="text-primary hover:underline text-sm">← Worklist</Link>
+        <span className="text-muted-foreground">/</span>
+        <Link href={`/lims/encounters/${id}`} className="text-primary hover:underline text-sm">Encounter</Link>
+        <span className="text-muted-foreground">/</span>
+        <span className="text-sm text-muted-foreground">Reports</span>
       </div>
 
       <EncounterSummaryCard encounter={encounter} />
 
       {documents.length === 0 && (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '32px', textAlign: 'center' }}>
-          <p style={{ color: '#94a3b8', margin: 0 }}>No documents available yet.</p>
+        <div className="bg-card rounded-lg border border-border p-8 text-center">
+          <p className="text-muted-foreground m-0">No documents available yet.</p>
           {encounter.status === 'resulted' && (
-            <p style={{ margin: '8px 0 0', color: '#64748b', fontSize: '14px' }}>
-              <Link href={`/lims/encounters/${id}/verify`} style={{ color: '#2563eb' }}>Verify the encounter</Link> to generate reports.
+            <p className="mt-2 text-muted-foreground text-sm">
+              <Link href={`/lims/encounters/${id}/verify`} className="text-primary hover:underline">Verify the encounter</Link> to generate reports.
             </p>
           )}
         </div>
       )}
 
       {labReports.length > 0 && (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px', marginBottom: '16px' }}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Lab Reports</h3>
+        <div className="bg-card rounded-lg border border-border p-5 mb-4">
+          <h3 className="mb-4 text-base font-semibold text-foreground">Lab Reports</h3>
           <DocumentList documents={labReports} onRefresh={fetchData} />
         </div>
       )}
 
       {receipts.length > 0 && (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px', marginBottom: '16px' }}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Receipts</h3>
+        <div className="bg-card rounded-lg border border-border p-5 mb-4">
+          <h3 className="mb-4 text-base font-semibold text-foreground">Receipts</h3>
           <DocumentList documents={receipts} onRefresh={fetchData} />
         </div>
       )}
 
       {other.length > 0 && (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px', marginBottom: '16px' }}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Other Documents</h3>
+        <div className="bg-card rounded-lg border border-border p-5 mb-4">
+          <h3 className="mb-4 text-base font-semibold text-foreground">Other Documents</h3>
           <DocumentList documents={other} onRefresh={fetchData} />
         </div>
       )}
 
-      <div style={{ marginTop: '8px' }}>
-        <Link href="/lims/worklist" style={{ color: '#64748b', fontSize: '14px', textDecoration: 'none' }}>← Back to Worklist</Link>
+      <div className="mt-2">
+        <Link href="/lims/worklist" className="text-muted-foreground hover:underline text-sm">← Back to Worklist</Link>
       </div>
     </div>
   );

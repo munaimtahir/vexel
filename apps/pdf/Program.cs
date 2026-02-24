@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Linq;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -34,7 +35,14 @@ app.MapPost("/render", async (HttpContext context) =>
     byte[] pdfBytes;
     if (req?.PayloadJson is JsonElement payload)
     {
-        pdfBytes = GenerateLabReport(payload, req.BrandingConfig);
+        var templateKey = (req.TemplateKey ?? string.Empty).Trim().ToLowerInvariant();
+        pdfBytes = templateKey switch
+        {
+            "lab_report_v1" => GenerateLabReport(payload, req.BrandingConfig),
+            "receipt_v1" => GenerateReceipt(payload, req.BrandingConfig),
+            "opd_invoice_receipt_v1" => GenerateOpdInvoiceReceipt(payload, req.BrandingConfig),
+            _ => GeneratePlaceholderPdf(body),
+        };
     }
     else
     {
@@ -54,6 +62,18 @@ static byte[] GenerateLabReport(JsonElement payload, BrandingConfig? branding)
 {
     var report = new LabReportDocument(payload, branding ?? new BrandingConfig());
     return report.GeneratePdf();
+}
+
+static byte[] GenerateReceipt(JsonElement payload, BrandingConfig? branding)
+{
+    var receipt = new ReceiptDocument(payload, branding ?? new BrandingConfig());
+    return receipt.GeneratePdf();
+}
+
+static byte[] GenerateOpdInvoiceReceipt(JsonElement payload, BrandingConfig? branding)
+{
+    var doc = new OpdInvoiceReceiptDocument(payload, branding ?? new BrandingConfig());
+    return doc.GeneratePdf();
 }
 
 static byte[] GeneratePlaceholderPdf(string jsonBody)
@@ -129,7 +149,8 @@ class LabReportDocument : IDocument
                 row.ConstantItem(160).AlignRight().Column(c =>
                 {
                     c.Item().Text("LABORATORY REPORT").Bold().FontSize(12).FontColor(Colors.Grey.Darken3);
-                    c.Item().Text($"Printed: {DateTime.UtcNow:yyyy-MM-dd HH:mm} UTC").FontSize(7).FontColor(Colors.Grey.Darken1);
+                    var issuedAt = _payload.TryGetProperty("issuedAt", out var ia) ? ia.GetString() : null;
+                    c.Item().Text($"Issued: {issuedAt ?? "—"}").FontSize(7).FontColor(Colors.Grey.Darken1);
                 });
             });
         });
@@ -269,4 +290,388 @@ class LabReportDocument : IDocument
 
     static IContainer ValueCell(IContainer c) =>
         c.BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3);
+}
+
+class ReceiptDocument : IDocument
+{
+    private readonly JsonElement _payload;
+    private readonly BrandingConfig _branding;
+
+    public ReceiptDocument(JsonElement payload, BrandingConfig branding)
+    {
+        _payload = payload;
+        _branding = branding;
+    }
+
+    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+
+    public void Compose(IDocumentContainer container)
+    {
+        container.Page(page =>
+        {
+            page.Size(PageSizes.A4);
+            page.Margin(1.5f, Unit.Centimetre);
+            page.DefaultTextStyle(x => x.FontSize(9).FontFamily(Fonts.Arial));
+
+            page.Header().Element(c => ComposeHeader(c, "PAYMENT RECEIPT", Colors.Green.Darken2));
+            page.Content().Element(ComposeContent);
+            page.Footer().Element(c => ComposeFooter(c, _branding.FooterText ?? _branding.ReportFooter ?? "Payment receipt"));
+        });
+    }
+
+    void ComposeHeader(IContainer container, string title, string color)
+    {
+        var brand = _branding.BrandName ?? "Vexel Health";
+        container.BorderBottom(1).BorderColor(Colors.Grey.Lighten1).PaddingBottom(8).Row(row =>
+        {
+            row.RelativeItem().Column(c =>
+            {
+                c.Item().Text(brand).Bold().FontSize(15).FontColor(Colors.Blue.Darken3);
+                if (!string.IsNullOrWhiteSpace(_branding.ReportHeader))
+                    c.Item().Text(_branding.ReportHeader).FontSize(8).FontColor(Colors.Grey.Darken1);
+            });
+            row.ConstantItem(180).AlignRight().Column(c =>
+            {
+                c.Item().Text(title).Bold().FontSize(12).FontColor(color);
+                c.Item().Text($"Receipt #: {Get("receiptNumber", Get("receiptCode"))}").FontSize(8);
+                c.Item().Text($"Issued: {Get("issuedAt", Get("receiptDate"))}").FontSize(8).FontColor(Colors.Grey.Darken1);
+            });
+        });
+    }
+
+    void ComposeContent(IContainer container)
+    {
+        container.Column(col =>
+        {
+            col.Spacing(8);
+            col.Item().Element(ComposeIdentityBlock);
+            col.Item().Element(ComposeAmountSummary);
+            col.Item().Element(ComposeLines);
+        });
+    }
+
+    void ComposeIdentityBlock(IContainer container)
+    {
+        container.Table(table =>
+        {
+            table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); });
+
+            Cell(table, "Patient", Get("patientName"));
+            Cell(table, "MRN", Get("patientMrn"));
+            Cell(table, "Encounter", Get("encounterId"));
+            Cell(table, "Invoice", Get("invoiceNumber", Get("invoiceCode")));
+
+            Cell(table, "Payment Method", Get("paymentMethod", Get("method")));
+            Cell(table, "Collected By", Get("receivedBy", Get("collectedBy")));
+            Cell(table, "Reference", Get("referenceNo"));
+            Cell(table, "Status", Get("status", Get("paymentStatus")));
+        });
+    }
+
+    void ComposeAmountSummary(IContainer container)
+    {
+        container.Border(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(6).Table(table =>
+        {
+            table.ColumnsDefinition(c => { c.RelativeColumn(3); c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); });
+
+            Header(table, "Subtotal");
+            Header(table, "Discount");
+            Header(table, "Paid");
+            Header(table, "Balance");
+
+            Value(table, Get("subtotalAmount", Get("subtotal", "0.00")));
+            Value(table, Get("discountAmount", Get("discount", "0.00")));
+            Value(table, Get("paidAmount", Get("amountPaid", Get("amount", "0.00"))));
+            Value(table, Get("balanceAmount", Get("balanceDue", "0.00")));
+        });
+    }
+
+    void ComposeLines(IContainer container)
+    {
+        if (!_payload.TryGetProperty("lines", out var lines) || lines.ValueKind != JsonValueKind.Array || !lines.EnumerateArray().Any())
+        {
+            container.Text("No line items in payload.").FontSize(8).FontColor(Colors.Grey.Darken1);
+            return;
+        }
+
+        container.Table(table =>
+        {
+            table.ColumnsDefinition(c =>
+            {
+                c.RelativeColumn(5);
+                c.RelativeColumn(1);
+                c.RelativeColumn(2);
+                c.RelativeColumn(2);
+            });
+
+            foreach (var h in new[] { "Description", "Qty", "Unit", "Amount" })
+                table.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text(h).Bold().FontSize(8);
+
+            foreach (var line in lines.EnumerateArray())
+            {
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .Text(Get(line, "description", Get(line, "name"))).FontSize(8);
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .AlignRight().Text(Get(line, "quantity", "1")).FontSize(8);
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .AlignRight().Text(Get(line, "unitPrice", "0.00")).FontSize(8);
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .AlignRight().Text(Get(line, "lineTotal", Get(line, "amount", "0.00"))).FontSize(8).Bold();
+            }
+        });
+    }
+
+    void ComposeFooter(IContainer container, string footerText)
+    {
+        container.BorderTop(0.5f).BorderColor(Colors.Grey.Lighten1).PaddingTop(4).Row(row =>
+        {
+            row.RelativeItem().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+            row.ConstantItem(100).AlignRight().Text(text =>
+            {
+                text.Span("Page ").FontSize(7);
+                text.CurrentPageNumber().FontSize(7);
+                text.Span(" of ").FontSize(7);
+                text.TotalPages().FontSize(7);
+            });
+        });
+    }
+
+    void Cell(TableDescriptor table, string label, string value)
+    {
+        table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3).Text(label).FontSize(8);
+        table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3).Text(value).FontSize(8);
+    }
+
+    void Header(TableDescriptor table, string label) =>
+        table.Cell().Background(Colors.Grey.Lighten4).Padding(4).Text(label).Bold().FontSize(8);
+
+    void Value(TableDescriptor table, string value) =>
+        table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).AlignRight().Text(value).FontSize(8);
+
+    string Get(string key, string fallback = "—")
+    {
+        if (_payload.TryGetProperty(key, out var value))
+            return ToDisplay(value, fallback);
+        return fallback;
+    }
+
+    static string Get(JsonElement obj, string key, string fallback = "—")
+    {
+        if (obj.ValueKind == JsonValueKind.Object && obj.TryGetProperty(key, out var value))
+            return ToDisplay(value, fallback);
+        return fallback;
+    }
+
+    static string ToDisplay(JsonElement value, string fallback = "—") =>
+        value.ValueKind switch
+        {
+            JsonValueKind.String => value.GetString() ?? fallback,
+            JsonValueKind.Number => value.ToString(),
+            JsonValueKind.True => "true",
+            JsonValueKind.False => "false",
+            JsonValueKind.Null => fallback,
+            JsonValueKind.Undefined => fallback,
+            _ => value.ToString()
+        };
+}
+
+class OpdInvoiceReceiptDocument : IDocument
+{
+    private readonly JsonElement _payload;
+    private readonly BrandingConfig _branding;
+
+    public OpdInvoiceReceiptDocument(JsonElement payload, BrandingConfig branding)
+    {
+        _payload = payload;
+        _branding = branding;
+    }
+
+    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+
+    public void Compose(IDocumentContainer container)
+    {
+        container.Page(page =>
+        {
+            page.Size(PageSizes.A4);
+            page.Margin(1.5f, Unit.Centimetre);
+            page.DefaultTextStyle(x => x.FontSize(9).FontFamily(Fonts.Arial));
+
+            page.Header().Element(ComposeHeader);
+            page.Content().Element(ComposeContent);
+            page.Footer().Element(ComposeFooter);
+        });
+    }
+
+    void ComposeHeader(IContainer container)
+    {
+        var brand = _branding.BrandName ?? "Vexel Health";
+        container.BorderBottom(1).BorderColor(Colors.Grey.Lighten1).PaddingBottom(8).Row(row =>
+        {
+            row.RelativeItem().Column(c =>
+            {
+                c.Item().Text(brand).Bold().FontSize(15).FontColor(Colors.Blue.Darken3);
+                if (!string.IsNullOrWhiteSpace(_branding.ReportHeader))
+                    c.Item().Text(_branding.ReportHeader).FontSize(8).FontColor(Colors.Grey.Darken1);
+            });
+            row.ConstantItem(220).AlignRight().Column(c =>
+            {
+                c.Item().Text("OPD INVOICE / RECEIPT").Bold().FontSize(12).FontColor(Colors.Purple.Darken2);
+                c.Item().Text($"Invoice: {Get("invoiceCode", Get("invoiceNumber"))}").FontSize(8);
+                c.Item().Text($"Receipt: {Get("receiptNumber", Get("receiptCode"))}").FontSize(8);
+                c.Item().Text($"Issued: {Get("issuedAt", Get("invoiceDate"))}").FontSize(8).FontColor(Colors.Grey.Darken1);
+            });
+        });
+    }
+
+    void ComposeContent(IContainer container)
+    {
+        container.Column(col =>
+        {
+            col.Spacing(8);
+            col.Item().Element(ComposeParties);
+            col.Item().Element(ComposeVisitAndProvider);
+            col.Item().Element(ComposeItems);
+            col.Item().Element(ComposeTotals);
+        });
+    }
+
+    void ComposeParties(IContainer container)
+    {
+        container.Table(table =>
+        {
+            table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); });
+
+            Cell(table, "Patient", Get("patientName"));
+            Cell(table, "MRN", Get("patientMrn"));
+            Cell(table, "Phone", Get("patientPhone"));
+            Cell(table, "Status", Get("status", Get("paymentStatus")));
+        });
+    }
+
+    void ComposeVisitAndProvider(IContainer container)
+    {
+        container.Table(table =>
+        {
+            table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); });
+
+            Cell(table, "Visit ID", Get("opdVisitId", Get("visitId")));
+            Cell(table, "Appointment ID", Get("appointmentId"));
+            Cell(table, "Provider", Get("providerName", Get("doctorName")));
+            Cell(table, "Department", Get("departmentName"));
+
+            Cell(table, "Payment Method", Get("paymentMethod", Get("method")));
+            Cell(table, "Reference", Get("referenceNo"));
+            Cell(table, "Received By", Get("receivedBy"));
+            Cell(table, "Source Ref", Get("sourceRef"));
+        });
+    }
+
+    void ComposeItems(IContainer container)
+    {
+        if (!_payload.TryGetProperty("lines", out var lines) || lines.ValueKind != JsonValueKind.Array || !lines.EnumerateArray().Any())
+        {
+            container.Text("No invoice lines in payload.").FontSize(8).FontColor(Colors.Grey.Darken1);
+            return;
+        }
+
+        container.Table(table =>
+        {
+            table.ColumnsDefinition(c =>
+            {
+                c.RelativeColumn(5);
+                c.RelativeColumn(1);
+                c.RelativeColumn(2);
+                c.RelativeColumn(2);
+                c.RelativeColumn(2);
+            });
+
+            foreach (var h in new[] { "Description", "Qty", "Unit", "Discount", "Line Total" })
+                table.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text(h).Bold().FontSize(8);
+
+            foreach (var line in lines.EnumerateArray())
+            {
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .Text(Get(line, "description", Get(line, "name"))).FontSize(8);
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .AlignRight().Text(Get(line, "quantity", "1")).FontSize(8);
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .AlignRight().Text(Get(line, "unitPrice", "0.00")).FontSize(8);
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .AlignRight().Text(Get(line, "discountAmount", "0.00")).FontSize(8);
+                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4)
+                    .AlignRight().Text(Get(line, "lineTotal", "0.00")).FontSize(8).Bold();
+            }
+        });
+    }
+
+    void ComposeTotals(IContainer container)
+    {
+        container.AlignRight().Width(260).Border(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(6).Table(table =>
+        {
+            table.ColumnsDefinition(c => { c.RelativeColumn(2); c.RelativeColumn(1); });
+
+            SummaryRow(table, "Subtotal", Get("subtotalAmount", Get("subtotal", "0.00")));
+            SummaryRow(table, "Discount", Get("discountAmount", Get("discount", "0.00")));
+            SummaryRow(table, "Tax", Get("taxAmount", Get("tax", "0.00")));
+            SummaryRow(table, "Total", Get("totalAmount", Get("total", "0.00")), true);
+            SummaryRow(table, "Paid", Get("paidAmount", Get("amountPaid", "0.00")));
+            SummaryRow(table, "Balance", Get("balanceAmount", Get("balanceDue", "0.00")));
+        });
+    }
+
+    void ComposeFooter(IContainer container)
+    {
+        var footerText = _branding.FooterText ?? _branding.ReportFooter ?? "OPD billing document";
+        container.BorderTop(0.5f).BorderColor(Colors.Grey.Lighten1).PaddingTop(4).Row(row =>
+        {
+            row.RelativeItem().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+            row.ConstantItem(100).AlignRight().Text(text =>
+            {
+                text.Span("Page ").FontSize(7);
+                text.CurrentPageNumber().FontSize(7);
+                text.Span(" of ").FontSize(7);
+                text.TotalPages().FontSize(7);
+            });
+        });
+    }
+
+    void SummaryRow(TableDescriptor table, string label, string value, bool emphasize = false)
+    {
+        table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3).Text(label).FontSize(8);
+        var cell = table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3).AlignRight();
+        if (emphasize) cell.Text(value).Bold().FontSize(8);
+        else cell.Text(value).FontSize(8);
+    }
+
+    void Cell(TableDescriptor table, string label, string value)
+    {
+        table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3).Text(label).FontSize(8);
+        table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3).Text(value).FontSize(8);
+    }
+
+    string Get(string key, string fallback = "—")
+    {
+        if (_payload.TryGetProperty(key, out var value))
+            return ToDisplay(value, fallback);
+        return fallback;
+    }
+
+    static string Get(JsonElement obj, string key, string fallback = "—")
+    {
+        if (obj.ValueKind == JsonValueKind.Object && obj.TryGetProperty(key, out var value))
+            return ToDisplay(value, fallback);
+        return fallback;
+    }
+
+    static string ToDisplay(JsonElement value, string fallback = "—") =>
+        value.ValueKind switch
+        {
+            JsonValueKind.String => value.GetString() ?? fallback,
+            JsonValueKind.Number => value.ToString(),
+            JsonValueKind.True => "true",
+            JsonValueKind.False => "false",
+            JsonValueKind.Null => fallback,
+            JsonValueKind.Undefined => fallback,
+            _ => value.ToString()
+        };
 }

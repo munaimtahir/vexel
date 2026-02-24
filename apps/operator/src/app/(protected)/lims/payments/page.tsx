@@ -46,12 +46,12 @@ const TRANSACTION_LABELS: Record<string, string> = {
   CANCELLATION_REFUND: 'Cancellation Refund',
 };
 
-const TRANSACTION_COLORS: Record<string, string> = {
-  PAYMENT: '#16a34a',
-  DISCOUNT: '#d97706',
-  REFUND: '#2563eb',
-  DUE_RECEIVED: '#16a34a',
-  CANCELLATION_REFUND: '#dc2626',
+const TRANSACTION_VARIANT: Record<string, string> = {
+  PAYMENT: 'success',
+  DISCOUNT: 'warning',
+  REFUND: 'info',
+  DUE_RECEIVED: 'success',
+  CANCELLATION_REFUND: 'destructive',
 };
 
 export default function PaymentsPage() {
@@ -419,15 +419,9 @@ export default function PaymentsPage() {
                 {financials.transactions.map(tx => (
                   <div key={tx.id} className="flex justify-between items-center px-3.5 py-2.5 bg-muted/30 rounded-md gap-3 flex-wrap">
                     <div>
-                      <span
-                        className="px-2 py-0.5 rounded text-xs font-semibold mr-2"
-                        style={{
-                          background: `${TRANSACTION_COLORS[tx.type] ?? '#94a3b8'}22`,
-                          color: TRANSACTION_COLORS[tx.type] ?? '#64748b',
-                        }}
-                      >
+                      <Badge variant={(TRANSACTION_VARIANT[tx.type] ?? 'secondary') as any} className="mr-2">
                         {TRANSACTION_LABELS[tx.type] ?? tx.type}
-                      </span>
+                      </Badge>
                       {tx.reason && <span className="text-sm text-muted-foreground">{tx.reason}</span>}
                     </div>
                     <div className="flex gap-5 items-center">
@@ -439,10 +433,7 @@ export default function PaymentsPage() {
                       <span className="text-xs text-muted-foreground">
                         {new Date(tx.createdAt).toLocaleString()}
                       </span>
-                      <span
-                        className="font-bold text-sm min-w-24 text-right"
-                        style={{ color: TRANSACTION_COLORS[tx.type] ?? undefined }}
-                      >
+                      <span className="font-bold text-sm min-w-24 text-right text-foreground">
                         PKR {Number(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                       </span>
                     </div>

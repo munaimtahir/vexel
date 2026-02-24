@@ -5,15 +5,7 @@ import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import EncounterSummaryCard from '@/components/encounter-summary-card';
-
-const inputStyle: React.CSSProperties = {
-  padding: '8px 10px',
-  border: '1px solid #e2e8f0',
-  borderRadius: '6px',
-  fontSize: '14px',
-  width: '100%',
-  boxSizing: 'border-box',
-};
+import { Button } from '@/components/ui/button';
 
 export default function ReceiveSpecimenPage() {
   const params = useParams();
@@ -62,31 +54,29 @@ export default function ReceiveSpecimenPage() {
     }
   };
 
-  if (loading) return <p style={{ color: '#64748b' }}>Loading...</p>;
-  if (error) return <p style={{ color: '#ef4444' }}>{error}</p>;
+  if (loading) return <p className="text-muted-foreground">Loading...</p>;
+  if (error) return <p className="text-destructive">{error}</p>;
   if (!encounter) return null;
 
   if (success) {
     return (
       <div>
         <EncounterSummaryCard encounter={encounter} />
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '24px', marginBottom: '16px' }}>
-          <p style={{ margin: '0 0 8px', color: '#15803d', fontWeight: 600, fontSize: '16px' }}>
+        <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-fg)/30)] rounded-lg p-6 mb-4">
+          <p className="mb-2 text-[hsl(var(--status-success-fg))] font-semibold text-base">
             ✓ Specimen received in lab
           </p>
-          <p style={{ margin: 0, color: '#166534', fontSize: '14px' }}>
+          <p className="text-[hsl(var(--status-success-fg))] text-sm">
             Specimen has been logged as received. You may now enter results.
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Link href={`/lims/encounters/${id}/results`}
-            style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
-            Enter Results →
-          </Link>
-          <Link href={`/lims/encounters/${id}`}
-            style={{ padding: '10px 20px', background: 'white', color: '#1e293b', border: '1px solid #e2e8f0', borderRadius: '6px', textDecoration: 'none', fontSize: '14px' }}>
-            Back to Encounter
-          </Link>
+        <div className="flex gap-3">
+          <Button asChild>
+            <Link href={`/lims/encounters/${id}/results`}>Enter Results →</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/lims/encounters/${id}`}>Back to Encounter</Link>
+          </Button>
         </div>
       </div>
     );
@@ -95,16 +85,16 @@ export default function ReceiveSpecimenPage() {
   if (encounter.status !== 'specimen_collected') {
     return (
       <div>
-        <div style={{ marginBottom: '16px' }}>
-          <Link href={`/lims/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Back to Encounter</Link>
+        <div className="mb-4">
+          <Link href={`/lims/encounters/${id}`} className="text-primary hover:underline text-sm">← Back to Encounter</Link>
         </div>
         <EncounterSummaryCard encounter={encounter} />
-        <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '8px', padding: '16px 20px' }}>
-          <p style={{ margin: 0, color: '#92400e', fontWeight: 500 }}>
+        <div className="bg-[hsl(var(--status-warning-bg))] border border-[hsl(var(--status-warning-fg)/30)] rounded-lg px-5 py-4">
+          <p className="m-0 text-[hsl(var(--status-warning-fg))] font-medium">
             ⚠ Specimen can only be received when encounter is in <strong>specimen_collected</strong> status. Current: <strong>{encounter.status}</strong>
           </p>
-          <p style={{ margin: '8px 0 0' }}>
-            <Link href={`/lims/encounters/${id}`} style={{ color: '#92400e', fontWeight: 600 }}>← Return to encounter</Link>
+          <p className="mt-2 mb-0">
+            <Link href={`/lims/encounters/${id}`} className="text-[hsl(var(--status-warning-fg))] font-semibold">← Return to encounter</Link>
           </p>
         </div>
       </div>
@@ -117,66 +107,58 @@ export default function ReceiveSpecimenPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Link href={`/lims/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Receive Specimen</span>
+      <div className="mb-4 flex items-center gap-2">
+        <Link href={`/lims/encounters/${id}`} className="text-primary hover:underline text-sm">← Encounter</Link>
+        <span className="text-muted-foreground">/</span>
+        <span className="text-sm text-muted-foreground">Receive Specimen</span>
       </div>
 
       <EncounterSummaryCard encounter={encounter} />
 
       {specimen && (
-        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px 20px', marginBottom: '20px' }}>
-          <h4 style={{ margin: '0 0 8px', fontSize: '14px', fontWeight: 600, color: '#475569' }}>Collected Specimen</h4>
-          <div style={{ display: 'flex', gap: '24px', fontSize: '14px' }}>
-            {specimen.barcode && <div><span style={{ color: '#94a3b8' }}>Barcode: </span><strong style={{ fontFamily: 'monospace' }}>{specimen.barcode}</strong></div>}
-            {specimen.specimenType && <div><span style={{ color: '#94a3b8' }}>Type: </span><strong>{specimen.specimenType}</strong></div>}
-            {specimen.collectedAt && <div><span style={{ color: '#94a3b8' }}>Collected: </span><strong>{new Date(specimen.collectedAt).toLocaleString()}</strong></div>}
+        <div className="bg-muted/40 border border-border rounded-lg px-5 py-4 mb-5">
+          <h4 className="mb-2 text-sm font-semibold text-muted-foreground">Collected Specimen</h4>
+          <div className="flex gap-6 text-sm">
+            {specimen.barcode && <div><span className="text-muted-foreground">Barcode: </span><strong className="font-mono">{specimen.barcode}</strong></div>}
+            {specimen.specimenType && <div><span className="text-muted-foreground">Type: </span><strong>{specimen.specimenType}</strong></div>}
+            {specimen.collectedAt && <div><span className="text-muted-foreground">Collected: </span><strong>{new Date(specimen.collectedAt).toLocaleString()}</strong></div>}
           </div>
         </div>
       )}
 
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '24px', maxWidth: '480px' }}>
-        <h3 style={{ margin: '0 0 8px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Confirm Specimen Receipt</h3>
-        <p style={{ margin: '0 0 20px', fontSize: '14px', color: '#64748b' }}>
+      <div className="bg-card rounded-lg border border-border p-6 max-w-[480px]">
+        <h3 className="mb-2 text-base font-semibold text-foreground">Confirm Specimen Receipt</h3>
+        <p className="mb-5 text-sm text-muted-foreground">
           Mark this specimen as physically received in the laboratory. This will timestamp receipt and advance the workflow.
         </p>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Notes (optional)</label>
+        <div className="mb-5">
+          <label className="block text-xs text-muted-foreground mb-1">Notes (optional)</label>
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
             rows={2}
-            style={{ ...inputStyle, resize: 'vertical' }}
+            className="w-full px-3 py-2 border border-border rounded-md text-sm bg-card text-foreground resize-y"
             placeholder="Any receipt notes (condition of specimen, etc.)..."
           />
         </div>
 
-        {apiError && <p style={{ color: '#ef4444', fontSize: '13px', marginBottom: '12px' }}>{apiError}</p>}
+        {apiError && <p className="text-destructive text-[13px] mb-3">{apiError}</p>}
 
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button
+        <div className="flex gap-3">
+          <Button
+            className="flex-1"
             onClick={handleReceive}
             disabled={submitting}
-            style={{
-              flex: 1, padding: '12px',
-              background: submitting ? '#94a3b8' : '#0ea5e9',
-              color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600,
-              cursor: submitting ? 'not-allowed' : 'pointer',
-            }}
           >
             {submitting ? 'Confirming...' : '✓ Confirm Receipt'}
-          </button>
-          <button
-            onClick={() => router.back()}
-            style={{ padding: '12px 24px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
-          >
+          </Button>
+          <Button variant="outline" onClick={() => router.back()}>
             Cancel
-          </button>
+          </Button>
         </div>
 
-        <p style={{ margin: '16px 0 0', fontSize: '12px', color: '#94a3b8' }}>
+        <p className="mt-4 text-xs text-muted-foreground">
           Note: You can also skip this step and go directly to result entry.
         </p>
       </div>

@@ -26,8 +26,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   if (!checked) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#64748b' }}>Loading…</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading…</p>
       </div>
     );
   }

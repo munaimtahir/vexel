@@ -6,7 +6,8 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ui:color-lint": "bash -c 'result=$(grep -rn \"#[0-9a-fA-F]\\{3,8\\}\\|bg-\\[#\\|text-\\[#\" src --include=\"*.tsx\" --include=\"*.ts\" | grep -v globals.css | grep -v \"components/sidebar.tsx\" | grep -v \"app/(protected)/encounters/\"); if [ -n \"$result\" ]; then echo \"Hard-coded colors found:\"; echo \"$result\"; exit 1; fi; echo \"No hard-coded hex colors found.\"; exit 0'"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.15",

@@ -10,7 +10,7 @@ const PRIORITIES = ['routine', 'urgent', 'stat'];
 
 const inputStyle: React.CSSProperties = {
   padding: '8px 10px',
-  border: '1px solid #e2e8f0',
+  border: '1px solid hsl(var(--border))',
   borderRadius: '6px',
   fontSize: '14px',
   width: '100%',
@@ -76,26 +76,26 @@ export default function PlaceOrderPage() {
     }
   };
 
-  if (loading) return <p style={{ color: '#64748b' }}>Loading...</p>;
-  if (error) return <p style={{ color: '#ef4444' }}>{error}</p>;
+  if (loading) return <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading...</p>;
+  if (error) return <p style={{ color: 'hsl(var(--destructive))' }}>{error}</p>;
   if (!encounter) return null;
 
   if (success) {
     return (
       <div>
         <EncounterSummaryCard encounter={encounter} />
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '24px', marginBottom: '16px' }}>
-          <p style={{ margin: '0 0 8px', color: '#15803d', fontWeight: 600, fontSize: '16px' }}>
+        <div style={{ background: 'hsl(var(--status-success-bg))', border: '1px solid hsl(var(--status-success-fg)/0.3)', borderRadius: '8px', padding: '24px', marginBottom: '16px' }}>
+          <p style={{ margin: '0 0 8px', color: 'hsl(var(--status-success-fg))', fontWeight: 600, fontSize: '16px' }}>
             ✓ Lab order placed — {selectedTests.size} test(s) ordered
           </p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <Link href={`/lims/encounters/${id}/sample`}
-            style={{ padding: '10px 20px', background: '#f59e0b', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
+            style={{ padding: '10px 20px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
             Collect Sample →
           </Link>
           <Link href={`/lims/encounters/${id}`}
-            style={{ padding: '10px 20px', background: 'white', color: '#1e293b', border: '1px solid #e2e8f0', borderRadius: '6px', textDecoration: 'none', fontSize: '14px' }}>
+            style={{ padding: '10px 20px', background: 'hsl(var(--card))', color: 'hsl(var(--foreground))', border: '1px solid hsl(var(--border))', borderRadius: '6px', textDecoration: 'none', fontSize: '14px' }}>
             Back to Encounter
           </Link>
         </div>
@@ -107,11 +107,11 @@ export default function PlaceOrderPage() {
     return (
       <div>
         <div style={{ marginBottom: '16px' }}>
-          <Link href={`/lims/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Back to Encounter</Link>
+          <Link href={`/lims/encounters/${id}`} style={{ color: 'hsl(var(--primary))', fontSize: '14px', textDecoration: 'none' }}>← Back to Encounter</Link>
         </div>
         <EncounterSummaryCard encounter={encounter} />
-        <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '8px', padding: '16px 20px' }}>
-          <p style={{ margin: 0, color: '#92400e', fontWeight: 500 }}>
+        <div style={{ background: 'hsl(var(--status-warning-bg))', border: '1px solid hsl(var(--status-warning-fg)/0.35)', borderRadius: '8px', padding: '16px 20px' }}>
+          <p style={{ margin: 0, color: 'hsl(var(--status-warning-fg))', fontWeight: 500 }}>
             ⚠ Lab order can only be placed when encounter is in <strong>registered</strong> status. Current: <strong>{encounter.status}</strong>
           </p>
         </div>
@@ -122,26 +122,26 @@ export default function PlaceOrderPage() {
   return (
     <div>
       <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Link href={`/lims/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Place Lab Order</span>
+        <Link href={`/lims/encounters/${id}`} style={{ color: 'hsl(var(--primary))', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
+        <span style={{ color: 'hsl(var(--border))' }}>/</span>
+        <span style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))' }}>Place Lab Order</span>
       </div>
 
       <EncounterSummaryCard encounter={encounter} />
 
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '24px', maxWidth: '600px' }}>
-        <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Select Tests</h3>
+      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))', padding: '24px', maxWidth: '600px' }}>
+        <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: 600, color: 'hsl(var(--foreground))' }}>Select Tests</h3>
 
         {tests.length === 0 ? (
-          <p style={{ color: '#94a3b8' }}>No tests in catalog. Add tests in the Admin catalog first.</p>
+          <p style={{ color: 'hsl(var(--muted-foreground))' }}>No tests in catalog. Add tests in the Admin catalog first.</p>
         ) : (
           <div style={{ display: 'grid', gap: '8px', marginBottom: '20px' }}>
             {tests.map((t: any) => (
               <label key={t.id} style={{
                 display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px',
-                border: `1px solid ${selectedTests.has(t.id) ? '#8b5cf6' : '#e2e8f0'}`,
+                border: `1px solid ${selectedTests.has(t.id) ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
                 borderRadius: '6px', cursor: 'pointer',
-                background: selectedTests.has(t.id) ? '#f5f3ff' : 'white',
+                background: selectedTests.has(t.id) ? 'hsl(var(--muted))' : 'hsl(var(--card))',
               }}>
                 <input
                   type="checkbox"
@@ -150,9 +150,9 @@ export default function PlaceOrderPage() {
                   style={{ width: '16px', height: '16px' }}
                 />
                 <div>
-                  <div style={{ fontWeight: 500, color: '#1e293b' }}>{t.name}</div>
+                  <div style={{ fontWeight: 500, color: 'hsl(var(--foreground))' }}>{t.name}</div>
                   {(t.code || t.turnaroundHours) && (
-                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
                       {t.code && <span>{t.code}</span>}
                       {t.turnaroundHours && <span style={{ marginLeft: '8px' }}>TAT: {t.turnaroundHours}h</span>}
                     </div>
@@ -164,19 +164,19 @@ export default function PlaceOrderPage() {
         )}
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Priority</label>
-          <select value={priority} onChange={e => setPriority(e.target.value)} style={{ ...inputStyle, background: 'white', width: '200px' }}>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Priority</label>
+          <select value={priority} onChange={e => setPriority(e.target.value)} style={{ ...inputStyle, background: 'hsl(var(--card))', width: '200px' }}>
             {PRIORITIES.map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>)}
           </select>
         </div>
 
         {selectedTests.size > 0 && (
-          <div style={{ background: '#f5f3ff', border: '1px solid #c4b5fd', borderRadius: '6px', padding: '10px 16px', marginBottom: '16px' }}>
-            <span style={{ color: '#5b21b6', fontSize: '14px' }}>{selectedTests.size} test(s) selected</span>
+          <div style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '6px', padding: '10px 16px', marginBottom: '16px' }}>
+            <span style={{ color: 'hsl(var(--primary))', fontSize: '14px' }}>{selectedTests.size} test(s) selected</span>
           </div>
         )}
 
-        {apiError && <p style={{ color: '#ef4444', fontSize: '13px', marginBottom: '12px' }}>{apiError}</p>}
+        {apiError && <p style={{ color: 'hsl(var(--destructive))', fontSize: '13px', marginBottom: '12px' }}>{apiError}</p>}
 
         <div style={{ display: 'flex', gap: '12px' }}>
           <button
@@ -184,8 +184,8 @@ export default function PlaceOrderPage() {
             disabled={submitting || selectedTests.size === 0}
             style={{
               flex: 1, padding: '12px',
-              background: submitting || selectedTests.size === 0 ? '#94a3b8' : '#8b5cf6',
-              color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600,
+              background: submitting || selectedTests.size === 0 ? 'hsl(var(--muted))' : 'hsl(var(--primary))',
+              color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600,
               cursor: submitting || selectedTests.size === 0 ? 'not-allowed' : 'pointer',
             }}
           >
@@ -193,7 +193,7 @@ export default function PlaceOrderPage() {
           </button>
           <button
             onClick={() => router.back()}
-            style={{ padding: '12px 24px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
+            style={{ padding: '12px 24px', background: 'hsl(var(--card))', color: 'hsl(var(--muted-foreground))', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
           >
             Cancel
           </button>

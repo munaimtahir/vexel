@@ -5,14 +5,8 @@ import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import IdentityHeader from '@/components/identity-header';
-
-const DOC_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  DRAFT:      { bg: '#f1f5f9', text: '#475569' },
-  RENDERING:  { bg: '#fef3c7', text: '#b45309' },
-  RENDERED:   { bg: '#d1fae5', text: '#065f46' },
-  PUBLISHED:  { bg: '#bbf7d0', text: '#14532d' },
-  FAILED:     { bg: '#fee2e2', text: '#991b1b' },
-};
+import { Button } from '@/components/ui/button';
+import { DocumentStatusBadge } from '@/components/status-badge';
 
 export default function PublishPage() {
   const params = useParams();
@@ -93,19 +87,18 @@ export default function PublishPage() {
     }
   };
 
-  if (loadingEncounter) return <p style={{ color: '#64748b' }}>Loading encounter...</p>;
-  if (encounterError) return <p style={{ color: '#ef4444' }}>{encounterError}</p>;
+  if (loadingEncounter) return <p className="text-muted-foreground">Loading encounter...</p>;
+  if (encounterError) return <p className="text-destructive">{encounterError}</p>;
   if (!encounter) return null;
 
   const docStatus: string | undefined = document?.status;
-  const docColors = docStatus ? (DOC_STATUS_COLORS[docStatus] ?? DOC_STATUS_COLORS.DRAFT) : null;
 
   return (
     <div>
-      <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Link href={`/lims/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Report Status</span>
+      <div className="mb-4 flex items-center gap-2">
+        <Link href={`/lims/encounters/${id}`} className="text-primary hover:underline text-sm">← Encounter</Link>
+        <span className="text-muted-foreground">/</span>
+        <span className="text-sm text-muted-foreground">Report Status</span>
       </div>
 
       <IdentityHeader
@@ -115,47 +108,41 @@ export default function PublishPage() {
         createdAt={encounter.createdAt}
       />
 
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '32px' }}>
-        <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>Lab Report</h3>
-        <p style={{ margin: '0 0 24px', color: '#64748b', fontSize: '14px' }}>
+      <div className="bg-card rounded-lg border border-border p-8">
+        <h3 className="mb-2 text-lg font-bold text-foreground">Lab Report</h3>
+        <p className="mb-6 text-muted-foreground text-sm">
           Report is automatically generated and published when the encounter is verified.
         </p>
 
         {/* Document status */}
         {!document && (
-          <p style={{ color: '#64748b', fontSize: '14px' }}>⏳ Waiting for report to be generated...</p>
+          <p className="text-muted-foreground text-sm">⏳ Waiting for report to be generated...</p>
         )}
 
-        {document && docColors && (
-          <div style={{ marginBottom: '24px', padding: '12px 16px', borderRadius: '6px', background: docColors.bg, display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontWeight: 700, color: docColors.text }}>Status: </span>
-            <span style={{ color: docColors.text, fontWeight: 600 }}>{docStatus}</span>
-            {(docStatus === 'RENDERING' || docStatus === 'RENDERED') && <span style={{ color: docColors.text, fontSize: '13px' }}>⏳ Generating PDF...</span>}
-            <span style={{ marginLeft: 'auto', fontSize: '12px', color: docColors.text, fontFamily: 'monospace' }}>{document.id?.slice(0, 8)}…</span>
+        {document && docStatus && (
+          <div className="mb-6 px-4 py-3 rounded-md border border-border flex items-center gap-3">
+            <span className="font-bold text-foreground">Status: </span>
+            <DocumentStatusBadge status={docStatus} />
+            {(docStatus === 'RENDERING' || docStatus === 'RENDERED') && <span className="text-muted-foreground text-sm">⏳ Generating PDF...</span>}
+            <span className="ml-auto text-xs text-muted-foreground font-mono">{document.id?.slice(0, 8)}…</span>
           </div>
         )}
 
         {downloadError && (
-          <p style={{ color: '#ef4444', marginBottom: '16px', background: '#fee2e2', padding: '10px 16px', borderRadius: '6px', fontSize: '14px' }}>
+          <p className="text-destructive mb-4 bg-[hsl(var(--status-destructive-bg))] px-4 py-2.5 rounded-md text-sm">
             {downloadError}
           </p>
         )}
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="flex flex-wrap gap-3">
           {docStatus === 'PUBLISHED' && (
             <>
-              <button
-                onClick={handleDownload}
-                style={{ padding: '12px 28px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
-              >
+              <Button onClick={handleDownload} className="bg-emerald-600 hover:bg-emerald-700">
                 ⬇ Download PDF
-              </button>
-              <button
-                onClick={() => window.print()}
-                style={{ padding: '12px 24px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
-              >
+              </Button>
+              <Button variant="outline" onClick={() => window.print()}>
                 🖨 Print
-              </button>
+              </Button>
             </>
           )}
         </div>
@@ -163,5 +150,3 @@ export default function PublishPage() {
     </div>
   );
 }
-
-

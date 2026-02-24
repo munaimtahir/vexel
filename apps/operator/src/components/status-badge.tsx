@@ -1,40 +1,48 @@
 'use client';
+import { Badge, type BadgeProps } from './ui/badge';
 
-type EncounterStatus = 'registered' | 'lab_ordered' | 'specimen_collected' | 'specimen_received' | 'resulted' | 'verified' | 'cancelled';
-type DocumentStatus = 'DRAFT' | 'RENDERING' | 'RENDERED' | 'PUBLISHED' | 'FAILED';
+type BadgeVariant = BadgeProps['variant'];
 
-const ENCOUNTER_STATUS_MAP: Record<EncounterStatus, { label: string; bg: string; color: string }> = {
-  registered: { label: 'Registered', bg: '#f0f9ff', color: '#0369a1' },
-  lab_ordered: { label: 'Ordered', bg: '#fef9c3', color: '#a16207' },
-  specimen_collected: { label: 'Collected', bg: '#fff7ed', color: '#c2410c' },
-  specimen_received: { label: 'Received', bg: '#e0f2fe', color: '#0369a1' },
-  resulted: { label: 'Resulted', bg: '#f0fdf4', color: '#15803d' },
-  verified: { label: 'Verified', bg: '#ede9fe', color: '#7c3aed' },
-  cancelled: { label: 'Cancelled', bg: '#f9fafb', color: '#9ca3af' },
+const ENCOUNTER_STATUS_MAP: Record<string, { label: string; variant: BadgeVariant }> = {
+  registered:          { label: 'Registered', variant: 'secondary' },
+  lab_ordered:         { label: 'Ordered',    variant: 'info' },
+  specimen_collected:  { label: 'Collected',  variant: 'warning' },
+  specimen_received:   { label: 'Received',   variant: 'info' },
+  partial_resulted:    { label: 'Partial',    variant: 'warning' },
+  resulted:            { label: 'Resulted',   variant: 'success' },
+  verified:            { label: 'Verified',   variant: 'success' },
+  cancelled:           { label: 'Cancelled',  variant: 'outline' },
 };
 
-const DOC_STATUS_MAP: Record<DocumentStatus, { label: string; bg: string; color: string }> = {
-  DRAFT: { label: 'Draft', bg: '#f3f4f6', color: '#6b7280' },
-  RENDERING: { label: 'Rendering...', bg: '#fef9c3', color: '#a16207' },
-  RENDERED: { label: 'Ready', bg: '#f0f9ff', color: '#0369a1' },
-  PUBLISHED: { label: 'Published', bg: '#f0fdf4', color: '#15803d' },
-  FAILED: { label: 'Failed', bg: '#fef2f2', color: '#dc2626' },
+const DOC_STATUS_MAP: Record<string, { label: string; variant: BadgeVariant }> = {
+  DRAFT:     { label: 'Draft',       variant: 'secondary' },
+  RENDERING: { label: 'Rendering…',  variant: 'warning' },
+  RENDERED:  { label: 'Ready',       variant: 'info' },
+  PUBLISHED: { label: 'Published',   variant: 'success' },
+  FAILED:    { label: 'Failed',      variant: 'destructive' },
 };
 
 export function EncounterStatusBadge({ status }: { status: string }) {
-  const s = ENCOUNTER_STATUS_MAP[status as EncounterStatus] ?? { label: status, bg: '#f3f4f6', color: '#6b7280' };
-  return (
-    <span style={{ padding: '2px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: s.bg, color: s.color, whiteSpace: 'nowrap' }}>
-      {s.label}
-    </span>
-  );
+  const s = ENCOUNTER_STATUS_MAP[status] ?? { label: status, variant: 'secondary' as BadgeVariant };
+  return <Badge variant={s.variant}>{s.label}</Badge>;
 }
 
 export function DocumentStatusBadge({ status }: { status: string }) {
-  const s = DOC_STATUS_MAP[status as DocumentStatus] ?? { label: status, bg: '#f3f4f6', color: '#6b7280' };
-  return (
-    <span style={{ padding: '2px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: s.bg, color: s.color }}>
-      {s.label}
-    </span>
-  );
+  const s = DOC_STATUS_MAP[status] ?? { label: status, variant: 'secondary' as BadgeVariant };
+  return <Badge variant={s.variant}>{s.label}</Badge>;
+}
+
+/** Result flag badge (H/L/N/critical) — uses CSS variable tokens */
+export function FlagBadge({ flag }: { flag: string | null | undefined }) {
+  if (!flag) return null;
+  const variant: BadgeVariant =
+    flag === 'high' || flag === 'critical' ? 'destructive' :
+    flag === 'low'                         ? 'info' :
+    flag === 'normal'                      ? 'success' : 'secondary';
+  const label =
+    flag === 'high'     ? 'H' :
+    flag === 'low'      ? 'L' :
+    flag === 'normal'   ? 'N' :
+    flag === 'critical' ? '!' : flag.charAt(0).toUpperCase();
+  return <Badge variant={variant}>{label}</Badge>;
 }

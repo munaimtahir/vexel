@@ -5,7 +5,7 @@ import {
 export type NavItem = {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; size?: number; color?: string }>;
   featureFlag?: string; // only show if this flag is enabled
 };
 

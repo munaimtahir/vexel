@@ -23,6 +23,14 @@ const DEFAULT_FEATURE_FLAGS = [
   { key: 'module.printing', enabled: false, description: 'Printing module' },
   { key: 'module.rad', enabled: false, description: 'Radiology (RAD) scaffold' },
   { key: 'module.opd', enabled: false, description: 'OPD scaffold' },
+  { key: 'opd.providers', enabled: false, description: 'OPD provider setup and directory' },
+  { key: 'opd.scheduling', enabled: false, description: 'OPD provider schedule management' },
+  { key: 'opd.appointments', enabled: false, description: 'OPD appointment booking workflow' },
+  { key: 'opd.vitals', enabled: false, description: 'OPD vitals capture workflow' },
+  { key: 'opd.clinical_note', enabled: false, description: 'OPD structured clinical notes' },
+  { key: 'opd.prescription_free_text', enabled: false, description: 'OPD free-text prescription workflow' },
+  { key: 'opd.billing', enabled: false, description: 'OPD billing and payments' },
+  { key: 'opd.invoice_receipt_pdf', enabled: false, description: 'OPD deterministic invoice/receipt PDFs' },
   { key: 'module.ipd', enabled: false, description: 'IPD scaffold' },
   { key: 'lims.auto_verify', enabled: false, description: 'Auto-verify LIMS results' },
   { key: 'lims.print_results', enabled: false, description: 'Allow printing results from LIMS' },
@@ -158,7 +166,71 @@ export async function main() {
       },
     },
   });
-  console.log('✅ Demo roles: operator, verifier');
+  const opdOperatorRole = await prisma.role.upsert({
+    where: { tenantId_name: { tenantId: 'system', name: 'opd-operator' } },
+    update: {},
+    create: {
+      tenantId: 'system',
+      name: 'opd-operator',
+      description: 'OPD front desk/operator: appointments, check-in, visit intake',
+      rolePermissions: {
+        create: [
+          'patient.manage',
+          'encounter.manage',
+          'opd.provider.read',
+          'opd.schedule.read',
+          'opd.appointment.manage',
+          'opd.visit.manage',
+          'opd.vitals.write',
+          'document.generate',
+        ].map((p) => ({ permission: p })),
+      },
+    },
+  });
+
+  const opdDoctorRole = await prisma.role.upsert({
+    where: { tenantId_name: { tenantId: 'system', name: 'opd-doctor' } },
+    update: {},
+    create: {
+      tenantId: 'system',
+      name: 'opd-doctor',
+      description: 'OPD doctor: consultation, notes, prescription',
+      rolePermissions: {
+        create: [
+          'patient.manage',
+          'encounter.manage',
+          'opd.provider.read',
+          'opd.appointment.read',
+          'opd.visit.manage',
+          'opd.vitals.read',
+          'opd.clinical_note.write',
+          'opd.prescription.write',
+          'document.generate',
+        ].map((p) => ({ permission: p })),
+      },
+    },
+  });
+
+  const opdFinanceRole = await prisma.role.upsert({
+    where: { tenantId_name: { tenantId: 'system', name: 'opd-finance' } },
+    update: {},
+    create: {
+      tenantId: 'system',
+      name: 'opd-finance',
+      description: 'OPD finance/cash desk: invoices, payments, receipts',
+      rolePermissions: {
+        create: [
+          'patient.manage',
+          'encounter.manage',
+          'opd.invoice.manage',
+          'opd.payment.manage',
+          'document.generate',
+          'document.publish',
+        ].map((p) => ({ permission: p })),
+      },
+    },
+  });
+  console.log('✅ Demo roles: operator, verifier, opd-operator, opd-doctor, opd-finance');
 
   // ── Demo users ─────────────────────────────────────────────────────────────
   const demoUsers = [
@@ -213,6 +285,24 @@ export async function main() {
       tenantId: systemTenant.id,
       type: 'LAB_REPORT',
       templateKey: 'lab_report_v1',
+      version: 1,
+      isActive: true,
+    },
+    update: {},
+  });
+
+  await prisma.documentTemplate.upsert({
+    where: {
+      tenantId_type_version: {
+        tenantId: systemTenant.id,
+        type: 'OPD_INVOICE_RECEIPT',
+        version: 1,
+      },
+    },
+    create: {
+      tenantId: systemTenant.id,
+      type: 'OPD_INVOICE_RECEIPT',
+      templateKey: 'opd_invoice_receipt_v1',
       version: 1,
       isActive: true,
     },

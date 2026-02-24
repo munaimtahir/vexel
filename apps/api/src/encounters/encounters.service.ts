@@ -45,6 +45,9 @@ export class EncountersService {
       },
     });
     if (!encounter) throw new NotFoundException('Encounter not found');
+    if ((encounter as any).moduleType && (encounter as any).moduleType !== 'LIMS') {
+      throw new ConflictException('Encounter belongs to a non-LIMS module');
+    }
     return encounter;
   }
 
@@ -52,7 +55,7 @@ export class EncountersService {
     const { status, patientId } = opts;
     const page = Number(opts.page ?? 1);
     const limit = Number(opts.limit ?? 20);
-    const where: any = { tenantId };
+    const where: any = { tenantId, moduleType: 'LIMS' };
     if (status) where.status = status;
     if (patientId) where.patientId = patientId;
 
@@ -76,7 +79,7 @@ export class EncountersService {
     if (!patient) throw new NotFoundException('Patient not found');
 
     const encounter = await this.prisma.encounter.create({
-      data: { tenantId, patientId: body.patientId, status: 'registered' },
+      data: { tenantId, patientId: body.patientId, moduleType: 'LIMS', status: 'registered' } as any,
       include: { patient: true, labOrders: true },
     });
 
@@ -439,7 +442,7 @@ export class EncountersService {
   async getFinancials(tenantId: string, encounterId: string) {
     await this.assertLimsEnabled(tenantId);
     const encounter = await this.prisma.encounter.findFirst({
-      where: { id: encounterId, tenantId },
+      where: { id: encounterId, tenantId, moduleType: 'LIMS' } as any,
       include: {
         patient: true,
         labOrders: { select: { id: true, status: true, testNameSnapshot: true, totalAmount: true, discountAmount: true, discountPct: true, payableAmount: true, amountPaid: true, dueAmount: true } },
@@ -456,7 +459,7 @@ export class EncountersService {
 
   async collectDue(tenantId: string, encounterId: string, body: { amount: number; labOrderId?: string }, actorUserId: string, correlationId?: string) {
     await this.assertLimsEnabled(tenantId);
-    const encounter = await this.prisma.encounter.findFirst({ where: { id: encounterId, tenantId } });
+    const encounter = await this.prisma.encounter.findFirst({ where: { id: encounterId, tenantId, moduleType: 'LIMS' } as any });
     if (!encounter) throw new NotFoundException('Encounter not found');
 
     // Find the target lab order (first one with due if not specified)
@@ -498,7 +501,7 @@ export class EncountersService {
 
   async applyDiscount(tenantId: string, encounterId: string, body: { discountAmount: number; reason: string; labOrderId?: string }, actorUserId: string, correlationId?: string) {
     await this.assertLimsEnabled(tenantId);
-    const encounter = await this.prisma.encounter.findFirst({ where: { id: encounterId, tenantId } });
+    const encounter = await this.prisma.encounter.findFirst({ where: { id: encounterId, tenantId, moduleType: 'LIMS' } as any });
     if (!encounter) throw new NotFoundException('Encounter not found');
 
     let labOrder: any;

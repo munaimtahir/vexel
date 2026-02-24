@@ -1533,6 +1533,605 @@ components:
           type: string
           nullable: true
 
+    OpdProvider:
+      type: object
+      required: [id, tenantId, name, isActive, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        code:
+          type: string
+          nullable: true
+        name:
+          type: string
+        title:
+          type: string
+          nullable: true
+        specialty:
+          type: string
+          nullable: true
+        consultationFee:
+          type: number
+          minimum: 0
+          nullable: true
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OpdProviderCreateRequest:
+      type: object
+      required: [name]
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        specialty:
+          type: string
+        consultationFee:
+          type: number
+          minimum: 0
+        isActive:
+          type: boolean
+          default: true
+
+    OpdProviderUpdateRequest:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        specialty:
+          type: string
+        consultationFee:
+          type: number
+          minimum: 0
+          nullable: true
+        isActive:
+          type: boolean
+
+    OpdProviderSchedule:
+      type: object
+      required: [id, tenantId, providerId, dayOfWeek, startTime, endTime, slotMinutes, isActive, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        providerId:
+          type: string
+        dayOfWeek:
+          type: integer
+          minimum: 0
+          maximum: 6
+          description: 0=Sunday ... 6=Saturday
+        startTime:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+        endTime:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+        slotMinutes:
+          type: integer
+          minimum: 5
+          maximum: 240
+        maxAppointments:
+          type: integer
+          minimum: 1
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OpdProviderScheduleCreateRequest:
+      type: object
+      required: [dayOfWeek, startTime, endTime, slotMinutes]
+      properties:
+        dayOfWeek:
+          type: integer
+          minimum: 0
+          maximum: 6
+        startTime:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+        endTime:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+        slotMinutes:
+          type: integer
+          minimum: 5
+          maximum: 240
+        maxAppointments:
+          type: integer
+          minimum: 1
+        location:
+          type: string
+        isActive:
+          type: boolean
+          default: true
+
+    OpdProviderScheduleUpdateRequest:
+      type: object
+      properties:
+        startTime:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+        endTime:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+        slotMinutes:
+          type: integer
+          minimum: 5
+          maximum: 240
+        maxAppointments:
+          type: integer
+          minimum: 1
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+
+    OpdAvailabilitySlot:
+      type: object
+      required: [providerId, startAt, endAt, status]
+      properties:
+        providerId:
+          type: string
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [AVAILABLE, BOOKED, BLOCKED]
+        scheduleId:
+          type: string
+          nullable: true
+        appointmentId:
+          type: string
+          nullable: true
+
+    OpdProviderAvailability:
+      type: object
+      required: [provider, fromDate, toDate, slots]
+      properties:
+        provider:
+          $ref: '#/components/schemas/OpdProvider'
+        fromDate:
+          type: string
+          format: date
+        toDate:
+          type: string
+          format: date
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdAvailabilitySlot'
+
+    OpdAppointment:
+      type: object
+      required: [id, tenantId, patientId, providerId, scheduledAt, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        patientId:
+          type: string
+        providerId:
+          type: string
+        visitId:
+          type: string
+          nullable: true
+        encounterId:
+          type: string
+          nullable: true
+        scheduledAt:
+          type: string
+          format: date-time
+        durationMinutes:
+          type: integer
+          minimum: 1
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [BOOKED, CHECKED_IN, IN_CONSULTATION, COMPLETED, CANCELLED, NO_SHOW]
+        cancelledReason:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        createdBy:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OpdAppointmentCreateRequest:
+      type: object
+      required: [patientId, providerId, scheduledAt]
+      properties:
+        patientId:
+          type: string
+        providerId:
+          type: string
+        scheduledAt:
+          type: string
+          format: date-time
+        durationMinutes:
+          type: integer
+          minimum: 1
+        reason:
+          type: string
+        notes:
+          type: string
+
+    OpdAppointmentRescheduleRequest:
+      type: object
+      required: [scheduledAt]
+      properties:
+        scheduledAt:
+          type: string
+          format: date-time
+        durationMinutes:
+          type: integer
+          minimum: 1
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+
+    OpdAppointmentCancelRequest:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+
+    OpdAppointmentListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdAppointment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    OpdVisit:
+      type: object
+      required: [id, tenantId, patientId, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        patientId:
+          type: string
+        providerId:
+          type: string
+          nullable: true
+        appointmentId:
+          type: string
+          nullable: true
+        encounterId:
+          type: string
+          nullable: true
+        visitNumber:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [REGISTERED, WAITING, IN_CONSULTATION, COMPLETED, CANCELLED]
+        registeredAt:
+          type: string
+          format: date-time
+          nullable: true
+        waitingAt:
+          type: string
+          format: date-time
+          nullable: true
+        consultationStartedAt:
+          type: string
+          format: date-time
+          nullable: true
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        cancelledReason:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OpdVisitCreateRequest:
+      type: object
+      required: [patientId]
+      properties:
+        patientId:
+          type: string
+        providerId:
+          type: string
+        appointmentId:
+          type: string
+        encounterId:
+          type: string
+        notes:
+          type: string
+
+    OpdVisitCancelRequest:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+
+    OpdVisitListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdVisit'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    OpdInvoiceLine:
+      type: object
+      required: [description, quantity, unitPrice]
+      properties:
+        id:
+          type: string
+          nullable: true
+        description:
+          type: string
+        quantity:
+          type: number
+          minimum: 0
+        unitPrice:
+          type: number
+          minimum: 0
+        discountAmount:
+          type: number
+          minimum: 0
+          default: 0
+        taxAmount:
+          type: number
+          minimum: 0
+          default: 0
+        total:
+          type: number
+          minimum: 0
+          nullable: true
+
+    OpdInvoicePayment:
+      type: object
+      required: [id, tenantId, invoiceId, amount, method, paidAt, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        invoiceId:
+          type: string
+        amount:
+          type: number
+          minimum: 0
+        method:
+          type: string
+          enum: [CASH]
+        referenceNo:
+          type: string
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        paidAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    OpdInvoice:
+      type: object
+      required: [id, tenantId, patientId, status, currency, subtotal, grandTotal, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        patientId:
+          type: string
+        visitId:
+          type: string
+          nullable: true
+        appointmentId:
+          type: string
+          nullable: true
+        invoiceNumber:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [DRAFT, ISSUED, PARTIALLY_PAID, PAID, VOID]
+        currency:
+          type: string
+          default: PKR
+        subtotal:
+          type: number
+        discountTotal:
+          type: number
+        taxTotal:
+          type: number
+        grandTotal:
+          type: number
+        paidTotal:
+          type: number
+        balanceDue:
+          type: number
+        issuedAt:
+          type: string
+          format: date-time
+          nullable: true
+        voidedAt:
+          type: string
+          format: date-time
+          nullable: true
+        voidReason:
+          type: string
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdInvoiceLine'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdInvoicePayment'
+        invoiceDocumentId:
+          type: string
+          nullable: true
+        receiptDocumentId:
+          type: string
+          nullable: true
+        createdBy:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OpdInvoiceCreateRequest:
+      type: object
+      required: [patientId, lines]
+      properties:
+        patientId:
+          type: string
+        visitId:
+          type: string
+        appointmentId:
+          type: string
+        currency:
+          type: string
+          default: PKR
+        note:
+          type: string
+        lines:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/OpdInvoiceLine'
+
+    OpdInvoiceIssueRequest:
+      type: object
+      properties:
+        note:
+          type: string
+          nullable: true
+
+    OpdInvoiceVoidRequest:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+
+    OpdInvoiceRecordPaymentRequest:
+      type: object
+      required: [amount, method]
+      properties:
+        amount:
+          type: number
+          exclusiveMinimum: 0
+        method:
+          type: string
+          enum: [CASH]
+        referenceNo:
+          type: string
+        note:
+          type: string
+        paidAt:
+          type: string
+          format: date-time
+
+    OpdInvoiceListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdInvoice'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    OpdInvoicePaymentListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdInvoicePayment'
+
+    OpdInvoicePaymentCommandResponse:
+      type: object
+      required: [invoice, payment]
+      properties:
+        invoice:
+          $ref: '#/components/schemas/OpdInvoice'
+        payment:
+          $ref: '#/components/schemas/OpdInvoicePayment'
+
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
   /health:
@@ -4882,3 +5481,1187 @@ paths:
           $ref: '#/components/responses/Forbidden'
         "404":
           $ref: '#/components/responses/NotFound'
+
+  # ─── OPD Admin Config (Providers / Schedules) ────────────────────────────
+
+  /opd/providers:
+    get:
+      operationId: listOpdProviders
+      summary: List OPD providers (tenant-scoped config)
+      tags: [OPD Providers]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: isActive
+          in: query
+          schema:
+            type: boolean
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Provider list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OpdProvider'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+    post:
+      operationId: createOpdProvider
+      summary: Create OPD provider (admin config only)
+      tags: [OPD Providers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdProviderCreateRequest'
+      responses:
+        "201":
+          description: Provider created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdProvider'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: Provider code conflict (tenant-scoped uniqueness)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/providers/{providerId}:
+    get:
+      operationId: getOpdProvider
+      summary: Get OPD provider by ID
+      tags: [OPD Providers]
+      parameters:
+        - name: providerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Provider detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdProvider'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateOpdProvider
+      summary: Update OPD provider configuration (no workflow status mutation)
+      tags: [OPD Providers]
+      parameters:
+        - name: providerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdProviderUpdateRequest'
+      responses:
+        "200":
+          description: Provider updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdProvider'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Provider code conflict (tenant-scoped uniqueness)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/providers/{providerId}/schedules:
+    get:
+      operationId: listOpdProviderSchedules
+      summary: List provider schedules (admin config only)
+      tags: [OPD Schedules]
+      parameters:
+        - name: providerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: isActive
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Provider schedules
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OpdProviderSchedule'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: createOpdProviderSchedule
+      summary: Create provider schedule (admin config only)
+      tags: [OPD Schedules]
+      parameters:
+        - name: providerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdProviderScheduleCreateRequest'
+      responses:
+        "201":
+          description: Schedule created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdProviderSchedule'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Overlapping schedule conflict for provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/providers/{providerId}/schedules/{scheduleId}:
+    patch:
+      operationId: updateOpdProviderSchedule
+      summary: Update provider schedule (admin config only)
+      tags: [OPD Schedules]
+      parameters:
+        - name: providerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdProviderScheduleUpdateRequest'
+      responses:
+        "200":
+          description: Schedule updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdProviderSchedule'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Overlapping schedule conflict for provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteOpdProviderSchedule
+      summary: Delete provider schedule (admin config only)
+      tags: [OPD Schedules]
+      parameters:
+        - name: providerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Schedule deleted
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Schedule cannot be deleted due to booked appointments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/providers/{providerId}/availability:
+    get:
+      operationId: getOpdProviderAvailability
+      summary: Get provider availability slots (derived from schedules + bookings)
+      tags: [OPD Scheduling]
+      parameters:
+        - name: providerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: includeBooked
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: Provider availability slots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdProviderAvailability'
+        "400":
+          description: Invalid date range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  # ─── OPD Appointments (workflow via commands only) ───────────────────────
+
+  /opd/appointments:
+    get:
+      operationId: listOpdAppointments
+      summary: List OPD appointments (tenant-scoped; filterable)
+      tags: [OPD Appointments]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: providerId
+          in: query
+          schema:
+            type: string
+        - name: patientId
+          in: query
+          schema:
+            type: string
+        - name: visitId
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [BOOKED, CHECKED_IN, IN_CONSULTATION, COMPLETED, CANCELLED, NO_SHOW]
+        - name: scheduledFrom
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: scheduledTo
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by patient-facing identifiers/name (tenant-scoped)
+      responses:
+        "200":
+          description: Appointment list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointmentListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+    post:
+      operationId: createOpdAppointment
+      summary: Book an OPD appointment (creates BOOKED appointment)
+      tags: [OPD Appointments]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdAppointmentCreateRequest'
+      responses:
+        "201":
+          description: Appointment booked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointment'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: Scheduling conflict or provider unavailable for requested slot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/appointments/{appointmentId}:
+    get:
+      operationId: getOpdAppointment
+      summary: Get OPD appointment detail
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Appointment detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointment'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/appointments/{appointmentId}:reschedule:
+    post:
+      operationId: rescheduleOpdAppointment
+      summary: Reschedule appointment (audited command)
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdAppointmentRescheduleRequest'
+      responses:
+        "200":
+          description: Appointment rescheduled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointment'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid transition or scheduling conflict (terminal states cannot be rescheduled)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/appointments/{appointmentId}:check-in:
+    post:
+      operationId: checkInOpdAppointment
+      summary: Transition appointment BOOKED -> CHECKED_IN (audited command)
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Optional metadata accepted by implementation
+      responses:
+        "200":
+          description: Appointment checked in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointment'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid appointment transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/appointments/{appointmentId}:start-consultation:
+    post:
+      operationId: startOpdAppointmentConsultation
+      summary: Transition appointment CHECKED_IN -> IN_CONSULTATION (audited command)
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Optional metadata accepted by implementation
+      responses:
+        "200":
+          description: Appointment moved to consultation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointment'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid appointment transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/appointments/{appointmentId}:complete:
+    post:
+      operationId: completeOpdAppointment
+      summary: Transition appointment IN_CONSULTATION -> COMPLETED (audited command)
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visitId:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Appointment completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointment'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid appointment transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/appointments/{appointmentId}:cancel:
+    post:
+      operationId: cancelOpdAppointment
+      summary: Transition appointment to CANCELLED (audited command)
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdAppointmentCancelRequest'
+      responses:
+        "200":
+          description: Appointment cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointment'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid appointment transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/appointments/{appointmentId}:mark-no-show:
+    post:
+      operationId: markNoShowOpdAppointment
+      summary: Transition appointment BOOKED -> NO_SHOW (audited command)
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: No body required
+      responses:
+        "200":
+          description: Appointment marked no-show
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdAppointment'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid appointment transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── OPD Visits (workflow via commands only) ─────────────────────────────
+
+  /opd/visits:
+    get:
+      operationId: listOpdVisits
+      summary: List OPD visits (tenant-scoped; filterable)
+      tags: [OPD Visits]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: providerId
+          in: query
+          schema:
+            type: string
+        - name: patientId
+          in: query
+          schema:
+            type: string
+        - name: appointmentId
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [REGISTERED, WAITING, IN_CONSULTATION, COMPLETED, CANCELLED]
+        - name: createdFrom
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: createdTo
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Visit list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVisitListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+    post:
+      operationId: createOpdVisit
+      summary: Create OPD visit (creates REGISTERED visit)
+      tags: [OPD Visits]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdVisitCreateRequest'
+      responses:
+        "201":
+          description: Visit created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVisit'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: Conflict (duplicate active visit or invalid source linkage)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/visits/{visitId}:
+    get:
+      operationId: getOpdVisit
+      summary: Get OPD visit detail
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Visit detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVisit'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/visits/{visitId}:mark-waiting:
+    post:
+      operationId: markOpdVisitWaiting
+      summary: Transition visit REGISTERED -> WAITING (audited command)
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: No body required
+      responses:
+        "200":
+          description: Visit marked waiting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVisit'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid visit transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/visits/{visitId}:start-consultation:
+    post:
+      operationId: startOpdVisitConsultation
+      summary: Transition visit WAITING -> IN_CONSULTATION (audited command)
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Optional metadata accepted by implementation
+      responses:
+        "200":
+          description: Visit moved to consultation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVisit'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid visit transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/visits/{visitId}:complete:
+    post:
+      operationId: completeOpdVisit
+      summary: Transition visit IN_CONSULTATION -> COMPLETED (audited command)
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Optional completion metadata accepted by implementation
+      responses:
+        "200":
+          description: Visit completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVisit'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid visit transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/visits/{visitId}:cancel:
+    post:
+      operationId: cancelOpdVisit
+      summary: Transition visit to CANCELLED (audited command)
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdVisitCancelRequest'
+      responses:
+        "200":
+          description: Visit cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVisit'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid visit transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── OPD Billing (reads + audited command endpoints) ─────────────────────
+
+  /opd/billing/invoices:
+    get:
+      operationId: listOpdInvoices
+      summary: List OPD invoices (tenant-scoped; filterable)
+      tags: [OPD Billing]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: patientId
+          in: query
+          schema:
+            type: string
+        - name: visitId
+          in: query
+          schema:
+            type: string
+        - name: appointmentId
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [DRAFT, ISSUED, PARTIALLY_PAID, PAID, VOID]
+        - name: createdFrom
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: createdTo
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by invoice number or patient-facing identifiers (tenant-scoped)
+      responses:
+        "200":
+          description: Invoice list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoiceListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+    post:
+      operationId: createOpdInvoice
+      summary: Create OPD invoice draft
+      tags: [OPD Billing]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdInvoiceCreateRequest'
+      responses:
+        "201":
+          description: Invoice draft created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoice'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: Conflict (invalid linkage or duplicate active draft policy)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/billing/invoices/{invoiceId}:
+    get:
+      operationId: getOpdInvoice
+      summary: Get OPD invoice detail
+      tags: [OPD Billing]
+      parameters:
+        - name: invoiceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invoice detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoice'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/billing/invoices/{invoiceId}/payments:
+    get:
+      operationId: listOpdInvoicePayments
+      summary: List payments recorded against an OPD invoice
+      tags: [OPD Billing]
+      parameters:
+        - name: invoiceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invoice payments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoicePaymentListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/billing/invoices/{invoiceId}:issue:
+    post:
+      operationId: issueOpdInvoice
+      summary: Transition invoice DRAFT -> ISSUED (audited command)
+      tags: [OPD Billing]
+      parameters:
+        - name: invoiceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdInvoiceIssueRequest'
+      responses:
+        "200":
+          description: Invoice issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoice'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid invoice transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/billing/invoices/{invoiceId}:void:
+    post:
+      operationId: voidOpdInvoice
+      summary: Transition invoice to VOID (audited command)
+      tags: [OPD Billing]
+      parameters:
+        - name: invoiceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdInvoiceVoidRequest'
+      responses:
+        "200":
+          description: Invoice voided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoice'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid invoice transition or invariant violation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/billing/invoices/{invoiceId}:record-payment:
+    post:
+      operationId: recordOpdInvoicePayment
+      summary: Record payment and transition invoice state (audited command)
+      tags: [OPD Billing]
+      description: |
+        Records a payment (cash desk MVP) and applies invoice transitions:
+        ISSUED -> PARTIALLY_PAID / PAID, PARTIALLY_PAID -> PAID.
+        Invalid transitions or overpayment invariants return 409 Conflict.
+      parameters:
+        - name: invoiceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdInvoiceRecordPaymentRequest'
+      responses:
+        "200":
+          description: Payment recorded; invoice state updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoicePaymentCommandResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invalid invoice transition or payment invariant violation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

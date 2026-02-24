@@ -35,7 +35,7 @@ export class DocumentsService {
 
   async generateDocument(
     tenantId: string,
-    type: 'RECEIPT' | 'LAB_REPORT',
+    type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT',
     payload: Record<string, unknown>,
     sourceRef: string | undefined,
     sourceType: string | undefined,

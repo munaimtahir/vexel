@@ -7,6 +7,8 @@ import { getToken } from '@/lib/auth';
 import EncounterSummaryCard from '@/components/encounter-summary-card';
 import DocumentList from '@/components/document-list';
 import { useDocumentPolling } from '@/hooks/use-document-polling';
+import { Button } from '@/components/ui/button';
+import { FlagBadge } from '@/components/status-badge';
 
 export default function VerifyPage() {
   const router = useRouter();
@@ -66,8 +68,8 @@ export default function VerifyPage() {
     }
   };
 
-  if (loading) return <p style={{ color: '#64748b' }}>Loading encounter...</p>;
-  if (error && !encounter) return <p style={{ color: '#ef4444' }}>{error}</p>;
+  if (loading) return <p className="text-muted-foreground">Loading encounter...</p>;
+  if (error && !encounter) return <p className="text-destructive">{error}</p>;
   if (!encounter) return null;
 
   const orders: any[] = encounter.labOrders ?? [];
@@ -76,20 +78,20 @@ export default function VerifyPage() {
   if (encounter.status !== 'resulted' && !verified) {
     return (
       <div>
-        <div style={{ marginBottom: '16px' }}>
-          <Link href={`/lims/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Back to Encounter</Link>
+        <div className="mb-4">
+          <Link href={`/lims/encounters/${id}`} className="text-primary hover:underline text-sm">← Back to Encounter</Link>
         </div>
         <EncounterSummaryCard encounter={encounter} />
-        <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '8px', padding: '16px 20px' }}>
-          <p style={{ margin: 0, color: '#92400e', fontWeight: 500 }}>
+        <div className="bg-[hsl(var(--status-warning-bg))] border border-[hsl(var(--status-warning-fg)/30)] rounded-lg px-5 py-4">
+          <p className="m-0 text-[hsl(var(--status-warning-fg))] font-medium">
             ⚠ Encounter must be in <strong>resulted</strong> status to verify. Current status: <strong>{encounter.status}</strong>
           </p>
-          <p style={{ margin: '8px 0 0' }}>
+          <p className="mt-2 mb-0">
             {encounter.status === 'specimen_collected' && (
-              <Link href={`/lims/encounters/${id}/results`} style={{ color: '#92400e', fontWeight: 600 }}>→ Enter results first</Link>
+              <Link href={`/lims/encounters/${id}/results`} className="text-[hsl(var(--status-warning-fg))] font-semibold">→ Enter results first</Link>
             )}
             {encounter.status !== 'specimen_collected' && (
-              <Link href={`/lims/encounters/${id}`} style={{ color: '#92400e', fontWeight: 600 }}>← Return to encounter</Link>
+              <Link href={`/lims/encounters/${id}`} className="text-[hsl(var(--status-warning-fg))] font-semibold">← Return to encounter</Link>
             )}
           </p>
         </div>
@@ -99,48 +101,40 @@ export default function VerifyPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Link href={`/lims/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Verify Results</span>
+      <div className="mb-4 flex items-center gap-2">
+        <Link href={`/lims/encounters/${id}`} className="text-primary hover:underline text-sm">← Encounter</Link>
+        <span className="text-muted-foreground">/</span>
+        <span className="text-sm text-muted-foreground">Verify Results</span>
       </div>
 
       <EncounterSummaryCard encounter={encounter} />
 
-      {error && <p style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</p>}
+      {error && <p className="text-destructive mb-4">{error}</p>}
 
       {/* Read-only results table */}
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden', marginBottom: '24px' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Results for Verification (Read-only)</h3>
+      <div className="bg-card rounded-lg border border-border overflow-hidden mb-6">
+        <div className="px-5 py-4 border-b border-border bg-muted/40">
+          <h3 className="m-0 text-base font-semibold text-foreground">Results for Verification (Read-only)</h3>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="w-full border-collapse">
           <thead>
-            <tr style={{ background: '#f8fafc' }}>
+            <tr className="bg-muted/40">
               {['Test', 'Value', 'Unit', 'Ref Range', 'Flag'].map((h) => (
-                <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{h}</th>
+                <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {orders.length === 0 ? (
-              <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>No lab orders found.</td></tr>
+              <tr><td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">No lab orders found.</td></tr>
             ) : orders.map((order: any) => (
-              <tr key={order.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '12px 16px', fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>{order.test?.name ?? '—'}</td>
-                <td style={{ padding: '12px 16px', fontSize: '14px', color: '#1e293b' }}>{order.result?.value ?? '—'}</td>
-                <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{order.result?.unit ?? '—'}</td>
-                <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{order.result?.referenceRange ?? '—'}</td>
-                <td style={{ padding: '12px 16px' }}>
-                  {order.result?.flag ? (
-                    <span style={{
-                      padding: '2px 8px', borderRadius: '10px', fontSize: '12px', fontWeight: 600,
-                      background: order.result.flag === 'critical' ? '#fee2e2' : order.result.flag === 'normal' ? '#d1fae5' : '#fef3c7',
-                      color: order.result.flag === 'critical' ? '#991b1b' : order.result.flag === 'normal' ? '#065f46' : '#92400e',
-                    }}>
-                      {order.result.flag}
-                    </span>
-                  ) : '—'}
+              <tr key={order.id} className="border-b border-muted/50">
+                <td className="px-4 py-3 text-sm text-foreground font-medium">{order.test?.name ?? '—'}</td>
+                <td className="px-4 py-3 text-sm text-foreground">{order.result?.value ?? '—'}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{order.result?.unit ?? '—'}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{order.result?.referenceRange ?? '—'}</td>
+                <td className="px-4 py-3">
+                  {order.result?.flag ? <FlagBadge flag={order.result.flag} /> : '—'}
                 </td>
               </tr>
             ))}
@@ -150,15 +144,15 @@ export default function VerifyPage() {
 
       {/* Documents section */}
       {(encounter.status === 'verified' || verified) && (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px', marginBottom: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Lab Report</h3>
-            {polling && <span style={{ color: '#b45309', fontSize: '13px' }}>⏳ Generating report...</span>}
+        <div className="bg-card rounded-lg border border-border p-5 mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="m-0 text-base font-semibold text-foreground">Lab Report</h3>
+            {polling && <span className="text-[hsl(var(--status-warning-fg))] text-sm">⏳ Generating report...</span>}
           </div>
           {publishedDoc && (
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '12px 16px', marginBottom: '12px' }}>
-              <span style={{ color: '#15803d', fontWeight: 600 }}>✓ Report ready — </span>
-              <Link href={`/lims/encounters/${id}/reports`} style={{ color: '#15803d', fontWeight: 600 }}>Download ↗</Link>
+            <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-fg)/30)] rounded-md px-4 py-3 mb-3">
+              <span className="text-[hsl(var(--status-success-fg))] font-semibold">✓ Report ready — </span>
+              <Link href={`/lims/encounters/${id}/reports`} className="text-[hsl(var(--status-success-fg))] font-semibold hover:underline">Download ↗</Link>
             </div>
           )}
           <DocumentList documents={documents} onRefresh={refetchDocs} />
@@ -166,36 +160,30 @@ export default function VerifyPage() {
       )}
 
       {encounter.status === 'resulted' && !verified && (
-        <button
-          onClick={() => setShowModal(true)}
-          style={{ padding: '12px 32px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '15px', fontWeight: 600, cursor: 'pointer' }}
-        >
+        <Button onClick={() => setShowModal(true)} className="bg-emerald-600 hover:bg-emerald-700">
           Verify &amp; Publish
-        </button>
+        </Button>
       )}
 
       {/* Confirmation Modal */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div style={{ background: 'white', borderRadius: '8px', padding: '32px', maxWidth: '440px', width: '100%', margin: '16px' }}>
-            <h3 style={{ margin: '0 0 12px', fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>Verify & Publish Results</h3>
-            <p style={{ color: '#64748b', marginBottom: '24px' }}>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-card rounded-lg p-8 max-w-[440px] w-full mx-4 border border-border">
+            <h3 className="mb-3 text-lg font-bold text-foreground">Verify & Publish Results</h3>
+            <p className="text-muted-foreground mb-6">
               Verify all results for <strong>{encounter.patient?.firstName} {encounter.patient?.lastName}</strong>? This will publish the lab report. This cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setShowModal(false)}
-                style={{ padding: '8px 20px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
-              >
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setShowModal(false)}>
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleVerify}
                 disabled={verifying}
-                style={{ padding: '8px 24px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: verifying ? 'not-allowed' : 'pointer' }}
+                className="bg-emerald-600 hover:bg-emerald-700"
               >
                 {verifying ? 'Verifying...' : 'Confirm Verify'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
