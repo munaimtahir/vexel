@@ -1,30 +1,20 @@
 'use client';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 const inp: React.CSSProperties = {
-  padding: '8px 10px',
-  border: '1px solid #e2e8f0',
-  borderRadius: '6px',
-  fontSize: '14px',
-  width: '100%',
-  boxSizing: 'border-box',
-  outline: 'none',
+  padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px',
+  fontSize: '14px', width: '100%', boxSizing: 'border-box', outline: 'none',
 };
 const inpErr: React.CSSProperties = { ...inp, border: '1px solid #ef4444' };
-const label: React.CSSProperties = { display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px', fontWeight: 500 };
+const lbl: React.CSSProperties = { display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px', fontWeight: 500 };
 
-type PatientData = {
-  mobile: string; fullName: string;
-  dateOfBirth: string; gender: string; cnic: string; address: string;
-};
-
+type PatientData = { fullName: string; dateOfBirth: string; gender: string; cnic: string; address: string };
 type SelectedTest = { id: string; name: string; code: string; price: number | null };
-
-type FieldErrors = Partial<Record<keyof PatientData, string>>;
-
-const EMPTY_PATIENT: PatientData = { mobile: '', fullName: '', dateOfBirth: '', gender: 'male', cnic: '', address: '' };
+type FieldErrors = Partial<Record<keyof PatientData | 'mobile' | 'tests', string>>;
+const EMPTY: PatientData = { fullName: '', dateOfBirth: '', gender: 'male', cnic: '', address: '' };
 
 function dobFromAge(age: string): string {
   const n = parseInt(age, 10);
@@ -36,18 +26,29 @@ function ageFromDob(dob: string): string {
   const diff = Date.now() - new Date(dob).getTime();
   return String(Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)));
 }
+// Parse mobile string (with or without dash) into [part1, part2]
+function parseMobile(m: string): [string, string] {
+  const clean = m.replace(/[^0-9]/g, '');
+  return [clean.slice(0, 4), clean.slice(4, 11)];
+}
 
 export default function NewRegistrationPage() {
-  // Patient state
-  const [patient, setPatient] = useState<PatientData>(EMPTY_PATIENT);
+  const router = useRouter();
+
+  // Mobile split fields
+  const [mob1, setMob1] = useState('');
+  const [mob2, setMob2] = useState('');
+  const mobileValue = mob1 || mob2 ? `${mob1}-${mob2}` : '';
+
+  // Patient
+  const [patient, setPatient] = useState<PatientData>(EMPTY);
   const [existingPatient, setExistingPatient] = useState<any>(null);
+  const [registeredMRN, setRegisteredMRN] = useState<string | null>(null);
   const [mobileLooking, setMobileLooking] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
-  // Derived age display (always computed from DOB, never stored)
   const displayAge = patient.dateOfBirth ? ageFromDob(patient.dateOfBirth) : '';
 
-  // Order state
+  // Order
   const [testSearch, setTestSearch] = useState('');
   const [testResults, setTestResults] = useState<any[]>([]);
   const [testDropOpen, setTestDropOpen] = useState(false);
@@ -56,35 +57,58 @@ export default function NewRegistrationPage() {
   const [selectedTests, setSelectedTests] = useState<SelectedTest[]>([]);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Payment state
+  // Payment
   const [discountPKR, setDiscountPKR] = useState('0');
   const [discountPct, setDiscountPct] = useState('0');
   const [paid, setPaid] = useState('0');
 
-  // Save state
+  // Save
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [savedEncounterId, setSavedEncounterId] = useState<string | null>(null);
 
-  // ── derived payment ──────────────────────────────────────────────
+  // ── Field refs for keyboard nav ──────────────────────────────────
+  const mob1Ref = useRef<HTMLInputElement>(null);
+  const mob2Ref = useRef<HTMLInputElement>(null);
+  const fullNameRef = useRef<HTMLInputElement>(null);
+  const ageRef = useRef<HTMLInputElement>(null);
+  const dobRef = useRef<HTMLInputElement>(null);
+  const genderRef = useRef<HTMLSelectElement>(null);
+  const cnicRef = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLTextAreaElement>(null);
+  const testSearchRef = useRef<HTMLInputElement>(null);
+  const discountRef = useRef<HTMLInputElement>(null);
+  const paidRef = useRef<HTMLInputElement>(null);
+
+  const focusAndSelect = (ref: React.RefObject<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null>) => {
+    const el = ref.current;
+    if (!el) return;
+    el.focus();
+    if ('select' in el) (el as HTMLInputElement).select();
+  };
+
+  // ── Payment derived ──────────────────────────────────────────────
   const total = selectedTests.reduce((s, t) => s + (t.price ?? 0), 0);
   const discPKRNum = parseFloat(discountPKR) || 0;
   const paidNum = parseFloat(paid) || 0;
   const due = total - discPKRNum - paidNum;
 
-  // ── mobile lookup ────────────────────────────────────────────────
-  const handleMobileBlur = async () => {
-    const mobile = patient.mobile.trim();
+  // ── Mobile lookup ────────────────────────────────────────────────
+  const handleMobileLookup = useCallback(async () => {
+    const mobile = mobileValue.replace(/[^0-9]/g, '');
     if (mobile.length < 7) return;
     setMobileLooking(true);
     try {
       const api = getApiClient(getToken() ?? undefined);
       // @ts-ignore
-      const { data } = await api.GET('/patients', { params: { query: { mobile, limit: 1 } } });
+      const { data } = await api.GET('/patients', { params: { query: { mobile: mobileValue, limit: 1 } } });
       const found = ((data as any)?.data ?? [])[0];
       if (found) {
         setExistingPatient(found);
+        setRegisteredMRN(found.mrn);
+        const [p1, p2] = parseMobile(found.mobile ?? mobileValue);
+        setMob1(p1); setMob2(p2);
         setPatient({
-          mobile: found.mobile ?? mobile,
           fullName: `${found.firstName ?? ''} ${found.lastName ?? ''}`.trim(),
           dateOfBirth: found.dateOfBirth ?? '',
           gender: found.gender ?? 'male',
@@ -93,27 +117,20 @@ export default function NewRegistrationPage() {
         });
       } else {
         setExistingPatient(null);
+        setRegisteredMRN(null);
       }
-    } catch {
-      setExistingPatient(null);
-    } finally {
-      setMobileLooking(false);
-    }
-  };
+    } catch { setExistingPatient(null); }
+    finally { setMobileLooking(false); }
+  }, [mobileValue]);
 
-  // ── field change handlers ────────────────────────────────────────
+  // ── Field helpers ────────────────────────────────────────────────
   const setField = (k: keyof PatientData, v: string) => {
     setPatient(p => ({ ...p, [k]: v }));
     setFieldErrors(e => ({ ...e, [k]: undefined }));
   };
+  const handleAgeInput = (v: string) => { const dob = dobFromAge(v); if (dob) setField('dateOfBirth', dob); };
 
-  // Age input: convert entered age to estimated DOB (Jan 1 of birth year)
-  const handleAgeInput = (v: string) => {
-    const dob = dobFromAge(v);
-    if (dob) setField('dateOfBirth', dob);
-  };
-
-  // ── test search (debounced) ──────────────────────────────────────
+  // ── Test search ──────────────────────────────────────────────────
   const doTestSearch = useCallback(async (q: string) => {
     if (!q.trim()) { setTestResults([]); setTestDropOpen(false); return; }
     setSearching(true);
@@ -124,12 +141,9 @@ export default function NewRegistrationPage() {
       const list: any[] = (data as any)?.data ?? [];
       setTestResults(list);
       setTestDropOpen(list.length > 0);
-      setTestDropIdx(-1);
-    } catch {
-      setTestResults([]);
-    } finally {
-      setSearching(false);
-    }
+      setTestDropIdx(list.length > 0 ? 0 : -1);
+    } catch { setTestResults([]); }
+    finally { setSearching(false); }
   }, []);
 
   useEffect(() => {
@@ -144,39 +158,51 @@ export default function NewRegistrationPage() {
     setTestSearch('');
     setTestDropOpen(false);
     setTestDropIdx(-1);
+    setFieldErrors(e => ({ ...e, tests: undefined }));
+    // Return focus to search so user can add another test immediately
+    setTimeout(() => testSearchRef.current?.focus(), 10);
   };
   const removeTest = (id: string) => setSelectedTests(prev => prev.filter(x => x.id !== id));
 
   const handleTestKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!testDropOpen) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); setTestDropIdx(i => Math.min(i + 1, testResults.length - 1)); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setTestDropIdx(i => Math.min(i + 1, testResults.length - 1)); setTestDropOpen(true); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setTestDropIdx(i => Math.max(i - 1, 0)); }
-    else if (e.key === 'Enter') { e.preventDefault(); if (testDropIdx >= 0 && testResults[testDropIdx]) addTest(testResults[testDropIdx]); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (testDropOpen && testDropIdx >= 0 && testResults[testDropIdx]) {
+        addTest(testResults[testDropIdx]);
+      } else if (testDropOpen && testResults.length === 1) {
+        addTest(testResults[0]);
+      }
+    }
+    else if (e.key === 'Tab' && !e.shiftKey) {
+      // Tab from test search → discount field
+      setTestDropOpen(false);
+      e.preventDefault();
+      focusAndSelect(discountRef);
+    }
     else if (e.key === 'Escape') { setTestDropOpen(false); }
   };
 
-  // ── payment sync ─────────────────────────────────────────────────
+  // ── Payment sync ─────────────────────────────────────────────────
   const handleDiscountPKRChange = (v: string) => {
     setDiscountPKR(v);
     const n = parseFloat(v) || 0;
     setDiscountPct(total > 0 ? String(((n / total) * 100).toFixed(1)) : '0');
-    const newPaid = Math.max(0, total - n);
-    setPaid(String(newPaid));
+    setPaid(String(Math.max(0, total - n)));
   };
   const handleDiscountPctChange = (v: string) => {
     setDiscountPct(v);
-    const pct = parseFloat(v) || 0;
-    const pkr = (pct / 100) * total;
+    const pkr = ((parseFloat(v) || 0) / 100) * total;
     setDiscountPKR(pkr.toFixed(2));
     setPaid(String(Math.max(0, total - pkr)));
   };
-
   useEffect(() => {
     setPaid(String(Math.max(0, total - (parseFloat(discountPKR) || 0))));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
 
-  // ── validation ───────────────────────────────────────────────────
+  // ── Validation ───────────────────────────────────────────────────
   const validate = (): boolean => {
     const errs: FieldErrors = {};
     if (!patient.fullName.trim()) errs.fullName = 'Required';
@@ -185,38 +211,61 @@ export default function NewRegistrationPage() {
     return Object.keys(errs).length === 0;
   };
 
-  // ── save ─────────────────────────────────────────────────────────
+  // ── Register Patient (patient only, no order) ────────────────────
+  const handleRegisterPatient = async () => {
+    if (!validate()) return;
+    setSaving(true); setSaveError('');
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      if (existingPatient) { setRegisteredMRN(existingPatient.mrn); return; }
+      const parts = patient.fullName.trim().split(/\s+/);
+      const body: Record<string, unknown> = {
+        firstName: parts[0] || '',
+        lastName: parts.length > 1 ? parts.slice(1).join(' ') : parts[0] || '',
+        gender: patient.gender,
+      };
+      if (mobileValue.replace(/[^0-9]/g, '').length >= 4) body.mobile = mobileValue;
+      if (patient.dateOfBirth) body.dateOfBirth = patient.dateOfBirth;
+      if (patient.cnic.trim()) body.cnic = patient.cnic.trim();
+      if (patient.address.trim()) body.address = patient.address.trim();
+      const { data: pt, error: ptErr } = await api.POST('/patients', { body: body as any });
+      if (ptErr || !pt) { setSaveError((ptErr as any)?.message ?? 'Registration failed'); return; }
+      setExistingPatient(pt);
+      setRegisteredMRN((pt as any).mrn);
+      setTimeout(() => testSearchRef.current?.focus(), 100);
+    } finally { setSaving(false); }
+  };
+
+  // ── Save & Print ─────────────────────────────────────────────────
   const handleSave = async () => {
     if (!validate()) return;
-    if (selectedTests.length === 0) { setSaveError('Add at least one test'); return; }
+    if (selectedTests.length === 0) { setSaveError('Add at least one test'); setFieldErrors(e => ({ ...e, tests: 'Add at least one test' })); return; }
     setSaving(true); setSaveError('');
     try {
       const api = getApiClient(getToken() ?? undefined);
       let patientId = existingPatient?.id;
 
       if (!patientId) {
-        // Split fullName: first word = firstName, rest = lastName (fallback to same if single word)
         const parts = patient.fullName.trim().split(/\s+/);
-        const firstName = parts[0] || '';
-        const lastName = parts.length > 1 ? parts.slice(1).join(' ') : firstName;
-
-        const body: Record<string, unknown> = { firstName, lastName, gender: patient.gender };
-        if (patient.mobile.trim()) body.mobile = patient.mobile.trim();
-        // DOB is source of truth — never save ageYears
+        const body: Record<string, unknown> = {
+          firstName: parts[0] || '',
+          lastName: parts.length > 1 ? parts.slice(1).join(' ') : parts[0] || '',
+          gender: patient.gender,
+        };
+        if (mobileValue.replace(/[^0-9]/g, '').length >= 4) body.mobile = mobileValue;
         if (patient.dateOfBirth) body.dateOfBirth = patient.dateOfBirth;
         if (patient.cnic.trim()) body.cnic = patient.cnic.trim();
         if (patient.address.trim()) body.address = patient.address.trim();
-
         const { data: pt, error: ptErr } = await api.POST('/patients', { body: body as any });
         if (ptErr || !pt) { setSaveError((ptErr as any)?.message ?? 'Failed to create patient'); return; }
         patientId = (pt as any).id;
         setExistingPatient(pt);
+        setRegisteredMRN((pt as any).mrn);
       }
 
       const { data: enc, error: encErr } = await api.POST('/encounters', { body: { patientId } as any });
       if (encErr || !enc) { setSaveError('Failed to create encounter'); return; }
       const encounterId = (enc as any).id;
-      const encounterCode = (enc as any).encounterCode ?? encounterId;
 
       for (const test of selectedTests) {
         // @ts-ignore
@@ -226,116 +275,161 @@ export default function NewRegistrationPage() {
         });
       }
 
-      // Queue receipt generation
+      // Queue receipt
       try {
-        const parts = patient.fullName.trim().split(/\s+/);
-        const firstName = parts[0] || '';
-        const lastName = parts.length > 1 ? parts.slice(1).join(' ') : firstName;
-        const receiptBody = {
-          receiptNumber: encounterCode,
-          patientName: patient.fullName.trim(),
-          patientMrn: existingPatient?.mrn ?? 'Auto',
-          issuedAt: new Date().toISOString(),
-          items: selectedTests.map(t => ({
-            description: t.name, quantity: 1,
-            unitPrice: t.price ?? 0, total: t.price ?? 0,
-          })),
-          subtotal: total, tax: 0, grandTotal: total,
-          sourceRef: encounterId, sourceType: 'encounter',
-        };
         // @ts-ignore
-        await api.POST('/documents/receipt:generate', { body: receiptBody as any });
-      } catch { /* receipt generation is best-effort */ }
+        await api.POST('/documents/receipt:generate', {
+          body: {
+            receiptNumber: (enc as any).encounterCode ?? encounterId,
+            patientName: patient.fullName.trim(),
+            patientMrn: existingPatient?.mrn ?? 'Auto',
+            issuedAt: new Date().toISOString(),
+            items: selectedTests.map(t => ({ description: t.name, quantity: 1, unitPrice: t.price ?? 0, total: t.price ?? 0 })),
+            subtotal: total, tax: 0, grandTotal: total,
+            sourceRef: encounterId, sourceType: 'encounter',
+          } as any,
+        });
+      } catch { /* best-effort */ }
 
-      // Poll up to 4s for receipt to be published, then open it and reset
+      // Poll for receipt PDF
       let receiptUrl: string | null = null;
-      for (let attempt = 0; attempt < 4; attempt++) {
+      for (let i = 0; i < 4; i++) {
         await new Promise(r => setTimeout(r, 1000));
         try {
-          const { data: docs } = await api.GET('/documents' as any, {
-            params: { query: { sourceRef: encounterId, status: 'PUBLISHED', limit: 1 } },
-          });
+          const { data: docs } = await api.GET('/documents' as any, { params: { query: { sourceRef: encounterId, status: 'PUBLISHED', limit: 1 } } });
           const items: any[] = (docs as any)?.items ?? [];
           if (items.length > 0) {
-            const { data: dl } = await api.GET('/documents/{id}/download' as any, {
-              params: { path: { id: items[0].id } },
-            });
+            const { data: dl } = await api.GET('/documents/{id}/download' as any, { params: { path: { id: items[0].id } } });
             const url = (dl as any)?.url;
             if (url) { receiptUrl = url; break; }
           }
         } catch { /* keep trying */ }
       }
-
-      // Open receipt in new tab if ready; always reset form for next patient
       if (receiptUrl) window.open(receiptUrl, '_blank');
-      handleReset();
+      setSavedEncounterId(encounterId);
     } catch (err: any) {
       setSaveError(err?.message ?? 'Save failed');
-    } finally {
-      setSaving(false);
-    }
+    } finally { setSaving(false); }
   };
 
-  // ── reset ────────────────────────────────────────────────────────
+  // ── Reset ────────────────────────────────────────────────────────
   const handleReset = () => {
-    setPatient(EMPTY_PATIENT);
-    setExistingPatient(null);
-    setFieldErrors({});
-    setSelectedTests([]);
-    setTestSearch('');
-    setTestResults([]);
-    setTestDropOpen(false);
-    setDiscountPKR('0');
-    setDiscountPct('0');
-    setPaid('0');
-    setSaveError('');
+    setMob1(''); setMob2('');
+    setPatient(EMPTY); setExistingPatient(null); setRegisteredMRN(null);
+    setFieldErrors({}); setSelectedTests([]);
+    setTestSearch(''); setTestResults([]); setTestDropOpen(false);
+    setDiscountPKR('0'); setDiscountPct('0'); setPaid('0');
+    setSaveError(''); setSavedEncounterId(null);
+    setTimeout(() => mob1Ref.current?.focus(), 50);
   };
 
-  const sectionCard: React.CSSProperties = { background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px' };
-  const sectionTitle: React.CSSProperties = { fontSize: '14px', fontWeight: 700, color: '#1e293b', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.05em' };
+  const card: React.CSSProperties = { background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px' };
+  const sectionTitle: React.CSSProperties = { fontSize: '13px', fontWeight: 700, color: '#64748b', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.06em' };
+
+  // ── Success Banner ────────────────────────────────────────────────
+  if (savedEncounterId) {
+    return (
+      <div style={{ maxWidth: '520px', margin: '48px auto', textAlign: 'center' }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+        <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#1e293b' }}>Registration & Order Saved</h2>
+        {registeredMRN && (
+          <p style={{ margin: '0 0 4px', color: '#64748b', fontSize: '15px' }}>
+            MRN: <strong style={{ color: '#1e293b' }}>{registeredMRN}</strong>
+          </p>
+        )}
+        <p style={{ margin: '0 0 28px', color: '#94a3b8', fontSize: '14px' }}>Receipt printed (if ready). What next?</p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => router.push(`/lims/encounters/${savedEncounterId}`)}
+            style={{ padding: '10px 24px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}
+          >
+            Open Encounter →
+          </button>
+          <button
+            onClick={handleReset}
+            style={{ padding: '10px 24px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}
+          >
+            + New Patient
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       {/* Header */}
       <div style={{ marginBottom: '20px' }}>
         <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#1e293b' }}>New Registration</h1>
-        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '14px' }}>Patient • Order • Payment</p>
+        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '14px' }}>Patient · Order · Payment</p>
       </div>
 
-      {/* SECTION 1 — Patient Form */}
-      <div style={{ ...sectionCard, marginBottom: '16px' }}>
+      {/* SECTION 1 — Patient */}
+      <div style={{ ...card, marginBottom: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <p style={sectionTitle}>Patient Registration</p>
-          {existingPatient && (
-            <span style={{ background: '#dbeafe', color: '#1d4ed8', borderRadius: '20px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>
-              Existing Patient · MRN: {existingPatient.mrn}
+          {registeredMRN && (
+            <span style={{ background: '#dcfce7', color: '#15803d', borderRadius: '20px', padding: '3px 14px', fontSize: '12px', fontWeight: 700 }}>
+              MRN: {registeredMRN}
             </span>
           )}
-          {!existingPatient && patient.mobile && !mobileLooking && (
+          {!registeredMRN && mob1 && !mobileLooking && (
             <span style={{ background: '#fef9c3', color: '#854d0e', borderRadius: '20px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>
               New Patient · MRN: Auto-generated
             </span>
           )}
+          {mobileLooking && (
+            <span style={{ color: '#94a3b8', fontSize: '12px' }}>Looking up…</span>
+          )}
         </div>
 
-        {/* Mobile */}
-        <div style={{ marginBottom: '16px', maxWidth: '280px' }}>
-          <label style={label}>Mobile {mobileLooking && <span style={{ color: '#94a3b8' }}>· Looking up…</span>}</label>
-          <input
-            value={patient.mobile}
-            onChange={e => setField('mobile', e.target.value)}
-            onBlur={handleMobileBlur}
-            placeholder="03XX-XXXXXXX"
-            style={inp}
-          />
+        {/* Mobile — two subfields with visual dash */}
+        <div style={{ marginBottom: '16px', maxWidth: '300px' }}>
+          <label style={lbl}>Mobile</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+            <input
+              ref={mob1Ref}
+              value={mob1}
+              onChange={e => {
+                const v = e.target.value.replace(/\D/g, '').slice(0, 4);
+                setMob1(v);
+                if (v.length === 4) mob2Ref.current?.focus();
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') { e.preventDefault(); mob2Ref.current?.focus(); }
+              }}
+              placeholder="0300"
+              maxLength={4}
+              style={{ ...inp, width: '72px', borderRadius: '6px 0 0 6px', borderRight: 'none', textAlign: 'center', letterSpacing: '2px' }}
+            />
+            <span style={{ padding: '8px 6px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderLeft: 'none', borderRight: 'none', color: '#64748b', fontSize: '16px', lineHeight: 1, userSelect: 'none' }}>-</span>
+            <input
+              ref={mob2Ref}
+              value={mob2}
+              onChange={e => {
+                const v = e.target.value.replace(/\D/g, '').slice(0, 7);
+                setMob2(v);
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Backspace' && mob2 === '') { e.preventDefault(); mob1Ref.current?.focus(); }
+                if (e.key === 'Enter') { e.preventDefault(); handleMobileLookup().then(() => focusAndSelect(fullNameRef)); }
+              }}
+              onBlur={handleMobileLookup}
+              placeholder="1234567"
+              maxLength={7}
+              style={{ ...inp, flex: 1, borderRadius: '0 6px 6px 0', letterSpacing: '1px' }}
+            />
+          </div>
         </div>
 
-        {/* Full name */}
+        {/* Full Name */}
         <div style={{ marginBottom: '12px' }}>
-          <label style={label}>Full Name *</label>
+          <label style={lbl}>Full Name *</label>
           <input
+            ref={fullNameRef}
             value={patient.fullName}
             onChange={e => setField('fullName', e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(ageRef); } }}
             placeholder="e.g. Ali Hassan"
             style={fieldErrors.fullName ? inpErr : inp}
           />
@@ -345,22 +439,37 @@ export default function NewRegistrationPage() {
         {/* Age + DOB + Gender + CNIC */}
         <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
           <div>
-            <label style={label}>Age</label>
+            <label style={lbl}>Age (yrs)</label>
             <input
+              ref={ageRef}
               type="number" min="0" max="150"
               value={displayAge}
               onChange={e => handleAgeInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(dobRef); } }}
               placeholder="yrs"
               style={inp}
             />
           </div>
           <div>
-            <label style={label}>Date of Birth</label>
-            <input type="date" value={patient.dateOfBirth} onChange={e => setField('dateOfBirth', e.target.value)} style={inp} />
+            <label style={lbl}>Date of Birth</label>
+            <input
+              ref={dobRef}
+              type="date"
+              value={patient.dateOfBirth}
+              onChange={e => setField('dateOfBirth', e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); genderRef.current?.focus(); } }}
+              style={inp}
+            />
           </div>
           <div>
-            <label style={label}>Gender *</label>
-            <select value={patient.gender} onChange={e => setField('gender', e.target.value)} style={{ ...inp, background: 'white' }}>
+            <label style={lbl}>Gender *</label>
+            <select
+              ref={genderRef}
+              value={patient.gender}
+              onChange={e => setField('gender', e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(cnicRef); } }}
+              style={{ ...inp, background: 'white' }}
+            >
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
@@ -368,43 +477,69 @@ export default function NewRegistrationPage() {
             {fieldErrors.gender && <p style={{ color: '#ef4444', fontSize: '11px', margin: '2px 0 0' }}>{fieldErrors.gender}</p>}
           </div>
           <div>
-            <label style={label}>CNIC</label>
-            <input value={patient.cnic} onChange={e => setField('cnic', e.target.value)} placeholder="XXXXX-XXXXXXX-X" style={inp} />
+            <label style={lbl}>CNIC</label>
+            <input
+              ref={cnicRef}
+              value={patient.cnic}
+              onChange={e => setField('cnic', e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addressRef.current?.focus(); } }}
+              placeholder="XXXXX-XXXXXXX-X"
+              style={inp}
+            />
           </div>
         </div>
 
         {/* Address */}
-        <div>
-          <label style={label}>Address</label>
-          <textarea value={patient.address} onChange={e => setField('address', e.target.value)} rows={2} style={{ ...inp, resize: 'vertical' }} />
+        <div style={{ marginBottom: '16px' }}>
+          <label style={lbl}>Address</label>
+          <textarea
+            ref={addressRef}
+            value={patient.address}
+            onChange={e => setField('address', e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); testSearchRef.current?.focus(); } }}
+            rows={2}
+            placeholder="Press Enter to move to order, Shift+Enter for new line"
+            style={{ ...inp, resize: 'vertical' }}
+          />
+        </div>
+
+        {/* Register Patient button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={handleRegisterPatient}
+            disabled={saving}
+            style={{ padding: '8px 20px', background: saving ? '#94a3b8' : '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 600, fontSize: '14px' }}
+          >
+            {saving ? 'Registering…' : '👤 Register Patient'}
+          </button>
+          {registeredMRN && (
+            <span style={{ fontSize: '13px', color: '#15803d', fontWeight: 600 }}>
+              ✓ Registered — MRN: {registeredMRN}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* SECTIONS 2+3 — two columns */}
+      {/* SECTION 2+3 — Order + Payment */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '16px', marginBottom: '16px' }}>
 
         {/* SECTION 2 — Order */}
-        <div style={sectionCard}>
-          <p style={sectionTitle}>Order</p>
-
-          {/* Search input */}
+        <div style={card}>
+          <p style={sectionTitle}>Order Tests</p>
           <div style={{ position: 'relative', marginBottom: '12px' }}>
             <input
+              ref={testSearchRef}
               value={testSearch}
               onChange={e => setTestSearch(e.target.value)}
               onKeyDown={handleTestKeyDown}
               onBlur={() => setTimeout(() => setTestDropOpen(false), 150)}
               onFocus={() => testResults.length > 0 && setTestDropOpen(true)}
-              placeholder="Search test name or code…"
-              style={inp}
+              placeholder="Type test name or code, Enter to add…"
+              style={fieldErrors.tests ? inpErr : inp}
             />
-            {searching && (
-              <span style={{ position: 'absolute', right: '10px', top: '9px', color: '#94a3b8', fontSize: '12px' }}>Searching…</span>
-            )}
-
-            {/* Dropdown */}
+            {searching && <span style={{ position: 'absolute', right: '10px', top: '9px', color: '#94a3b8', fontSize: '12px' }}>Searching…</span>}
             {testDropOpen && testResults.length > 0 && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 100, maxHeight: '220px', overflowY: 'auto' }}>
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', zIndex: 100, maxHeight: '240px', overflowY: 'auto' }}>
                 {testResults.map((t, i) => (
                   <div
                     key={t.id}
@@ -415,17 +550,17 @@ export default function NewRegistrationPage() {
                       <div style={{ fontWeight: 500, fontSize: '14px', color: '#1e293b' }}>{t.name}</div>
                       {t.code && <div style={{ fontSize: '11px', color: '#94a3b8' }}>{t.code}</div>}
                     </div>
-                    <span style={{ fontSize: '12px', color: '#64748b' }}>{t.price != null ? `PKR ${t.price}` : 'PKR N/A'}</span>
+                    <span style={{ fontSize: '12px', color: '#64748b' }}>{t.price != null ? `PKR ${t.price}` : 'N/A'}</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
+          {fieldErrors.tests && <p style={{ color: '#ef4444', fontSize: '12px', margin: '-8px 0 8px' }}>{fieldErrors.tests}</p>}
 
-          {/* Selected tests */}
           {selectedTests.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '32px 16px', color: '#94a3b8', fontSize: '14px', border: '1px dashed #e2e8f0', borderRadius: '6px' }}>
-              Search and add tests above
+            <div style={{ textAlign: 'center', padding: '28px 16px', color: '#94a3b8', fontSize: '14px', border: '1px dashed #e2e8f0', borderRadius: '6px' }}>
+              Search and add tests · Press <kbd style={{ background: '#f1f5f9', padding: '1px 6px', borderRadius: '3px', fontSize: '12px' }}>Enter</kbd> to add, <kbd style={{ background: '#f1f5f9', padding: '1px 6px', borderRadius: '3px', fontSize: '12px' }}>Tab</kbd> for payment
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -436,8 +571,8 @@ export default function NewRegistrationPage() {
                     {t.code && <div style={{ fontSize: '11px', color: '#94a3b8' }}>{t.code}</div>}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ fontSize: '13px', color: '#64748b' }}>{t.price != null ? `PKR ${t.price}` : 'PKR N/A'}</span>
-                    <button onClick={() => removeTest(t.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: '0 4px' }}>×</button>
+                    <span style={{ fontSize: '13px', color: '#64748b' }}>{t.price != null ? `PKR ${t.price}` : 'N/A'}</span>
+                    <button onClick={() => removeTest(t.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '18px', lineHeight: 1, padding: '0 4px' }}>×</button>
                   </div>
                 </div>
               ))}
@@ -446,53 +581,52 @@ export default function NewRegistrationPage() {
         </div>
 
         {/* SECTION 3 — Payment */}
-        <div style={sectionCard}>
+        <div style={card}>
           <p style={sectionTitle}>Payment</p>
-
           <div style={{ marginBottom: '12px' }}>
-            <label style={label}>Total (PKR)</label>
-            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>
+            <label style={lbl}>Total (PKR)</label>
+            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
               {total.toLocaleString()}
             </div>
           </div>
-
           <div style={{ marginBottom: '12px' }}>
-            <label style={label}>Discount</label>
+            <label style={lbl}>Discount</label>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
+                ref={discountRef}
                 type="number" min="0" value={discountPKR}
                 onChange={e => handleDiscountPKRChange(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(paidRef); } }}
                 placeholder="PKR" style={{ ...inp, flex: 2 }}
               />
               <input
                 type="number" min="0" max="100" value={discountPct}
                 onChange={e => handleDiscountPctChange(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(paidRef); } }}
                 placeholder="%" style={{ ...inp, flex: 1 }}
               />
             </div>
           </div>
-
           <div style={{ marginBottom: '12px' }}>
-            <label style={label}>Paid (PKR)</label>
+            <label style={lbl}>Paid (PKR)</label>
             <input
+              ref={paidRef}
               type="number" min="0" value={paid}
               onChange={e => setPaid(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleSave(); } }}
               style={inp}
             />
           </div>
-
           <div style={{ padding: '10px 14px', background: due > 0 ? '#fef2f2' : '#f0fdf4', borderRadius: '6px', border: `1px solid ${due > 0 ? '#fecaca' : '#bbf7d0'}` }}>
             <div style={{ fontSize: '12px', color: '#64748b' }}>Due (PKR)</div>
-            <div style={{ fontSize: '20px', fontWeight: 700, color: due > 0 ? '#ef4444' : '#15803d' }}>
-              {due.toLocaleString()}
-            </div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: due > 0 ? '#ef4444' : '#15803d' }}>{due.toLocaleString()}</div>
           </div>
         </div>
       </div>
 
       {/* Action bar */}
       {saveError && <p style={{ color: '#ef4444', fontSize: '13px', marginBottom: '8px' }}>{saveError}</p>}
-      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', alignItems: 'center' }}>
         <button
           onClick={handleReset}
           style={{ padding: '10px 24px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', color: '#64748b' }}
