@@ -28,7 +28,8 @@ export default function LoginPage() {
       }
 
       setTokens(data.accessToken, data.refreshToken);
-      router.push('/dashboard');
+      // Use replace so the login page is not in browser history
+      router.replace('/dashboard');
     } catch (err) {
       setError('Login failed. Please try again.');
     } finally {

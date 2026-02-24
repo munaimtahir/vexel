@@ -1,32 +1,25 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { isAuthenticated, getToken } from '@/lib/auth';
 
+/**
+ * AuthGuard — client hydration guard only.
+ * Real auth protection is handled by middleware.ts (server-side).
+ * This prevents a brief flash before hydration completes.
+ */
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const [authorized, setAuthorized] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      router.replace('/login');
-      return;
-    }
+    setReady(true);
+  }, []);
 
-    // Simple token check — if token exists and isAuthenticated(), allow access
-    if (!isAuthenticated()) {
-      router.replace('/login');
-      return;
-    }
-
-    setAuthorized(true);
-  }, [router]);
-
-  if (!authorized) {
+  if (!ready) {
     return (
-      <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center' }}>
-        <p>Verifying access...</p>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        </div>
       </div>
     );
   }

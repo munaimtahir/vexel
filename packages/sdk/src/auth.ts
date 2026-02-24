@@ -49,7 +49,10 @@ export function getTokens(): { token: string | null; refresh: string | null } {
     if (typeof document === 'undefined') return { token: null, refresh: null };
 
     const cookies = document.cookie.split(';').reduce((acc, c) => {
-        const [k, v] = c.trim().split('=');
+        const eqIdx = c.indexOf('=');
+        if (eqIdx === -1) return acc;
+        const k = c.slice(0, eqIdx).trim();
+        const v = c.slice(eqIdx + 1).trim();
         acc[k] = v;
         return acc;
     }, {} as Record<string, string>);
