@@ -1,631 +1,451 @@
-# Vexel LIMS — Operator UI Full Build Plan
-> **Purpose:** Session-resilient plan. If session is interrupted, share this file. The agent should read it, check what's done vs pending, and continue from where we left off.
-> **Last updated:** After schema migration applied and Wave 1 complete.
+# Vexel LIMS — Operator UI Plan & Troubleshooting Guide
+> **Purpose:** Session-resilient handoff. Share this file at the start of any new chat window.
+> The agent should read it fully, verify current state, pick the first open issue, fix + test it, mark done, then move to the next.
+> **Last updated:** 2026-02-24 — UX bug-fix session complete.
 
 ---
 
-## Current Production State
-- **Live URL:** https://vexel.alshifalab.pk
-- **Repo:** `git@github.com:munaimtahir/vexel.git`
-- **HEAD (as of last session):** `fa7d398` on `main`
-- **Stack:** 8 Docker services healthy (postgres:5433, redis:6380, api:9021, pdf:9022, admin:9023, operator:9024, minio:9025, worker)
-- **Tests:** 36/36 unit tests passing
+## ⚡ QUICK STATE CHECK (run these first in every new session)
 
-## What Has Been Done in This Plan (Wave 1 — COMPLETE)
+```bash
+# 1. What commit are we on?
+git -C /home/munaim/srv/apps/vexel log --oneline -5
 
-### ✅ Schema changes applied (`migration 20260223000002_workflow_schema_v2`)
-All Prisma schema changes written and migrated via `migrate deploy`. Prisma client regenerated.
+# 2. Are all containers running?
+docker compose -f /home/munaim/srv/apps/vexel/docker-compose.yml ps
 
-**Patient model** — added fields:
-- `mobile String?` + index on `(tenantId, mobile)`
-- `cnic String?`
-- `address String?`
-- `ageYears Int?`
+# 3. Is API healthy?
+curl -s http://127.0.0.1:9021/api/health
 
-**Encounter model** — added:
-- `encounterCode String?` — LIMS Order ID, unique per tenant, server-generated format: `[prefix]L-[YYMM]-[seq]`
-- `specimenItems SpecimenItem[]` relation
-- Status comment updated to include `partial_resulted`
+# 4. Get a token (used for all API tests below)
+TOKEN=$(curl -s -X POST http://127.0.0.1:9021/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@vexel.pk","password":"admin123"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['accessToken'])")
+echo $TOKEN | cut -c1-30  # should print first 30 chars of JWT
 
-**CatalogTest model** — added:
-- `specimenType String?` — exact specimen type string e.g. `"EDTA Blood"`, `"Urine"` (used for grouping specimen items)
-- `price Decimal?` — price in PKR for receipt/payment section
+# 5. Quick worklist check (was 500 — fixed 2287b59)
+curl -s "http://127.0.0.1:9021/api/encounters?page=1&limit=5" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "x-tenant-id: demo" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print('encounters total:', d.get('pagination',{}).get('total','ERROR'))"
+```
 
-**LabOrder model** — added:
-- `resultStatus String @default("PENDING")` — `PENDING | SUBMITTED`
-- `submittedAt DateTime?`
-- `submittedById String?`
-- `testNameSnapshot String?` — snapshot of test name at order time
-- `results LabResult[]` relation (one-to-many now, was one-to-one)
-- Index on `(tenantId, resultStatus)`
-
-**LabResult model** — restructured (BREAKING — per-parameter now):
-- Dropped `@unique` on `labOrderId` (was one result per order, now many per order = one per parameter)
-- Dropped `resultedAt`, `resultedBy` columns
-- Added `parameterId String?` — links to catalog parameter
-- Added `parameterNameSnapshot String?`
-- Added `locked Boolean @default(false)` — true once test submitted with a value
-- Added `enteredAt DateTime @default(now())`
-- Added `enteredById String?`
-- Added index on `(tenantId, labOrderId)`
-
-**SpecimenItem model** — NEW:
-- One row per unique `catalogSpecimenType` per encounter
-- Auto-created when lab order is placed (grouping by specimen type)
-- Fields: `id, tenantId, encounterId, catalogSpecimenType, status (PENDING|COLLECTED|POSTPONED|RECEIVED), barcode?, collectedAt, collectedById, postponedAt, postponedById, postponeReason, receivedAt, receivedById`
-- Unique: `(tenantId, encounterId, catalogSpecimenType)`
-
-**TenantConfig model** — added:
-- `registrationPrefix String?` — 2-3 letters e.g. `"VX"` for MRN generation
-- `orderPrefix String?` — 2-3 letters for Order ID generation
+Expected output: encounters total = a number (not ERROR, not 500).
 
 ---
 
-## What Still Needs to Be Done
+## 🏗 PRODUCTION STATE
 
-**ALL WAVES COMPLETE** — commit `caffe7d` on `main`.
+| Item | Value |
+|------|-------|
+| Live URL | https://vexel.alshifalab.pk |
+| Repo | `git@github.com:munaimtahir/vexel.git` |
+| Server | `/home/munaim/srv/apps/vexel/` |
+| HEAD commit | `2287b59` on `main` |
+| DB | `postgresql://vexel:vexel@127.0.0.1:5433/vexel` |
 
-See below for the full spec (preserved for reference) in case any page needs adjustment.
+### Credentials
+| User | Email | Password | Use For |
+|------|-------|----------|---------|
+| Super Admin | `admin@vexel.pk` | `admin123` | Admin app + API tests |
+| Demo Operator | `operator@demo.vexel.pk` | `Operator@demo123!` | Operator app |
+| Demo Verifier | `verifier@demo.vexel.pk` | `Verifier@demo123!` | Verify step |
+
+### Ports
+| Service | Port |
+|---------|------|
+| API (NestJS) | 127.0.0.1:9021 |
+| PDF (.NET) | 127.0.0.1:9022 |
+| Admin (Next.js) | 127.0.0.1:9023 |
+| Operator (Next.js) | 127.0.0.1:9024 |
+| Postgres | 127.0.0.1:5433 |
+| Redis | 127.0.0.1:6380 |
+| MinIO | 127.0.0.1:9025 |
+
+### Deploy Commands
+```bash
+cd /home/munaim/srv/apps/vexel
+
+# After API changes:
+docker compose build api && docker compose up -d api
+
+# After Operator UI changes:
+docker compose build operator && docker compose up -d operator
+
+# After Admin UI changes:
+docker compose build admin && docker compose up -d admin
+
+# After ALL:
+docker compose build api admin operator && docker compose up -d api admin operator
+```
 
 ---
 
-## Completed Features (all committed)
+## 📋 ISSUE TRACKER (work one at a time, test before marking done)
 
-### WAVE 2 — OpenAPI + SDK (in_progress, partially started)
-
-**File:** `packages/contracts/openapi.yaml`
-**After editing:** run `pnpm sdk:generate` (or `cd packages/contracts && node generate.js`)
-
-#### Endpoints to add:
-
-**Results (test-level):**
-```
-GET  /results/tests/pending        → list LabOrders where resultStatus=PENDING + sample collected/received
-GET  /results/tests/submitted      → list LabOrders where resultStatus=SUBMITTED
-GET  /results/tests/{orderedTestId} → detail: test info + all parameter schemas + current values + lock state
-POST /results/tests/{orderedTestId}:save           → body: {values:[{parameterId,value}]} — save draft
-POST /results/tests/{orderedTestId}:submit         → body: {} — set resultStatus=SUBMITTED, lock non-empty
-POST /results/tests/{orderedTestId}:submit-and-verify → submit + verify + enqueue publish (needs verify permission)
-```
-
-**Verification (encounter/patient-level):**
-```
-GET  /verification/encounters/pending              → encounters with ≥1 LabOrder submitted + not yet verified
-GET  /verification/encounters/{encounterId}        → encounter detail with submitted test cards + ONLY filled params
-POST /verification/encounters/{encounterId}:verify → verify all submitted tests → trigger publish pipeline
-```
-
-**Sample Collection:**
-```
-GET  /sample-collection/worklist                   → encounters with pending specimen items (last 3 days default)
-POST /encounters/{id}:collect-specimens            → body: {specimenItemIds:[]} — batch collect
-POST /encounters/{id}:postpone-specimen            → body: {specimenItemId, reason (required, min 3 chars)}
-POST /encounters/{id}:receive-specimens            → body: {specimenItemIds:[]} — batch receive (feature-flagged)
-```
-
-**Patient search:**
-```
-GET /patients?mobile=xxx   → add mobile query param to existing patients endpoint
-```
-
-Also update response schemas:
-- `EncounterResponse`: add `encounterCode` field
-- `LabOrderResponse`: add `resultStatus`, `submittedAt`, `testNameSnapshot`
-- `PatientResponse`: add `mobile`, `cnic`, `address`, `ageYears`
+### How to work through this list
+1. Pick the first `[ ]` item.
+2. Read the **Issue**, **Root Cause**, and **Expected Behavior** sections.
+3. Fix it.
+4. Run the **Test Steps** to verify.
+5. Deploy (`docker compose build X && docker compose up -d X`).
+6. Verify on live: https://vexel.alshifalab.pk
+7. Commit: `git add -A && git commit -m "fix: <description>\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"`
+8. Mark `[x]` and record result.
+9. Move to next item.
 
 ---
 
-### WAVE 3 — Backend Services (NestJS)
+### ISSUE 1: Results entry — end-to-end validation
+**Status:** `[ ]` Not tested  
+**Priority:** 🔴 High
 
-**Constraints (do not break these):**
-- All state changes via Command endpoints only — no direct DB mutation from controllers
-- Every command writes `AuditEvent` with `correlationId`
-- Every query includes `tenantId` filter — no cross-tenant reads
-- No Prisma imports in Next.js apps ever
+**What to test:**
+1. Log in as `operator@demo.vexel.pk` on https://vexel.alshifalab.pk
+2. Create a new registration: fill mobile, name, add 1 test → Save
+3. Go to Sample Collection → collect sample for that patient
+4. Go to Results → Pending tab — does the test appear?
+5. Click "Enter results" — does the results entry page load with parameters?
+6. Fill in a value → Save → confirm value persists on refresh
+7. Submit → confirm filled fields are locked, empty fields stay editable
+8. Check Submitted tab — test appears there?
 
-#### b6 — ResultsModule (`apps/api/src/results/`)
+**Files to investigate if broken:**
+- `apps/operator/src/app/(protected)/lims/results/page.tsx`
+- `apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx`
+- `apps/api/src/results/results.service.ts`
 
-Service methods:
-- `getOrderedTestDetail(tenantId, orderedTestId)` — return LabOrder + parameter schemas (from catalog mapping) + current LabResult rows + computed lock per parameter
-- `getPendingTests(tenantId)` — LabOrders where `resultStatus=PENDING` AND encounter specimen collected
-- `getSubmittedTests(tenantId)` — LabOrders where `resultStatus=SUBMITTED`
-- `saveResults(tenantId, actorId, orderedTestId, values[])` — upsert LabResult rows, do NOT change resultStatus, write `TEST_RESULTS_SAVE` AuditEvent
-- `submitResults(tenantId, actorId, orderedTestId)` — set `resultStatus=SUBMITTED`, lock all non-empty LabResults, advance encounter status (`partial_resulted` if some tests remain, `resulted` if all submitted), write `TEST_RESULTS_SUBMIT` AuditEvent
-- `submitAndVerify(tenantId, actorId, orderedTestId)` — idempotent submit + verify + enqueue doc pipeline, requires `result.verify` permission, write both `TEST_RESULTS_SUBMIT` + `TEST_RESULTS_VERIFY` AuditEvents
+**API test commands:**
+```bash
+TOKEN=$(curl -s -X POST http://127.0.0.1:9021/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@vexel.pk","password":"admin123"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['accessToken'])")
 
-**Lock rule (hard):**
-- If `resultStatus = SUBMITTED` AND parameter has non-empty value → `locked = true`
-- If `resultStatus = SUBMITTED` AND parameter empty → `locked = false` (late entry allowed)
-- If `resultStatus = PENDING` → all unlocked
+# Get pending tests
+curl -s "http://127.0.0.1:9021/api/results/tests/pending" \
+  -H "Authorization: Bearer $TOKEN" -H "x-tenant-id: demo" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print('pending tests:', len(d.get('data',[])))"
+```
 
-**Encounter status auto-advance after submit:**
-- Count LabOrders for encounter: if ALL `resultStatus=SUBMITTED` → set encounter `status=resulted`
-- If some submitted but not all → set encounter `status=partial_resulted`
-- These are the ONLY status changes needed from results submission
+**Result:** ___________
 
-**H/L Flag computation:**
-- Parse reference range (e.g. `"3.5-5.0"` or `">10"`)
-- Compare numeric value → set `flag`: `normal | high | low | critical`
-- Operator can override flag manually
+---
 
-#### b7 — VerificationModule (`apps/api/src/verification/`)
+### ISSUE 2: Verification flow — end-to-end validation
+**Status:** `[ ]` Not tested  
+**Priority:** 🔴 High
 
-Service methods:
-- `getPendingEncounters(tenantId)` — encounters where status = `resulted | partial_resulted` AND at least one LabOrder submitted and not verified. Include patient identity + submitted test count.
-- `getEncounterDetail(tenantId, encounterId)` — return submitted LabOrders with ONLY filled parameter values (omit any LabResult where value is empty/null). Include patient identity.
-- `verifyEncounter(tenantId, actorId, encounterId)` — verify all submitted LabOrders (set `labOrder.status=verified`, set `labResult.verifiedAt/By`), advance encounter to `verified`, enqueue deterministic document job, write `ENCOUNTER_VERIFIED` AuditEvent with correlationId
+**What to test:**
+1. After completing Issue 1 (test submitted), go to Verification → Pending tab
+2. Does the encounter appear?
+3. Click "Verify patient" — does verification page load with test cards?
+4. Are empty parameters hidden (only filled ones shown)?
+5. Click "Verify patient" button — does it succeed?
+6. Does a PDF document get published? (poll `/lims/reports`)
+7. Download the PDF — does it open?
 
-**Important:** verification payload for document = only filled parameters, aggregated across all submitted tests for the encounter.
+**API test commands:**
+```bash
+TOKEN=$(curl -s -X POST http://127.0.0.1:9021/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@vexel.pk","password":"admin123"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['accessToken'])")
 
-#### b8 — SampleCollectionModule (`apps/api/src/sample-collection/`)
+# Get pending verification encounters
+curl -s "http://127.0.0.1:9021/api/verification/encounters/pending" \
+  -H "Authorization: Bearer $TOKEN" -H "x-tenant-id: demo" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print('pending verification:', len(d.get('data',[])))"
+```
 
-Service methods:
-- `getWorklist(tenantId, filters)` — encounters with pending SpecimenItems, default last 3 days
-- `collectSpecimens(tenantId, actorId, encounterId, specimenItemIds[])` — batch set `status=COLLECTED`, set `collectedAt/By`, write `SPECIMEN_COLLECTED` AuditEvent, advance encounter status to `specimen_collected`
-- `postponeSpecimen(tenantId, actorId, encounterId, specimenItemId, reason)` — set `status=POSTPONED`, reason required (min 3 chars), write `SPECIMEN_POSTPONED` AuditEvent
-- `receiveSpecimens(tenantId, actorId, encounterId, specimenItemIds[])` — batch set `status=RECEIVED`, write `SPECIMEN_RECEIVED` AuditEvent (feature-flagged: `lims.operator.sample.receiveSeparate.enabled`)
+**Result:** ___________
 
-**Auto-create SpecimenItems on orderLab:**
-In `EncountersService.orderLab()` — after creating LabOrder rows, for each unique `CatalogTest.specimenType` in the order, upsert a SpecimenItem row (ignore if already exists for that type).
+---
 
-#### b9 — Patient Registration Enhancements
+### ISSUE 3: Sample worklist not showing pre-fix encounters
+**Status:** `[ ]` Known data issue  
+**Priority:** 🟡 Medium
 
-- Add `mobile` search to existing `GET /patients` endpoint
-- Add `registrationCode` (MRN) generation: `[prefix]-[YY]-[SEQPADDED4]` e.g. `VX-26-0001`
-  - Prefix from `TenantConfig.registrationPrefix`, default `"PT"`
-  - Sequence: count existing patients for tenant in that year + 1
-- Add `encounterCode` generation on `EncountersService.orderLab()`: `[prefix]L-[YYMM]-[SEQ3]` e.g. `VXL-2602-001`
-  - Sequence resets monthly; count LabOrders for tenant in that month + 1
+**Root Cause:** Encounters created before commit `3b022ec` have zero `SpecimenItem` rows because `orderLab` silently skipped creation when `specimenType = NULL` on the catalog test. New orders (post-fix) work correctly.
 
-#### b10 — Feature Flags
+**Fix options:**
+- **Option A (recommended):** Run a one-time DB migration to create missing SpecimenItems for all existing `lab_ordered` encounters that have zero SpecimenItems:
+  ```sql
+  -- Preview: count affected encounters
+  SELECT COUNT(DISTINCT e.id) 
+  FROM encounters e
+  JOIN lab_orders lo ON lo."encounterId" = e.id
+  WHERE e.status = 'lab_ordered'
+    AND NOT EXISTS (SELECT 1 FROM specimen_items si WHERE si."encounterId" = e.id);
 
-Add to feature-flag registry defaults:
+  -- Fix: insert one SpecimenItem per encounter (using 'Blood' as default specimenType)
+  INSERT INTO specimen_items (id, "tenantId", "encounterId", "catalogSpecimenType", status, "createdAt", "updatedAt")
+  SELECT 
+    gen_random_uuid()::text,
+    e."tenantId",
+    e.id,
+    'Blood',
+    'PENDING',
+    NOW(),
+    NOW()
+  FROM encounters e
+  JOIN lab_orders lo ON lo."encounterId" = e.id
+  WHERE e.status = 'lab_ordered'
+    AND NOT EXISTS (SELECT 1 FROM specimen_items si WHERE si."encounterId" = e.id)
+  ON CONFLICT DO NOTHING;
+  ```
+- **Option B:** Ignore old data; only new registrations matter going forward.
+
+**DB access:**
+```bash
+docker exec -it $(docker compose -f /home/munaim/srv/apps/vexel/docker-compose.yml ps -q postgres) \
+  psql -U vexel -d vexel -c "SELECT COUNT(DISTINCT e.id) FROM encounters e JOIN lab_orders lo ON lo.\"encounterId\" = e.id WHERE e.status = 'lab_ordered' AND NOT EXISTS (SELECT 1 FROM specimen_items si WHERE si.\"encounterId\" = e.id);"
+```
+
+**Ask user before applying Option A** — it modifies existing data.
+
+**Result:** ___________
+
+---
+
+### ISSUE 4: Catalog price column — full surface audit
+**Status:** `[ ]` Partially done  
+**Priority:** 🟡 Medium
+
+**What was done:** `price Decimal?` field added to `CatalogTest` schema in migration `20260223000002`.
+
+**What to verify (check each):**
+- [ ] Admin → Catalog → Tests list — does it show a Price column?
+- [ ] Admin → Catalog → Create Test form — does it have a Price field?
+- [ ] Admin → Catalog → Import/Export → Download XLSX template — does Tests sheet have `price` column?
+- [ ] Upload a test CSV/XLSX with a price value — does it import correctly?
+- [ ] Operator → Registration → add test — does the price show in the order section?
+
+**Files to check:**
+- `apps/admin/src/app/(protected)/catalog/tests/page.tsx` — list + create form
+- `apps/api/src/catalog/catalog-import-export.service.ts` — template generation
+- `apps/operator/src/app/(protected)/lims/registrations/new/page.tsx` — test search results
+
+**API test:**
+```bash
+TOKEN=$(curl -s -X POST http://127.0.0.1:9021/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@vexel.pk","password":"admin123"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['accessToken'])")
+curl -s "http://127.0.0.1:9021/api/catalog/tests?limit=3" \
+  -H "Authorization: Bearer $TOKEN" -H "x-tenant-id: system" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); [print(t.get('name'), '| price:', t.get('price')) for t in d.get('data',[])]"
+```
+
+**Result:** ___________
+
+---
+
+### ISSUE 5: Receipt polling — extend timeout
+**Status:** `[ ]` Open  
+**Priority:** 🟡 Medium
+
+**Root Cause:** Receipt polls 12 × 1s = 12 seconds max. PDF rendering + BullMQ job processing can take longer.
+
+**File:** `apps/operator/src/app/(protected)/lims/registrations/new/page.tsx`
+
+**Fix:** Change the poll loop from 12 iterations to 20, with a 1.5s delay:
 ```typescript
-{ key: 'lims.verification.enabled', defaultValue: true, type: 'boolean', description: '...' }
-{ key: 'lims.verification.mode', defaultValue: { mode: 'separate' }, type: 'variant', description: '...' }
-{ key: 'lims.operator.verificationPages.enabled', defaultValue: true, type: 'boolean', description: '...' }
-{ key: 'lims.operator.sample.receiveSeparate.enabled', defaultValue: false, type: 'boolean', description: '...' }
+// Change:
+for (let i = 0; i < 12; i++) {
+  await new Promise(r => setTimeout(r, 1000));
+// To:
+for (let i = 0; i < 20; i++) {
+  await new Promise(r => setTimeout(r, 1500));
 ```
+
+**Test:** Create a registration + order → watch the success screen → does receipt link appear within 30s?
+
+**Result:** ___________
 
 ---
 
-### WAVE 4 — Operator UI (Next.js)
+### ISSUE 6: Admin/Operator show "unhealthy" in docker compose ps
+**Status:** `[ ]` Low priority cosmetic  
+**Priority:** 🟢 Low
 
-**Constraints:**
-- SDK-only — no direct fetch/axios
-- `getApiClient(getToken() ?? undefined)` pattern
-- All pages under `apps/operator/src/app/(protected)/`
+**Root Cause:** The healthcheck in `docker-compose.yml` for admin and operator containers hits a path that returns non-200 (likely redirects to login page). Containers are actually working.
 
-#### u1 — Registration Page (`/registrations/new`)
+**Fix:** Update healthcheck for admin and operator in `docker-compose.yml`:
+```yaml
+# For operator (port 3000):
+healthcheck:
+  test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s
 
-**File:** `apps/operator/src/app/(protected)/registrations/new/page.tsx`
-
-**Layout (3 sections):**
-```
-┌─────────────────────────────────────────────────────┐
-│  PATIENT REGISTRATION FORM (top, full width)        │
-│  Mobile search → auto-fill → reuse or create MRN    │
-└────────────────────────┬────────────────────────────┘
-│  ORDER SECTION          │  PAYMENT SECTION           │
-│  (bottom-left)          │  (bottom-right)            │
-│  Test search            │  Total (auto)              │
-│  Test list              │  Discount (PKR ↔ %)        │
-│  + Remove               │  Paid (default=total)      │
-│                         │  Due (auto)                │
-└────────────────────────┴────────────────────────────┘
-                [ Save & Print Receipt ]
+# For admin (port 3001, basePath=/admin):
+healthcheck:
+  test: ["CMD", "wget", "-qO-", "http://localhost:3001/admin"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s
 ```
 
-**Registration form fields:**
-- Mobile* (first field) — on blur: call `GET /patients?mobile=xxx`, auto-fill if found
-- Full Name* (split into firstName + lastName internally)
-- Age (integer) ↔ DOB (linked: entering one computes the other approximately)
-- Gender* (select: Male/Female/Other)
-- CNIC (optional)
-- Address (optional)
-- MRN: shown as read-only after save, or "(auto-generated)" before save
-
-**Order section:**
-- Catalog test search: real-time search by name/code as user types
-- Keyboard: arrow keys to navigate suggestions, Enter to add, click to add
-- Shows list of added tests with test name + price + remove button
-- If test has no price → show PKR 0
-
-**Payment section:**
-- Total = sum of prices (auto-computed)
-- Discount field: PKR amount field + "%" toggle that syncs (enter 10% → computes PKR amount and vice versa)
-- Paid = default to Total − Discount (editable by operator)
-- Due = Total − Discount − Paid (auto, read-only, red if > 0)
-
-**Save & Print Receipt:**
-- POST to create encounter (registers patient + creates lab order in one flow or two calls)
-- On success: open receipt PDF in new tab
-- Receipt format picker (before or after save):
-  - **A4**: top 49% patient copy + 2% tear line + bottom 48% office copy, with tenant header/footer
-  - **Thermal 80mm**: patient block → tests block → payment block, tenant header/footer
-- After save + print: page resets for next patient (clear form, keep tenant context)
-
-**Existing registration page location:** `apps/operator/src/app/(protected)/registrations/new/page.tsx` — needs complete redesign
-
-#### u2 — Sample Collection Page (`/sample-collection`)
-
-**File:** `apps/operator/src/app/(protected)/sample-collection/page.tsx`
-
-**Route:** `/sample-collection` (new top-level route, replaces old `/encounters/[id]/sample`)
-
-**Layout:**
-- Header: "Sample Collection"
-- Filters: date range picker (default: last 3 days)
-- Status tabs: **Pending** | **Postponed** | **Pending Receive** *(only if `lims.operator.sample.receiveSeparate.enabled` = true)*
-- Search: MRN / Patient Name / Order ID
-- Table columns: Time | Patient (MRN, Name, Age/Sex) | Order ID | Tests summary | Specimen items badge
-- **Expandable rows**: click row → expands to show per-SpecimenItem sub-rows:
-  - Specimen type label (e.g. "EDTA Blood", "Urine")
-  - Status badge (PENDING / COLLECTED / POSTPONED / RECEIVED)
-  - Buttons: **Collect** | **Postpone**
-  - If `receiveSeparate` flag on: **Receive** button for COLLECTED items
-- **Batch action**: "Collect all pending" button on expanded row header — collects all PENDING items for that encounter at once
-- **Postpone modal**: opens on Postpone click
-  - Shows specimen type
-  - Reason field (required, min 3 chars, shows error if shorter)
-  - Confirm / Cancel buttons
-- **Queue exit**: encounter row disappears from Pending tab when all SpecimenItems are no longer PENDING
-- After collecting all specimens → encounter status becomes `specimen_collected`
-
-#### u3 — Results Worklist (`/results`)
-
-**File:** `apps/operator/src/app/(protected)/results/page.tsx`
-
-**Layout:**
-- Header: "Results"
-- Tabs: **Pending tests** (default) | **Submitted tests**
-- Search: MRN / Patient / Order ID / Test name
-- Table columns: Time | Patient (MRN, Name, Age/Sex) | Order ID | Test name | Status badge | Action
-  - Pending tab: action = "Enter results" → navigates to `/results/[orderedTestId]`
-  - Submitted tab: action = "View / Add missing" → navigates to `/results/[orderedTestId]`
-- **One row per test** (not per encounter). An encounter with 3 tests = 3 rows. This is intentional.
-- Pending tab: shows only LabOrders where `resultStatus=PENDING`
-- Submitted tab: shows only LabOrders where `resultStatus=SUBMITTED`
-- No "incomplete" labels anywhere — ever
-
-#### u4 — Results Entry Page (`/results/[orderedTestId]`)
-
-**File:** `apps/operator/src/app/(protected)/results/[orderedTestId]/page.tsx`
-
-**Sticky header:**
-- Patient identity: MRN, Name, Age/Sex
-- Order ID / Encounter code
-- Test name (VERY prominent — largest text)
-- Sample status badge (must be COLLECTED or RECEIVED to allow entry)
-- Test status badge: **Pending** or **Submitted**
-- Buttons: Back to Results | Go to Sample Collection (if blocked by sample)
-
-**Sticky footer buttons:**
-- **Save** — always visible
-- **Submit** — always visible (when `mode=separate` or `mode=inline`)
-- **Submit & Verify** — conditional:
-  - Show if `mode=disabled` OR `mode=inline` AND user has `result.verify` permission
-  - Hide if `mode=separate`
-  - If `mode=disabled`: hide Submit-only button, show only "Submit & Verify"
-
-**Main parameter table:**
-Columns: Parameter name | Input field | Unit | Reference range | H/L flag (display)
-
-**Input types by parameter dataType:**
-- `number` → numeric input
-- `text` → text input
-- `select` → dropdown from `allowedValues`
-- `boolean` → toggle or Yes/No select
-
-**Lock rules:**
-- `resultStatus=PENDING` → ALL inputs editable
-- `resultStatus=SUBMITTED`:
-  - Value is non-empty → input READ-ONLY (locked=true)
-  - Value is empty → input EDITABLE (late entry allowed)
-- After saving a late-entry value on a SUBMITTED test → that value becomes locked on next refresh
-
-**Sample gate:**
-- If specimen NOT in COLLECTED or RECEIVED state → disable ALL inputs, disable Save/Submit
-- Show message: "Collect sample first" with link to `/sample-collection`
-
-**Save action:**
-- Call SDK `POST /results/tests/{orderedTestId}:save` with changed values
-- After save: refresh `GET /results/tests/{orderedTestId}` to recompute locks
-
-**Submit action:**
-- Call SDK `POST /results/tests/{orderedTestId}:submit`
-- After submit: refresh → all non-empty locked → empty still editable
-- Then navigate to: next pending test for same patient (if any) → else back to results worklist
-- Show "Submit All" option: bulk-submit all remaining pending tests for this patient
-
-**Submit & Verify action:**
-- Call SDK `POST /results/tests/{orderedTestId}:submit-and-verify`
-- Show status: "Verifying…" → "Verified. Publishing report…"
-- Poll `GET /documents?sourceType=ENCOUNTER&sourceRef={encounterId}` until `status=PUBLISHED`
-- Show "Download PDF" / "Open PDF" button
-- Then navigate: next pending test for same patient → else next patient in worklist
-
-**H/L display flag:**
-- Auto-computed from reference range vs value (backend computes, returned in GET response)
-- Operator can override: clickable H/L badge to toggle override
-
-**No "incomplete" UI anywhere. Missing values = blank fields. No warnings.**
-
-#### u5 — Verification Pages
-
-**File 1:** `apps/operator/src/app/(protected)/verification/page.tsx` — Worklist
-
-Layout:
-- Header: "Verification"
-- Filter: Pending (default) | Verified today
-- Table: Time | Patient (MRN, Name, Age/Sex) | Order ID | Submitted tests count | Action: "Verify patient"
-- One row per encounter (not per test)
-- Click → navigate to `/verification/encounters/[encounterId]`
-
-**File 2:** `apps/operator/src/app/(protected)/verification/encounters/[encounterId]/page.tsx` — Patient verification
-
-Layout:
-```
-┌──────────────────────────────────────────────────────────────┐
-│ STICKY HEADER: Patient name, MRN, Age/Sex, Order ID          │
-│ "Submitted tests: X | Pending verification: Y"               │
-│ [Back] [Load all tests toggle] [Next patient / Skip]         │
-├──────────────┬───────────────────────────────────────────────┤
-│ LEFT SIDEBAR │ MAIN SCROLL AREA                              │
-│ Test nav:    │                                               │
-│ • CBC   ✓    │ ┌─ TEST CARD: CBC ──────────────────────────┐ │
-│ • Urine ⏳   │ │ Submitted: 2h ago by John                 │ │
-│ • RBS   ⏳   │ │ Status: Pending Verification               │ │
-│              │ │ Parameter | Result | Unit | Ref range | H/L│ │
-│              │ │ Haemoglobin | 13.2 | g/dL | 12-16 | N     │ │
-│              │ │ (only FILLED params shown)                 │ │
-│              │ └───────────────────────────────────────────┘ │
-│              │                                               │
-│              │ ┌─ TEST CARD: Urine ────────────────────────┐ │
-│              │ │ ... (only filled params)                  │ │
-│              │ └───────────────────────────────────────────┘ │
-├──────────────┴───────────────────────────────────────────────┤
-│ STICKY FOOTER: [Skip patient]  [✅ Verify patient (all)]     │
-└──────────────────────────────────────────────────────────────┘
+Or simplest fix: disable healthcheck for both Next.js apps (they start fine, no need for Docker healthcheck):
+```yaml
+healthcheck:
+  disable: true
 ```
 
-**Load all tests toggle:**
-- ON (default): all test cards stacked in main area
-- OFF: only the selected test (from sidebar) shown
-
-**Verify patient action (Mode 1 only — MVP):**
-- Call SDK `POST /verification/encounters/{encounterId}:verify`
-- Show: "Verified. Publishing report…"
-- Poll documents until `status=PUBLISHED`
-- Show "Download PDF" + "Open PDF"
-- Auto-advance: "Next patient" button with 3-second countdown auto-click
-- If no more pending patients: "No more pending patients." screen
-
-**Skip patient:**
-- Removes from current in-memory queue, navigate to next encounter
-- Does NOT change any status (encounter stays in worklist)
-
-**Empty parameter rule:** NEVER show empty parameters in verification view. Only LabResults with non-empty value appear.
-
-**Feature flag gating:**
-- If `lims.verification.enabled=false` OR `lims.verification.mode.mode=disabled`:
-  - Hide entire Verification section from sidebar navigation
-  - If user navigates directly → show "Verification is disabled for this tenant"
-
-#### u6 — Sidebar Navigation
-
-**File:** `apps/operator/src/components/sidebar.tsx`
-
-Add navigation items:
-- Sample Collection → `/sample-collection` (icon: test tube or flask)
-- Results → `/results` (icon: clipboard)
-- Verification → `/verification` (icon: checkmark shield) — **hidden if verification disabled via feature flag**
-
-Remove/retire:
-- Old `/encounters/[id]/sample` route can remain for compat but should NOT be linked in nav
-
-**Feature flag check in sidebar:** call `GET /feature-flags` once on load, store in context. Use `lims.verification.enabled` + `lims.verification.mode` to gate Verification nav item.
+**Result:** ___________
 
 ---
 
-### WAVE 5 — Admin UI
+### ISSUE 7: Worklist load — verify filtering and search
+**Status:** `[ ]` Not tested  
+**Priority:** 🟡 Medium
 
-#### a1 — Verification Feature Flags in Admin
+**What to test on https://vexel.alshifalab.pk/lims/worklist:**
+1. Does the worklist load encounters (now that 500 is fixed)?
+2. Does "search by MRN" work?
+3. Does "search by patient name" work?
+4. Does clicking an encounter row open encounter detail?
+5. Does encounter detail show the correct tests ordered?
 
-**File:** Find existing tenant feature-flags page in `apps/admin/` — likely `apps/admin/src/app/(protected)/tenants/[tenantId]/feature-flags/page.tsx`
+**API test:**
+```bash
+TOKEN=$(curl -s -X POST http://127.0.0.1:9021/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@vexel.pk","password":"admin123"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['accessToken'])")
+curl -s "http://127.0.0.1:9021/api/encounters?page=1&limit=5" \
+  -H "Authorization: Bearer $TOKEN" -H "x-tenant-id: demo" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); [print(e.get('encounterCode','?'), '|', e.get('status')) for e in d.get('data',[])]"
+```
 
-Add "Verification" section:
-- **Toggle:** Verification enabled (`lims.verification.enabled`)
-- **Dropdown:** Verification mode (`lims.verification.mode` → `{mode: "separate" | "inline" | "disabled"}`)
-  - Separate: standard two-step verify worklist
-  - Inline: show Submit & Verify button on results entry
-  - Disabled: no verification step, results entry shows Submit & Verify only
-- **Toggle:** Show verification pages (`lims.operator.verificationPages.enabled`)
-- Info note when mode=disabled: "Operator will verify from results entry. Verification worklist will be hidden."
-
-Each change → `PUT /feature-flags/{key}` via SDK → writes AuditEvent.
+**Result:** ___________
 
 ---
 
-## Execution Order (strict — follow this)
+### ISSUE 8: Registration — verify full new flow works
+**Status:** `[ ]` Not tested after latest changes  
+**Priority:** 🔴 High (this is the primary entry point)
 
-```
-WAVE 1 ✅ Schema — COMPLETE
-  s1 ✅ Patient model (mobile, cnic, address, ageYears)
-  s2 ✅ CatalogTest model (specimenType, price)
-  s3 ✅ LabOrder model (resultStatus, submittedAt, testNameSnapshot)
-  s4 ✅ LabResult model (per-parameter, drop unique, add locked)
-  s5 ✅ SpecimenItem model (new)
-  s6 ✅ Encounter model (encounterCode, partial_resulted)
-  s7 ✅ TenantConfig model (registrationPrefix, orderPrefix)
-  s8 ✅ Migration written + applied + prisma generate done
+**What to test on https://vexel.alshifalab.pk/lims/registrations/new:**
 
-WAVE 2 — OpenAPI + SDK (partially started)
-  b1 → Add results endpoints to openapi.yaml
-  b2 → Add verification endpoints to openapi.yaml
-  b3 → Add sample-collection endpoints to openapi.yaml
-  b4 → Add mobile search param to patients endpoint
-  b5 → pnpm sdk:generate (after all OpenAPI edits done)
+#### A) New patient flow
+1. Clear all fields
+2. Enter a new mobile number (one not in DB) → press Enter on mob2 field
+3. ✅ Should see: no popup, "New Patient · MRN: Auto-generated" badge appears (only after lookup completes)
+4. Fill name, age or DOB, gender
+5. Search a test, press Enter → test added, cursor returns to search bar
+6. Press Tab → cursor moves to Discount field
+7. Click "Save & Print" → success screen appears immediately
+8. Wait up to 12s → "Download/Print Receipt" link appears (or "check reports later")
+9. Click "Open Encounter →" — does it navigate to encounter detail?
+10. Click "+ New Patient" — form clears, cursor on mob1
 
-WAVE 3 — Backend (after SDK generated)
-  b6 → ResultsModule (save/submit/submit-and-verify, lock rules, H/L, encounter status advance)
-  b7 → VerificationModule (pending encounters, encounter detail, verify-all + publish)
-  b8 → SampleCollectionModule (worklist, collect, postpone, receive, auto-create specimen items)
-  b9 → Patient registration enhancements (MRN gen, encounterCode gen, mobile search)
-  b10 → Feature flags (add 4 new flags to registry)
+#### B) Existing patient flow
+1. Enter a mobile number that exists (check DB or use a previously registered patient)
+2. Press Enter or blur mob2
+3. ✅ Should see: popup modal with matching patients
+4. Arrow-down to select → Enter → form fills with patient data, MRN badge shows
+5. Add tests → Save → receipt flow
 
-WAVE 4 — Operator UI (after SDK types available)
-  u6 → Sidebar nav (needs feature flags and new routes to exist — do early for structure)
-  u1 → Registration page (/registrations/new redesign)
-  u2 → Sample collection page (/sample-collection)
-  u3 → Results worklist (/results)
-  u4 → Results entry page (/results/[orderedTestId])
-  u5 → Verification pages (/verification + /verification/encounters/[id])
+#### C) Register Patient only (no order)
+1. Fill patient details, no tests
+2. Click "Register Patient" button (top of form)
+3. ✅ Should create patient only (no encounter), MRN badge shows in green
+4. Then add tests and Save → should create encounter against existing patient
 
-WAVE 5 — Admin UI
-  a1 → Verification flags section
-
-FINAL — Build + Deploy
-  → docker compose build --no-cache api worker && docker compose up -d api worker
-  → docker compose build --no-cache operator admin && docker compose up -d operator admin
-  → Smoke test all new pages
-```
+**Result:** ___________
 
 ---
 
-## Technical Constraints (Never Break These)
+## 📜 FIXES LOG (session history)
+
+| Date | Commit | What was fixed |
+|------|--------|----------------|
+| 2026-02-24 | `2287b59` | Worklist 500 (Number cast for page/limit in 5 services) |
+| 2026-02-24 | `2287b59` | Catalog auth errors (stale containers — rebuilt api/admin/operator) |
+| 2026-02-24 | `2287b59` | Mobile "New Patient" badge too eager (added lookupDone state) |
+| 2026-02-24 | `2287b59` | Receipt window.open() popup blocked → inline download link |
+| 2026-02-24 | `4929f9b` | Mobile patient picker modal (arrow-key nav, Enter select) |
+| 2026-02-24 | `4c1bb69` | Catalog template download 401 (window.open → fetch+auth) |
+| 2026-02-24 | `4c1bb69` | Catalog export JSON → XLSX (5 sheets) |
+| 2026-02-24 | `c08d6b9` | Registration UX: mobile split fields, keyboard nav, Register Patient step |
+| 2026-02-24 | `3b022ec` | SpecimenItem never created (specimenType NULL guard — fixed to ?? 'Blood') |
+| 2026-02-24 | `3b022ec` | Sample worklist toDate midnight UTC — fixed +24h |
+| 2026-02-24 | `3b022ec` | Sample collection page auto-load, barcode flag, receive separation |
+| 2026-02-24 | `9e7e1ea` | Sidebar dedup, worklist links, fullName+DOB, save&print flow, price column |
+| 2026-02-24 | `38d628b` | /lims/* route namespace + Operator landing page + App Switcher |
+
+---
+
+## 🔒 NON-NEGOTIABLE GUARDRAILS
+
+Every fix must respect these — if in doubt, ask the user:
 
 | Rule | Detail |
 |------|--------|
-| Contract-first | All endpoints added to `packages/contracts/openapi.yaml` BEFORE backend implementation |
-| SDK-only frontend | No direct `fetch()` or `axios()` in any Next.js app. Use `getApiClient()` from `apps/operator/src/lib/api-client.ts` |
-| Command-only state changes | No direct DB status mutations from controllers. Use service methods that enforce valid transitions. |
-| Tenant isolation | Every query includes `tenantId` filter. No cross-tenant reads ever. |
-| Audit events | Every command writes `AuditEvent` with `correlationId`, `tenantId`, `actorUserId`, `action`, entity refs |
-| migrate deploy | Use `migrate deploy` (NOT `migrate dev`) for all migrations. Shadow DB is broken on this server. Write raw SQL manually. |
-| NEXT_PUBLIC_API_URL | Must be set as Docker build arg (baked at build time). Not runtime env. |
-| LabResult is now per-parameter | Old code that assumed `result: LabResult?` (singular) on LabOrder must be updated to `results: LabResult[]` |
-| SpecimenItem auto-create | Must happen inside `EncountersService.orderLab()` — group by `CatalogTest.specimenType`, upsert one item per unique type per encounter |
-| Empty params = never shown | In verification view and publish payload: ONLY parameters with non-empty values. No empty rows. No "incomplete" labels. |
+| **SDK-only** | No `fetch()` or `axios()` in Next.js apps. Use `getApiClient(getToken() ?? undefined)` |
+| **Contract-first** | New API endpoints must be added to `packages/contracts/openapi.yaml` first, then `pnpm sdk:generate` |
+| **Tenant isolation** | Every Prisma query includes `tenantId` filter |
+| **Command-only state** | No direct DB status mutations. All state changes via Command endpoints |
+| **Number() cast** | Always cast `page`/`limit` query params with `Number()` before passing to Prisma `take`/`skip` |
+| **NEXT_PUBLIC_API_URL** | Build arg, not runtime env — rebuild container after changing |
+| **No Prisma in Next.js** | Never import Prisma in admin or operator apps |
+| **Audit events** | Every command writes AuditEvent with correlationId |
 
 ---
 
-## Database Connection
-```
-postgresql://vexel:vexel@127.0.0.1:5433/vexel
-```
+## 📁 KEY FILE PATHS
 
-## Key File Paths
 | What | Path |
 |------|------|
 | Prisma schema | `apps/api/prisma/schema.prisma` |
-| Migrations | `apps/api/prisma/migrations/` |
 | OpenAPI contract | `packages/contracts/openapi.yaml` |
 | SDK (generated) | `packages/sdk/` |
-| API main module | `apps/api/src/app.module.ts` |
 | Encounters service | `apps/api/src/encounters/encounters.service.ts` |
-| Feature flags module | `apps/api/src/feature-flags/` |
+| Results service | `apps/api/src/results/results.service.ts` |
+| Sample collection service | `apps/api/src/sample-collection/sample-collection.service.ts` |
+| Feature flags service | `apps/api/src/feature-flags/feature-flags.service.ts` |
+| Feature flags hook | `apps/operator/src/hooks/use-feature-flags.ts` |
 | Operator API client | `apps/operator/src/lib/api-client.ts` |
 | Operator sidebar | `apps/operator/src/components/sidebar.tsx` |
-| Operator pages root | `apps/operator/src/app/(protected)/` |
-| Admin pages root | `apps/admin/src/app/(protected)/` |
+| Operator LIMS pages | `apps/operator/src/app/(protected)/lims/` |
+| Registration page | `apps/operator/src/app/(protected)/lims/registrations/new/page.tsx` |
+| Sample collection page | `apps/operator/src/app/(protected)/lims/sample-collection/page.tsx` |
+| Results worklist page | `apps/operator/src/app/(protected)/lims/results/page.tsx` |
+| Results entry page | `apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx` |
+| Verification queue page | `apps/operator/src/app/(protected)/lims/verification/page.tsx` |
+| Patient verification page | `apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx` |
+| Reports page | `apps/operator/src/app/(protected)/lims/reports/page.tsx` |
+| Admin catalog tests | `apps/admin/src/app/(protected)/catalog/tests/page.tsx` |
+| Admin import-export | `apps/admin/src/app/(protected)/catalog/import-export/page.tsx` |
+| Caddy config | `/home/munaim/srv/proxy/caddy/Caddyfile` |
+| docker-compose | `/home/munaim/srv/apps/vexel/docker-compose.yml` |
 
-## How to Verify Current State
-```bash
-# Check which migration was last applied
-cd /home/munaim/srv/apps/vexel/apps/api
-DATABASE_URL="postgresql://vexel:vexel@127.0.0.1:5433/vexel" npx prisma migrate status
+---
 
-# Check stack health
-curl http://127.0.0.1:9021/api/health
+## 📐 SCHEMA REFERENCE (current as of migration 20260223000002)
 
-# Run unit tests
-cd /home/munaim/srv/apps/vexel && pnpm --filter @vexel/api test --passWithNoTests 2>&1 | tail -10
-
-# Check git log
-git -C /home/munaim/srv/apps/vexel log --oneline -5
+### Key models
+```
+Patient: id, tenantId, mrn, firstName, lastName, mobile, cnic, address, dateOfBirth, gender, ageYears
+Encounter: id, tenantId, patientId, status, encounterCode, createdAt
+LabOrder: id, tenantId, encounterId, testId, testNameSnapshot, status, resultStatus(PENDING|SUBMITTED), submittedAt
+LabResult: id, tenantId, labOrderId, parameterId, parameterNameSnapshot, value, unit, flag, locked, enteredAt
+SpecimenItem: id, tenantId, encounterId, catalogSpecimenType, status(PENDING|COLLECTED|RECEIVED|POSTPONED), barcode?
+CatalogTest: id, tenantId, code, name, specimenType?, price?
+CatalogParameter: id, tenantId, code, name, resultType, defaultUnit, decimals, allowedValues
 ```
 
-## How to Resume After Interruption
-1. Read this file top to bottom
-2. Run the verification commands above to confirm actual state
-3. Check `git log --oneline -5` to see what was committed
-4. Find the first todo in the execution order that is NOT done
-5. Continue from there
+### Encounter status flow
+```
+registered → lab_ordered → specimen_collected → partial_resulted → resulted → verified → published
+```
+
+### LabOrder resultStatus flow
+```
+PENDING → SUBMITTED
+```
 
 ---
 
-## Specimen Grouping Rule (Critical for Sample Collection)
-Two tests ordered on the same encounter:
-- CBC (specimenType = "EDTA Blood") → creates SpecimenItem for "EDTA Blood"
-- ESR (specimenType = "EDTA Blood") → reuses the same SpecimenItem (upsert, no duplicate)
-- LFTs (specimenType = "Clot Blood") → creates a SECOND SpecimenItem for "Clot Blood"
-- Urinalysis (specimenType = "Urine") → creates a THIRD SpecimenItem for "Urine"
+## 🔮 FUTURE WORK (not started — do not touch unless user asks)
 
-Result: 3 SpecimenItems for that encounter, even though 4 tests were ordered.
-The CBC and ESR share one EDTA Blood tube.
-
-## Order Immutability Rule
-Once an encounter reaches `lab_ordered` status:
-- Clinical data (tests ordered) is immutable
-- Only the payment fields can be updated (via a separate payment endpoint)
-- New tests require a NEW encounter with a NEW encounterCode/Order ID but SAME patient MRN
-- An encounter can be CANCELLED but not edited
-
-## Receipt Format
-A4 format:
-- Top 49%: patient copy (tenant header, patient details, test list, payment summary, footer)
-- 2% tear line with dashes
-- Bottom 48%: office copy (same content)
-
-Thermal 80mm:
-- Patient block (name, MRN, date)
-- Tests block (test names, prices)
-- Payment block (total, discount, paid, due)
-- Tenant header/footer (small text, wrapped to 80mm width)
-
----
-
-## Phase: LIMS Route Namespace (`/lims/*`) — PLANNED
-
-### Status
-All Wave 1–5 pages are BUILT and DEPLOYED (commit `2b345dd`).
-Next phase: move all LIMS pages under `/lims/*` namespace, add landing page.
-
-### Why
-- Future modules (Radiology, OPD) need `/radiology/*`, `/opd/*` without route collisions.
-- App needs a proper entry point (app-switcher landing page).
-
-### Target Routes
-All current operator pages move from `/foo` → `/lims/foo`:
-- `/worklist` → `/lims/worklist`
-- `/registrations/new` → `/lims/registrations/new`
-- `/sample-collection` → `/lims/sample-collection`
-- `/results` → `/lims/results`
-- `/results/[orderedTestId]` → `/lims/results/[orderedTestId]`
-- `/verification` → `/lims/verification`
-- `/verification/encounters/[encounterId]` → `/lims/verification/encounters/[encounterId]`
-- `/reports` → `/lims/reports`
-- `/encounters` → `/lims/encounters`
-- `/patients` → `/lims/patients`
-
-Old routes kept as redirect shims.
-
-### Landing Page
-- `(protected)/page.tsx`: full-screen app-switcher
-- Shows LIMS (enabled), Radiology (disabled), OPD (disabled)
-- Auto-redirects to `/lims/worklist` after 800ms
-
-### Layout Changes
-- `(protected)/layout.tsx`: auth guard only (no sidebar)
-- `(protected)/lims/layout.tsx`: NEW — LIMS sidebar with `/lims/*` links + module switcher header
-
-### Todo List
-| ID | Task |
-|----|------|
-| lims-landing | `(protected)/page.tsx` — app switcher + auto-redirect |
-| lims-layout | `(protected)/lims/layout.tsx` — LIMS sidebar |
-| lims-pages | Copy all LIMS pages to `(protected)/lims/*` |
-| lims-redirects | Replace old pages with redirect shims |
-| lims-links | Update internal links in new pages to `/lims/*` |
-| lims-deploy | Build + deploy + verify |
+- Full Playwright CI run (currently `if: false`)
+- Admin branding UI (TenantConfig fields exist, scaffold exists, not wired)
+- MinIO console Caddy route (port 9025)
+- Multi-order encounters (currently one order per encounter)
+- Real logo in QuestPDF
+- RIMS / OPD modules

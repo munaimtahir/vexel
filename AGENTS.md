@@ -2,13 +2,13 @@
 
 ---
 
-## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-02-23)
+## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-02-24)
 
-### Current State: Catalog + Operator UI + Auth Unification COMPLETE. Application is LIVE.
+### Current State: LIMS Operator UI LIVE. Active bug fixing + UX improvements session completed.
 
 **Live URL:** https://vexel.alshifalab.pk  
 **Repo:** `git@github.com:munaimtahir/vexel.git` (SSH auth)  
-**HEAD commit:** `1074ca5` on `main`  
+**HEAD commit:** `2287b59` on `main`  
 **Server:** `/home/munaim/srv/apps/vexel/`
 
 #### Credentials (demo — all verified ✅)
@@ -23,22 +23,23 @@ Operator permissions: `catalog.read, patient.manage, encounter.manage, result.en
 Verifier permissions: `catalog.read, encounter.manage, result.enter, result.verify, document.generate, document.publish`
 
 #### Live endpoints verified ✅
-- `https://vexel.alshifalab.pk/` → Operator app (307 → /encounters)
+- `https://vexel.alshifalab.pk/` → Operator landing page → auto-redirects to `/lims/worklist`
+- `https://vexel.alshifalab.pk/lims/registrations/new` → Patient registration (active workflow)
 - `https://vexel.alshifalab.pk/admin/login` → Admin app (200)
 - `https://vexel.alshifalab.pk/api/health` → `{"status":"ok"}`
 - `https://vexel.alshifalab.pk/api/auth/login` → JWT token on valid credentials
 
-#### Stack (Docker Compose — all 8 services healthy)
-| Service | Port | Image |
-|---------|------|-------|
-| postgres | 127.0.0.1:5433 | postgres:16-alpine |
-| redis | 127.0.0.1:6380 | redis:7-alpine |
-| api (NestJS) | 127.0.0.1:9021 | vexel-api |
-| pdf (.NET QuestPDF) | 127.0.0.1:9022 | vexel-pdf |
-| admin (Next.js) | 127.0.0.1:9023 | vexel-admin |
-| operator (Next.js) | 127.0.0.1:9024 | vexel-operator |
-| minio | 127.0.0.1:9025 (console) | minio/minio |
-| worker (BullMQ) | internal | vexel-worker |
+#### Stack (Docker Compose)
+| Service | Port | Image | Status |
+|---------|------|-------|--------|
+| postgres | 127.0.0.1:5433 | postgres:16-alpine | healthy |
+| redis | 127.0.0.1:6380 | redis:7-alpine | healthy |
+| api (NestJS) | 127.0.0.1:9021 | vexel-api | healthy |
+| pdf (.NET QuestPDF) | 127.0.0.1:9022 | vexel-pdf | healthy |
+| admin (Next.js) | 127.0.0.1:9023 | vexel-admin | running (unhealthy = healthcheck misconfigured, actually serves ✅) |
+| operator (Next.js) | 127.0.0.1:9024 | vexel-operator | running (unhealthy = healthcheck misconfigured, actually serves ✅) |
+| minio | 127.0.0.1:9025 (console) | minio/minio | healthy |
+| worker (BullMQ) | internal | vexel-worker | running |
 
 **To restart stack after VPS reboot:** `cd /home/munaim/srv/apps/vexel && docker compose up -d`
 
@@ -55,13 +56,34 @@ Verifier permissions: `catalog.read, encounter.manage, result.enter, result.veri
 - API uses `app.setGlobalPrefix('api')` → all routes at `/api/*`
 - MinIO uses `forcePathStyle: true` for S3 client compatibility
 - Seed runs via `ts-node --transpile-only --skip-project prisma/seed.ts` (avoid tsconfig conflict)
+- **All query-param integers (page, limit) arrive as strings** — always cast with `Number()` in service `list()` methods before passing to Prisma `take`/`skip`
 
-#### Known gotchas / bugs fixed
-- `GET /api/documents?limit=N` — limit arrives as string; must cast `Number(filters.limit)` ✅ fixed `2729139`
-- Admin 404 on `/admin/login` — was missing `basePath: '/admin'` ✅ fixed `ddf7f81`
-- Operator calling `127.0.0.1:9021` in browser — NEXT_PUBLIC_API_URL was wrong build arg ✅ fixed `ddf7f81`
-- Worker Dockerfile needs root build context (`.`) to access `apps/api/prisma/schema.prisma`
-- API seed: `nest build` does NOT compile `prisma/seed.ts`; use ts-node directly
+#### Known gotchas / bugs fixed (cumulative)
+- `GET /api/documents?limit=N` — limit arrives as string → cast `Number(filters.limit)` ✅ `2729139`
+- Admin 404 on `/admin/login` — missing `basePath: '/admin'` ✅ `ddf7f81`
+- Operator calling `127.0.0.1:9021` in browser — NEXT_PUBLIC_API_URL wrong build arg ✅ `ddf7f81`
+- Worker Dockerfile needs root build context (`.`) to access schema
+- API seed: use ts-node directly (not `nest build`)
+- `SpecimenItem` never created — `orderLab` had `if (specimenType)` guard with NULL catalog data → fixed to `specimenType ?? 'Blood'` ✅ `3b022ec`
+- Sample worklist `toDate` midnight UTC cut off same-day → add +24h ✅ `3b022ec`
+- Catalog template download `window.open()` → no auth header → 401 → replaced with `fetch()` + Bearer token ✅ `4c1bb69`
+- Catalog export was JSON; changed to XLSX (5 sheets) ✅ `4929f9b`
+- `GET /api/encounters?page=1&limit=20` → Prisma `take: "20"` (string) → 500 → cast `Number()` in encounters/patients/audit/users/tenant services ✅ `2287b59`
+- Registration success screen: `window.open()` popup blocked → replaced with inline Download/Print Receipt link that polls 12s in background ✅ `2287b59`
+- Mobile "New Patient" badge showing on first digit typed → fixed with `lookupDone` state; badge only after lookup returns zero results ✅ `2287b59`
+
+#### Operator App Route Structure (as of 2287b59)
+All LIMS routes are under `/lims/*`:
+- `/` → landing page (App Switcher) → auto-redirects to `/lims/worklist`
+- `/lims/worklist` — encounter worklist
+- `/lims/registrations/new` — patient registration + order
+- `/lims/encounters/[id]` — encounter detail
+- `/lims/sample-collection` — sample collect/receive
+- `/lims/results` — results worklist (pending/submitted tabs)
+- `/lims/results/[orderedTestId]` — one-test results entry
+- `/lims/verification` — verification queue
+- `/lims/verification/encounters/[encounterId]` — patient verification
+- `/lims/reports` — published documents
 
 #### Phases completed
 | Phase | What was built |
@@ -72,19 +94,30 @@ Verifier permissions: `catalog.read, encounter.manage, result.enter, result.veri
 | 5 | Deterministic doc pipeline (payloadHash=sha256(canonical_json)), DocumentTemplate |
 | 6 | Operator UI (5 pages), 36 integration tests, CI gates, Phase 6 PASS audit |
 | 7 | MinIO storage, QuestPDF real template, auto-publish on verify, 25/25 E2E pass |
-| Deploy | Caddy routing, port assignment, seed super-admin, `basePath` fix, `limit` cast fix |
-| Wave1-3 | Auth unification (unified token keys, HttpOnly cookie, CORS env-driven), catalog v2 (import/export, XLSX), Operator UI 15 routes, Admin Catalog UI 19 pages |
-| E2E Fix | 25/25 E2E green: CORS E2E origins, admin basePath paths, workflow UI selector updates, document pipeline tests |
+| Deploy | Caddy routing, port assignment, seed super-admin, basePath fix, limit cast fix |
+| Wave1-3 | Auth unification, catalog v2 (import/export XLSX), Operator UI 15 routes, Admin Catalog UI 19 pages |
+| E2E Fix | 25/25 E2E green |
+| UX Wave | /lims namespace, landing page, registration UX (mobile split, keyboard nav, picker modal, Register Patient step), sample collection rewrite (SpecimenItem fix, barcode flag, single-click collect+receive), catalog auth fix, worklist 500 fix, receipt download link |
 
-#### Remaining / future work
-- No blocking gaps. All 72 planned todos are done.
-- Potential next phase items:
-  - Full Playwright CI run (currently `if: false` — needs persistent env)
-  - Admin branding UI (TenantConfig fields exist, page scaffold exists, needs wiring)
-  - MinIO console Caddy route (port 9025, optional)
-  - Multi-order encounters (currently one order per encounter)
-  - Real logo rendering in QuestPDF (field exists, image loading not wired)
-  - RIMS / OPD modules (architecture ready, no features built)
+#### Known remaining issues / next work items
+1. **Worklist loads but shows old data** — existing encounters before `3b022ec` have zero SpecimenItems; only new orders after the fix will appear in sample worklist. Not a code bug, just data state.
+2. **Admin + Operator show `unhealthy` in `docker compose ps`** — healthcheck endpoint misconfigured in docker-compose.yml for Next.js apps. They ARE serving correctly (verified with curl). Low priority cosmetic fix.
+3. **Catalog price column** — `price` field was noted as needed in test/panel create forms and CSV template but not confirmed fully wired in all surfaces. Verify: admin test create form has price input, CSV template has price header.
+4. **Results entry page** — not tested end-to-end in this session; `/lims/results` and `/lims/results/[orderedTestId]` exist but functionality should be validated.
+5. **Verification flow** — not tested end-to-end in this session; pages exist but need smoke test.
+6. **Receipt generation** — depends on `encounterCode` being set (set during `orderLab`). The polling loop runs 12 attempts × 1s. If worker is slow, it may still show "check reports later" — increase attempts if needed.
+7. **Mobile search** — lookup fires on mob2 blur/Enter when digits ≥ 7. Edge case: if user types partial number and blurs. Logic guard: `mobile.length < 7 → return`. Works correctly for standard 11-digit PKN numbers.
+
+#### Potential future work (not started)
+- Full Playwright CI run (currently `if: false` — needs persistent env)
+- Admin branding UI (TenantConfig fields exist, scaffold exists, not wired)
+- MinIO console Caddy route (port 9025, optional)
+- Multi-order encounters (currently one order per encounter)
+- Real logo in QuestPDF (field exists, image loading not wired)
+- RIMS / OPD modules (architecture ready, no features built)
+- Worklist filtering / search by patient name / MRN
+- Results entry — late-entry lock (filled locked, empty editable after submit)
+- Verification omit-empty params from preview
 
 ---
 
