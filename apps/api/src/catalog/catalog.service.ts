@@ -37,6 +37,7 @@ export class CatalogService {
       code: string; name: string; description?: string; sampleType?: string;
       turnaroundHours?: number; externalId?: string; userCode?: string;
       loincCode?: string; department?: string; method?: string; specimenType?: string;
+      price?: number;
     },
     actorUserId: string,
     correlationId?: string,
@@ -71,7 +72,7 @@ export class CatalogService {
     body: {
       name?: string; description?: string; sampleType?: string; turnaroundHours?: number;
       isActive?: boolean; externalId?: string; userCode?: string; loincCode?: string;
-      department?: string; method?: string; specimenType?: string;
+      department?: string; method?: string; specimenType?: string; price?: number;
     },
     actorUserId: string,
     correlationId?: string,
@@ -125,7 +126,7 @@ export class CatalogService {
 
   async createPanel(
     tenantId: string,
-    body: { code: string; name: string; description?: string; externalId?: string; userCode?: string; loincCode?: string },
+    body: { code: string; name: string; description?: string; externalId?: string; userCode?: string; loincCode?: string; price?: number },
     actorUserId: string,
     correlationId?: string,
   ) {
@@ -149,7 +150,7 @@ export class CatalogService {
   async updatePanel(
     tenantId: string,
     id: string,
-    body: { name?: string; description?: string; isActive?: boolean; externalId?: string; userCode?: string; loincCode?: string },
+    body: { name?: string; description?: string; isActive?: boolean; externalId?: string; userCode?: string; loincCode?: string; price?: number },
     actorUserId: string,
     correlationId?: string,
   ) {

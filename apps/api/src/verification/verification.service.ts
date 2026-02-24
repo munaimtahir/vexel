@@ -1,15 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { Queue } from 'bullmq';
-import IORedis from 'ioredis';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-
-const DOCUMENT_GEN_QUEUE = 'document-generation';
-
-function getRedisConnection() {
-  const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
-  return new IORedis(url, { maxRetriesPerRequest: null });
-}
+import { DocumentsService } from '../documents/documents.service';
 
 export interface VerificationEncounterSummary {
   encounterId: string;
@@ -29,16 +21,11 @@ export interface VerificationEncounterSummary {
 
 @Injectable()
 export class VerificationService {
-  private readonly documentGenQueue: Queue;
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
-  ) {
-    this.documentGenQueue = new Queue(DOCUMENT_GEN_QUEUE, {
-      connection: getRedisConnection() as any,
-    });
-  }
+    private readonly documents: DocumentsService,
+  ) {}
 
   async getVerificationQueue(
     tenantId: string,
@@ -210,14 +197,13 @@ export class VerificationService {
 
     let documentJobId: string | null = null;
     try {
-      const job = await this.documentGenQueue.add('generate', {
+      const result = await this.documents.generateFromEncounter(
         tenantId,
         encounterId,
-        docType: 'LAB_REPORT',
-        triggeredBy: actorId,
-        correlationId,
-      });
-      documentJobId = job.id ?? null;
+        actorId,
+        correlationId ?? '',
+      );
+      documentJobId = (result as any).document?.id ?? null;
     } catch (err) {
       console.error(
         '[verification] Failed to enqueue document generation:',

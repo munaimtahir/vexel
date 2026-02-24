@@ -50,7 +50,7 @@ export class VerificationController {
     return this.svc.getEncounterVerificationDetail(this.resolveTenantId(req), encounterId);
   }
 
-  @Post('encounters/:encounterId/verify')
+  @Post('encounters/:encounterId\\:verify')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.RESULT_VERIFY)
   verifyEncounter(

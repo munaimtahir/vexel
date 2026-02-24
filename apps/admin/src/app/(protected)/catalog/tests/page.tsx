@@ -5,7 +5,7 @@ import { getToken } from '@/lib/auth';
 
 const emptyForm = () => ({
   name: '', code: '', externalId: '', userCode: '', loincCode: '',
-  department: '', specimenType: '', method: '', isActive: true,
+  department: '', specimenType: '', method: '', price: '', isActive: true,
 });
 
 export default function CatalogTestsPage() {
@@ -60,7 +60,7 @@ export default function CatalogTestsPage() {
       name: t.name ?? '', code: t.code ?? '', externalId: t.externalId ?? '',
       userCode: t.userCode ?? '', loincCode: t.loincCode ?? '',
       department: t.department ?? '', specimenType: t.specimenType ?? '',
-      method: t.method ?? '', isActive: t.isActive !== false,
+      method: t.method ?? '', price: t.price != null ? String(t.price) : '', isActive: t.isActive !== false,
     });
     setError(null); setDrawerOpen(true);
   }
@@ -82,6 +82,7 @@ export default function CatalogTestsPage() {
     if (form.department) body.department = form.department;
     if (form.specimenType) body.specimenType = form.specimenType;
     if (form.method) body.method = form.method;
+    if (form.price !== '') body.price = Number(form.price);
 
     let res: any;
     if (editingId) {
@@ -179,6 +180,10 @@ export default function CatalogTestsPage() {
                   <label style={labelStyle}>LOINC Code</label>
                   <input value={form.loincCode} onChange={(e) => setForm({ ...form, loincCode: e.target.value })} style={inputStyle} />
                 </div>
+              </div>
+              <div>
+                <label style={labelStyle}>Price (PKR)</label>
+                <input type="number" min="0" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} style={inputStyle} />
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="test-active" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} style={{ width: '16px', height: '16px' }} />

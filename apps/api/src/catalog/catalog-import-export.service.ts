@@ -23,16 +23,16 @@ export class CatalogImportExportService {
     ], [['PARAM-001', 'GLU', 'glucose', 'Glucose', 'numeric', 'mg/dL', '2', '', '2339-0', 'true']]);
 
     this._addSheet(wb, 'Tests', [
-      'externalId', 'userCode', 'code', 'name', 'department', 'specimenType', 'method', 'loincCode', 'isActive',
-    ], [['TEST-001', 'CBC', 'cbc', 'Complete Blood Count', 'Hematology', 'Whole Blood', 'Automated', '58410-2', 'true']]);
+      'externalId', 'userCode', 'code', 'name', 'department', 'specimenType', 'method', 'loincCode', 'price', 'isActive',
+    ], [['TEST-001', 'CBC', 'cbc', 'Complete Blood Count', 'Hematology', 'Whole Blood', 'Automated', '58410-2', '1200', 'true']]);
 
     this._addSheet(wb, 'TestParameters', [
       'testExternalId', 'parameterExternalId', 'displayOrder', 'isRequired', 'unitOverride',
     ], [['TEST-001', 'PARAM-001', '1', 'true', '']]);
 
     this._addSheet(wb, 'Panels', [
-      'externalId', 'userCode', 'code', 'name', 'loincCode', 'isActive',
-    ], [['PANEL-001', 'BASIC', 'basic_metabolic', 'Basic Metabolic Panel', '51990-0', 'true']]);
+      'externalId', 'userCode', 'code', 'name', 'loincCode', 'price', 'isActive',
+    ], [['PANEL-001', 'BASIC', 'basic_metabolic', 'Basic Metabolic Panel', '51990-0', '2000', 'true']]);
 
     this._addSheet(wb, 'PanelTests', [
       'panelExternalId', 'testExternalId', 'displayOrder',
@@ -78,8 +78,8 @@ export class CatalogImportExportService {
 
   generateTestsCsv(): string {
     return this._csv(
-      ['externalId', 'userCode', 'code', 'name', 'department', 'specimenType', 'method', 'loincCode', 'isActive'],
-      [['TEST-001', 'CBC', 'cbc', 'Complete Blood Count', 'Hematology', 'Whole Blood', 'Automated', '58410-2', 'true']],
+      ['externalId', 'userCode', 'code', 'name', 'department', 'specimenType', 'method', 'loincCode', 'price', 'isActive'],
+      [['TEST-001', 'CBC', 'cbc', 'Complete Blood Count', 'Hematology', 'Whole Blood', 'Automated', '58410-2', '1200', 'true']],
     );
   }
 
@@ -92,8 +92,8 @@ export class CatalogImportExportService {
 
   generatePanelsCsv(): string {
     return this._csv(
-      ['externalId', 'userCode', 'code', 'name', 'loincCode', 'isActive'],
-      [['PANEL-001', 'BASIC', 'basic_metabolic', 'Basic Metabolic Panel', '51990-0', 'true']],
+      ['externalId', 'userCode', 'code', 'name', 'loincCode', 'price', 'isActive'],
+      [['PANEL-001', 'BASIC', 'basic_metabolic', 'Basic Metabolic Panel', '51990-0', '2000', 'true']],
     );
   }
 
@@ -290,6 +290,16 @@ export class CatalogImportExportService {
     const externalId = this._val(row, 'externalId');
     const code = this._val(row, 'code');
     if (!code) { result.errors.push({ row: rowNum, message: 'code is required' }); return; }
+    const priceRaw = this._val(row, 'price');
+    let price: number | undefined;
+    if (priceRaw !== undefined) {
+      const parsed = Number(priceRaw);
+      if (!Number.isFinite(parsed) || parsed < 0) {
+        result.errors.push({ row: rowNum, message: 'price must be a number >= 0' });
+        return;
+      }
+      price = parsed;
+    }
 
     const existing = externalId
       ? await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId } })
@@ -305,6 +315,7 @@ export class CatalogImportExportService {
         const department = this._valOrNull(row, 'department'); if (department !== undefined) data.department = department;
         const method = this._valOrNull(row, 'method'); if (method !== undefined) data.method = method;
         const specimenType = this._valOrNull(row, 'specimenType'); if (specimenType !== undefined) data.sampleType = specimenType;
+        if (price !== undefined) data.price = price;
         const isActive = this._val(row, 'isActive'); if (isActive !== undefined) data.isActive = isActive === 'true';
         await this.prisma.catalogTest.update({ where: { id: existing.id }, data });
       }
@@ -322,6 +333,7 @@ export class CatalogImportExportService {
             department: this._valOrNull(row, 'department') ?? undefined,
             method: this._valOrNull(row, 'method') ?? undefined,
             sampleType: this._valOrNull(row, 'specimenType') ?? undefined,
+            price: price ?? undefined,
             isActive: this._val(row, 'isActive') !== 'false',
           },
         });
@@ -334,6 +346,16 @@ export class CatalogImportExportService {
     const externalId = this._val(row, 'externalId');
     const code = this._val(row, 'code');
     if (!code) { result.errors.push({ row: rowNum, message: 'code is required' }); return; }
+    const priceRaw = this._val(row, 'price');
+    let price: number | undefined;
+    if (priceRaw !== undefined) {
+      const parsed = Number(priceRaw);
+      if (!Number.isFinite(parsed) || parsed < 0) {
+        result.errors.push({ row: rowNum, message: 'price must be a number >= 0' });
+        return;
+      }
+      price = parsed;
+    }
 
     const existing = externalId
       ? await this.prisma.catalogPanel.findFirst({ where: { tenantId, externalId } })
@@ -346,6 +368,7 @@ export class CatalogImportExportService {
         const name = this._val(row, 'name'); if (name !== undefined) data.name = name;
         const userCode = this._valOrNull(row, 'userCode'); if (userCode !== undefined) data.userCode = userCode;
         const loincCode = this._valOrNull(row, 'loincCode'); if (loincCode !== undefined) data.loincCode = loincCode;
+        if (price !== undefined) data.price = price;
         const isActive = this._val(row, 'isActive'); if (isActive !== undefined) data.isActive = isActive === 'true';
         await this.prisma.catalogPanel.update({ where: { id: existing.id }, data });
       }
@@ -360,6 +383,7 @@ export class CatalogImportExportService {
             externalId: externalId ?? undefined,
             userCode: this._valOrNull(row, 'userCode') ?? undefined,
             loincCode: this._valOrNull(row, 'loincCode') ?? undefined,
+            price: price ?? undefined,
             isActive: this._val(row, 'isActive') !== 'false',
           },
         });

@@ -319,14 +319,15 @@ export default function NewRegistrationPage() {
       // Show success screen immediately
       setSavedEncounterId(encounterId);
 
-      // Poll for receipt PDF in background (up to 12 seconds)
+      // Poll for receipt PDF in background (up to 30 seconds)
       setPollingReceipt(true);
       (async () => {
-        for (let i = 0; i < 12; i++) {
-          await new Promise(r => setTimeout(r, 1000));
+        for (let i = 0; i < 20; i++) {
+          await new Promise(r => setTimeout(r, 1500));
           try {
-            const { data: docs } = await api.GET('/documents' as any, { params: { query: { sourceRef: encounterId, status: 'PUBLISHED', limit: 1 } } });
-            const items: any[] = (docs as any)?.items ?? [];
+            const { data: docs } = await api.GET('/documents' as any, { params: { query: { sourceRef: encounterId, status: 'PUBLISHED', docType: 'RECEIPT', limit: 1 } } });
+            // API returns a plain array
+            const items: any[] = Array.isArray(docs) ? docs : ((docs as any)?.items ?? (docs as any)?.data ?? []);
             if (items.length > 0) {
               const { data: dl } = await api.GET('/documents/{id}/download' as any, { params: { path: { id: items[0].id } } });
               const url = (dl as any)?.url;

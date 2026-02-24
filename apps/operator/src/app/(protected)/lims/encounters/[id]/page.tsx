@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import IdentityHeader from '@/components/identity-header';
+import { useFeatureFlags, isReceiveSeparate } from '@/hooks/use-feature-flags';
 
 const DOC_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   DRAFT:      { bg: '#f1f5f9', text: '#475569' },
@@ -25,7 +26,10 @@ export default function EncounterDetailPage() {
   const [cancelling, setCancelling] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  const [document, setDocument] = useState<any>(null);
+  const { flags } = useFeatureFlags();
+  const receiveSeparate = isReceiveSeparate(flags);
+  const [receiptDoc, setReceiptDoc] = useState<any>(null);
+  const [reportDoc, setReportDoc] = useState<any>(null);
   const [downloadError, setDownloadError] = useState('');
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -38,14 +42,17 @@ export default function EncounterDetailPage() {
     setEncounter(data);
   };
 
-  const fetchDocument = async () => {
+  const fetchDocuments = async () => {
     try {
       const api = getApiClient(getToken() ?? undefined);
       // @ts-ignore
-      const { data } = await api.GET('/documents', { params: { query: { sourceRef: id, sourceType: 'ENCOUNTER', limit: 1 } } });
-      if (data && Array.isArray(data) && data.length > 0) {
-        setDocument(data[0]);
-        return data[0];
+      const { data } = await api.GET('/documents', { params: { query: { sourceRef: id, sourceType: 'ENCOUNTER', limit: 20 } } });
+      if (data && Array.isArray(data)) {
+        const receipt = data.find((d: any) => d.type === 'RECEIPT' || d.docType === 'RECEIPT') ?? null;
+        const report = data.find((d: any) => d.type === 'LAB_REPORT' || d.docType === 'LAB_REPORT') ?? null;
+        setReceiptDoc(receipt);
+        setReportDoc(report);
+        return report;
       }
     } catch {}
     return null;
@@ -54,7 +61,7 @@ export default function EncounterDetailPage() {
   const startPolling = () => {
     if (pollRef.current) clearInterval(pollRef.current);
     pollRef.current = setInterval(async () => {
-      const doc = await fetchDocument();
+      const doc = await fetchDocuments();
       if (doc && (doc.status === 'PUBLISHED' || doc.status === 'FAILED')) {
         clearInterval(pollRef.current!);
         pollRef.current = null;
@@ -63,38 +70,34 @@ export default function EncounterDetailPage() {
   };
 
   useEffect(() => {
-    Promise.all([fetchEncounter(), fetchDocument()]).finally(() => setLoading(false));
+    Promise.all([fetchEncounter(), fetchDocuments()]).finally(() => setLoading(false));
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [id]);
 
   // Start polling when encounter is verified and doc not yet published
   useEffect(() => {
-    if (encounter?.status === 'verified' && document && document.status !== 'PUBLISHED' && document.status !== 'FAILED') {
+    if (encounter?.status === 'verified' && reportDoc && reportDoc.status !== 'PUBLISHED' && reportDoc.status !== 'FAILED') {
       startPolling();
     }
-    if (encounter?.status === 'verified' && !document) {
+    if (encounter?.status === 'verified' && !reportDoc) {
       // Poll for document to appear
       startPolling();
     }
-  }, [encounter?.status, document?.status]);
+  }, [encounter?.status, reportDoc?.status]);
 
-  const handleDownload = async () => {
-    if (!document) return;
+  const handleDownload = async (doc: any) => {
+    if (!doc) return;
     setDownloadError('');
     try {
       const client = getApiClient(getToken() ?? undefined);
-      // @ts-ignore – /documents/{id}/download not yet in SDK types
-      const { data: blob, error: dlError } = await client.GET('/documents/{id}/download', {
-        params: { path: { id: document.id } },
-        parseAs: 'blob',
+      // @ts-ignore
+      const { data: dl, error: dlError } = await client.GET('/documents/{id}/download', {
+        params: { path: { id: doc.id } },
       });
-      if (dlError || !blob) { setDownloadError('Download failed'); return; }
-      const url = URL.createObjectURL(blob as Blob);
-      const a = window.document.createElement('a');
-      a.href = url;
-      a.download = `report-${document.id}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
+      if (dlError || !dl) { setDownloadError('Download failed'); return; }
+      const url = (dl as any)?.url;
+      if (url) window.open(url, '_blank');
+      else setDownloadError('Download URL not available');
     } catch {
       setDownloadError('Download failed');
     }
@@ -122,7 +125,7 @@ export default function EncounterDetailPage() {
   if (!encounter) return null;
 
   const { status, labOrders = [], patient } = encounter;
-  const docStatus: string | undefined = document?.status;
+  const docStatus: string | undefined = reportDoc?.status;
   const docColors = docStatus ? (DOC_STATUS_COLORS[docStatus] ?? DOC_STATUS_COLORS.DRAFT) : null;
 
   return (
@@ -158,7 +161,7 @@ export default function EncounterDetailPage() {
             Collect Sample
           </Link>
         )}
-        {status === 'specimen_collected' && (
+        {status === 'specimen_collected' && receiveSeparate && (
           <>
             <Link
               href={`/lims/encounters/${id}/receive`}
@@ -173,6 +176,14 @@ export default function EncounterDetailPage() {
               Enter Results
             </Link>
           </>
+        )}
+        {status === 'specimen_collected' && !receiveSeparate && (
+          <Link
+            href={`/lims/encounters/${id}/results`}
+            style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
+          >
+            Enter Results
+          </Link>
         )}
         {status === 'specimen_received' && (
           <Link
@@ -209,14 +220,29 @@ export default function EncounterDetailPage() {
       </div>
 
       {/* Document status + download (shown when verified/published) */}
-      {(status === 'verified' || document) && (
+      {(status === 'verified' || reportDoc || receiptDoc) && (
         <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px', marginBottom: '24px' }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Lab Report</h3>
-          {!document && (
+          <h3 style={{ margin: '0 0 12px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Documents</h3>
+          {receiptDoc && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '13px', color: '#334155', fontWeight: 600 }}>Receipt</span>
+              <span style={{ padding: '4px 12px', borderRadius: '10px', background: '#d1fae5', color: '#065f46', fontWeight: 600, fontSize: '13px' }}>
+                {receiptDoc.status}
+              </span>
+              <button
+                onClick={() => handleDownload(receiptDoc)}
+                style={{ padding: '8px 16px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                ⬇ Print Receipt Again
+              </button>
+            </div>
+          )}
+          {!reportDoc && (
             <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>⏳ Generating report...</p>
           )}
-          {document && docColors && (
+          {reportDoc && docColors && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '13px', color: '#334155', fontWeight: 600 }}>Lab Report</span>
               <span style={{ padding: '4px 12px', borderRadius: '10px', background: docColors.bg, color: docColors.text, fontWeight: 600, fontSize: '13px' }}>
                 {docStatus}
               </span>
@@ -226,13 +252,13 @@ export default function EncounterDetailPage() {
               {docStatus === 'PUBLISHED' && (
                 <>
                   <button
-                    onClick={handleDownload}
+                    onClick={() => handleDownload(reportDoc)}
                     style={{ padding: '8px 20px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
                   >
                     ⬇ Download Report
                   </button>
                   <button
-                    onClick={() => { handleDownload().then(() => window.print()); }}
+                    onClick={() => { handleDownload(reportDoc).then(() => window.print()); }}
                     style={{ padding: '8px 16px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
                   >
                     🖨 Print
@@ -325,5 +351,4 @@ export default function EncounterDetailPage() {
     </div>
   );
 }
-
 

@@ -190,7 +190,7 @@ export default function VerificationPage() {
                       </td>
                       <td style={{ padding: '12px 14px' }}>
                         <button
-                          onClick={() => router.push(`/verification/encounters/${row.encounterId}`)}
+                          onClick={() => router.push(`/lims/verification/encounters/${row.encounterId}`)}
                           style={{
                             padding: '6px 14px', background: '#3b82f6', color: 'white',
                             border: 'none', borderRadius: '6px', cursor: 'pointer',

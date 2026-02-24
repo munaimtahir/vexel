@@ -4,7 +4,7 @@ import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 const emptyForm = () => ({
-  name: '', code: '', externalId: '', userCode: '', loincCode: '', isActive: true,
+  name: '', code: '', externalId: '', userCode: '', loincCode: '', price: '', isActive: true,
 });
 
 export default function PanelsPage() {
@@ -57,7 +57,7 @@ export default function PanelsPage() {
     setEditingId(p.id);
     setForm({
       name: p.name ?? '', code: p.code ?? '', externalId: p.externalId ?? '',
-      userCode: p.userCode ?? '', loincCode: p.loincCode ?? '', isActive: p.isActive !== false,
+      userCode: p.userCode ?? '', loincCode: p.loincCode ?? '', price: p.price != null ? String(p.price) : '', isActive: p.isActive !== false,
     });
     setError(null); setDrawerOpen(true);
   }
@@ -76,6 +76,7 @@ export default function PanelsPage() {
     if (form.externalId) body.externalId = form.externalId;
     if (form.userCode) body.userCode = form.userCode;
     if (form.loincCode) body.loincCode = form.loincCode;
+    if (form.price !== '') body.price = Number(form.price);
 
     let res: any;
     if (editingId) {
@@ -156,6 +157,10 @@ export default function PanelsPage() {
                   <label style={labelStyle}>LOINC Code</label>
                   <input value={form.loincCode} onChange={(e) => setForm({ ...form, loincCode: e.target.value })} style={inputStyle} />
                 </div>
+              </div>
+              <div>
+                <label style={labelStyle}>Price (PKR)</label>
+                <input type="number" min="0" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} style={inputStyle} />
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="panel-active" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} style={{ width: '16px', height: '16px' }} />

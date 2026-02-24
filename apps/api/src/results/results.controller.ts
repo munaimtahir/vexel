@@ -53,7 +53,7 @@ export class ResultsController {
     return this.svc.getOrderedTestDetail(this.resolveTenantId(req), orderedTestId);
   }
 
-  @Post('tests/:orderedTestId/save')
+  @Post('tests/:orderedTestId\\:save')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.RESULT_ENTER)
   saveResults(
@@ -72,7 +72,7 @@ export class ResultsController {
     );
   }
 
-  @Post('tests/:orderedTestId/submit')
+  @Post('tests/:orderedTestId\\:submit')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.RESULT_ENTER)
   submitResults(
@@ -89,7 +89,7 @@ export class ResultsController {
     );
   }
 
-  @Post('tests/:orderedTestId/submit-and-verify')
+  @Post('tests/:orderedTestId\\:submit-and-verify')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.RESULT_VERIFY)
   submitAndVerify(

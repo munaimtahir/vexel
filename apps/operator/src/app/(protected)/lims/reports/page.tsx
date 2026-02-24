@@ -23,7 +23,7 @@ export default function ReportsPage() {
         params: { query: { limit: 50, offset: 0 } },
       });
       if (err) throw new Error('Failed to load documents');
-      setDocs((data as any)?.items ?? []);
+      setDocs(Array.isArray(data) ? data : ((data as any)?.items ?? (data as any)?.data ?? []));
     } catch (e: any) {
       setError(e.message ?? 'Error');
     } finally {

@@ -51,10 +51,15 @@ export class DocumentsService {
     }
 
     // Fetch active DocumentTemplate for tenant + type
-    const template = await this.prisma.documentTemplate.findFirst({
-      where: { tenantId, type, isActive: true },
-      orderBy: { version: 'desc' },
-    });
+    const template =
+      (await this.prisma.documentTemplate.findFirst({
+        where: { tenantId, type, isActive: true },
+        orderBy: { version: 'desc' },
+      })) ??
+      (await this.prisma.documentTemplate.findFirst({
+        where: { tenantId: 'system', type, isActive: true },
+        orderBy: { version: 'desc' },
+      }));
     if (!template) {
       throw new NotFoundException(`No active DocumentTemplate found for type ${type}`);
     }
@@ -171,10 +176,11 @@ export class DocumentsService {
     return doc;
   }
 
-  async downloadDocument(tenantId: string, id: string): Promise<Buffer> {
+  async downloadDocument(tenantId: string, id: string): Promise<{ url: string }> {
     const doc = await this.getDocument(tenantId, id);
     if (!(doc as any).storageKey) throw new NotFoundException('PDF not yet generated for this document');
-    return this.storage.download((doc as any).storageKey);
+    const url = await this.storage.getSignedDownloadUrl((doc as any).storageKey, 3600);
+    return { url };
   }
 
   async listDocuments(tenantId: string, filters: { status?: string; limit?: number; sourceRef?: string; sourceType?: string; encounterId?: string; docType?: string }) {

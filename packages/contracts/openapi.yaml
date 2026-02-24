@@ -245,6 +245,10 @@ components:
           type: string
         turnaroundHours:
           type: integer
+        price:
+          type: number
+          minimum: 0
+          nullable: true
         isActive:
           type: boolean
         createdAt:
@@ -287,6 +291,10 @@ components:
           type: string
         description:
           type: string
+        price:
+          type: number
+          minimum: 0
+          nullable: true
         isActive:
           type: boolean
         createdAt:
@@ -428,6 +436,10 @@ components:
         method:
           type: string
           nullable: true
+        price:
+          type: number
+          minimum: 0
+          nullable: true
         isActive:
           type: boolean
         parameters:
@@ -491,6 +503,10 @@ components:
           nullable: true
         loincCode:
           type: string
+          nullable: true
+        price:
+          type: number
+          minimum: 0
           nullable: true
         isActive:
           type: boolean
@@ -686,6 +702,10 @@ components:
                 type: string
               turnaroundHours:
                 type: integer
+              price:
+                type: number
+                minimum: 0
+                nullable: true
         parameters:
           type: array
           items:
@@ -713,6 +733,10 @@ components:
                 type: string
               description:
                 type: string
+              price:
+                type: number
+                minimum: 0
+                nullable: true
         mappings:
           type: array
           items:
@@ -2180,6 +2204,10 @@ paths:
                   type: string
                 turnaroundHours:
                   type: integer
+                price:
+                  type: number
+                  minimum: 0
+                  nullable: true
       responses:
         "201":
           description: Created
@@ -2231,6 +2259,10 @@ paths:
                   type: string
                 turnaroundHours:
                   type: integer
+                price:
+                  type: number
+                  minimum: 0
+                  nullable: true
                 isActive:
                   type: boolean
       responses:
@@ -2303,6 +2335,10 @@ paths:
                   type: string
                 description:
                   type: string
+                price:
+                  type: number
+                  minimum: 0
+                  nullable: true
                 testIds:
                   type: array
                   items:
@@ -2310,6 +2346,42 @@ paths:
       responses:
         "201":
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPanel'
+
+  /catalog/panels/{panelId}:
+    patch:
+      operationId: updateCatalogPanel
+      summary: Update catalog panel
+      tags: [Catalog]
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  minimum: 0
+                  nullable: true
+                isActive:
+                  type: boolean
+      responses:
+        "200":
+          description: Updated
           content:
             application/json:
               schema:

@@ -207,6 +207,7 @@ model CatalogPanel {
   code        String
   name        String
   description String?
+  price       Decimal? @db.Decimal(10,2) // price in PKR
   isActive    Boolean  @default(true)
   externalId  String?
   userCode    String?

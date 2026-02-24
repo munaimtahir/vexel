@@ -410,6 +410,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/panels/{panelId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update catalog panel */
+        patch: operations["updateCatalogPanel"];
+        trace?: never;
+    };
     "/catalog/parameters": {
         parameters: {
             query?: never;
@@ -1531,6 +1548,7 @@ export interface components {
             description?: string;
             sampleType?: string;
             turnaroundHours?: number;
+            price?: number | null;
             isActive?: boolean;
             /** Format: date-time */
             createdAt?: string;
@@ -1549,6 +1567,7 @@ export interface components {
             code: string;
             name: string;
             description?: string;
+            price?: number | null;
             isActive?: boolean;
             /** Format: date-time */
             createdAt?: string;
@@ -1619,6 +1638,7 @@ export interface components {
             department?: string | null;
             specimenType?: string | null;
             method?: string | null;
+            price?: number | null;
             isActive?: boolean;
             /** @description Ordered parameters for this test */
             parameters: components["schemas"]["TestDefinitionParameter"][];
@@ -1646,6 +1666,7 @@ export interface components {
             externalId?: string | null;
             userCode?: string | null;
             loincCode?: string | null;
+            price?: number | null;
             isActive?: boolean;
             /** @description Ordered tests in this panel */
             tests: components["schemas"]["PanelDefinitionTest"][];
@@ -1736,6 +1757,7 @@ export interface components {
                 description?: string;
                 sampleType?: string;
                 turnaroundHours?: number;
+                price?: number | null;
             }[];
             parameters?: {
                 code: string;
@@ -1748,6 +1770,7 @@ export interface components {
                 code: string;
                 name: string;
                 description?: string;
+                price?: number | null;
             }[];
             mappings?: {
                 testCode?: string;
@@ -2944,6 +2967,7 @@ export interface operations {
                     description?: string;
                     sampleType?: string;
                     turnaroundHours?: number;
+                    price?: number | null;
                 };
             };
         };
@@ -3017,6 +3041,7 @@ export interface operations {
                     description?: string;
                     sampleType?: string;
                     turnaroundHours?: number;
+                    price?: number | null;
                     isActive?: boolean;
                 };
             };
@@ -3075,6 +3100,7 @@ export interface operations {
                     code: string;
                     name: string;
                     description?: string;
+                    price?: number | null;
                     testIds?: string[];
                 };
             };
@@ -3082,6 +3108,37 @@ export interface operations {
         responses: {
             /** @description Created */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogPanel"];
+                };
+            };
+        };
+    };
+    updateCatalogPanel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    description?: string;
+                    price?: number | null;
+                    isActive?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

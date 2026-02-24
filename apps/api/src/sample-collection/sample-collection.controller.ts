@@ -33,7 +33,7 @@ export class SampleCollectionController {
     return this.svc.getWorklist(this.resolveTenantId(req), q);
   }
 
-  @Post('encounters/:encounterId/collect-specimens')
+  @Post('encounters/:encounterId\\:collect-specimens')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   async collectSpecimens(
@@ -61,7 +61,7 @@ export class SampleCollectionController {
     return result;
   }
 
-  @Post('encounters/:encounterId/postpone-specimen')
+  @Post('encounters/:encounterId\\:postpone-specimen')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   async postponeSpecimen(
@@ -81,7 +81,7 @@ export class SampleCollectionController {
     );
   }
 
-  @Post('encounters/:encounterId/receive-specimens')
+  @Post('encounters/:encounterId\\:receive-specimens')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   async receiveSpecimens(

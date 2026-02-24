@@ -144,12 +144,14 @@ export default function VerificationEncounterPage() {
         }
         try {
           const { data } = await api.GET('/documents', {
-            params: { query: { encounterId, status: 'PUBLISHED', limit: 1 } },
+            params: { query: { encounterId, status: 'PUBLISHED', docType: 'LAB_REPORT', limit: 1 } },
           });
           const docs: any[] = Array.isArray(data) ? data : [];
-          if (docs.length > 0 && docs[0].fileUrl) {
-            clearInterval(interval);
-            resolve(docs[0].fileUrl as string);
+          if (docs.length > 0) {
+            // Fetch presigned download URL
+            const { data: dl } = await api.GET('/documents/{id}/download' as any, { params: { path: { id: docs[0].id } } });
+            const url = (dl as any)?.url;
+            if (url) { clearInterval(interval); resolve(url); }
           }
         } catch { /* continue polling */ }
       }, 2000);
@@ -162,7 +164,7 @@ export default function VerificationEncounterPage() {
       setCountdown(prev => {
         if (prev === null || prev <= 1) {
           clearInterval(countdownRef.current!);
-          if (nextId) router.push(`/verification/encounters/${nextId}`);
+          if (nextId) router.push(`/lims/verification/encounters/${nextId}`);
           else router.push('/lims/verification');
           return null;
         }
@@ -205,7 +207,7 @@ export default function VerificationEncounterPage() {
 
   const handleNavigateNext = () => {
     if (countdownRef.current) clearInterval(countdownRef.current);
-    if (nextEncounterId) router.push(`/verification/encounters/${nextEncounterId}`);
+    if (nextEncounterId) router.push(`/lims/verification/encounters/${nextEncounterId}`);
     else router.push('/lims/verification');
   };
 

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import EncounterSummaryCard from '@/components/encounter-summary-card';
+import { useFeatureFlags, isReceiveSeparate } from '@/hooks/use-feature-flags';
 
 const SPECIMEN_TYPES = ['blood', 'urine', 'serum', 'other'];
 
@@ -29,6 +30,8 @@ export default function SampleCollectionPage() {
   const [success, setSuccess] = useState(false);
   const [apiError, setApiError] = useState('');
   const [form, setForm] = useState({ barcode: '', specimenType: 'blood', notes: '' });
+  const { flags } = useFeatureFlags();
+  const receiveSeparate = isReceiveSeparate(flags);
 
   useEffect(() => {
     const api = getApiClient(getToken() ?? undefined);
@@ -57,6 +60,14 @@ export default function SampleCollectionPage() {
         return;
       }
       if (err) { setApiError('Failed to collect specimen'); return; }
+      if (!receiveSeparate) {
+        // Keep encounter-detail workflow aligned with receiveSeparate flag.
+        // @ts-ignore
+        await api.POST('/encounters/{encounterId}:receive-specimen', {
+          params: { path: { encounterId: id } },
+          body: {},
+        });
+      }
       setSuccess(true);
     } catch {
       setApiError('Failed to collect specimen');
@@ -74,7 +85,9 @@ export default function SampleCollectionPage() {
       <div>
         <EncounterSummaryCard encounter={encounter} />
         <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '24px', marginBottom: '16px' }}>
-          <p style={{ margin: '0 0 12px', color: '#15803d', fontWeight: 600, fontSize: '16px' }}>✓ Sample collected successfully</p>
+          <p style={{ margin: '0 0 12px', color: '#15803d', fontWeight: 600, fontSize: '16px' }}>
+            ✓ Sample {receiveSeparate ? 'collected' : 'collected and received'} successfully
+          </p>
         </div>
         <Link href={`/lims/encounters/${id}/results`} style={{ padding: '10px 20px', background: '#2563eb', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
           Enter Results →

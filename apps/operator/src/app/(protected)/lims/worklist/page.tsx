@@ -114,7 +114,9 @@ export default function WorklistPage() {
                       {p?.mrn && <div style={{ fontSize: '12px', color: '#94a3b8' }}>MRN: {p.mrn}</div>}
                     </td>
                     <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#1d4ed8', fontSize: '13px' }}>
-                      {enc.encounterCode ?? enc.id?.slice(0, 8)}
+                      <Link href={`/lims/encounters/${enc.id}`} style={{ color: '#1d4ed8', textDecoration: 'underline' }}>
+                        {enc.encounterCode ?? enc.id?.slice(0, 8)}
+                      </Link>
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <EncounterStatusBadge status={enc.status} />
