@@ -209,22 +209,64 @@ export default function ImportExportPage() {
     }
   }
 
-  function triggerExportDownload(job: any) {
-    const data = job.resultSummary?.data ?? job.resultSummary;
+  async function triggerExportDownload(job: any) {
+    const data = job.resultSummary?.data;
     if (!data) return;
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const XLSX = await import('xlsx');
+    const wb = XLSX.utils.book_new();
+
+    const testsRows = (data.tests ?? []).map((r: any) => ({
+      externalId: r.externalId ?? '', userCode: r.userCode ?? '', code: r.code ?? '',
+      name: r.name ?? '', department: r.department ?? '', specimenType: r.specimenType ?? '',
+      method: r.method ?? '', loincCode: r.loincCode ?? '', isActive: r.isActive ?? true,
+    }));
+    const paramsRows = (data.parameters ?? []).map((r: any) => ({
+      externalId: r.externalId ?? '', userCode: r.userCode ?? '', code: r.code ?? '',
+      name: r.name ?? '', resultType: r.resultType ?? '', defaultUnit: r.defaultUnit ?? '',
+      decimals: r.decimals ?? '', allowedValues: r.allowedValues ?? '', loincCode: r.loincCode ?? '', isActive: r.isActive ?? true,
+    }));
+    const panelsRows = (data.panels ?? []).map((r: any) => ({
+      externalId: r.externalId ?? '', userCode: r.userCode ?? '', code: r.code ?? '',
+      name: r.name ?? '', loincCode: r.loincCode ?? '', isActive: r.isActive ?? true,
+    }));
+    const testParamRows = (data.testParamMappings ?? []).map((r: any) => ({
+      testExternalId: r.testExternalId ?? '', parameterExternalId: r.parameterExternalId ?? '',
+      displayOrder: r.displayOrder ?? 0, isRequired: r.isRequired ?? false, unitOverride: r.unitOverride ?? '',
+    }));
+    const panelTestRows = (data.panelTestMappings ?? []).map((r: any) => ({
+      panelExternalId: r.panelExternalId ?? '', testExternalId: r.testExternalId ?? '', displayOrder: r.displayOrder ?? 0,
+    }));
+
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(testsRows), 'Tests');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(paramsRows), 'Parameters');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(panelsRows), 'Panels');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(testParamRows), 'TestParameters');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(panelTestRows), 'PanelTests');
+
+    const wbArray = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `catalog-export-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `catalog-export-${new Date().toISOString().slice(0, 10)}.xlsx`;
     a.click();
     URL.revokeObjectURL(url);
   }
 
-  function downloadTemplate(templatePath: string) {
+  async function downloadTemplate(templatePath: string) {
+    const token = getToken();
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? '';
-    window.open(`${apiBase}/api/catalog/templates/${templatePath}`, '_blank');
+    const res = await fetch(`${apiBase}/api/catalog/templates/${templatePath}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) { alert('Download failed'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = templatePath;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   const sectionStyle: React.CSSProperties = { background: 'white', borderRadius: '8px', padding: '24px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' };
@@ -233,7 +275,7 @@ export default function ImportExportPage() {
   return (
     <div>
       <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>Import / Export</h1>
-      <p style={{ color: '#64748b', marginBottom: '24px', fontSize: '14px' }}>Upload XLSX or CSV files to bulk-import catalog data, or export the full catalog as JSON.</p>
+      <p style={{ color: '#64748b', marginBottom: '24px', fontSize: '14px' }}>Upload XLSX or CSV files to bulk-import catalog data, or export the full catalog as XLSX.</p>
 
       {/* Import section */}
       <section style={sectionStyle}>
@@ -298,9 +340,9 @@ export default function ImportExportPage() {
       {/* Export section */}
       <section style={sectionStyle}>
         <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#1e293b' }}>📤 Export Catalog</h2>
-        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>Export all active catalog data as JSON. The export runs as a background job.</p>
+        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>Export all active catalog data as XLSX. The export runs as a background job.</p>
         <button onClick={handleExport} disabled={exporting} style={btnStyle('#7c3aed', exporting)}>
-          {exporting ? '⏳ Preparing…' : '⬇ Export All as JSON'}
+          {exporting ? '⏳ Preparing…' : '⬇ Export All as XLSX'}
         </button>
         {exportError && <div style={{ marginTop: '12px', background: '#fee2e2', color: '#991b1b', padding: '10px 12px', borderRadius: '6px', fontSize: '13px' }}>{exportError}</div>}
         {exportJob && (
