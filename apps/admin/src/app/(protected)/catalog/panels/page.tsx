@@ -196,22 +196,25 @@ export default function PanelsPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
               <thead style={{ background: '#f8fafc' }}>
                 <tr>
-                  {['User Code', 'Ext ID', 'Name', 'LOINC', 'Status', ''].map((h) => (
+                  {['User Code', 'Ext ID', 'Name', 'Price (PKR)', 'LOINC', 'Status', ''].map((h) => (
                     <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: '#64748b', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={6} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Loading…</td></tr>
+                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Loading…</td></tr>
                 ) : panels.length === 0 ? (
-                  <tr><td colSpan={6} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>No panels found.</td></tr>
+                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>No panels found.</td></tr>
                 ) : panels.map((p: any) => (
                   <tr key={p.id} style={{ borderTop: '1px solid #f1f5f9', background: selectedPanel?.id === p.id ? '#eff6ff' : undefined, cursor: 'pointer' }}
                     onClick={() => selectPanel(p)}>
                     <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 600 }}>{p.userCode ?? '—'}</td>
                     <td style={{ padding: '10px 12px', color: '#64748b' }}>{p.externalId ?? '—'}</td>
                     <td style={{ padding: '10px 12px', fontWeight: 500 }}>{p.name}</td>
+                    <td style={{ padding: '10px 12px', color: '#0f172a', fontWeight: 500 }}>
+                      {p.price != null ? p.price.toLocaleString() : '—'}
+                    </td>
                     <td style={{ padding: '10px 12px', color: '#64748b', fontFamily: 'monospace', fontSize: '12px' }}>{p.loincCode ?? '—'}</td>
                     <td style={{ padding: '10px 12px' }}>
                       <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: p.isActive ? '#dcfce7' : '#fee2e2', color: p.isActive ? '#166534' : '#991b1b' }}>

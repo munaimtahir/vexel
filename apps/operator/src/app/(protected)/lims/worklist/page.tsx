@@ -20,14 +20,15 @@ const STATUS_OPTIONS = [
 
 function nextActionLink(enc: any): { text: string; href: string; disabled?: boolean } {
   switch (enc.status) {
-    case 'registered':         return { text: 'Place Order', href: `/encounters/${enc.id}/order` };
-    case 'lab_ordered':        return { text: 'Collect Sample', href: `/encounters/${enc.id}/sample` };
-    case 'specimen_collected': return { text: 'Enter Results', href: `/encounters/${enc.id}/results` };
-    case 'specimen_received':  return { text: 'Enter Results', href: `/encounters/${enc.id}/results` };
-    case 'resulted':           return { text: 'Verify', href: `/encounters/${enc.id}/verify` };
-    case 'verified':           return { text: 'View Reports', href: `/encounters/${enc.id}/reports` };
+    case 'registered':         return { text: 'Place Order', href: `/lims/encounters/${enc.id}/order` };
+    case 'lab_ordered':        return { text: 'Collect Sample', href: `/lims/encounters/${enc.id}/sample` };
+    case 'specimen_collected': return { text: 'Enter Results', href: `/lims/encounters/${enc.id}/results` };
+    case 'specimen_received':  return { text: 'Enter Results', href: `/lims/encounters/${enc.id}/results` };
+    case 'partial_resulted':   return { text: 'Enter Results', href: `/lims/encounters/${enc.id}/results` };
+    case 'resulted':           return { text: 'Verify', href: `/lims/encounters/${enc.id}/verify` };
+    case 'verified':           return { text: 'View Reports', href: `/lims/encounters/${enc.id}/reports` };
     case 'cancelled':          return { text: 'Cancelled', href: '#', disabled: true };
-    default:                   return { text: 'View', href: `/encounters/${enc.id}` };
+    default:                   return { text: 'View', href: `/lims/encounters/${enc.id}` };
   }
 }
 
@@ -112,8 +113,8 @@ export default function WorklistPage() {
                       <div style={{ fontWeight: 500, color: '#1e293b' }}>{name}</div>
                       {p?.mrn && <div style={{ fontSize: '12px', color: '#94a3b8' }}>MRN: {p.mrn}</div>}
                     </td>
-                    <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#64748b', fontSize: '13px' }}>
-                      {enc.id?.slice(0, 8)}…
+                    <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#1d4ed8', fontSize: '13px' }}>
+                      {enc.encounterCode ?? enc.id?.slice(0, 8)}
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <EncounterStatusBadge status={enc.status} />

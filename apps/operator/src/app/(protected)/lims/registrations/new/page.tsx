@@ -16,15 +16,15 @@ const inpErr: React.CSSProperties = { ...inp, border: '1px solid #ef4444' };
 const label: React.CSSProperties = { display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px', fontWeight: 500 };
 
 type PatientData = {
-  mobile: string; firstName: string; lastName: string;
-  age: string; dateOfBirth: string; gender: string; cnic: string; address: string;
+  mobile: string; fullName: string;
+  dateOfBirth: string; gender: string; cnic: string; address: string;
 };
 
 type SelectedTest = { id: string; name: string; code: string; price: number | null };
 
 type FieldErrors = Partial<Record<keyof PatientData, string>>;
 
-const EMPTY_PATIENT: PatientData = { mobile: '', firstName: '', lastName: '', age: '', dateOfBirth: '', gender: 'male', cnic: '', address: '' };
+const EMPTY_PATIENT: PatientData = { mobile: '', fullName: '', dateOfBirth: '', gender: 'male', cnic: '', address: '' };
 
 function dobFromAge(age: string): string {
   const n = parseInt(age, 10);
@@ -44,6 +44,9 @@ export default function NewRegistrationPage() {
   const [mobileLooking, setMobileLooking] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
+  // Derived age display (always computed from DOB, never stored)
+  const displayAge = patient.dateOfBirth ? ageFromDob(patient.dateOfBirth) : '';
+
   // Order state
   const [testSearch, setTestSearch] = useState('');
   const [testResults, setTestResults] = useState<any[]>([]);
@@ -61,8 +64,6 @@ export default function NewRegistrationPage() {
   // Save state
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
-  const [savedEncounterId, setSavedEncounterId] = useState<string | null>(null);
-  const [toast, setToast] = useState('');
 
   // ── derived payment ──────────────────────────────────────────────
   const total = selectedTests.reduce((s, t) => s + (t.price ?? 0), 0);
@@ -84,9 +85,7 @@ export default function NewRegistrationPage() {
         setExistingPatient(found);
         setPatient({
           mobile: found.mobile ?? mobile,
-          firstName: found.firstName ?? '',
-          lastName: found.lastName ?? '',
-          age: found.ageYears != null ? String(found.ageYears) : (found.dateOfBirth ? ageFromDob(found.dateOfBirth) : ''),
+          fullName: `${found.firstName ?? ''} ${found.lastName ?? ''}`.trim(),
           dateOfBirth: found.dateOfBirth ?? '',
           gender: found.gender ?? 'male',
           cnic: found.cnic ?? '',
@@ -108,14 +107,10 @@ export default function NewRegistrationPage() {
     setFieldErrors(e => ({ ...e, [k]: undefined }));
   };
 
-  const handleAgeChange = (v: string) => {
-    setField('age', v);
+  // Age input: convert entered age to estimated DOB (Jan 1 of birth year)
+  const handleAgeInput = (v: string) => {
     const dob = dobFromAge(v);
     if (dob) setField('dateOfBirth', dob);
-  };
-  const handleDobChange = (v: string) => {
-    setField('dateOfBirth', v);
-    setField('age', ageFromDob(v));
   };
 
   // ── test search (debounced) ──────────────────────────────────────
@@ -184,8 +179,7 @@ export default function NewRegistrationPage() {
   // ── validation ───────────────────────────────────────────────────
   const validate = (): boolean => {
     const errs: FieldErrors = {};
-    if (!patient.firstName.trim()) errs.firstName = 'Required';
-    if (!patient.lastName.trim()) errs.lastName = 'Required';
+    if (!patient.fullName.trim()) errs.fullName = 'Required';
     if (!patient.gender) errs.gender = 'Required';
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
@@ -201,14 +195,15 @@ export default function NewRegistrationPage() {
       let patientId = existingPatient?.id;
 
       if (!patientId) {
-        const body: Record<string, unknown> = {
-          firstName: patient.firstName.trim(),
-          lastName: patient.lastName.trim(),
-          gender: patient.gender,
-        };
+        // Split fullName: first word = firstName, rest = lastName (fallback to same if single word)
+        const parts = patient.fullName.trim().split(/\s+/);
+        const firstName = parts[0] || '';
+        const lastName = parts.length > 1 ? parts.slice(1).join(' ') : firstName;
+
+        const body: Record<string, unknown> = { firstName, lastName, gender: patient.gender };
         if (patient.mobile.trim()) body.mobile = patient.mobile.trim();
+        // DOB is source of truth — never save ageYears
         if (patient.dateOfBirth) body.dateOfBirth = patient.dateOfBirth;
-        if (patient.age) body.ageYears = parseInt(patient.age, 10) || undefined;
         if (patient.cnic.trim()) body.cnic = patient.cnic.trim();
         if (patient.address.trim()) body.address = patient.address.trim();
 
@@ -231,33 +226,49 @@ export default function NewRegistrationPage() {
         });
       }
 
-      // Generate receipt
+      // Queue receipt generation
       try {
+        const parts = patient.fullName.trim().split(/\s+/);
+        const firstName = parts[0] || '';
+        const lastName = parts.length > 1 ? parts.slice(1).join(' ') : firstName;
         const receiptBody = {
           receiptNumber: encounterCode,
-          patientName: `${patient.firstName} ${patient.lastName}`.trim(),
+          patientName: patient.fullName.trim(),
           patientMrn: existingPatient?.mrn ?? 'Auto',
           issuedAt: new Date().toISOString(),
           items: selectedTests.map(t => ({
-            description: t.name,
-            quantity: 1,
-            unitPrice: t.price ?? 0,
-            total: t.price ?? 0,
+            description: t.name, quantity: 1,
+            unitPrice: t.price ?? 0, total: t.price ?? 0,
           })),
-          subtotal: total,
-          tax: 0,
-          grandTotal: total,
-          sourceRef: encounterId,
-          sourceType: 'encounter',
+          subtotal: total, tax: 0, grandTotal: total,
+          sourceRef: encounterId, sourceType: 'encounter',
         };
         // @ts-ignore
         await api.POST('/documents/receipt:generate', { body: receiptBody as any });
-        setToast('Saved! Receipt queued for printing.');
-      } catch {
-        setToast('Saved! Receipt PDF coming soon.');
+      } catch { /* receipt generation is best-effort */ }
+
+      // Poll up to 4s for receipt to be published, then open it and reset
+      let receiptUrl: string | null = null;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        await new Promise(r => setTimeout(r, 1000));
+        try {
+          const { data: docs } = await api.GET('/documents' as any, {
+            params: { query: { sourceRef: encounterId, status: 'PUBLISHED', limit: 1 } },
+          });
+          const items: any[] = (docs as any)?.items ?? [];
+          if (items.length > 0) {
+            const { data: dl } = await api.GET('/documents/{id}/download' as any, {
+              params: { path: { id: items[0].id } },
+            });
+            const url = (dl as any)?.url;
+            if (url) { receiptUrl = url; break; }
+          }
+        } catch { /* keep trying */ }
       }
 
-      setSavedEncounterId(encounterId);
+      // Open receipt in new tab if ready; always reset form for next patient
+      if (receiptUrl) window.open(receiptUrl, '_blank');
+      handleReset();
     } catch (err: any) {
       setSaveError(err?.message ?? 'Save failed');
     } finally {
@@ -278,30 +289,7 @@ export default function NewRegistrationPage() {
     setDiscountPct('0');
     setPaid('0');
     setSaveError('');
-    setSavedEncounterId(null);
-    setToast('');
   };
-
-  // ── success state ────────────────────────────────────────────────
-  if (savedEncounterId && toast) {
-    return (
-      <div>
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '28px', marginBottom: '24px' }}>
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>✓</div>
-          <h2 style={{ margin: '0 0 8px', color: '#15803d', fontSize: '20px' }}>Registration Complete</h2>
-          <p style={{ margin: 0, color: '#166534' }}>{toast}</p>
-        </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <a href={`/lims/encounters/${savedEncounterId}`} style={{ padding: '10px 20px', background: '#2563eb', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
-            View Encounter
-          </a>
-          <button onClick={handleReset} style={{ padding: '10px 20px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', color: '#1e293b' }}>
-            New Registration
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   const sectionCard: React.CSSProperties = { background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px' };
   const sectionTitle: React.CSSProperties = { fontSize: '14px', fontWeight: 700, color: '#1e293b', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.05em' };
@@ -342,29 +330,33 @@ export default function NewRegistrationPage() {
           />
         </div>
 
-        {/* Name row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-          <div>
-            <label style={label}>First Name *</label>
-            <input value={patient.firstName} onChange={e => setField('firstName', e.target.value)} style={fieldErrors.firstName ? inpErr : inp} />
-            {fieldErrors.firstName && <p style={{ color: '#ef4444', fontSize: '11px', margin: '2px 0 0' }}>{fieldErrors.firstName}</p>}
-          </div>
-          <div>
-            <label style={label}>Last Name *</label>
-            <input value={patient.lastName} onChange={e => setField('lastName', e.target.value)} style={fieldErrors.lastName ? inpErr : inp} />
-            {fieldErrors.lastName && <p style={{ color: '#ef4444', fontSize: '11px', margin: '2px 0 0' }}>{fieldErrors.lastName}</p>}
-          </div>
+        {/* Full name */}
+        <div style={{ marginBottom: '12px' }}>
+          <label style={label}>Full Name *</label>
+          <input
+            value={patient.fullName}
+            onChange={e => setField('fullName', e.target.value)}
+            placeholder="e.g. Ali Hassan"
+            style={fieldErrors.fullName ? inpErr : inp}
+          />
+          {fieldErrors.fullName && <p style={{ color: '#ef4444', fontSize: '11px', margin: '2px 0 0' }}>{fieldErrors.fullName}</p>}
         </div>
 
-        {/* Age + DOB + Gender */}
+        {/* Age + DOB + Gender + CNIC */}
         <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
           <div>
             <label style={label}>Age</label>
-            <input type="number" min="0" max="150" value={patient.age} onChange={e => handleAgeChange(e.target.value)} style={inp} />
+            <input
+              type="number" min="0" max="150"
+              value={displayAge}
+              onChange={e => handleAgeInput(e.target.value)}
+              placeholder="yrs"
+              style={inp}
+            />
           </div>
           <div>
             <label style={label}>Date of Birth</label>
-            <input type="date" value={patient.dateOfBirth} onChange={e => handleDobChange(e.target.value)} style={inp} />
+            <input type="date" value={patient.dateOfBirth} onChange={e => setField('dateOfBirth', e.target.value)} style={inp} />
           </div>
           <div>
             <label style={label}>Gender *</label>

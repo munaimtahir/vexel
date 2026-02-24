@@ -219,22 +219,25 @@ export default function CatalogTestsPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
               <thead style={{ background: '#f8fafc' }}>
                 <tr>
-                  {['User Code', 'Ext ID', 'Name', 'Department', 'LOINC', 'Status', ''].map((h) => (
+                  {['User Code', 'Ext ID', 'Name', 'Price (PKR)', 'Department', 'LOINC', 'Status', ''].map((h) => (
                     <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: '#64748b', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Loading…</td></tr>
+                  <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Loading…</td></tr>
                 ) : tests.length === 0 ? (
-                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>No tests found.</td></tr>
+                  <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>No tests found.</td></tr>
                 ) : tests.map((t: any) => (
                   <tr key={t.id} style={{ borderTop: '1px solid #f1f5f9', background: selectedTest?.id === t.id ? '#eff6ff' : undefined, cursor: 'pointer' }}
                     onClick={() => selectTest(t)}>
                     <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 600 }}>{t.userCode ?? '—'}</td>
                     <td style={{ padding: '10px 12px', color: '#64748b' }}>{t.externalId ?? '—'}</td>
                     <td style={{ padding: '10px 12px', fontWeight: 500 }}>{t.name}</td>
+                    <td style={{ padding: '10px 12px', color: '#0f172a', fontWeight: 500 }}>
+                      {t.price != null ? t.price.toLocaleString() : '—'}
+                    </td>
                     <td style={{ padding: '10px 12px', color: '#64748b' }}>{t.department ?? '—'}</td>
                     <td style={{ padding: '10px 12px', color: '#64748b', fontFamily: 'monospace', fontSize: '12px' }}>{t.loincCode ?? '—'}</td>
                     <td style={{ padding: '10px 12px' }}>

@@ -9,7 +9,6 @@ const BASE_NAV_ITEMS = [
   { label: 'New Registration', href: '/lims/registrations/new', icon: '➕' },
   { label: 'Sample Collection', href: '/lims/sample-collection', icon: '🧪' },
   { label: 'Results', href: '/lims/results', icon: '📊' },
-  { label: 'Encounters', href: '/lims/encounters', icon: '🏥' },
   { label: 'Patients', href: '/lims/patients', icon: '👤' },
 ];
 
