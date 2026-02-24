@@ -86,6 +86,9 @@ jobs:
         run: docker compose up -d --wait --wait-timeout 120
         env:
           JWT_SECRET: ci-test-jwt-secret-not-for-production-use-only
+      - name: Show API logs on failure
+        if: failure()
+        run: docker compose logs api --tail=100 || true
       - name: Wait for API health
         run: |
           for i in $(seq 1 30); do
