@@ -63,7 +63,20 @@ export class StorageService implements OnModuleInit {
   }
 
   async getSignedDownloadUrl(key: string, expiresIn = 3600): Promise<string> {
-    return getSignedUrl(this.s3, new GetObjectCommand({ Bucket: this.bucket, Key: key }), { expiresIn });
+    const publicUrl = process.env.STORAGE_PUBLIC_URL;
+    // Use a separate S3 client with the public URL so the presigned URL uses the correct host
+    const signingClient = publicUrl
+      ? new S3Client({
+          endpoint: publicUrl,
+          region: 'us-east-1',
+          credentials: {
+            accessKeyId: process.env.STORAGE_ACCESS_KEY ?? 'vexel',
+            secretAccessKey: process.env.STORAGE_SECRET_KEY ?? 'vexel_secret_2026',
+          },
+          forcePathStyle: true,
+        })
+      : this.s3;
+    return getSignedUrl(signingClient, new GetObjectCommand({ Bucket: this.bucket, Key: key }), { expiresIn });
   }
 
   storageKey(tenantId: string, documentId: string): string {
