@@ -3,11 +3,11 @@ import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
 const ICON_COLORS = [
-  'from-indigo-500 to-violet-500',
-  'from-sky-500 to-blue-500',
-  'from-emerald-500 to-teal-500',
-  'from-amber-500 to-orange-500',
-  'from-rose-500 to-pink-500',
+  'from-[#C07850] to-[#A86040]',    /* dusty terracotta */
+  'from-[#5E8EA8] to-[#3E6E88]',    /* dusty slate-blue */
+  'from-[#7EA88A] to-[#5E8870]',    /* morandi sage */
+  'from-[#C4A86A] to-[#A48A4A]',    /* morandi amber */
+  'from-[#9098C0] to-[#7078A0]',    /* morandi lavender */
 ];
 
 interface StatCardProps {
