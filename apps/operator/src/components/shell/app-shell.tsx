@@ -7,8 +7,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto bg-background">
-          <div className="p-6">
+        <main className="flex-1 overflow-y-auto page-canvas">
+          <div className="p-6 max-w-[1400px]">
             {children}
           </div>
         </main>

@@ -1,18 +1,18 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-const ENCOUNTER_STATUS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'info' | 'destructive' }> = {
+const ENCOUNTER_STATUS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'info' | 'destructive' | 'purple' }> = {
   registered:          { label: 'Registered',     variant: 'secondary' },
   lab_ordered:         { label: 'Ordered',         variant: 'info' },
   specimen_collected:  { label: 'Collected',       variant: 'warning' },
   specimen_received:   { label: 'Received',        variant: 'warning' },
-  partial_resulted:    { label: 'Partial',         variant: 'warning' },
+  partial_resulted:    { label: 'Partial Result',  variant: 'purple' },
   resulted:            { label: 'Resulted',        variant: 'success' },
   verified:            { label: 'Verified',        variant: 'success' },
   cancelled:           { label: 'Cancelled',       variant: 'destructive' },
 };
 
-const DOC_STATUS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'info' | 'destructive' }> = {
+const DOC_STATUS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'info' | 'destructive' | 'purple' }> = {
   QUEUED:    { label: 'Queued',    variant: 'secondary' },
   RENDERING: { label: 'Rendering', variant: 'warning' },
   RENDERED:  { label: 'Rendered',  variant: 'info' },
@@ -32,5 +32,9 @@ export function DocumentStatusBadge({ status }: { status: string }) {
 
 export function DueBadge({ amount }: { amount?: number | null }) {
   if (!amount || amount <= 0) return null;
-  return <Badge variant="destructive">DUE ₨{amount.toLocaleString()}</Badge>;
+  return (
+    <Badge variant="destructive" className="font-bold">
+      DUE ₨{amount.toLocaleString()}
+    </Badge>
+  );
 }

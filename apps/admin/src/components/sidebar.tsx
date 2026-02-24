@@ -2,6 +2,8 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { logout } from '@/lib/auth';
+import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: '📊' },
@@ -41,29 +43,36 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
+  const handleLogout = () => { logout(); router.push('/login'); };
 
   return (
     <aside style={{
       width: '240px',
       minHeight: '100vh',
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: 'linear-gradient(175deg, hsl(243,38%,14%) 0%, hsl(240,32%,10%) 100%)',
+      color: 'hsl(240,30%,96%)',
       display: 'flex',
       flexDirection: 'column',
-      padding: '16px 0',
+      borderRight: '1px solid hsl(243,28%,18%)',
     }}>
-      <div style={{ padding: '0 16px 24px', borderBottom: '1px solid #334155' }}>
-        <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#f8fafc' }}>
-          Vexel Admin
-        </h1>
-        <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>Back Office</p>
+      {/* Logo */}
+      <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid hsl(243,28%,18%)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{
+            width: '32px', height: '32px',
+            background: 'linear-gradient(135deg, hsl(249,76%,58%) 0%, hsl(259,72%,55%) 100%)',
+            borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '14px', boxShadow: '0 2px 8px hsl(249 76% 58% / .35)',
+          }}>🧬</div>
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc', letterSpacing: '-0.01em' }}>Vexel Admin</div>
+            <div style={{ fontSize: '10px', color: 'hsl(240,20%,55%)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Back Office</div>
+          </div>
+        </div>
       </div>
-      <nav style={{ flex: 1, padding: '16px 0' }}>
+
+      {/* Nav */}
+      <nav style={{ flex: 1, padding: '10px 8px', overflowY: 'auto' }}>
         {NAV_ITEMS.map((item) => {
           const isParentActive = pathname === item.href || pathname.startsWith(item.href + '/')
             || (item.children?.some((c) => pathname === c.href || pathname.startsWith(c.href + '/')) ?? false);
@@ -72,22 +81,28 @@ export function Sidebar() {
               <Link
                 href={item.href}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '10px 16px',
-                  color: isParentActive ? '#f8fafc' : '#94a3b8',
-                  background: isParentActive && !item.children ? '#334155' : 'transparent',
-                  textDecoration: 'none',
-                  fontSize: '14px',
-                  transition: 'background 0.15s',
+                  display: 'flex', alignItems: 'center', gap: '10px',
+                  padding: '9px 12px',
+                  borderRadius: '8px',
+                  marginBottom: '1px',
+                  color: isParentActive ? '#f8fafc' : 'hsl(240,15%,58%)',
+                  background: isParentActive && !item.children
+                    ? 'linear-gradient(90deg, hsl(249 76% 58% / 0.22) 0%, hsl(249 76% 58% / 0.08) 100%)'
+                    : isParentActive ? 'hsl(249 76% 58% / 0.08)' : 'transparent',
+                  textDecoration: 'none', fontSize: '13.5px',
+                  fontWeight: isParentActive ? 600 : 400,
+                  transition: 'all 0.12s',
+                  borderLeft: isParentActive && !item.children ? '2px solid hsl(249,76%,68%)' : '2px solid transparent',
                 }}
+                onMouseOver={(e) => { if (!isParentActive) { (e.currentTarget as HTMLElement).style.background = 'hsl(240,20%,100%,0.06)'; (e.currentTarget as HTMLElement).style.color = '#e2e8f0'; } }}
+                onMouseOut={(e) => { if (!isParentActive) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'hsl(240,15%,58%)'; } }}
               >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
+                <span style={{ fontSize: '14px', flexShrink: 0 }}>{item.icon}</span>
+                <span style={{ flex: 1 }}>{item.label}</span>
+                {item.children && <ChevronDown style={{ width: '12px', height: '12px', opacity: 0.5, transform: isParentActive ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />}
               </Link>
               {item.children && isParentActive && (
-                <div style={{ background: '#0f172a' }}>
+                <div style={{ marginBottom: '4px' }}>
                   {item.children.map((child) => {
                     const childActive = pathname === child.href || pathname.startsWith(child.href + '/');
                     return (
@@ -96,13 +111,18 @@ export function Sidebar() {
                         href={child.href}
                         style={{
                           display: 'block',
-                          padding: '8px 16px 8px 44px',
-                          color: childActive ? '#f8fafc' : '#64748b',
-                          background: childActive ? '#1e3a5f' : 'transparent',
-                          textDecoration: 'none',
-                          fontSize: '13px',
-                          transition: 'background 0.15s',
+                          padding: '7px 12px 7px 38px',
+                          borderRadius: '6px',
+                          marginBottom: '1px',
+                          color: childActive ? '#f8fafc' : 'hsl(240,12%,52%)',
+                          background: childActive ? 'hsl(249 76% 58% / 0.18)' : 'transparent',
+                          textDecoration: 'none', fontSize: '12.5px',
+                          fontWeight: childActive ? 600 : 400,
+                          transition: 'all 0.12s',
+                          borderLeft: childActive ? '2px solid hsl(249,76%,68%)' : '2px solid transparent',
                         }}
+                        onMouseOver={(e) => { if (!childActive) { (e.currentTarget as HTMLElement).style.background = 'hsl(240,20%,100%,0.05)'; (e.currentTarget as HTMLElement).style.color = '#d1d5db'; } }}
+                        onMouseOut={(e) => { if (!childActive) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'hsl(240,12%,52%)'; } }}
                       >
                         {child.label}
                       </Link>
@@ -114,22 +134,23 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div style={{ padding: '0 16px' }}>
+
+      {/* Footer */}
+      <div style={{ padding: '12px', borderTop: '1px solid hsl(243,28%,18%)' }}>
         <button
           onClick={handleLogout}
           style={{
-            width: '100%',
-            padding: '10px 0',
+            width: '100%', padding: '9px 12px',
             background: 'transparent',
-            border: '1px solid #475569',
-            borderRadius: '6px',
-            color: '#94a3b8',
-            cursor: 'pointer',
-            fontSize: '14px',
+            border: '1px solid hsl(243,25%,24%)',
+            borderRadius: '8px',
+            color: 'hsl(240,15%,55%)',
+            cursor: 'pointer', fontSize: '13px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
             transition: 'all 0.15s',
           }}
-          onMouseOver={(e) => { e.currentTarget.style.color = '#f8fafc'; e.currentTarget.style.borderColor = '#64748b'; }}
-          onMouseOut={(e) => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.borderColor = '#475569'; }}
+          onMouseOver={(e) => { e.currentTarget.style.color = '#f1f5f9'; e.currentTarget.style.borderColor = 'hsl(243,25%,35%)'; e.currentTarget.style.background = 'hsl(243,25%,18%)'; }}
+          onMouseOut={(e) => { e.currentTarget.style.color = 'hsl(240,15%,55%)'; e.currentTarget.style.borderColor = 'hsl(243,25%,24%)'; e.currentTarget.style.background = 'transparent'; }}
         >
           Sign Out
         </button>
