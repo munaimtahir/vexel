@@ -46,6 +46,11 @@ export default function NewRegistrationPage() {
   const [registeredMRN, setRegisteredMRN] = useState<string | null>(null);
   const [mobileLooking, setMobileLooking] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  // Patient picker modal
+  const [pickerPatients, setPickerPatients] = useState<any[]>([]);
+  const [pickerIdx, setPickerIdx] = useState(0);
+  const pickerRef = useRef<HTMLDivElement>(null);
   const displayAge = patient.dateOfBirth ? ageFromDob(patient.dateOfBirth) : '';
 
   // Order
@@ -93,7 +98,7 @@ export default function NewRegistrationPage() {
   const paidNum = parseFloat(paid) || 0;
   const due = total - discPKRNum - paidNum;
 
-  // ── Mobile lookup ────────────────────────────────────────────────
+  // ── Mobile lookup → show picker if any matches ──────────────────
   const handleMobileLookup = useCallback(async () => {
     const mobile = mobileValue.replace(/[^0-9]/g, '');
     if (mobile.length < 7) return;
@@ -101,27 +106,43 @@ export default function NewRegistrationPage() {
     try {
       const api = getApiClient(getToken() ?? undefined);
       // @ts-ignore
-      const { data } = await api.GET('/patients', { params: { query: { mobile: mobileValue, limit: 1 } } });
-      const found = ((data as any)?.data ?? [])[0];
-      if (found) {
-        setExistingPatient(found);
-        setRegisteredMRN(found.mrn);
-        const [p1, p2] = parseMobile(found.mobile ?? mobileValue);
-        setMob1(p1); setMob2(p2);
-        setPatient({
-          fullName: `${found.firstName ?? ''} ${found.lastName ?? ''}`.trim(),
-          dateOfBirth: found.dateOfBirth ?? '',
-          gender: found.gender ?? 'male',
-          cnic: found.cnic ?? '',
-          address: found.address ?? '',
-        });
+      const { data } = await api.GET('/patients', { params: { query: { mobile: mobileValue, limit: 20 } } });
+      const found: any[] = (data as any)?.data ?? [];
+      if (found.length > 0) {
+        setPickerPatients(found);
+        setPickerIdx(0);
+        setTimeout(() => pickerRef.current?.focus(), 50);
       } else {
+        setPickerPatients([]);
         setExistingPatient(null);
         setRegisteredMRN(null);
       }
-    } catch { setExistingPatient(null); }
+    } catch { setExistingPatient(null); setPickerPatients([]); }
     finally { setMobileLooking(false); }
   }, [mobileValue]);
+
+  const selectPickerPatient = (p: any) => {
+    setExistingPatient(p);
+    setRegisteredMRN(p.mrn);
+    const [p1, p2] = parseMobile(p.mobile ?? mobileValue);
+    setMob1(p1); setMob2(p2);
+    setPatient({
+      fullName: `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim(),
+      dateOfBirth: p.dateOfBirth ?? '',
+      gender: p.gender ?? 'male',
+      cnic: p.cnic ?? '',
+      address: p.address ?? '',
+    });
+    setPickerPatients([]);
+    setTimeout(() => fullNameRef.current?.focus(), 50);
+  };
+
+  const closePickerNew = () => {
+    setPickerPatients([]);
+    setExistingPatient(null);
+    setRegisteredMRN(null);
+    setTimeout(() => fullNameRef.current?.focus(), 50);
+  };
 
   // ── Field helpers ────────────────────────────────────────────────
   const setField = (k: keyof PatientData, v: string) => {
@@ -316,6 +337,7 @@ export default function NewRegistrationPage() {
   const handleReset = () => {
     setMob1(''); setMob2('');
     setPatient(EMPTY); setExistingPatient(null); setRegisteredMRN(null);
+    setPickerPatients([]);
     setFieldErrors({}); setSelectedTests([]);
     setTestSearch(''); setTestResults([]); setTestDropOpen(false);
     setDiscountPKR('0'); setDiscountPct('0'); setPaid('0');
@@ -358,6 +380,72 @@ export default function NewRegistrationPage() {
 
   return (
     <div>
+      {/* ── Patient Picker Modal ─────────────────────────────────── */}
+      {pickerPatients.length > 0 && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+          <div
+            ref={pickerRef}
+            tabIndex={-1}
+            onKeyDown={e => {
+              if (e.key === 'ArrowDown') { e.preventDefault(); setPickerIdx(i => Math.min(i + 1, pickerPatients.length - 1)); }
+              else if (e.key === 'ArrowUp') { e.preventDefault(); setPickerIdx(i => Math.max(i - 1, 0)); }
+              else if (e.key === 'Enter') { e.preventDefault(); selectPickerPatient(pickerPatients[pickerIdx]); }
+              else if (e.key === 'Escape') { e.preventDefault(); closePickerNew(); }
+            }}
+            style={{ background: 'white', borderRadius: '10px', width: '520px', maxWidth: '95vw', boxShadow: '0 8px 32px rgba(0,0,0,0.25)', overflow: 'hidden', outline: 'none' }}
+          >
+            {/* Modal header */}
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', background: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>
+                  {pickerPatients.length} patient{pickerPatients.length > 1 ? 's' : ''} found for <span style={{ fontFamily: 'monospace' }}>{mobileValue}</span>
+                </div>
+                <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>↑↓ navigate · Enter select · Esc = new patient</div>
+              </div>
+              <button onClick={closePickerNew} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8', lineHeight: 1 }}>×</button>
+            </div>
+
+            {/* Patient list */}
+            <div style={{ maxHeight: '340px', overflowY: 'auto' }}>
+              {pickerPatients.map((p, i) => {
+                const name = `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() || '—';
+                const age = p.dateOfBirth ? ageFromDob(p.dateOfBirth) : p.ageYears != null ? String(p.ageYears) : null;
+                return (
+                  <div
+                    key={p.id}
+                    onClick={() => selectPickerPatient(p)}
+                    style={{ padding: '14px 20px', cursor: 'pointer', background: i === pickerIdx ? '#eff6ff' : 'white', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: i === pickerIdx ? '3px solid #2563eb' : '3px solid transparent' }}
+                    onMouseEnter={() => setPickerIdx(i)}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '14px', color: '#1e293b' }}>{name}</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                        MRN: <strong>{p.mrn ?? '—'}</strong>
+                        {age && ` · ${age}y`}
+                        {p.gender && ` · ${p.gender.charAt(0).toUpperCase()}`}
+                        {p.cnic && ` · CNIC: ${p.cnic}`}
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '11px', color: '#94a3b8', background: '#f1f5f9', borderRadius: '4px', padding: '2px 8px' }}>Select</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* New registration option */}
+            <div style={{ padding: '14px 20px', borderTop: '1px solid #f1f5f9', background: '#fafafa', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '13px', color: '#64748b' }}>Not listed? Register a new patient for this number.</span>
+              <button
+                onClick={closePickerNew}
+                style={{ padding: '7px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}
+              >
+                + New Registration
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ marginBottom: '20px' }}>
         <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#1e293b' }}>New Registration</h1>
