@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 const MODULES = [
   {
@@ -44,80 +45,35 @@ export default function OperatorLandingPage() {
   }, [router]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '32px',
-    }}>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex flex-col items-center justify-center p-8">
       {/* Brand */}
-      <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#f1f5f9', margin: '0 0 8px' }}>
-          Vexel Operator
-        </h1>
-        <p style={{ color: '#94a3b8', fontSize: '16px', margin: 0 }}>
-          Select a module to continue
-        </p>
+      <div className="text-center mb-12">
+        <h1 className="text-3xl font-extrabold text-slate-100 mb-2">Vexel Operator</h1>
+        <p className="text-slate-400 text-base">Select a module to continue</p>
       </div>
 
       {/* Module switcher cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 280px)', gap: '20px', justifyContent: 'center' }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 justify-center" style={{ gridTemplateColumns: 'repeat(3, 280px)' }}>
         {MODULES.map((mod) => (
           <div
             key={mod.id}
             onClick={() => mod.enabled && mod.href && router.push(mod.href)}
-            style={{
-              background: mod.enabled ? '#1e293b' : '#111827',
-              border: mod.enabled ? '2px solid #3b82f6' : '2px solid #1f2937',
-              borderRadius: '16px',
-              padding: '28px 24px',
-              cursor: mod.enabled ? 'pointer' : 'default',
-              opacity: mod.enabled ? 1 : 0.5,
-              transition: 'transform 0.15s, box-shadow 0.15s',
-            }}
-            onMouseEnter={(e) => {
-              if (mod.enabled) {
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)';
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 12px 32px rgba(59,130,246,0.25)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLDivElement).style.transform = 'none';
-              (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
-            }}
+            className={cn(
+              'rounded-2xl p-7 transition-all duration-150',
+              mod.enabled
+                ? 'bg-slate-800 border-2 border-blue-500 cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/25'
+                : 'bg-gray-900 border-2 border-gray-800 opacity-50 cursor-default'
+            )}
           >
-            <div style={{ fontSize: '40px', marginBottom: '16px' }}>{mod.icon}</div>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#f1f5f9', margin: '0 0 8px' }}>
-              {mod.label}
-            </h2>
-            <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0 0 20px', lineHeight: 1.5 }}>
-              {mod.description}
-            </p>
+            <div className="text-4xl mb-4">{mod.icon}</div>
+            <h2 className="text-lg font-bold text-slate-100 mb-2">{mod.label}</h2>
+            <p className="text-slate-400 text-sm mb-5 leading-relaxed">{mod.description}</p>
             {mod.enabled ? (
-              <span style={{
-                display: 'inline-block',
-                padding: '6px 16px',
-                background: '#3b82f6',
-                color: 'white',
-                borderRadius: '6px',
-                fontSize: '13px',
-                fontWeight: 600,
-              }}>
+              <span className="inline-block px-4 py-1.5 bg-blue-500 text-white rounded-md text-sm font-semibold">
                 Open →
               </span>
             ) : (
-              <span style={{
-                display: 'inline-block',
-                padding: '6px 16px',
-                background: '#374151',
-                color: '#9ca3af',
-                borderRadius: '6px',
-                fontSize: '13px',
-                fontWeight: 500,
-              }}>
+              <span className="inline-block px-4 py-1.5 bg-gray-700 text-gray-400 rounded-md text-sm font-medium">
                 Coming soon
               </span>
             )}
@@ -126,9 +82,7 @@ export default function OperatorLandingPage() {
       </div>
 
       {/* Redirect notice */}
-      <p style={{ color: '#475569', fontSize: '13px', marginTop: '40px' }}>
-        Redirecting to LIMS…
-      </p>
+      <p className="text-slate-500 text-sm mt-10">Redirecting to LIMS…</p>
     </div>
   );
 }

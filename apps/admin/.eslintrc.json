@@ -1,0 +1,9 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    "no-restricted-globals": [
+      "error",
+      { "name": "fetch", "message": "Use @vexel/sdk API client instead of raw fetch(). See lib/api-client.ts" }
+    ]
+  }
+}

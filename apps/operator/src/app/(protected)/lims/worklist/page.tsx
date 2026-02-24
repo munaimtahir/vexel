@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
-import { EncounterStatusBadge } from '@/components/status-badge';
+import { EncounterStatusBadge, DueBadge, SkeletonPage, EmptyState, DataTable, PageHeader } from '@/components/app';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const LIMIT = 20;
 
@@ -66,104 +68,108 @@ export default function WorklistPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#1e293b' }}>Worklist</h1>
-        <Link href="/lims/registrations/new" style={{ padding: '10px 20px', background: '#2563eb', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
-          + New Registration
-        </Link>
+      <PageHeader
+        title="Worklist"
+        actions={
+          <Button asChild>
+            <Link href="/lims/registrations/new">+ New Registration</Link>
+          </Button>
+        }
+      />
+
+      <div className="mb-4">
+          <Select value={statusFilter === '' ? '__all__' : statusFilter} onValueChange={(v) => handleStatusChange(v === '__all__' ? '' : v)}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="All Statuses" />
+          </SelectTrigger>
+          <SelectContent>
+            {STATUS_OPTIONS.map(o => (
+              <SelectItem key={o.value} value={o.value === '' ? '__all__' : o.value}>{o.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      <div style={{ marginBottom: '16px' }}>
-        <select
-          value={statusFilter}
-          onChange={(e) => handleStatusChange(e.target.value)}
-          style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', background: 'white' }}
-        >
-          {STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-      </div>
+      {error && <p className="text-destructive mb-4">{error}</p>}
 
-      {error && <p style={{ color: '#ef4444' }}>{error}</p>}
-
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-        {loading ? (
-          <div style={{ padding: '48px', textAlign: 'center', color: '#94a3b8' }}>Loading...</div>
-        ) : encounters.length === 0 ? (
-          <div style={{ padding: '48px', textAlign: 'center', color: '#94a3b8' }}>No encounters found.</div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-            <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
-                {['Date/Time', 'Patient', 'Encounter ID', 'Status', 'Next Action'].map(h => (
-                  <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {encounters.map((enc: any) => {
-                const action = nextActionLink(enc);
+      {loading ? (
+        <SkeletonPage />
+      ) : encounters.length === 0 ? (
+        <EmptyState title="No encounters found" />
+      ) : (
+        <DataTable
+          data={encounters}
+          keyExtractor={(enc: any) => enc.id}
+          columns={[
+            {
+              key: 'date',
+              header: 'Date/Time',
+              cell: (enc: any) => (
+                <span className="text-muted-foreground text-sm">
+                  {enc.createdAt ? new Date(enc.createdAt).toLocaleString() : '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'patient',
+              header: 'Patient',
+              cell: (enc: any) => {
                 const p = enc.patient;
                 const name = p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : enc.patientId ?? '—';
-                const hasDue = (enc.labOrders ?? []).some((o: any) => Number(o.dueAmount) > 0);
                 return (
-                  <tr key={enc.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '12px 16px', color: '#475569' }}>
-                      {enc.createdAt ? new Date(enc.createdAt).toLocaleString() : '—'}
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <div style={{ fontWeight: 500, color: '#1e293b' }}>{name}</div>
-                      {p?.mrn && <div style={{ fontSize: '12px', color: '#94a3b8' }}>MRN: {p.mrn}</div>}
-                    </td>
-                    <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#1d4ed8', fontSize: '13px' }}>
-                      <Link href={`/lims/encounters/${enc.id}`} style={{ color: '#1d4ed8', textDecoration: 'underline' }}>
-                        {enc.encounterCode ?? enc.id?.slice(0, 8)}
-                      </Link>
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <EncounterStatusBadge status={enc.status} />
-                      {hasDue && enc.status !== 'cancelled' && (
-                        <span style={{ marginLeft: '6px', padding: '1px 7px', background: '#fee2e2', color: '#dc2626', borderRadius: '999px', fontSize: '11px', fontWeight: 700, verticalAlign: 'middle' }}>
-                          DUE
-                        </span>
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      {action.disabled ? (
-                        <span style={{ color: '#9ca3af', fontSize: '13px' }}>{action.text}</span>
-                      ) : (
-                        <Link
-                          href={action.href}
-                          style={{ padding: '6px 14px', background: '#2563eb', color: 'white', borderRadius: '4px', textDecoration: 'none', fontSize: '13px', fontWeight: 500 }}
-                        >
-                          {action.text}
-                        </Link>
-                      )}
-                    </td>
-                  </tr>
+                  <div>
+                    <div className="font-medium text-foreground">{name}</div>
+                    {p?.mrn && <div className="text-xs text-muted-foreground">MRN: {p.mrn}</div>}
+                  </div>
                 );
-              })}
-            </tbody>
-          </table>
-        )}
-      </div>
+              },
+            },
+            {
+              key: 'encounterCode',
+              header: 'Encounter ID',
+              cell: (enc: any) => (
+                <Link href={`/lims/encounters/${enc.id}`} className="font-mono text-primary text-sm underline">
+                  {enc.encounterCode ?? enc.id?.slice(0, 8)}
+                </Link>
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Status',
+              cell: (enc: any) => (
+                <div className="flex items-center gap-1.5">
+                  <EncounterStatusBadge status={enc.status} />
+                  <DueBadge amount={enc.labOrders?.find((o: any) => Number(o.dueAmount) > 0)?.dueAmount} />
+                </div>
+              ),
+            },
+            {
+              key: 'action',
+              header: 'Next Action',
+              cell: (enc: any) => {
+                const action = nextActionLink(enc);
+                return action.disabled ? (
+                  <Button variant="ghost" size="sm" disabled>{action.text}</Button>
+                ) : (
+                  <Button asChild size="sm">
+                    <Link href={action.href}>{action.text}</Link>
+                  </Button>
+                );
+              },
+            },
+          ]}
+        />
+      )}
 
       {!loading && (
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '16px' }}>
-          <button
-            disabled={page <= 1}
-            onClick={() => setPage(p => p - 1)}
-            style={{ padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: '6px', background: 'white', cursor: page <= 1 ? 'not-allowed' : 'pointer', color: page <= 1 ? '#94a3b8' : '#1e293b' }}
-          >
+        <div className="flex gap-3 justify-end items-center mt-4">
+          <Button variant="outline" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
             ← Prev
-          </button>
-          <span style={{ padding: '8px 12px', color: '#64748b', fontSize: '14px' }}>Page {page}</span>
-          <button
-            disabled={!hasMore}
-            onClick={() => setPage(p => p + 1)}
-            style={{ padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: '6px', background: 'white', cursor: !hasMore ? 'not-allowed' : 'pointer', color: !hasMore ? '#94a3b8' : '#1e293b' }}
-          >
+          </Button>
+          <span className="text-sm text-muted-foreground px-2">Page {page}</span>
+          <Button variant="outline" disabled={!hasMore} onClick={() => setPage(p => p + 1)}>
             Next →
-          </button>
+          </Button>
         </div>
       )}
     </div>

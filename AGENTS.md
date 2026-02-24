@@ -363,3 +363,52 @@ Build against a deterministic contract before the backend is complete. This elim
 ---
 
 **This document is the governance baseline. Read it first. Respect the guardrails. Build right.**
+
+---
+
+## UI Shell & Theme Governance (Permanent — added 2026-02-24)
+
+### Route Group Requirements
+Every Next.js page in operator or admin apps MUST be under an explicit route group:
+- `(public)` — unauthenticated pages (login, landing). No sidebar rendered.
+- `(protected)` — authenticated LIMS pages. `AppShell` (sidebar + topbar) applied via group layout.
+- `(admin)` — admin back-office pages. `AdminShell` applied.
+No page may be placed outside these groups.
+
+### Shell Requirements
+- All `(protected)` pages render inside `AppShell` (collapsible sidebar + sticky topbar).
+- All `(public)` pages render inside `PublicShell` (branded, no sidebar).
+- Shell components live in `components/shell/`. Do not inline shell HTML in page files.
+
+### Module Namespacing
+- All LIMS routes MUST be under `/lims/*`
+- Future modules: `/rims/*`, `/opd/*`, `/billing/*`
+- Never create top-level unnamespaced LIMS routes (`/encounters`, `/results` etc.). Use redirects if legacy routes must be preserved.
+
+### Component-First Development
+- All new UI pages MUST compose from `components/app/*` wrappers:
+  - `PageHeader` — every page must have one
+  - `SectionCard` — grouping related content
+  - `DataTable` — any tabular list
+  - `EmptyState` / `ErrorState` / `SkeletonPage` — all three states required
+  - `EncounterStatusBadge`, `DocumentStatusBadge` — never inline status colors
+- Tailwind utility classes are used for layout/spacing. No inline `style={{}}` objects in new code.
+- New shadcn/ui primitives go in `components/ui/`. Do not reinvent Button, Input, Dialog etc.
+
+### Prohibited Patterns (enforced by lint)
+- ❌ `fetch(` in operator or admin source (use SDK only)
+- ❌ `axios` imports in operator or admin
+- ❌ `style={{ ... }}` inline objects in new page code
+- ❌ Navigation links pointing to routes outside the correct shell group
+- ❌ Prisma imports in Next.js code (no direct DB from frontend)
+
+### QA Gates (must pass before each deploy)
+- `npx tsc --noEmit` exits 0 in operator and admin
+- `npx next lint` passes in operator and admin (no fetch violations)
+- Manual checklist in `docs/_audit/UI_QA_GATES.md`
+
+### Theme Tokens
+- CSS variables defined in `apps/operator/src/app/globals.css` under `:root` and `.dark`
+- Color tokens: `--primary`, `--background`, `--foreground`, `--muted`, `--destructive`, etc.
+- Sidebar tokens: `--sidebar`, `--sidebar-foreground`, `--sidebar-accent`
+- Any new color must be added as a CSS variable, not hardcoded

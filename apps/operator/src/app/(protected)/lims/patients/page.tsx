@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { PageHeader, DataTable, EmptyState } from '@/components/app';
+import { Button } from '@/components/ui/button';
 
 export default function PatientsPage() {
   const [patients, setPatients] = useState<any[]>([]);
@@ -24,54 +26,34 @@ export default function PatientsPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <div>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b', margin: 0 }}>Patients</h2>
-          {pagination && <p style={{ color: '#64748b', margin: '4px 0 0', fontSize: '14px' }}>{pagination.total} total</p>}
-        </div>
-        <Link
-          href="/lims/patients/new"
-          style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-        >
-          + New Patient
-        </Link>
-      </div>
+      <PageHeader
+        title="Patients"
+        description={pagination ? `${pagination.total} total` : undefined}
+        actions={
+          <Button asChild>
+            <Link href="/lims/patients/new">+ New Patient</Link>
+          </Button>
+        }
+      />
 
-      {loading && <p style={{ color: '#64748b' }}>Loading patients...</p>}
-      {error && <p style={{ color: '#ef4444' }}>{error}</p>}
+      {loading && <p className="text-muted-foreground">Loading patients...</p>}
+      {error && <p className="text-destructive">{error}</p>}
       {!loading && !error && patients.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '48px', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-          <p style={{ color: '#64748b', fontSize: '16px' }}>No patients yet.</p>
-        </div>
+        <EmptyState title="No patients yet" />
       )}
 
       {!loading && patients.length > 0 && (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                {['MRN', 'Name', 'DOB', 'Gender', 'Created'].map((h) => (
-                  <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {patients.map((p: any) => (
-                <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace', color: '#475569' }}>{p.mrn}</td>
-                  <td style={{ padding: '12px 16px', fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>
-                    {p.firstName} {p.lastName}
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>
-                    {p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString() : '—'}
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{p.gender ?? '—'}</td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{new Date(p.createdAt).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          data={patients}
+          keyExtractor={(p: any) => p.id}
+          columns={[
+            { key: 'mrn', header: 'MRN', cell: (p: any) => <span className="font-mono text-sm text-muted-foreground">{p.mrn}</span> },
+            { key: 'name', header: 'Name', cell: (p: any) => <span className="font-medium text-foreground">{p.firstName} {p.lastName}</span> },
+            { key: 'dob', header: 'DOB', cell: (p: any) => <span className="text-muted-foreground text-sm">{p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString() : '—'}</span> },
+            { key: 'gender', header: 'Gender', cell: (p: any) => <span className="text-muted-foreground text-sm">{p.gender ?? '—'}</span> },
+            { key: 'created', header: 'Created', cell: (p: any) => <span className="text-muted-foreground text-sm">{new Date(p.createdAt).toLocaleDateString()}</span> },
+          ]}
+        />
       )}
     </div>
   );

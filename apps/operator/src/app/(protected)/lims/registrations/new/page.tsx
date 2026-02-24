@@ -3,13 +3,11 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
-
-const inp: React.CSSProperties = {
-  padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px',
-  fontSize: '14px', width: '100%', boxSizing: 'border-box', outline: 'none',
-};
-const inpErr: React.CSSProperties = { ...inp, border: '1px solid #ef4444' };
-const lbl: React.CSSProperties = { display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px', fontWeight: 500 };
+import { PageHeader, SectionCard } from '@/components/app';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 type PatientData = { fullName: string; dateOfBirth: string; gender: string; cnic: string; address: string };
 type SelectedTest = { id: string; name: string; code: string; price: number | null };
@@ -367,51 +365,42 @@ export default function NewRegistrationPage() {
     setTimeout(() => mob1Ref.current?.focus(), 50);
   };
 
-  const card: React.CSSProperties = { background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px' };
-  const sectionTitle: React.CSSProperties = { fontSize: '13px', fontWeight: 700, color: '#64748b', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.06em' };
-
   // ── Success Banner ────────────────────────────────────────────────
   if (savedEncounterId) {
     return (
-      <div style={{ maxWidth: '520px', margin: '48px auto', textAlign: 'center' }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
-        <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: '#1e293b' }}>Registration & Order Saved</h2>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+        <div className="text-5xl mb-6">✅</div>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Registration &amp; Order Saved</h2>
         {registeredMRN && (
-          <p style={{ margin: '0 0 4px', color: '#64748b', fontSize: '15px' }}>
-            MRN: <strong style={{ color: '#1e293b' }}>{registeredMRN}</strong>
+          <p className="text-muted-foreground mb-1">
+            MRN: <strong className="text-foreground">{registeredMRN}</strong>
           </p>
         )}
-        <div style={{ margin: '16px 0 24px', minHeight: '40px' }}>
+        <div className="my-4 min-h-[40px]">
           {pollingReceipt && !receiptUrl && (
-            <p style={{ color: '#94a3b8', fontSize: '14px' }}>⏳ Generating receipt…</p>
+            <p className="text-muted-foreground text-sm">⏳ Generating receipt…</p>
           )}
           {receiptUrl && (
             <a
               href={receiptUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ display: 'inline-block', padding: '10px 24px', background: '#0891b2', color: 'white', borderRadius: '6px', fontWeight: 600, fontSize: '14px', textDecoration: 'none' }}
+              className="inline-block px-6 py-2.5 bg-cyan-600 text-white rounded-md font-semibold text-sm no-underline hover:bg-cyan-700"
             >
               🖨 Download / Print Receipt
             </a>
           )}
           {!pollingReceipt && !receiptUrl && (
-            <p style={{ color: '#94a3b8', fontSize: '13px' }}>Receipt not ready — check reports later.</p>
+            <p className="text-muted-foreground text-xs">Receipt not ready — check reports later.</p>
           )}
         </div>
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => router.push(`/lims/encounters/${savedEncounterId}`)}
-            style={{ padding: '10px 24px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}
-          >
+        <div className="flex gap-3 justify-center flex-wrap mt-4">
+          <Button onClick={() => router.push(`/lims/encounters/${savedEncounterId}`)}>
             Open Encounter →
-          </button>
-          <button
-            onClick={handleReset}
-            style={{ padding: '10px 24px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}
-          >
+          </Button>
+          <Button variant="outline" className="bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white" onClick={handleReset}>
             + New Patient
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -421,7 +410,7 @@ export default function NewRegistrationPage() {
     <div>
       {/* ── Patient Picker Modal ─────────────────────────────────── */}
       {pickerPatients.length > 0 && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div
             ref={pickerRef}
             tabIndex={-1}
@@ -431,21 +420,21 @@ export default function NewRegistrationPage() {
               else if (e.key === 'Enter') { e.preventDefault(); selectPickerPatient(pickerPatients[pickerIdx]); }
               else if (e.key === 'Escape') { e.preventDefault(); closePickerNew(); }
             }}
-            style={{ background: 'white', borderRadius: '10px', width: '520px', maxWidth: '95vw', boxShadow: '0 8px 32px rgba(0,0,0,0.25)', overflow: 'hidden', outline: 'none' }}
+            className="bg-background rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col outline-none"
           >
             {/* Modal header */}
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', background: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="px-5 py-4 border-b border-border bg-muted/40 flex justify-between items-center">
               <div>
-                <div style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>
-                  {pickerPatients.length} patient{pickerPatients.length > 1 ? 's' : ''} found for <span style={{ fontFamily: 'monospace' }}>{mobileValue}</span>
+                <div className="font-bold text-sm text-foreground">
+                  {pickerPatients.length} patient{pickerPatients.length > 1 ? 's' : ''} found for <span className="font-mono">{mobileValue}</span>
                 </div>
-                <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>↑↓ navigate · Enter select · Esc = new patient</div>
+                <div className="text-xs text-muted-foreground mt-0.5">↑↓ navigate · Enter select · Esc = new patient</div>
               </div>
-              <button onClick={closePickerNew} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8', lineHeight: 1 }}>×</button>
+              <button onClick={closePickerNew} className="bg-transparent border-none text-xl cursor-pointer text-muted-foreground leading-none hover:text-foreground">×</button>
             </div>
 
             {/* Patient list */}
-            <div style={{ maxHeight: '340px', overflowY: 'auto' }}>
+            <div className="max-h-[340px] overflow-y-auto">
               {pickerPatients.map((p, i) => {
                 const name = `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() || '—';
                 const age = p.dateOfBirth ? ageFromDob(p.dateOfBirth) : p.ageYears != null ? String(p.ageYears) : null;
@@ -453,67 +442,62 @@ export default function NewRegistrationPage() {
                   <div
                     key={p.id}
                     onClick={() => selectPickerPatient(p)}
-                    style={{ padding: '14px 20px', cursor: 'pointer', background: i === pickerIdx ? '#eff6ff' : 'white', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: i === pickerIdx ? '3px solid #2563eb' : '3px solid transparent' }}
+                    className={cn(
+                      'px-5 py-3.5 cursor-pointer border-b border-border flex justify-between items-center border-l-[3px]',
+                      i === pickerIdx ? 'bg-blue-50 border-l-blue-600' : 'bg-background border-l-transparent hover:bg-muted/30'
+                    )}
                     onMouseEnter={() => setPickerIdx(i)}
                   >
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '14px', color: '#1e293b' }}>{name}</div>
-                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                      <div className="font-semibold text-sm text-foreground">{name}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">
                         MRN: <strong>{p.mrn ?? '—'}</strong>
                         {age && ` · ${age}y`}
                         {p.gender && ` · ${p.gender.charAt(0).toUpperCase()}`}
                         {p.cnic && ` · CNIC: ${p.cnic}`}
                       </div>
                     </div>
-                    <span style={{ fontSize: '11px', color: '#94a3b8', background: '#f1f5f9', borderRadius: '4px', padding: '2px 8px' }}>Select</span>
+                    <span className="text-xs text-muted-foreground bg-muted rounded px-2 py-0.5">Select</span>
                   </div>
                 );
               })}
             </div>
 
             {/* New registration option */}
-            <div style={{ padding: '14px 20px', borderTop: '1px solid #f1f5f9', background: '#fafafa', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '13px', color: '#64748b' }}>Not listed? Register a new patient for this number.</span>
-              <button
-                onClick={closePickerNew}
-                style={{ padding: '7px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}
-              >
-                + New Registration
-              </button>
+            <div className="px-5 py-3.5 border-t border-border bg-muted/20 flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Not listed? Register a new patient for this number.</span>
+              <Button size="sm" onClick={closePickerNew}>+ New Registration</Button>
             </div>
           </div>
         </div>
       )}
 
       {/* Header */}
-      <div style={{ marginBottom: '20px' }}>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#1e293b' }}>New Registration</h1>
-        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '14px' }}>Patient · Order · Payment</p>
-      </div>
+      <PageHeader title="New Registration" description="Patient · Order · Payment" />
 
       {/* SECTION 1 — Patient */}
-      <div style={{ ...card, marginBottom: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <p style={sectionTitle}>Patient Registration</p>
+      <SectionCard className="mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-sm font-semibold text-foreground mb-0 uppercase tracking-wide">Patient Registration</h3>
           {registeredMRN && (
-            <span style={{ background: '#dcfce7', color: '#15803d', borderRadius: '20px', padding: '3px 14px', fontSize: '12px', fontWeight: 700 }}>
+            <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200">
               MRN: {registeredMRN}
-            </span>
+            </Badge>
           )}
           {!registeredMRN && lookupDone && pickerPatients.length === 0 && !mobileLooking && (
-            <span style={{ background: '#fef9c3', color: '#854d0e', borderRadius: '20px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>
+            <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">
               New Patient · MRN: Auto-generated
-            </span>
+            </Badge>
           )}
           {mobileLooking && (
-            <span style={{ color: '#94a3b8', fontSize: '12px' }}>Looking up…</span>
+            <span className="text-muted-foreground text-xs">Looking up…</span>
           )}
         </div>
 
         {/* Mobile — two subfields with visual dash */}
-        <div style={{ marginBottom: '16px', maxWidth: '300px' }}>
-          <label style={lbl}>Mobile</label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+        <div className="mb-4 max-w-[300px]">
+          <Label className="block text-xs font-medium text-muted-foreground mb-1">Mobile</Label>
+          <div className="flex items-center">
             <input
               ref={mob1Ref}
               value={mob1}
@@ -528,9 +512,9 @@ export default function NewRegistrationPage() {
               }}
               placeholder="0300"
               maxLength={4}
-              style={{ ...inp, width: '72px', borderRadius: '6px 0 0 6px', borderRight: 'none', textAlign: 'center', letterSpacing: '2px' }}
+              className="w-[72px] px-2.5 py-2 border border-input rounded-l-md border-r-0 text-sm bg-background outline-none focus:ring-1 focus:ring-ring text-center tracking-widest"
             />
-            <span style={{ padding: '8px 6px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderLeft: 'none', borderRight: 'none', color: '#64748b', fontSize: '16px', lineHeight: 1, userSelect: 'none' }}>-</span>
+            <span className="px-1.5 py-2 bg-muted border border-input border-l-0 border-r-0 text-muted-foreground text-base leading-none select-none">-</span>
             <input
               ref={mob2Ref}
               value={mob2}
@@ -546,29 +530,32 @@ export default function NewRegistrationPage() {
               onBlur={handleMobileLookup}
               placeholder="1234567"
               maxLength={7}
-              style={{ ...inp, flex: 1, borderRadius: '0 6px 6px 0', letterSpacing: '1px' }}
+              className="flex-1 px-2.5 py-2 border border-input rounded-r-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring tracking-wider"
             />
           </div>
         </div>
 
         {/* Full Name */}
-        <div style={{ marginBottom: '12px' }}>
-          <label style={lbl}>Full Name *</label>
+        <div className="mb-3">
+          <Label className="block text-xs font-medium text-muted-foreground mb-1">Full Name *</Label>
           <input
             ref={fullNameRef}
             value={patient.fullName}
             onChange={e => setField('fullName', e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(ageRef); } }}
             placeholder="e.g. Ali Hassan"
-            style={fieldErrors.fullName ? inpErr : inp}
+            className={cn(
+              'w-full px-2.5 py-2 border rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring',
+              fieldErrors.fullName ? 'border-destructive focus:ring-destructive' : 'border-input'
+            )}
           />
-          {fieldErrors.fullName && <p style={{ color: '#ef4444', fontSize: '11px', margin: '2px 0 0' }}>{fieldErrors.fullName}</p>}
+          {fieldErrors.fullName && <p className="text-destructive text-xs mt-0.5">{fieldErrors.fullName}</p>}
         </div>
 
         {/* Age + DOB + Gender + CNIC */}
-        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+        <div className="grid grid-cols-[80px_1fr_1fr_1fr] gap-3 mb-3">
           <div>
-            <label style={lbl}>Age (yrs)</label>
+            <Label className="block text-xs font-medium text-muted-foreground mb-1">Age (yrs)</Label>
             <input
               ref={ageRef}
               type="number" min="0" max="150"
@@ -576,51 +563,51 @@ export default function NewRegistrationPage() {
               onChange={e => handleAgeInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(dobRef); } }}
               placeholder="yrs"
-              style={inp}
+              className="w-full px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
-            <label style={lbl}>Date of Birth</label>
+            <Label className="block text-xs font-medium text-muted-foreground mb-1">Date of Birth</Label>
             <input
               ref={dobRef}
               type="date"
               value={patient.dateOfBirth}
               onChange={e => setField('dateOfBirth', e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); genderRef.current?.focus(); } }}
-              style={inp}
+              className="w-full px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
-            <label style={lbl}>Gender *</label>
+            <Label className="block text-xs font-medium text-muted-foreground mb-1">Gender *</Label>
             <select
               ref={genderRef}
               value={patient.gender}
               onChange={e => setField('gender', e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(cnicRef); } }}
-              style={{ ...inp, background: 'white' }}
+              className="w-full px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none"
             >
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
-            {fieldErrors.gender && <p style={{ color: '#ef4444', fontSize: '11px', margin: '2px 0 0' }}>{fieldErrors.gender}</p>}
+            {fieldErrors.gender && <p className="text-destructive text-xs mt-0.5">{fieldErrors.gender}</p>}
           </div>
           <div>
-            <label style={lbl}>CNIC</label>
+            <Label className="block text-xs font-medium text-muted-foreground mb-1">CNIC</Label>
             <input
               ref={cnicRef}
               value={patient.cnic}
               onChange={e => setField('cnic', e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addressRef.current?.focus(); } }}
               placeholder="XXXXX-XXXXXXX-X"
-              style={inp}
+              className="w-full px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
         </div>
 
         {/* Address */}
-        <div style={{ marginBottom: '16px' }}>
-          <label style={lbl}>Address</label>
+        <div className="mb-4">
+          <Label className="block text-xs font-medium text-muted-foreground mb-1">Address</Label>
           <textarea
             ref={addressRef}
             value={patient.address}
@@ -628,34 +615,30 @@ export default function NewRegistrationPage() {
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); testSearchRef.current?.focus(); } }}
             rows={2}
             placeholder="Press Enter to move to order, Shift+Enter for new line"
-            style={{ ...inp, resize: 'vertical' }}
+            className="w-full px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring resize-y"
           />
         </div>
 
         {/* Register Patient button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={handleRegisterPatient}
-            disabled={saving}
-            style={{ padding: '8px 20px', background: saving ? '#94a3b8' : '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 600, fontSize: '14px' }}
-          >
+        <div className="flex items-center gap-3">
+          <Button onClick={handleRegisterPatient} disabled={saving}>
             {saving ? 'Registering…' : '👤 Register Patient'}
-          </button>
+          </Button>
           {registeredMRN && (
-            <span style={{ fontSize: '13px', color: '#15803d', fontWeight: 600 }}>
+            <span className="text-sm text-emerald-700 font-semibold">
               ✓ Registered — MRN: {registeredMRN}
             </span>
           )}
         </div>
-      </div>
+      </SectionCard>
 
       {/* SECTION 2+3 — Order + Payment */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '16px', marginBottom: '16px' }}>
+      <div className="grid grid-cols-[1fr_340px] gap-4 mb-4">
 
         {/* SECTION 2 — Order */}
-        <div style={card}>
-          <p style={sectionTitle}>Order Tests</p>
-          <div style={{ position: 'relative', marginBottom: '12px' }}>
+        <SectionCard>
+          <h3 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wide">Order Tests</h3>
+          <div className="relative mb-3">
             <input
               ref={testSearchRef}
               value={testSearch}
@@ -664,111 +647,114 @@ export default function NewRegistrationPage() {
               onBlur={() => setTimeout(() => setTestDropOpen(false), 150)}
               onFocus={() => testResults.length > 0 && setTestDropOpen(true)}
               placeholder="Type test name or code, Enter to add…"
-              style={fieldErrors.tests ? inpErr : inp}
+              className={cn(
+                'w-full px-2.5 py-2 border rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring',
+                fieldErrors.tests ? 'border-destructive focus:ring-destructive' : 'border-input'
+              )}
             />
-            {searching && <span style={{ position: 'absolute', right: '10px', top: '9px', color: '#94a3b8', fontSize: '12px' }}>Searching…</span>}
+            {searching && <span className="absolute right-2.5 top-2 text-muted-foreground text-xs">Searching…</span>}
             {testDropOpen && testResults.length > 0 && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', zIndex: 100, maxHeight: '240px', overflowY: 'auto' }}>
+              <div className="absolute top-full left-0 right-0 bg-background border border-input rounded-md shadow-md z-[100] max-h-[240px] overflow-y-auto">
                 {testResults.map((t, i) => (
                   <div
                     key={t.id}
                     onMouseDown={() => addTest(t)}
-                    style={{ padding: '10px 14px', cursor: 'pointer', background: i === testDropIdx ? '#eff6ff' : 'white', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                    className={cn(
+                      'px-3.5 py-2.5 cursor-pointer border-b border-border flex justify-between items-center',
+                      i === testDropIdx ? 'bg-blue-50' : 'bg-background hover:bg-muted/30'
+                    )}
                   >
                     <div>
-                      <div style={{ fontWeight: 500, fontSize: '14px', color: '#1e293b' }}>{t.name}</div>
-                      {t.code && <div style={{ fontSize: '11px', color: '#94a3b8' }}>{t.code}</div>}
+                      <div className="font-medium text-sm text-foreground">{t.name}</div>
+                      {t.code && <div className="text-xs text-muted-foreground">{t.code}</div>}
                     </div>
-                    <span style={{ fontSize: '12px', color: '#64748b' }}>{t.price != null ? `PKR ${t.price}` : 'N/A'}</span>
+                    <span className="text-xs text-muted-foreground">{t.price != null ? `PKR ${t.price}` : 'N/A'}</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
-          {fieldErrors.tests && <p style={{ color: '#ef4444', fontSize: '12px', margin: '-8px 0 8px' }}>{fieldErrors.tests}</p>}
+          {fieldErrors.tests && <p className="text-destructive text-xs -mt-2 mb-2">{fieldErrors.tests}</p>}
 
           {selectedTests.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '28px 16px', color: '#94a3b8', fontSize: '14px', border: '1px dashed #e2e8f0', borderRadius: '6px' }}>
-              Search and add tests · Press <kbd style={{ background: '#f1f5f9', padding: '1px 6px', borderRadius: '3px', fontSize: '12px' }}>Enter</kbd> to add, <kbd style={{ background: '#f1f5f9', padding: '1px 6px', borderRadius: '3px', fontSize: '12px' }}>Tab</kbd> for payment
+            <div className="text-center py-7 px-4 text-muted-foreground text-sm border border-dashed border-input rounded-md">
+              Search and add tests · Press <kbd className="bg-muted px-1.5 py-0.5 rounded text-xs">Enter</kbd> to add, <kbd className="bg-muted px-1.5 py-0.5 rounded text-xs">Tab</kbd> for payment
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div className="flex flex-col gap-1.5">
               {selectedTests.map(t => (
-                <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #f1f5f9' }}>
+                <div key={t.id} className="flex justify-between items-center px-3.5 py-2.5 bg-muted/30 rounded-md border border-border">
                   <div>
-                    <div style={{ fontWeight: 500, fontSize: '14px', color: '#1e293b' }}>{t.name}</div>
-                    {t.code && <div style={{ fontSize: '11px', color: '#94a3b8' }}>{t.code}</div>}
+                    <div className="font-medium text-sm text-foreground">{t.name}</div>
+                    {t.code && <div className="text-xs text-muted-foreground">{t.code}</div>}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ fontSize: '13px', color: '#64748b' }}>{t.price != null ? `PKR ${t.price}` : 'N/A'}</span>
-                    <button onClick={() => removeTest(t.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '18px', lineHeight: 1, padding: '0 4px' }}>×</button>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground">{t.price != null ? `PKR ${t.price}` : 'N/A'}</span>
+                    <button onClick={() => removeTest(t.id)} className="bg-transparent border-none text-destructive cursor-pointer text-lg leading-none px-1 hover:opacity-70">×</button>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </SectionCard>
 
         {/* SECTION 3 — Payment */}
-        <div style={card}>
-          <p style={sectionTitle}>Payment</p>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={lbl}>Total (PKR)</label>
-            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
+        <SectionCard>
+          <h3 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wide">Payment</h3>
+          <div className="mb-3">
+            <Label className="block text-xs font-medium text-muted-foreground mb-1">Total (PKR)</Label>
+            <div className="px-2.5 py-2 bg-muted/40 border border-input rounded-md text-[15px] font-bold text-foreground">
               {total.toLocaleString()}
             </div>
           </div>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={lbl}>Discount</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="mb-3">
+            <Label className="block text-xs font-medium text-muted-foreground mb-1">Discount</Label>
+            <div className="flex gap-2">
               <input
                 ref={discountRef}
                 type="number" min="0" value={discountPKR}
                 onChange={e => handleDiscountPKRChange(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(paidRef); } }}
-                placeholder="PKR" style={{ ...inp, flex: 2 }}
+                placeholder="PKR"
+                className="flex-[2] px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring"
               />
               <input
                 type="number" min="0" max="100" value={discountPct}
                 onChange={e => handleDiscountPctChange(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); focusAndSelect(paidRef); } }}
-                placeholder="%" style={{ ...inp, flex: 1 }}
+                placeholder="%"
+                className="flex-1 px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
           </div>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={lbl}>Paid (PKR)</label>
+          <div className="mb-3">
+            <Label className="block text-xs font-medium text-muted-foreground mb-1">Paid (PKR)</Label>
             <input
               ref={paidRef}
               type="number" min="0" value={paid}
               onChange={e => setPaid(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleSave(); } }}
-              style={inp}
+              className="w-full px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
-          <div style={{ padding: '10px 14px', background: due > 0 ? '#fef2f2' : '#f0fdf4', borderRadius: '6px', border: `1px solid ${due > 0 ? '#fecaca' : '#bbf7d0'}` }}>
-            <div style={{ fontSize: '12px', color: '#64748b' }}>Due (PKR)</div>
-            <div style={{ fontSize: '22px', fontWeight: 700, color: due > 0 ? '#ef4444' : '#15803d' }}>{due.toLocaleString()}</div>
+          <div className={cn('px-3.5 py-2.5 rounded-md border', due > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200')}>
+            <div className="text-xs text-muted-foreground">Due (PKR)</div>
+            <div className={cn('text-2xl font-bold', due > 0 ? 'text-destructive' : 'text-emerald-700')}>{due.toLocaleString()}</div>
           </div>
-        </div>
+        </SectionCard>
       </div>
 
       {/* Action bar */}
-      {saveError && <p style={{ color: '#ef4444', fontSize: '13px', marginBottom: '8px' }}>{saveError}</p>}
-      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <button
-          onClick={handleReset}
-          style={{ padding: '10px 24px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', color: '#64748b' }}
-        >
-          Reset
-        </button>
-        <button
+      {saveError && <p className="text-destructive text-sm mb-2">{saveError}</p>}
+      <div className="flex gap-3 justify-end items-center">
+        <Button variant="outline" onClick={handleReset}>Reset</Button>
+        <Button
           onClick={handleSave}
           disabled={saving}
-          style={{ padding: '10px 28px', background: saving ? '#94a3b8' : '#059669', color: 'white', border: 'none', borderRadius: '6px', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: 600, fontSize: '14px' }}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white"
         >
           {saving ? 'Saving…' : '💾 Save & Print Receipt'}
-        </button>
+        </Button>
       </div>
     </div>
   );

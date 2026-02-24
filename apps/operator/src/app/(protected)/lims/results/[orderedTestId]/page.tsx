@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { useFeatureFlags, showSubmitAndVerify, showSubmitOnly } from '@/hooks/use-feature-flags';
+import { PageHeader, SectionCard } from '@/components/app';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { cn } from '@/lib/utils';
 
 const SPECIMEN_READY_STATUSES = ['specimen_collected', 'specimen_received', 'partial_resulted', 'resulted', 'verified'];
 
@@ -39,20 +44,10 @@ function FlagBadge({ flag, locked, onClick }: { flag: string | null; locked: boo
       <span
         onClick={locked ? undefined : onClick}
         title={locked ? undefined : 'Click to set flag'}
-        style={{
-          display: 'inline-block',
-          width: '24px',
-          height: '24px',
-          lineHeight: '24px',
-          textAlign: 'center',
-          borderRadius: '4px',
-          fontSize: '11px',
-          fontWeight: 700,
-          background: '#f1f5f9',
-          color: '#94a3b8',
-          cursor: locked ? 'default' : 'pointer',
-          userSelect: 'none',
-        }}
+        className={cn(
+          'inline-block w-6 h-6 leading-6 text-center rounded text-xs font-bold bg-muted text-muted-foreground select-none',
+          locked ? 'cursor-default' : 'cursor-pointer'
+        )}
       >—</span>
     );
   }
@@ -61,17 +56,8 @@ function FlagBadge({ flag, locked, onClick }: { flag: string | null; locked: boo
     <span
       onClick={locked ? undefined : onClick}
       title={locked ? undefined : 'Click to cycle flag'}
-      style={{
-        display: 'inline-block',
-        padding: '2px 8px',
-        borderRadius: '4px',
-        fontSize: '11px',
-        fontWeight: 700,
-        background: s.bg,
-        color: s.color,
-        cursor: locked ? 'default' : 'pointer',
-        userSelect: 'none',
-      }}
+      className={cn('inline-block px-2 py-0.5 rounded text-xs font-bold select-none', locked ? 'cursor-default' : 'cursor-pointer')}
+      style={{ background: s.bg, color: s.color }}
     >{s.label}</span>
   );
 }
@@ -82,19 +68,9 @@ function Toast({ message, onDone }: { message: string; onDone: () => void }) {
     return () => clearTimeout(t);
   }, [onDone]);
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: '24px',
-      right: '24px',
-      background: '#1e293b',
-      color: 'white',
-      padding: '12px 20px',
-      borderRadius: '8px',
-      fontSize: '14px',
-      fontWeight: 500,
-      zIndex: 9999,
-      boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-    }}>{message}</div>
+    <div className="fixed bottom-6 right-6 bg-foreground text-background px-5 py-3 rounded-lg text-sm font-medium z-50 shadow-lg">
+      {message}
+    </div>
   );
 }
 
@@ -315,91 +291,64 @@ export default function ResultsEntryPage() {
     } catch { /* ignore */ }
   };
 
-  if (loading) return <p style={{ color: '#64748b', padding: '24px' }}>Loading...</p>;
-  if (error) return <p style={{ color: '#ef4444', padding: '24px' }}>{error}</p>;
+  if (loading) return <p className="text-muted-foreground p-6">Loading...</p>;
+  if (error) return <p className="text-destructive p-6">{error}</p>;
   if (!detail) return null;
 
   const patient = detail.patient;
   const parameters: any[] = detail.parameters ?? [];
 
-  const inputStyle = (locked: boolean): React.CSSProperties => ({
-    padding: '6px 10px',
-    border: '1px solid #e2e8f0',
-    borderRadius: '6px',
-    fontSize: '13px',
-    width: '160px',
-    background: locked ? '#f8fafc' : 'white',
-    color: locked ? '#64748b' : '#1e293b',
-  });
-
-  const btnBase: React.CSSProperties = {
-    padding: '8px 20px',
-    border: 'none',
-    borderRadius: '6px',
-    fontWeight: 600,
-    fontSize: '14px',
-    cursor: 'pointer',
-  };
+  const inputCls = (locked: boolean) => cn(
+    'px-2.5 py-1.5 border rounded-md text-sm w-40',
+    locked ? 'bg-muted text-muted-foreground' : 'bg-background text-foreground'
+  );
 
   return (
-    <div style={{ paddingBottom: '80px' }}>
+    <div className="pb-20">
       {/* Sticky header */}
-      <div style={{
-        position: 'sticky',
-        top: 0,
-        background: 'white',
-        zIndex: 100,
-        padding: '16px 0',
-        borderBottom: '1px solid #e2e8f0',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-        marginBottom: '24px',
-      }}>
+      <div className="sticky top-0 bg-background z-10 py-4 border-b shadow-sm mb-6">
         {/* Back button row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-          <Link href="/lims/results" style={{ color: '#2563eb', fontSize: '14px', textDecoration: 'none', fontWeight: 500 }}>
-            ← Back to Results
-          </Link>
+        <div className="flex items-center gap-3 mb-3">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/lims/results">← Back to Results</Link>
+          </Button>
           {!specimenReady && (
-            <Link
-              href="/lims/sample-collection"
-              style={{ color: '#f59e0b', fontSize: '13px', textDecoration: 'none', fontWeight: 500 }}
-            >
-              Go to Sample Collection
-            </Link>
+            <Button variant="ghost" size="sm" asChild className="text-amber-600">
+              <Link href="/lims/sample-collection">Go to Sample Collection</Link>
+            </Button>
           )}
         </div>
 
         {/* Patient + test info */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="flex justify-between items-start flex-wrap gap-3">
           <div>
             {patient && (
-              <div style={{ marginBottom: '4px' }}>
-                <span style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b' }}>
+              <div className="mb-1">
+                <span className="text-base font-bold text-foreground">
                   {patient.firstName} {patient.lastName}
                 </span>
-                <span style={{ marginLeft: '10px', fontSize: '13px', color: '#64748b' }}>
+                <span className="ml-2.5 text-sm text-muted-foreground">
                   {patient.mrn} · {patientLabel(patient)}
                 </span>
               </div>
             )}
-            <div style={{ fontSize: '12px', color: '#94a3b8' }}>
-              Order: <span style={{ fontFamily: 'monospace', color: '#475569' }}>{detail.encounterCode ?? detail.encounterId?.slice(0, 12)}</span>
+            <div className="text-xs text-muted-foreground">
+              Order: <span className="font-mono text-foreground">{detail.encounterCode ?? detail.encounterId?.slice(0, 12)}</span>
             </div>
           </div>
 
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '22px', fontWeight: 700, color: '#1e293b' }}>{detail.testName}</div>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '4px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+          <div className="text-right">
+            <div className="text-xl font-bold text-foreground">{detail.testName}</div>
+            <div className="flex gap-2 mt-1 justify-end flex-wrap">
               {detail.specimenStatus && (
-                <span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 600, background: '#f0f9ff', color: '#0369a1' }}>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700">
                   {detail.specimenStatus}
                 </span>
               )}
-              <span style={{
-                padding: '3px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
-                background: isSubmitted ? '#f0fdf4' : '#fff7ed',
-                color: isSubmitted ? '#16a34a' : '#c2410c',
-              }}>
+              <span className={cn(
+                'px-2.5 py-0.5 rounded-full text-xs font-semibold',
+                isSubmitted ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+              )}>
                 {detail.resultStatus}
               </span>
             </div>
@@ -409,23 +358,14 @@ export default function ResultsEntryPage() {
 
       {/* Specimen gate warning */}
       {!specimenReady && (
-        <div style={{
-          background: '#fff7ed',
-          border: '1px solid #fed7aa',
-          borderRadius: '8px',
-          padding: '16px 20px',
-          marginBottom: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-        }}>
-          <span style={{ fontSize: '20px' }}>⚠️</span>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+          <span className="text-xl">⚠️</span>
           <div>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#c2410c' }}>
+            <span className="text-sm font-semibold text-amber-700">
               Sample not collected. Collect the sample first before entering results.
             </span>
-            <span style={{ marginLeft: '8px' }}>
-              <Link href="/lims/sample-collection" style={{ color: '#2563eb', fontSize: '13px' }}>Go to Sample Collection →</Link>
+            <span className="ml-2">
+              <Link href="/lims/sample-collection" className="text-primary text-sm">Go to Sample Collection →</Link>
             </span>
           </div>
         </div>
@@ -433,50 +373,45 @@ export default function ResultsEntryPage() {
 
       {/* Action error */}
       {actionError && (
-        <div style={{ background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '6px', padding: '10px 16px', marginBottom: '16px', color: '#dc2626', fontSize: '14px' }}>
+        <div className="bg-destructive/10 border border-destructive/30 rounded-md p-3 mb-4 text-destructive text-sm">
           {actionError}
         </div>
       )}
 
-      {/* Verify / publish status banner */}
+      {/* Verify / publish status banners */}
       {verifyStatus === 'verifying' && (
-        <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', padding: '14px 20px', marginBottom: '16px', color: '#0369a1', fontSize: '14px', fontWeight: 500 }}>
+        <div className="bg-sky-50 border border-sky-200 rounded-lg px-5 py-3.5 mb-4 text-sky-700 text-sm font-medium">
           Verifying…
         </div>
       )}
       {verifyStatus === 'verified' && (
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '14px 20px', marginBottom: '16px', color: '#16a34a', fontSize: '14px', fontWeight: 500 }}>
+        <div className="bg-green-50 border border-green-200 rounded-lg px-5 py-3.5 mb-4 text-green-700 text-sm font-medium">
           ✅ Verified. Publishing report…
         </div>
       )}
       {verifyStatus === 'published' && publishedDoc && (
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '14px 20px', marginBottom: '16px' }}>
-          <div style={{ color: '#16a34a', fontWeight: 700, marginBottom: '10px' }}>✅ Report Published</div>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <button onClick={() => handleOpenPdf(publishedDoc)} style={{ ...btnBase, background: '#2563eb', color: 'white' }}>Open PDF</button>
-            <button onClick={() => handleDownloadPdf(publishedDoc)} style={{ ...btnBase, background: '#16a34a', color: 'white' }}>Download PDF</button>
-            <button
-              onClick={() => navigateAfterAction(detail.encounterId)}
-              style={{ ...btnBase, background: '#f8fafc', color: '#1e293b', border: '1px solid #e2e8f0' }}
-            >
-              Next test →
-            </button>
+        <div className="bg-green-50 border border-green-200 rounded-lg px-5 py-4 mb-4">
+          <div className="font-bold text-green-700 mb-2.5">✅ Report Published</div>
+          <div className="flex gap-2.5 flex-wrap">
+            <Button onClick={() => handleOpenPdf(publishedDoc)}>Open PDF</Button>
+            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handleDownloadPdf(publishedDoc)}>Download PDF</Button>
+            <Button variant="outline" onClick={() => navigateAfterAction(detail.encounterId)}>Next test →</Button>
           </div>
         </div>
       )}
 
       {/* Parameters table */}
       {parameters.length === 0 ? (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '32px', textAlign: 'center' }}>
-          <p style={{ color: '#94a3b8', margin: 0 }}>No parameters defined for this test.</p>
-        </div>
+        <SectionCard>
+          <p className="text-muted-foreground text-center py-4">No parameters defined for this test.</p>
+        </SectionCard>
       ) : (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden', marginBottom: '24px' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <SectionCard noPadding className="mb-6">
+          <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+              <tr className="bg-muted/50">
                 {['Parameter', 'Value', 'Unit', 'Ref Range', 'Flag'].map(h => (
-                  <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{h}</th>
+                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -500,7 +435,7 @@ export default function ResultsEntryPage() {
                         disabled={isLocked}
                         value={currentValue}
                         onChange={e => setLocalValues(v => ({ ...v, [p.parameterId]: e.target.value }))}
-                        style={inputStyle(isLocked)}
+                        className={inputCls(isLocked)}
                       >
                         <option value="">—</option>
                         {p.allowedValues.map((opt: string) => (
@@ -515,7 +450,7 @@ export default function ResultsEntryPage() {
                         disabled={isLocked}
                         value={currentValue}
                         onChange={e => setLocalValues(v => ({ ...v, [p.parameterId]: e.target.value }))}
-                        style={inputStyle(isLocked)}
+                        className={inputCls(isLocked)}
                       >
                         <option value="">—</option>
                         <option value="true">Yes</option>
@@ -531,7 +466,7 @@ export default function ResultsEntryPage() {
                         readOnly={isLocked}
                         value={currentValue}
                         onChange={e => setLocalValues(v => ({ ...v, [p.parameterId]: e.target.value }))}
-                        style={inputStyle(isLocked)}
+                        className={inputCls(isLocked)}
                       />
                     );
                   }
@@ -541,27 +476,27 @@ export default function ResultsEntryPage() {
                       readOnly={isLocked}
                       value={currentValue}
                       onChange={e => setLocalValues(v => ({ ...v, [p.parameterId]: e.target.value }))}
-                      style={inputStyle(isLocked)}
+                      className={inputCls(isLocked)}
                     />
                   );
                 };
 
                 return (
-                  <tr key={p.parameterId} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '10px 16px', fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>
+                  <tr key={p.parameterId} className="border-t border-muted/50">
+                    <td className="px-4 py-2.5 text-sm text-foreground font-medium">
                       {p.name}
-                      {isLocked && <span style={{ marginLeft: '6px', fontSize: '12px' }}>🔒</span>}
+                      {isLocked && <span className="ml-1.5 text-xs">🔒</span>}
                     </td>
-                    <td style={{ padding: '10px 16px' }}>
+                    <td className="px-4 py-2.5">
                       {renderInput()}
                     </td>
-                    <td style={{ padding: '10px 16px', fontSize: '13px', color: '#64748b' }}>
+                    <td className="px-4 py-2.5 text-sm text-muted-foreground">
                       {p.unit ?? '—'}
                     </td>
-                    <td style={{ padding: '10px 16px', fontSize: '13px', color: '#64748b' }}>
+                    <td className="px-4 py-2.5 text-sm text-muted-foreground">
                       {p.referenceRange ?? '—'}
                     </td>
-                    <td style={{ padding: '10px 16px' }}>
+                    <td className="px-4 py-2.5">
                       <FlagBadge flag={currentFlag} locked={isLocked} onClick={cycleFlag} />
                     </td>
                   </tr>
@@ -569,41 +504,34 @@ export default function ResultsEntryPage() {
               })}
             </tbody>
           </table>
-        </div>
+        </SectionCard>
       )}
 
       {/* Action buttons footer */}
-      <div style={{
-        display: 'flex',
-        gap: '12px',
-        flexWrap: 'wrap',
-        padding: '16px 0',
-        borderTop: '1px solid #e2e8f0',
-      }}>
-        <button
+      <div className="flex gap-3 flex-wrap pt-4 border-t">
+        <Button
+          variant="outline"
           onClick={handleSave}
           disabled={!specimenReady || saving}
-          style={{ ...btnBase, background: specimenReady ? '#f8fafc' : '#f1f5f9', color: specimenReady ? '#1e293b' : '#94a3b8', border: '1px solid #e2e8f0', opacity: saving ? 0.7 : 1 }}
         >
           {saving ? 'Saving…' : 'Save'}
-        </button>
+        </Button>
         {showSubmitOnly(flags) && (
-          <button
+          <Button
             onClick={handleSubmit}
             disabled={!specimenReady || submitting}
-            style={{ ...btnBase, background: specimenReady ? '#2563eb' : '#93c5fd', color: 'white', opacity: submitting ? 0.7 : 1 }}
           >
             {submitting ? 'Submitting…' : 'Submit'}
-          </button>
+          </Button>
         )}
         {showSubmitAndVerify(flags) && (
-          <button
+          <Button
             onClick={handleSubmitAndVerify}
             disabled={!specimenReady || verifying || verifyStatus !== 'idle'}
-            style={{ ...btnBase, background: specimenReady && verifyStatus === 'idle' ? '#16a34a' : '#86efac', color: 'white', opacity: verifying ? 0.7 : 1 }}
+            className="bg-emerald-600 hover:bg-emerald-700"
           >
             {verifying ? 'Verifying…' : 'Submit & Verify'}
-          </button>
+          </Button>
         )}
       </div>
 

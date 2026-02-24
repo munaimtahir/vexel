@@ -3,6 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { SectionCard } from '@/components/app';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 type FilledParam = {
   parameterId?: string | null;
@@ -50,8 +54,6 @@ function fmtTime(iso?: string | null): string {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' ' +
     d.toLocaleDateString([], { day: '2-digit', month: 'short' });
 }
-
-const HEADER_HEIGHT = 130;
 
 export default function VerificationEncounterPage() {
   const router = useRouter();
@@ -211,8 +213,8 @@ export default function VerificationEncounterPage() {
     else router.push('/lims/verification');
   };
 
-  if (loading) return <div style={{ padding: '40px', color: '#64748b' }}>Loading...</div>;
-  if (error) return <div style={{ padding: '40px', color: '#ef4444' }}>{error}</div>;
+  if (loading) return <div className="p-10 text-muted-foreground">Loading...</div>;
+  if (error) return <div className="p-10 text-destructive">{error}</div>;
   if (!detail) return null;
 
   const { patient: p, encounter, submittedTestsCount = 0, pendingVerificationCount = 0, testCards = [] } = detail;
@@ -221,27 +223,23 @@ export default function VerificationEncounterPage() {
   const visibleCards = loadAll ? testCards : testCards.filter(c => c.labOrderId === selectedTest);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
+    <div className="flex flex-col h-full relative">
       {/* Sticky header */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 10, background: 'white',
-        borderBottom: '1px solid #e2e8f0', padding: '16px 24px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+      <div className="sticky top-0 z-10 bg-background border-b shadow-sm px-6 py-4">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
           {/* Patient info */}
           <div>
-            <div style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a' }}>
+            <div className="text-lg font-bold text-foreground">
               {p ? `${p.firstName} ${p.lastName}` : '—'}
-              <span style={{ fontWeight: 400, fontSize: '14px', color: '#64748b', marginLeft: '12px' }}>
+              <span className="font-normal text-sm text-muted-foreground ml-3">
                 MRN: {p?.mrn ?? '—'} · {age}/{sex}
               </span>
             </div>
-            <div style={{ fontSize: '13px', color: '#475569', marginTop: '2px' }}>
-              Order: <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{encounter?.encounterCode ?? '—'}</span>
-              <span style={{ marginLeft: '16px' }}>
+            <div className="text-sm text-muted-foreground mt-0.5">
+              Order: <span className="font-mono font-semibold">{encounter?.encounterCode ?? '—'}</span>
+              <span className="ml-4">
                 Submitted: <strong>{submittedTestsCount}</strong> tests ·{' '}
-                Pending: <strong style={{ color: pendingVerificationCount > 0 ? '#d97706' : '#16a34a' }}>
+                Pending: <strong className={pendingVerificationCount > 0 ? 'text-amber-600' : 'text-emerald-600'}>
                   {pendingVerificationCount}
                 </strong>
               </span>
@@ -249,55 +247,31 @@ export default function VerificationEncounterPage() {
           </div>
 
           {/* Action buttons */}
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => router.push('/lims/verification')}
-              style={{
-                padding: '6px 14px', background: 'none', border: '1px solid #cbd5e1',
-                borderRadius: '6px', cursor: 'pointer', fontSize: '13px', color: '#475569',
-              }}
-            >
-              ← Back
-            </button>
-            <button
+          <div className="flex gap-2 items-center flex-wrap">
+            <Button variant="outline" size="sm" onClick={() => router.push('/lims/verification')}>← Back</Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setLoadAll(v => !v)}
-              style={{
-                padding: '6px 14px', background: loadAll ? '#eff6ff' : 'none',
-                border: '1px solid ' + (loadAll ? '#bfdbfe' : '#cbd5e1'),
-                borderRadius: '6px', cursor: 'pointer', fontSize: '13px',
-                color: loadAll ? '#2563eb' : '#475569',
-              }}
+              className={cn(loadAll ? "bg-blue-50 border-blue-200 text-blue-700" : "")}
             >
               {loadAll ? 'Show one test' : 'Load all tests'}
-            </button>
-            <button
-              onClick={() => router.push('/lims/verification')}
-              style={{
-                padding: '6px 14px', background: 'none', border: '1px solid #cbd5e1',
-                borderRadius: '6px', cursor: 'pointer', fontSize: '13px', color: '#475569',
-              }}
-            >
-              Skip
-            </button>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => router.push('/lims/verification')}>Skip</Button>
             {!verified && (
-              <button
+              <Button
                 onClick={handleVerify}
                 disabled={verifying || pendingVerificationCount === 0}
-                style={{
-                  padding: '8px 18px', background: pendingVerificationCount === 0 ? '#e2e8f0' : '#16a34a',
-                  color: pendingVerificationCount === 0 ? '#94a3b8' : 'white',
-                  border: 'none', borderRadius: '6px', cursor: pendingVerificationCount === 0 ? 'not-allowed' : 'pointer',
-                  fontSize: '14px', fontWeight: 600,
-                }}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 {verifying ? 'Verifying…' : '✅ Verify patient'}
-              </button>
+              </Button>
             )}
           </div>
         </div>
 
         {verifyError && (
-          <div style={{ marginTop: '8px', padding: '8px 12px', background: '#fef2f2', borderRadius: '6px', color: '#dc2626', fontSize: '13px' }}>
+          <div className="mt-2 px-3 py-2 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm">
             {verifyError}
           </div>
         )}
@@ -305,129 +279,81 @@ export default function VerificationEncounterPage() {
 
       {/* Success banner */}
       {verified && (
-        <div style={{
-          margin: '16px 24px 0', padding: '16px', background: '#f0fdf4',
-          border: '1px solid #86efac', borderRadius: '8px',
-        }}>
-          <div style={{ fontSize: '16px', fontWeight: 600, color: '#15803d', marginBottom: '6px' }}>
+        <div className="mx-6 mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+          <div className="text-base font-semibold text-emerald-800 mb-1.5">
             ✅ All tests verified. Publishing report…
           </div>
           {pollingMsg && (
-            <div style={{ fontSize: '13px', color: '#166534' }}>{pollingMsg}</div>
+            <div className="text-sm text-emerald-700">{pollingMsg}</div>
           )}
           {publishedDocUrl && (
-            <div style={{ marginTop: '8px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <span style={{ fontSize: '14px', color: '#15803d', fontWeight: 500 }}>📄 Report published</span>
-              <a href={publishedDocUrl} target="_blank" rel="noopener noreferrer"
-                style={{
-                  padding: '6px 14px', background: '#16a34a', color: 'white',
-                  borderRadius: '6px', textDecoration: 'none', fontSize: '13px', fontWeight: 500,
-                }}
-              >
-                Open PDF
-              </a>
+            <div className="mt-2 flex gap-3 items-center">
+              <span className="text-sm font-medium text-emerald-700">📄 Report published</span>
+              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" asChild>
+                <a href={publishedDocUrl} target="_blank" rel="noopener noreferrer">Open PDF</a>
+              </Button>
             </div>
           )}
-          <div style={{ marginTop: '12px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <button
-              onClick={handleNavigateNext}
-              style={{
-                padding: '8px 18px', background: '#2563eb', color: 'white',
-                border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600,
-              }}
-            >
+          <div className="mt-3 flex gap-2.5 items-center">
+            <Button onClick={handleNavigateNext} className="mt-3">
               {countdown !== null
                 ? `Next patient in ${countdown}…`
                 : nextEncounterId ? 'Next patient →' : 'Back to worklist'}
-            </button>
+            </Button>
           </div>
         </div>
       )}
 
       {/* Body: sidebar + cards */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', marginTop: '16px' }}>
+      <div className="flex flex-1 overflow-hidden mt-4">
         {/* Left sidebar */}
-        <div style={{
-          width: '160px', flexShrink: 0,
-          position: 'sticky', top: HEADER_HEIGHT, alignSelf: 'flex-start',
-          padding: '0 8px 0 16px', maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`, overflowY: 'auto',
-        }}>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Tests
-          </div>
+        <div className="w-40 flex-shrink-0 sticky top-[130px] self-start px-2 pl-4 max-h-[calc(100vh-130px)] overflow-y-auto">
+          <div className="text-xs font-semibold text-muted-foreground uppercase mb-2">Tests</div>
           {testCards.map(card => (
             <button
               key={card.labOrderId}
               onClick={() => scrollToTest(card.labOrderId)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '6px', width: '100%',
-                textAlign: 'left', background: selectedTest === card.labOrderId ? '#eff6ff' : 'none',
-                border: 'none', borderRadius: '6px', padding: '7px 8px', cursor: 'pointer',
-                fontSize: '12px', color: selectedTest === card.labOrderId ? '#1d4ed8' : '#475569',
-                marginBottom: '2px',
-              }}
+              className={cn("flex items-center gap-1.5 w-full text-left rounded-md px-2 py-1.5 text-xs mb-0.5 cursor-pointer border-none", selectedTest === card.labOrderId ? "bg-blue-50 text-blue-700 font-medium" : "text-muted-foreground hover:bg-muted/50")}
             >
-              <span style={{
-                width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
-                background: card.resultStatus === 'VERIFIED' ? '#16a34a' : '#d97706',
-              }} />
-              <span style={{ lineHeight: 1.3 }}>{card.testName}</span>
+              <span className={cn("w-2 h-2 rounded-full flex-shrink-0", card.resultStatus === 'VERIFIED' ? "bg-emerald-500" : "bg-amber-500")} />
+              <span className="leading-snug">{card.testName}</span>
             </button>
           ))}
         </div>
 
         {/* Main scroll area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 80px' }}>
+        <div className="flex-1 overflow-y-auto px-6 pb-20">
           {visibleCards.length === 0 && (
-            <div style={{ color: '#94a3b8', padding: '32px 0', textAlign: 'center' }}>
-              No test cards to display
-            </div>
+            <div className="text-muted-foreground py-8 text-center">No test cards to display</div>
           )}
           {visibleCards.map(card => (
             <div
               key={card.labOrderId}
               id={`test-card-${card.labOrderId}`}
-              style={{
-                border: '1px solid #e2e8f0', borderRadius: '10px',
-                marginBottom: '16px', background: 'white',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-              }}
+              className="border rounded-xl mb-4 bg-card shadow-sm"
             >
               {/* Card header */}
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '14px 18px', borderBottom: '1px solid #f1f5f9',
-              }}>
-                <div style={{ fontWeight: 700, fontSize: '15px', color: '#0f172a' }}>
-                  {card.testName}
-                </div>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                  <span style={{
-                    padding: '3px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
-                    background: card.resultStatus === 'VERIFIED' ? '#dcfce7' : '#fef3c7',
-                    color: card.resultStatus === 'VERIFIED' ? '#15803d' : '#92400e',
-                  }}>
-                    {card.resultStatus === 'VERIFIED' ? 'Verified' : 'Pending Verification'}
-                  </span>
-                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-                    {fmtTime(card.submittedAt)}
-                  </span>
+              <div className="flex items-center justify-between px-4 py-3 border-b">
+                <div className="font-bold text-base text-foreground">{card.testName}</div>
+                <div className="flex gap-3 items-center">
+                  {card.resultStatus === 'VERIFIED'
+                    ? <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">Verified</Badge>
+                    : <Badge className="bg-amber-50 text-amber-700 border-amber-200">Pending Verification</Badge>
+                  }
+                  <span className="text-xs text-muted-foreground ml-2">{fmtTime(card.submittedAt)}</span>
                 </div>
               </div>
 
               {/* Card body */}
-              <div style={{ padding: '14px 18px' }}>
+              <div className="px-4 py-3">
                 {!card.filledParameters || card.filledParameters.length === 0 ? (
-                  <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0 }}>No results entered yet</p>
+                  <p className="text-muted-foreground text-sm">No results entered yet</p>
                 ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                  <table className="w-full text-sm border-collapse">
                     <thead>
-                      <tr style={{ background: '#f8fafc' }}>
+                      <tr className="bg-muted/30">
                         {['Parameter', 'Result', 'Unit', 'Ref Range', 'H/L'].map(h => (
-                          <th key={h} style={{
-                            padding: '8px 10px', textAlign: 'left', fontWeight: 600,
-                            color: '#475569', borderBottom: '1px solid #e2e8f0',
-                          }}>
+                          <th key={h} className="px-2.5 py-2 text-left font-semibold text-muted-foreground border-b border-border">
                             {h}
                           </th>
                         ))}
@@ -435,30 +361,21 @@ export default function VerificationEncounterPage() {
                     </thead>
                     <tbody>
                       {card.filledParameters.map((fp, i) => {
-                        const flagColor = fp.flag === 'high' || fp.flag === 'critical' ? '#dc2626'
-                          : fp.flag === 'low' ? '#2563eb' : '#16a34a';
                         const flagLabel = fp.flag === 'high' ? 'H' : fp.flag === 'low' ? 'L'
                           : fp.flag === 'critical' ? 'C!' : fp.flag === 'normal' ? 'N' : '—';
                         return (
-                          <tr key={fp.parameterId ?? i} style={{ borderBottom: '1px solid #f8fafc' }}>
-                            <td style={{ padding: '8px 10px', color: '#334155' }}>{fp.name ?? '—'}</td>
-                            <td style={{
-                              padding: '8px 10px', fontWeight: 600,
-                              color: fp.flag && fp.flag !== 'normal' ? flagColor : '#0f172a',
-                            }}>
+                          <tr key={fp.parameterId ?? i} className="border-b border-muted/30">
+                            <td className="px-2.5 py-2 text-muted-foreground">{fp.name ?? '—'}</td>
+                            <td className={cn("px-2.5 py-2 font-semibold", fp.flag && fp.flag !== 'normal' ? "text-destructive" : "text-foreground")}>
                               {fp.value ?? '—'}
                             </td>
-                            <td style={{ padding: '8px 10px', color: '#64748b' }}>{fp.unit ?? '—'}</td>
-                            <td style={{ padding: '8px 10px', color: '#64748b' }}>{fp.referenceRange ?? '—'}</td>
-                            <td style={{ padding: '8px 10px' }}>
+                            <td className="px-2.5 py-2 text-muted-foreground">{fp.unit ?? '—'}</td>
+                            <td className="px-2.5 py-2 text-muted-foreground">{fp.referenceRange ?? '—'}</td>
+                            <td className="px-2.5 py-2">
                               {fp.flag ? (
-                                <span style={{
-                                  padding: '2px 8px', borderRadius: '10px', fontSize: '11px', fontWeight: 700,
-                                  background: fp.flag !== 'normal' ? '#fef2f2' : '#f0fdf4',
-                                  color: flagColor,
-                                }}>
-                                  {flagLabel}
-                                </span>
+                                fp.flag !== 'normal'
+                                  ? <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-50 text-red-600">{flagLabel}</span>
+                                  : <span className="px-2 py-0.5 rounded text-xs font-bold bg-emerald-50 text-emerald-600">{flagLabel}</span>
                               ) : '—'}
                             </td>
                           </tr>

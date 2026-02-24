@@ -6,14 +6,8 @@ import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import IdentityHeader from '@/components/identity-header';
 import { useFeatureFlags, isReceiveSeparate } from '@/hooks/use-feature-flags';
-
-const DOC_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  DRAFT:      { bg: '#f1f5f9', text: '#475569' },
-  RENDERING:  { bg: '#fef3c7', text: '#b45309' },
-  RENDERED:   { bg: '#d1fae5', text: '#065f46' },
-  PUBLISHED:  { bg: '#bbf7d0', text: '#14532d' },
-  FAILED:     { bg: '#fee2e2', text: '#991b1b' },
-};
+import { SectionCard, DocumentStatusBadge, DataTable } from '@/components/app';
+import { Button } from '@/components/ui/button';
 
 export default function EncounterDetailPage() {
   const router = useRouter();
@@ -120,20 +114,19 @@ export default function EncounterDetailPage() {
     }
   };
 
-  if (loading) return <p style={{ color: '#64748b' }}>Loading encounter...</p>;
-  if (error) return <p style={{ color: '#ef4444' }}>{error}</p>;
+  if (loading) return <p className="text-muted-foreground">Loading encounter...</p>;
+  if (error) return <p className="text-destructive">{error}</p>;
   if (!encounter) return null;
 
   const { status, labOrders = [], patient } = encounter;
   const docStatus: string | undefined = reportDoc?.status;
-  const docColors = docStatus ? (DOC_STATUS_COLORS[docStatus] ?? DOC_STATUS_COLORS.DRAFT) : null;
 
   return (
     <div>
-      <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Link href="/lims/encounters" style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Encounters</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Detail</span>
+      <div className="flex items-center gap-2 text-sm mb-4">
+        <Link href="/lims/encounters" className="text-primary">← Encounters</Link>
+        <span className="text-muted-foreground">/</span>
+        <span className="text-muted-foreground">Detail</span>
       </div>
 
       <IdentityHeader
@@ -143,207 +136,144 @@ export default function EncounterDetailPage() {
         createdAt={encounter.createdAt}
       />
 
-      {/* Action Buttons — one primary CTA per status */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+      {/* Action Buttons */}
+      <div className="flex gap-3 mb-6 flex-wrap">
         {status === 'registered' && (
-          <Link
-            href={`/lims/encounters/${id}/order`}
-            style={{ padding: '10px 20px', background: '#8b5cf6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-          >
-            Place Lab Order
-          </Link>
+          <Button asChild className="bg-violet-600 hover:bg-violet-700">
+            <Link href={`/lims/encounters/${id}/order`}>Place Lab Order</Link>
+          </Button>
         )}
         {status === 'lab_ordered' && (
-          <Link
-            href={`/lims/encounters/${id}/sample`}
-            style={{ padding: '10px 20px', background: '#f59e0b', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-          >
-            Collect Sample
-          </Link>
+          <Button asChild className="bg-amber-500 hover:bg-amber-600">
+            <Link href={`/lims/encounters/${id}/sample`}>Collect Sample</Link>
+          </Button>
         )}
         {status === 'specimen_collected' && receiveSeparate && (
           <>
-            <Link
-              href={`/lims/encounters/${id}/receive`}
-              style={{ padding: '10px 20px', background: '#0ea5e9', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-            >
-              Receive Specimen
-            </Link>
-            <Link
-              href={`/lims/encounters/${id}/results`}
-              style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-            >
-              Enter Results
-            </Link>
+            <Button asChild className="bg-sky-500 hover:bg-sky-600">
+              <Link href={`/lims/encounters/${id}/receive`}>Receive Specimen</Link>
+            </Button>
+            <Button asChild>
+              <Link href={`/lims/encounters/${id}/results`}>Enter Results</Link>
+            </Button>
           </>
         )}
         {status === 'specimen_collected' && !receiveSeparate && (
-          <Link
-            href={`/lims/encounters/${id}/results`}
-            style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-          >
-            Enter Results
-          </Link>
+          <Button asChild>
+            <Link href={`/lims/encounters/${id}/results`}>Enter Results</Link>
+          </Button>
         )}
         {status === 'specimen_received' && (
-          <Link
-            href={`/lims/encounters/${id}/results`}
-            style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-          >
-            Enter Results
-          </Link>
+          <Button asChild>
+            <Link href={`/lims/encounters/${id}/results`}>Enter Results</Link>
+          </Button>
         )}
         {status === 'resulted' && (
-          <Link
-            href={`/lims/encounters/${id}/verify`}
-            style={{ padding: '10px 20px', background: '#059669', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-          >
-            Verify Results
-          </Link>
+          <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+            <Link href={`/lims/encounters/${id}/verify`}>Verify Results</Link>
+          </Button>
         )}
         {status === 'verified' && (
-          <Link
-            href={`/lims/encounters/${id}/reports`}
-            style={{ padding: '10px 20px', background: '#059669', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}
-          >
-            View / Download Report
-          </Link>
+          <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+            <Link href={`/lims/encounters/${id}/reports`}>View / Download Report</Link>
+          </Button>
         )}
         {status !== 'cancelled' && status !== 'verified' && (
-          <button
+          <Button
+            variant="outline"
+            className="text-destructive border-destructive/50 hover:bg-destructive/5"
             onClick={() => setShowCancelModal(true)}
-            style={{ padding: '10px 20px', background: 'white', color: '#ef4444', border: '1px solid #fca5a5', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
           >
             Cancel Encounter
-          </button>
+          </Button>
         )}
       </div>
 
-      {/* Document status + download (shown when verified/published) */}
+      {/* Document status + download */}
       {(status === 'verified' || reportDoc || receiptDoc) && (
-        <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px', marginBottom: '24px' }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Documents</h3>
+        <SectionCard title="Documents" className="mb-6">
           {receiptDoc && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '13px', color: '#334155', fontWeight: 600 }}>Receipt</span>
-              <span style={{ padding: '4px 12px', borderRadius: '10px', background: '#d1fae5', color: '#065f46', fontWeight: 600, fontSize: '13px' }}>
+            <div className="flex items-center gap-2.5 mb-3 flex-wrap">
+              <span className="text-sm font-semibold text-foreground">Receipt</span>
+              <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-sm">
                 {receiptDoc.status}
               </span>
-              <button
-                onClick={() => handleDownload(receiptDoc)}
-                style={{ padding: '8px 16px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
-              >
+              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handleDownload(receiptDoc)}>
                 ⬇ Print Receipt Again
-              </button>
+              </Button>
             </div>
           )}
           {!reportDoc && (
-            <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>⏳ Generating report...</p>
+            <p className="text-muted-foreground text-sm">⏳ Generating report...</p>
           )}
-          {reportDoc && docColors && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '13px', color: '#334155', fontWeight: 600 }}>Lab Report</span>
-              <span style={{ padding: '4px 12px', borderRadius: '10px', background: docColors.bg, color: docColors.text, fontWeight: 600, fontSize: '13px' }}>
-                {docStatus}
-              </span>
+          {reportDoc && (
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-sm font-semibold text-foreground">Lab Report</span>
+              <DocumentStatusBadge status={docStatus!} />
               {(docStatus === 'RENDERING' || docStatus === 'RENDERED') && (
-                <span style={{ color: '#b45309', fontSize: '13px' }}>⏳ Generating PDF...</span>
+                <span className="text-amber-600 text-sm">⏳ Generating PDF...</span>
               )}
               {docStatus === 'PUBLISHED' && (
                 <>
-                  <button
-                    onClick={() => handleDownload(reportDoc)}
-                    style={{ padding: '8px 20px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
-                  >
+                  <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handleDownload(reportDoc)}>
                     ⬇ Download Report
-                  </button>
-                  <button
-                    onClick={() => { handleDownload(reportDoc).then(() => window.print()); }}
-                    style={{ padding: '8px 16px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
-                  >
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => { handleDownload(reportDoc).then(() => window.print()); }}>
                     🖨 Print
-                  </button>
-                  <Link
-                    href={`/lims/encounters/${id}/publish`}
-                    style={{ padding: '8px 16px', color: '#3b82f6', fontSize: '13px', textDecoration: 'none' }}
-                  >
+                  </Button>
+                  <Link href={`/lims/encounters/${id}/publish`} className="text-primary text-sm">
                     View Report Details →
                   </Link>
                 </>
               )}
               {docStatus === 'FAILED' && (
-                <Link
-                  href={`/lims/encounters/${id}/publish`}
-                  style={{ padding: '8px 16px', background: '#f59e0b', color: 'white', borderRadius: '6px', fontSize: '14px', fontWeight: 600, textDecoration: 'none' }}
-                >
-                  Retry Report
-                </Link>
+                <Button size="sm" asChild className="bg-amber-500 hover:bg-amber-600">
+                  <Link href={`/lims/encounters/${id}/publish`}>Retry Report</Link>
+                </Button>
               )}
             </div>
           )}
-          {downloadError && <p style={{ color: '#ef4444', fontSize: '13px', marginTop: '8px' }}>{downloadError}</p>}
-        </div>
+          {downloadError && <p className="text-destructive text-sm mt-2">{downloadError}</p>}
+        </SectionCard>
       )}
 
       {/* Lab Orders */}
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0' }}>
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Lab Orders</h3>
-        </div>
+      <SectionCard title="Lab Orders" noPadding>
         {labOrders.length === 0 ? (
-          <div style={{ padding: '32px', textAlign: 'center' }}>
-            <p style={{ color: '#64748b', margin: 0 }}>No orders placed yet.</p>
+          <div className="px-5 py-8 text-center">
+            <p className="text-muted-foreground">No orders placed yet.</p>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: '#f8fafc' }}>
-                {['Test Name', 'Priority', 'Status', 'Specimen Barcode', 'Result Value', 'Flag'].map((h) => (
-                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {labOrders.map((order: any) => (
-                <tr key={order.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  <td style={{ padding: '12px 16px', fontSize: '14px', color: '#1e293b' }}>{order.test?.name ?? '—'}</td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{order.priority ?? '—'}</td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{order.status ?? '—'}</td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace', color: '#64748b' }}>{order.specimen?.barcode ?? '—'}</td>
-                  <td style={{ padding: '12px 16px', fontSize: '14px', color: '#1e293b' }}>{order.result?.value ?? '—'}</td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{order.result?.flag ?? '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DataTable
+            data={labOrders}
+            keyExtractor={(order: any) => order.id}
+            columns={[
+              { key: 'testName', header: 'Test Name', cell: (o: any) => <span className="text-foreground">{o.test?.name ?? '—'}</span> },
+              { key: 'priority', header: 'Priority', cell: (o: any) => <span className="text-muted-foreground text-sm">{o.priority ?? '—'}</span> },
+              { key: 'status', header: 'Status', cell: (o: any) => <span className="text-muted-foreground text-sm">{o.status ?? '—'}</span> },
+              { key: 'barcode', header: 'Specimen Barcode', cell: (o: any) => <span className="font-mono text-muted-foreground text-sm">{o.specimen?.barcode ?? '—'}</span> },
+              { key: 'result', header: 'Result Value', cell: (o: any) => <span className="text-foreground">{o.result?.value ?? '—'}</span> },
+              { key: 'flag', header: 'Flag', cell: (o: any) => <span className="text-muted-foreground text-sm">{o.result?.flag ?? '—'}</span> },
+            ]}
+          />
         )}
-      </div>
+      </SectionCard>
 
       {/* Cancel Modal */}
       {showCancelModal && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
-        }}>
-          <div style={{ background: 'white', borderRadius: '8px', padding: '32px', maxWidth: '420px', width: '100%', margin: '16px' }}>
-            <h3 style={{ margin: '0 0 12px', fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>Cancel Encounter</h3>
-            <p style={{ color: '#64748b', marginBottom: '24px' }}>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-background rounded-lg p-8 max-w-md w-full mx-4 shadow-xl">
+            <h3 className="text-lg font-bold text-foreground mb-3">Cancel Encounter</h3>
+            <p className="text-muted-foreground mb-6">
               Are you sure you want to cancel this encounter for <strong>{patient.firstName} {patient.lastName}</strong>? This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setShowCancelModal(false)}
-                style={{ padding: '8px 20px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
-              >
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setShowCancelModal(false)}>
                 Keep Encounter
-              </button>
-              <button
-                onClick={handleCancel}
-                disabled={cancelling}
-                style={{ padding: '8px 20px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: cancelling ? 'not-allowed' : 'pointer' }}
-              >
+              </Button>
+              <Button variant="destructive" disabled={cancelling} onClick={handleCancel}>
                 {cancelling ? 'Cancelling...' : 'Confirm Cancel'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

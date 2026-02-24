@@ -1,8 +1,15 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FlaskConical } from 'lucide-react';
 import { getApiClient } from '@/lib/api-client';
 import { setTokens } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,20 +22,12 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
       const api = getApiClient();
-      const { data, error: apiError } = await api.POST('/auth/login', {
-        body: { email, password },
-      });
-
-      if (apiError || !data) {
-        setError('Invalid credentials');
-        return;
-      }
-
+      const { data, error: apiError } = await api.POST('/auth/login', { body: { email, password } });
+      if (apiError || !data) { setError('Invalid email or password'); return; }
       setTokens(data.accessToken, data.refreshToken);
-      router.push('/encounters');
+      router.push('/lims/worklist');
     } catch {
       setError('Login failed. Please try again.');
     } finally {
@@ -37,37 +36,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9' }}>
-      <div style={{ background: 'white', padding: '40px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: '#1e293b' }}>Vexel Operator</h1>
-        <p style={{ color: '#64748b', marginBottom: '32px' }}>Sign in to your operator account</p>
-
-        <form onSubmit={handleLogin}>
-          <div style={{ marginBottom: '16px' }}>
-            <label htmlFor="email" style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '6px' }}>Email</label>
-            <input
-              id="email"
-              type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-              style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' }}
-            />
-          </div>
-          <div style={{ marginBottom: '24px' }}>
-            <label htmlFor="password" style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '6px' }}>Password</label>
-            <input
-              id="password"
-              type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
-              style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' }}
-            />
-          </div>
-          {error && <p style={{ color: '#ef4444', marginBottom: '16px', fontSize: '14px' }}>{error}</p>}
-          <button
-            type="submit" disabled={loading}
-            style={{ width: '100%', padding: '10px', background: loading ? '#94a3b8' : '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col">
+      <header className="p-6">
+        <div className="flex items-center gap-2 text-slate-700">
+          <FlaskConical className="h-6 w-6 text-blue-600" />
+          <span className="font-bold text-lg">Vexel Health</span>
+        </div>
+      </header>
+      <main className="flex-1 flex items-center justify-center px-4">
+        <Card className="w-full max-w-sm shadow-md">
+          <CardHeader>
+            <CardTitle>Operator Login</CardTitle>
+            <CardDescription>Sign in to your operator account</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required autoFocus placeholder="you@example.com" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" />
+              </div>
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Signing in…' : 'Sign In'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }

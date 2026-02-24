@@ -2,6 +2,12 @@
 import { useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { PageHeader, SectionCard, DueBadge } from '@/components/app';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 
 type FinancialsData = {
   encounter: {
@@ -213,268 +219,230 @@ export default function PaymentsPage() {
 
   return (
     <div>
-      <h1 style={{ margin: '0 0 24px', fontSize: '22px', fontWeight: 700, color: '#1e293b' }}>Payments</h1>
+      <PageHeader title="Payments" />
 
       {/* Search bar */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-        <input
+      <div className="flex gap-3 mb-6">
+        <Input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
           placeholder="Enter encounter code (e.g. VXL-2602-001) or patient MRN"
-          style={{
-            flex: 1, padding: '10px 14px', border: '1px solid #e2e8f0', borderRadius: '6px',
-            fontSize: '14px', outline: 'none',
-          }}
+          className="flex-1"
         />
-        <button
-          onClick={handleSearch}
-          disabled={loading}
-          style={{
-            padding: '10px 20px', background: '#2563eb', color: 'white', border: 'none',
-            borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1,
-          }}
-        >
+        <Button onClick={handleSearch} disabled={loading}>
           {loading ? 'Searching…' : 'Search'}
-        </button>
+        </Button>
       </div>
 
       {error && (
-        <div style={{ padding: '12px 16px', background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '6px', color: '#991b1b', marginBottom: '16px', fontSize: '14px' }}>
+        <div className="px-4 py-3 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm mb-4">
           {error}
         </div>
       )}
 
       {actionSuccess && (
-        <div style={{ padding: '12px 16px', background: '#d1fae5', border: '1px solid #6ee7b7', borderRadius: '6px', color: '#065f46', marginBottom: '16px', fontSize: '14px' }}>
+        <div className="px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-md text-emerald-700 text-sm mb-4">
           ✓ {actionSuccess}
         </div>
       )}
 
       {financials && enc && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div className="flex flex-col gap-5">
           {/* Patient / encounter card */}
-          <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+          <SectionCard>
+            <div className="flex justify-between items-start flex-wrap gap-3">
               <div>
-                <div style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>
+                <div className="text-lg font-bold text-foreground flex items-center gap-2">
                   {enc.patient.firstName} {enc.patient.lastName}
                   {hasDue && !isCancelled && (
-                    <span style={{ marginLeft: '10px', padding: '2px 10px', background: '#fee2e2', color: '#dc2626', borderRadius: '999px', fontSize: '12px', fontWeight: 700 }}>
-                      DUE
-                    </span>
+                    <DueBadge amount={dueAmt} />
                   )}
                 </div>
-                <div style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
+                <div className="text-sm text-muted-foreground mt-1">
                   MRN: {enc.patient.mrn} &nbsp;·&nbsp; Mobile: {enc.patient.mobile}
                 </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#1d4ed8', fontSize: '15px' }}>
+              <div className="text-right">
+                <div className="font-mono font-bold text-primary text-base">
                   {enc.encounterCode ?? enc.id.slice(0, 8)}
                 </div>
-                <div style={{
-                  marginTop: '4px', padding: '3px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 600, display: 'inline-block',
-                  background: isCancelled ? '#fee2e2' : '#dbeafe', color: isCancelled ? '#dc2626' : '#1d4ed8',
-                }}>
+                <Badge
+                  variant="secondary"
+                  className={isCancelled ? 'bg-red-50 text-red-700 mt-1' : 'bg-blue-50 text-blue-700 mt-1'}
+                >
                   {enc.status.replace(/_/g, ' ').toUpperCase()}
-                </div>
+                </Badge>
               </div>
             </div>
-          </div>
+          </SectionCard>
 
           {/* Financial summary */}
-          <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px' }}>
-            <h2 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>Financial Summary</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+          <SectionCard title="Financial Summary">
+            <table className="w-full text-sm border-collapse">
               <thead>
-                <tr style={{ background: '#f8fafc' }}>
+                <tr className="bg-muted/50">
                   {['Total', 'Discount', 'Payable', 'Paid', 'Due'].map(h => (
-                    <th key={h} style={{ padding: '10px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', borderBottom: '1px solid #e2e8f0' }}>{h}</th>
+                    <th key={h} className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground uppercase border-b border-border">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   {[totalAmount, discountAmt, payableAmt, paidAmt, dueAmt].map((v, i) => (
-                    <td key={i} style={{
-                      padding: '12px 16px', textAlign: 'right', fontWeight: i === 4 ? 700 : 500,
-                      color: i === 4 && v > 0 ? '#dc2626' : '#1e293b', fontSize: '15px',
-                    }}>
+                    <td key={i} className={`px-4 py-3 text-right text-base ${i === 4 ? 'font-bold' : 'font-medium'} ${i === 4 && v > 0 ? 'text-destructive' : 'text-foreground'}`}>
                       PKR {v.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                     </td>
                   ))}
                 </tr>
               </tbody>
             </table>
-          </div>
+          </SectionCard>
 
           {/* Action buttons */}
           {!isCancelled && (
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div className="flex gap-3 flex-wrap">
               {hasDue && (
-                <button
+                <Button
                   onClick={() => { setShowCollectDue(v => !v); setShowApplyDiscount(false); setShowCancelConfirm(false); }}
-                  style={{ padding: '10px 18px', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+                  className="bg-emerald-600 hover:bg-emerald-700"
                 >
                   💵 Collect Due
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 onClick={() => { setShowApplyDiscount(v => !v); setShowCollectDue(false); setShowCancelConfirm(false); }}
-                style={{ padding: '10px 18px', background: '#d97706', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+                className="bg-amber-500 hover:bg-amber-600"
               >
                 🏷 Apply Discount
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => { setShowCancelConfirm(v => !v); setShowCollectDue(false); setShowApplyDiscount(false); }}
-                style={{ padding: '10px 18px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+                variant="destructive"
               >
                 ✕ Cancel Encounter
-              </button>
+              </Button>
             </div>
           )}
 
           {/* Collect Due form */}
           {showCollectDue && (
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '20px' }}>
-              <h3 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: '#15803d' }}>Collect Due Payment</h3>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+            <SectionCard className="bg-emerald-50 border-emerald-200">
+              <h3 className="text-sm font-bold text-emerald-700 mb-3">Collect Due Payment</h3>
+              <div className="flex gap-2.5 items-end flex-wrap">
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#4b5563', marginBottom: '4px' }}>Amount (PKR)</label>
-                  <input
+                  <Label className="text-xs text-muted-foreground mb-1 block">Amount (PKR)</Label>
+                  <Input
                     type="number" min="1" value={collectAmount}
                     onChange={e => setCollectAmount(e.target.value)}
                     placeholder={`Max: ${dueAmt}`}
-                    style={{ padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', width: '160px' }}
+                    className="w-40"
                   />
                 </div>
-                <button
-                  onClick={handleCollectDue} disabled={collectLoading}
-                  style={{ marginTop: '20px', padding: '8px 18px', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: collectLoading ? 'not-allowed' : 'pointer', opacity: collectLoading ? 0.7 : 1 }}
-                >
+                <Button onClick={handleCollectDue} disabled={collectLoading} className="bg-emerald-600 hover:bg-emerald-700">
                   {collectLoading ? 'Saving…' : 'Confirm'}
-                </button>
-                <button
-                  onClick={() => setShowCollectDue(false)}
-                  style={{ marginTop: '20px', padding: '8px 16px', background: 'transparent', color: '#64748b', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
-                >
-                  Cancel
-                </button>
+                </Button>
+                <Button variant="outline" onClick={() => setShowCollectDue(false)}>Cancel</Button>
               </div>
-              {collectError && <p style={{ margin: '8px 0 0', color: '#dc2626', fontSize: '13px' }}>{collectError}</p>}
-            </div>
+              {collectError && <p className="mt-2 text-destructive text-sm">{collectError}</p>}
+            </SectionCard>
           )}
 
           {/* Apply Discount form */}
           {showApplyDiscount && (
-            <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '20px' }}>
-              <h3 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: '#b45309' }}>Apply Discount</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '360px' }}>
+            <SectionCard className="bg-amber-50 border-amber-200">
+              <h3 className="text-sm font-bold text-amber-700 mb-3">Apply Discount</h3>
+              <div className="flex flex-col gap-2.5 max-w-sm">
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#4b5563', marginBottom: '4px' }}>Discount Amount (PKR)</label>
-                  <input
+                  <Label className="text-xs text-muted-foreground mb-1 block">Discount Amount (PKR)</Label>
+                  <Input
                     type="number" min="1" value={discountAmount}
                     onChange={e => setDiscountAmount(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#4b5563', marginBottom: '4px' }}>Reason <span style={{ color: '#dc2626' }}>*</span></label>
-                  <input
+                  <Label className="text-xs text-muted-foreground mb-1 block">
+                    Reason <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
                     type="text" value={discountReason}
                     onChange={e => setDiscountReason(e.target.value)}
                     placeholder="e.g. Staff discount, Senior citizen"
-                    style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' }}
                   />
                 </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button
-                    onClick={handleApplyDiscount} disabled={discountLoading}
-                    style={{ padding: '8px 18px', background: '#d97706', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: discountLoading ? 'not-allowed' : 'pointer', opacity: discountLoading ? 0.7 : 1 }}
-                  >
+                <div className="flex gap-2.5">
+                  <Button onClick={handleApplyDiscount} disabled={discountLoading} className="bg-amber-500 hover:bg-amber-600">
                     {discountLoading ? 'Saving…' : 'Apply'}
-                  </button>
-                  <button
-                    onClick={() => setShowApplyDiscount(false)}
-                    style={{ padding: '8px 16px', background: 'transparent', color: '#64748b', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
-                  >
-                    Cancel
-                  </button>
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowApplyDiscount(false)}>Cancel</Button>
                 </div>
               </div>
-              {discountError && <p style={{ margin: '8px 0 0', color: '#dc2626', fontSize: '13px' }}>{discountError}</p>}
-            </div>
+              {discountError && <p className="mt-2 text-destructive text-sm">{discountError}</p>}
+            </SectionCard>
           )}
 
           {/* Cancel confirmation */}
           {showCancelConfirm && (
-            <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', padding: '20px' }}>
-              <h3 style={{ margin: '0 0 8px', fontSize: '14px', fontWeight: 700, color: '#be123c' }}>Cancel Encounter</h3>
-              <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#64748b' }}>
+            <SectionCard className="bg-red-50 border-red-200">
+              <h3 className="text-sm font-bold text-red-700 mb-2">Cancel Encounter</h3>
+              <p className="text-sm text-muted-foreground mb-3">
                 This will cancel the encounter. This action cannot be undone.
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '360px' }}>
+              <div className="flex flex-col gap-2.5 max-w-sm">
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#4b5563', marginBottom: '4px' }}>Reason (optional)</label>
-                  <textarea
+                  <Label className="text-xs text-muted-foreground mb-1 block">Reason (optional)</Label>
+                  <Textarea
                     value={cancelReason}
                     onChange={e => setCancelReason(e.target.value)}
                     rows={2}
-                    style={{ width: '100%', padding: '8px 12px', border: '1px solid #fca5a5', borderRadius: '6px', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' }}
+                    className="border-red-200"
                   />
                 </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button
-                    onClick={handleCancelEncounter} disabled={cancelLoading}
-                    style={{ padding: '8px 18px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: cancelLoading ? 'not-allowed' : 'pointer', opacity: cancelLoading ? 0.7 : 1 }}
-                  >
+                <div className="flex gap-2.5">
+                  <Button onClick={handleCancelEncounter} disabled={cancelLoading} variant="destructive">
                     {cancelLoading ? 'Cancelling…' : 'Confirm Cancel'}
-                  </button>
-                  <button
-                    onClick={() => setShowCancelConfirm(false)}
-                    style={{ padding: '8px 16px', background: 'transparent', color: '#64748b', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
-                  >
-                    Go Back
-                  </button>
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowCancelConfirm(false)}>Go Back</Button>
                 </div>
               </div>
-              {cancelError && <p style={{ margin: '8px 0 0', color: '#dc2626', fontSize: '13px' }}>{cancelError}</p>}
-            </div>
+              {cancelError && <p className="mt-2 text-destructive text-sm">{cancelError}</p>}
+            </SectionCard>
           )}
 
           {/* Transaction history */}
-          <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px' }}>
-            <h2 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>Transaction History</h2>
+          <SectionCard title="Transaction History">
             {financials.transactions.length === 0 ? (
-              <p style={{ color: '#94a3b8', fontSize: '14px', margin: 0 }}>No transactions recorded.</p>
+              <p className="text-muted-foreground text-sm">No transactions recorded.</p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div className="flex flex-col gap-2">
                 {financials.transactions.map(tx => (
-                  <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#f8fafc', borderRadius: '6px', gap: '12px', flexWrap: 'wrap' }}>
+                  <div key={tx.id} className="flex justify-between items-center px-3.5 py-2.5 bg-muted/30 rounded-md gap-3 flex-wrap">
                     <div>
-                      <span style={{
-                        padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,
-                        background: `${TRANSACTION_COLORS[tx.type] ?? '#94a3b8'}22`,
-                        color: TRANSACTION_COLORS[tx.type] ?? '#64748b',
-                        marginRight: '8px',
-                      }}>
+                      <span
+                        className="px-2 py-0.5 rounded text-xs font-semibold mr-2"
+                        style={{
+                          background: `${TRANSACTION_COLORS[tx.type] ?? '#94a3b8'}22`,
+                          color: TRANSACTION_COLORS[tx.type] ?? '#64748b',
+                        }}
+                      >
                         {TRANSACTION_LABELS[tx.type] ?? tx.type}
                       </span>
-                      {tx.reason && <span style={{ fontSize: '13px', color: '#64748b' }}>{tx.reason}</span>}
+                      {tx.reason && <span className="text-sm text-muted-foreground">{tx.reason}</span>}
                     </div>
-                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                    <div className="flex gap-5 items-center">
                       {tx.actor && (
-                        <span style={{ fontSize: '12px', color: '#94a3b8' }}>
+                        <span className="text-xs text-muted-foreground">
                           {tx.actor.firstName} {tx.actor.lastName}
                         </span>
                       )}
-                      <span style={{ fontSize: '12px', color: '#94a3b8' }}>
+                      <span className="text-xs text-muted-foreground">
                         {new Date(tx.createdAt).toLocaleString()}
                       </span>
-                      <span style={{ fontWeight: 700, color: TRANSACTION_COLORS[tx.type] ?? '#1e293b', fontSize: '14px', minWidth: '100px', textAlign: 'right' }}>
+                      <span
+                        className="font-bold text-sm min-w-24 text-right"
+                        style={{ color: TRANSACTION_COLORS[tx.type] ?? undefined }}
+                      >
                         PKR {Number(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                       </span>
                     </div>
@@ -482,7 +450,7 @@ export default function PaymentsPage() {
                 ))}
               </div>
             )}
-          </div>
+          </SectionCard>
         </div>
       )}
     </div>

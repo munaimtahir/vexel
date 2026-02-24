@@ -3,15 +3,31 @@ import { useState, useEffect, useCallback } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { useFeatureFlags, isReceiveSeparate, isBarcodeEnabled } from '@/hooks/use-feature-flags';
+import { PageHeader } from '@/components/app';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 type SpecimenStatus = 'PENDING' | 'COLLECTED' | 'POSTPONED' | 'RECEIVED';
 type FilterStatus = 'PENDING' | 'POSTPONED' | 'RECEIVED' | '';
 
-const STATUS_COLOR: Record<SpecimenStatus, { bg: string; color: string; label: string }> = {
-  PENDING:   { bg: '#fef3c7', color: '#92400e', label: 'Pending' },
-  COLLECTED: { bg: '#d1fae5', color: '#065f46', label: 'Collected' },
-  POSTPONED: { bg: '#fee2e2', color: '#991b1b', label: 'Postponed' },
-  RECEIVED:  { bg: '#dbeafe', color: '#1e40af', label: 'Received' },
+const SPECIMEN_STATUS_CLASS: Record<SpecimenStatus, string> = {
+  PENDING:   'bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded',
+  COLLECTED: 'bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded',
+  POSTPONED: 'bg-red-100 text-red-800 text-xs font-semibold px-2 py-0.5 rounded',
+  RECEIVED:  'bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded',
+};
+
+const SPECIMEN_STATUS_LABEL: Record<SpecimenStatus, string> = {
+  PENDING:   'Pending',
+  COLLECTED: 'Collected',
+  POSTPONED: 'Postponed',
+  RECEIVED:  'Received',
 };
 
 function defaultFromDate() {
@@ -178,99 +194,102 @@ export default function SampleCollectionPage() {
     }
   };
 
-  const btn = (extra: React.CSSProperties = {}): React.CSSProperties => ({
-    padding: '5px 12px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600, ...extra,
-  });
 
   return (
     <div>
       {/* Toast */}
       {toast && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', background: '#1e293b', color: 'white', padding: '12px 20px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)', zIndex: 9999, fontSize: '14px' }}>
+        <div className="fixed bottom-6 right-6 bg-foreground text-background px-5 py-3 rounded-lg shadow-lg z-[9999] text-sm">
           {toast}
         </div>
       )}
 
       {/* Postpone Modal */}
-      {postponeModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9998 }}>
-          <div style={{ background: 'white', borderRadius: '10px', padding: '28px', width: '420px', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700, color: '#1e293b' }}>Postpone Specimen</h3>
-            <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#64748b' }}>{postponeModal.label}</p>
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>
-                Reason * <span style={{ color: '#94a3b8' }}>({postponeReason.length} chars)</span>
-              </label>
-              <textarea
-                value={postponeReason}
-                onChange={e => { setPostponeReason(e.target.value); setPostponeError(''); }}
-                rows={3}
-                placeholder="Enter reason for postponement…"
-                style={{ width: '100%', padding: '8px 10px', border: `1px solid ${postponeError ? '#ef4444' : '#e2e8f0'}`, borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box', resize: 'vertical', outline: 'none' }}
-              />
-              {postponeError && <p style={{ color: '#ef4444', fontSize: '12px', margin: '4px 0 0' }}>{postponeError}</p>}
-            </div>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px' }}>
-              <button onClick={() => { setPostponeModal(null); setPostponeReason(''); setPostponeError(''); }} style={btn({ background: 'white', border: '1px solid #e2e8f0', color: '#64748b', padding: '8px 18px' })}>
-                Cancel
-              </button>
-              <button onClick={confirmPostpone} disabled={postponing} style={btn({ background: postponing ? '#94a3b8' : '#ef4444', color: 'white', padding: '8px 18px', cursor: postponing ? 'not-allowed' : 'pointer' })}>
-                {postponing ? 'Postponing…' : 'Confirm'}
-              </button>
-            </div>
+      <Dialog open={!!postponeModal} onOpenChange={(open) => { if (!open) { setPostponeModal(null); setPostponeReason(''); setPostponeError(''); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Postpone Specimen</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">{postponeModal?.label}</p>
+          <div>
+            <Label className="text-xs text-muted-foreground mb-1 block">
+              Reason * <span className="text-muted-foreground">({postponeReason.length} chars)</span>
+            </Label>
+            <Textarea
+              value={postponeReason}
+              onChange={e => { setPostponeReason(e.target.value); setPostponeError(''); }}
+              rows={3}
+              placeholder="Enter reason for postponement…"
+              className={postponeError ? 'border-destructive' : ''}
+            />
+            {postponeError && <p className="text-destructive text-xs mt-1">{postponeError}</p>}
           </div>
-        </div>
-      )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setPostponeModal(null); setPostponeReason(''); setPostponeError(''); }}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmPostpone} disabled={postponing}>
+              {postponing ? 'Postponing…' : 'Confirm'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Header */}
-      <div style={{ marginBottom: '20px' }}>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#1e293b' }}>Sample Collection</h1>
-        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '14px' }}>
-          Collect, postpone, and{receiveSeparate ? ' receive' : ''} specimens
-          {barcodeEnabled && <span style={{ marginLeft: '8px', background: '#dbeafe', color: '#1e40af', borderRadius: '4px', padding: '1px 8px', fontSize: '12px' }}>Barcode labels enabled</span>}
-        </p>
-      </div>
+      <PageHeader
+        title="Sample Collection"
+        description={`Collect, postpone, and${receiveSeparate ? ' receive' : ''} specimens`}
+        actions={barcodeEnabled ? (
+          <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5 text-xs font-medium">Barcode labels enabled</span>
+        ) : undefined}
+      />
 
       {/* Filters */}
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '16px', marginBottom: '16px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-        {/* Status tabs */}
-        <div style={{ display: 'flex', gap: '4px', background: '#f1f5f9', borderRadius: '6px', padding: '3px' }}>
-          {(['', 'PENDING', 'POSTPONED', 'RECEIVED'] as FilterStatus[]).map(s => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              style={{ padding: '5px 14px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: statusFilter === s ? 600 : 400, background: statusFilter === s ? 'white' : 'transparent', color: statusFilter === s ? '#1e293b' : '#64748b', boxShadow: statusFilter === s ? '0 1px 3px rgba(0,0,0,0.1)' : 'none' }}
-            >
-              {s === '' ? 'All' : s[0] + s.slice(1).toLowerCase()}
-            </button>
-          ))}
-        </div>
+      <Card className="mb-4">
+        <CardContent className="flex flex-wrap gap-4 items-center p-4">
+          {/* Status tabs */}
+          <div className="flex gap-1 bg-muted rounded-md p-0.5">
+            {(['', 'PENDING', 'POSTPONED', 'RECEIVED'] as FilterStatus[]).map(s => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={cn(
+                  'px-3.5 py-1.5 rounded text-sm border-none cursor-pointer transition-colors',
+                  statusFilter === s
+                    ? 'bg-background shadow-sm text-foreground font-semibold'
+                    : 'text-muted-foreground bg-transparent font-normal'
+                )}
+              >
+                {s === '' ? 'All' : s[0] + s.slice(1).toLowerCase()}
+              </button>
+            ))}
+          </div>
 
-        {/* Date range */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#64748b' }}>
-          <label>From</label>
-          <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} style={{ padding: '5px 8px', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '13px' }} />
-          <label>To</label>
-          <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} style={{ padding: '5px 8px', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '13px' }} />
-        </div>
+          {/* Date range */}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <label>From</label>
+            <Input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} className="w-36 h-8 text-sm" />
+            <label>To</label>
+            <Input type="date" value={toDate} onChange={e => setToDate(e.target.value)} className="w-36 h-8 text-sm" />
+          </div>
 
-        {/* Search */}
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && load()}
-          placeholder="MRN, name, or encounter…"
-          style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', width: '200px', outline: 'none' }}
-        />
-        <button onClick={load} style={{ padding: '6px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>
-          Search
-        </button>
-      </div>
+          {/* Search */}
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && load()}
+            placeholder="MRN, name, or encounter…"
+            className="w-48 h-8 text-sm"
+          />
+          <Button size="sm" onClick={load}>Search</Button>
+        </CardContent>
+      </Card>
 
       {/* Table */}
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+      <div className="bg-card rounded-lg border overflow-hidden">
         {/* Table header */}
-        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 60px 140px 60px', gap: '0', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '10px 16px', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div className="grid bg-muted/50 border-b px-4 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-wide"
+          style={{ gridTemplateColumns: '80px 1fr 130px 60px 140px 60px' }}>
           <div>Time</div>
           <div>Patient</div>
           <div>Order ID</div>
@@ -280,14 +299,14 @@ export default function SampleCollectionPage() {
         </div>
 
         {loading && (
-          <div style={{ padding: '48px', textAlign: 'center', color: '#94a3b8' }}>Loading…</div>
+          <div className="p-12 text-center text-muted-foreground">Loading…</div>
         )}
         {error && (
-          <div style={{ padding: '24px', textAlign: 'center', color: '#ef4444' }}>{error}</div>
+          <div className="p-6 text-center text-destructive">{error}</div>
         )}
         {!loading && !error && rows.length === 0 && (
-          <div style={{ padding: '48px', textAlign: 'center', color: '#94a3b8' }}>
-            <div style={{ fontSize: '32px', marginBottom: '8px' }}>🧪</div>
+          <div className="p-12 text-center text-muted-foreground">
+            <div className="text-3xl mb-2">🧪</div>
             <div>No specimen work items found for the selected date range</div>
           </div>
         )}
@@ -302,139 +321,141 @@ export default function SampleCollectionPage() {
           const displayAge = patient?.dateOfBirth ? ageFromDob(patient.dateOfBirth) : patient?.ageYears != null ? `${patient.ageYears}y` : null;
 
           return (
-            <div key={row.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+            <div key={row.id} className="border-b border-muted/50">
               {/* Main row */}
               <div
-                style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 60px 140px 60px', gap: '0', padding: '12px 16px', alignItems: 'center', cursor: 'pointer', background: isOpen ? '#fafbfc' : 'white' }}
+                className={cn('grid items-center px-4 py-3 cursor-pointer transition-colors hover:bg-muted/20', isOpen ? 'bg-muted/10' : '')}
+                style={{ gridTemplateColumns: '80px 1fr 130px 60px 140px 60px' }}
                 onClick={() => toggleExpand(row.id)}
               >
-                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                <div className="text-xs text-muted-foreground">
                   <div>{fmtDate(row.createdAt)}</div>
                   <div>{fmt(row.createdAt)}</div>
                 </div>
                 <div>
                   {patient ? (
                     <>
-                      <div style={{ fontWeight: 600, fontSize: '14px', color: '#1e293b' }}>{patientName}</div>
-                      <div style={{ fontSize: '12px', color: '#94a3b8' }}>
+                      <div className="font-semibold text-sm text-foreground">{patientName}</div>
+                      <div className="text-xs text-muted-foreground">
                         MRN: {patient.mrn}
                         {displayAge && ` · ${displayAge}`}
                         {patient.gender && ` · ${patient.gender.charAt(0).toUpperCase()}`}
                       </div>
                     </>
-                  ) : <span style={{ color: '#94a3b8', fontSize: '13px' }}>—</span>}
+                  ) : <span className="text-muted-foreground text-sm">—</span>}
                 </div>
-                <div style={{ fontSize: '12px', color: '#64748b', fontFamily: 'monospace' }}>
+                <div className="text-xs text-muted-foreground font-mono">
                   {row.encounterCode ?? row.id.slice(0, 8)}
                 </div>
-                <div style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>
+                <div className="text-sm text-foreground font-medium">
                   {row.testCount ?? row.labOrders?.length ?? '—'}
                 </div>
-                <div style={{ fontSize: '12px' }}>
-                  <span style={{ color: row.pendingCount > 0 ? '#d97706' : '#64748b', fontWeight: row.pendingCount > 0 ? 600 : 400 }}>
+                <div className="text-xs">
+                  <span className={cn(row.pendingCount > 0 ? 'text-amber-600 font-semibold' : 'text-muted-foreground')}>
                     {row.pendingCount}/{row.totalCount} pending
                   </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>{isOpen ? '▼' : '▶'}</span>
+                <div className="flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground">{isOpen ? '▼' : '▶'}</span>
                 </div>
               </div>
 
               {/* Expanded: specimen rows */}
               {isOpen && (
-                <div style={{ background: '#f8fafc', borderTop: '1px solid #f1f5f9', padding: '0 16px 12px 48px' }}>
+                <div className="bg-muted/20 border-t border-muted/30 px-4 pb-3 pl-12">
                   {/* Tests summary */}
                   {testNames.length > 0 && (
-                    <div style={{ paddingTop: '10px', fontSize: '12px', color: '#64748b' }}>
-                      Tests: <span style={{ color: '#1e293b', fontWeight: 500 }}>{testNames.join(' · ')}</span>
+                    <div className="pt-2.5 text-xs text-muted-foreground">
+                      Tests: <span className="text-foreground font-medium">{testNames.join(' · ')}</span>
                     </div>
                   )}
 
                   {/* Collect all button */}
                   {pendingSpecimens.length > 1 && (
-                    <div style={{ paddingTop: '10px', marginBottom: '8px' }}>
-                      <button
+                    <div className="pt-2.5 mb-2">
+                      <Button
+                        size="sm"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
                         onClick={() => collectSpecimens(row.id, [])}
                         disabled={acting.has(`all-${row.id}`)}
-                        style={btn({ background: '#059669', color: 'white', padding: '6px 14px', opacity: acting.has(`all-${row.id}`) ? 0.6 : 1 })}
                       >
                         ✓ {receiveSeparate ? 'Collect All' : 'Collect & Receive All'}
-                      </button>
+                      </Button>
                     </div>
                   )}
 
                   {specimens.length === 0 && (
-                    <p style={{ color: '#94a3b8', fontSize: '13px', padding: '12px 0' }}>No specimen items found for this encounter</p>
+                    <p className="text-muted-foreground text-sm py-3">No specimen items found for this encounter</p>
                   )}
 
                   {specimens.map((sp: any) => {
-                    const colors = STATUS_COLOR[sp.status as SpecimenStatus] ?? STATUS_COLOR.PENDING;
                     const isActing = acting.has(sp.id);
                     const specimenLabel = sp.catalogSpecimenType || '—';
-                    // When barcode enabled, barcode = encounterCode
                     const barcodeValue = barcodeEnabled ? (row.encounterCode ?? row.id.slice(0, 8)) : sp.barcode;
 
                     return (
-                      <div key={sp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', marginTop: '6px', background: 'white', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                          <span style={{ background: colors.bg, color: colors.color, borderRadius: '4px', padding: '2px 10px', fontSize: '11px', fontWeight: 700 }}>
-                            {colors.label}
+                      <div key={sp.id} className="flex justify-between items-center px-3.5 py-2.5 mt-1.5 bg-background rounded-md border border-border">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <span className={SPECIMEN_STATUS_CLASS[sp.status as SpecimenStatus] ?? SPECIMEN_STATUS_CLASS.PENDING}>
+                            {SPECIMEN_STATUS_LABEL[sp.status as SpecimenStatus] ?? sp.status}
                           </span>
-                          <span style={{ fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>{specimenLabel}</span>
+                          <span className="text-sm text-foreground font-medium">{specimenLabel}</span>
                           {barcodeEnabled && (
-                            <span style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'monospace' }}>
-                              #{barcodeValue}
-                            </span>
+                            <span className="text-xs text-muted-foreground font-mono">#{barcodeValue}</span>
                           )}
                           {sp.postponeReason && (
-                            <span style={{ fontSize: '12px', color: '#dc2626', fontStyle: 'italic' }}>Reason: {sp.postponeReason}</span>
+                            <span className="text-xs text-destructive italic">Reason: {sp.postponeReason}</span>
                           )}
                         </div>
 
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <div className="flex gap-2 items-center">
                           {barcodeEnabled && sp.status !== 'POSTPONED' && (
-                            <button
+                            <Button
+                              size="sm"
+                              variant="outline"
                               onClick={(e) => { e.stopPropagation(); printBarcodeLabel(row.encounterCode ?? row.id.slice(0, 8), patientName, specimenLabel); }}
-                              style={btn({ background: 'white', border: '1px solid #e2e8f0', color: '#64748b' })}
                               title="Print barcode label"
                             >
                               🖨 Label
-                            </button>
+                            </Button>
                           )}
                           {sp.status === 'PENDING' && (
                             <>
-                              <button
+                              <Button
+                                size="sm"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white"
                                 onClick={() => collectSpecimens(row.id, [sp.id])}
                                 disabled={isActing}
-                                style={btn({ background: '#059669', color: 'white', opacity: isActing ? 0.6 : 1 })}
                               >
                                 {receiveSeparate ? 'Collect' : 'Collect & Receive'}
-                              </button>
-                              <button
+                              </Button>
+                              <Button
+                                size="sm"
+                                className="bg-amber-500 hover:bg-amber-600 text-white"
                                 onClick={() => { setPostponeModal({ encounterId: row.id, specimenItemId: sp.id, label: specimenLabel }); setPostponeReason(''); setPostponeError(''); }}
-                                style={btn({ background: '#f59e0b', color: 'white' })}
                               >
                                 Postpone
-                              </button>
+                              </Button>
                             </>
                           )}
                           {sp.status === 'COLLECTED' && receiveSeparate && (
-                            <button
+                            <Button
+                              size="sm"
                               onClick={() => receiveSpecimen(row.id, sp.id)}
                               disabled={isActing}
-                              style={btn({ background: '#2563eb', color: 'white', opacity: isActing ? 0.6 : 1 })}
                             >
                               Receive
-                            </button>
+                            </Button>
                           )}
                           {sp.status === 'POSTPONED' && (
-                            <button
+                            <Button
+                              size="sm"
+                              className="bg-violet-600 hover:bg-violet-700 text-white"
                               onClick={() => collectSpecimens(row.id, [sp.id])}
                               disabled={isActing}
-                              style={btn({ background: '#8b5cf6', color: 'white', opacity: isActing ? 0.6 : 1 })}
                             >
                               Re-collect
-                            </button>
+                            </Button>
                           )}
                         </div>
                       </div>
