@@ -27,7 +27,7 @@ async function setupVerifiedEncounter() {
     accessToken,
   );
 
-  const testCode = process.env.E2E_TEST_CODE || 'GLU';
+  const testCode = process.env.E2E_TEST_CODE || 't1';
   await apiPost(`/encounters/${encounter.id}:order-lab`, { tests: [{ code: testCode }] }, accessToken);
   await apiPostRaw(`/encounters/${encounter.id}:collect-specimen`, {}, accessToken);
 

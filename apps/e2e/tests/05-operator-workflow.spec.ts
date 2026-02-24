@@ -38,7 +38,7 @@ async function setupWorkflowEncounter() {
 
   // Place a lab order (command endpoint)
   // The order body may need a testId — use a known catalog test code or placeholder
-  const testCode = process.env.E2E_TEST_CODE || 'GLU'; // Glucose, expected in seed data
+  const testCode = process.env.E2E_TEST_CODE || 't1'; // Glucose (externalId t1), expected in seed data
   await apiPost(
     `/encounters/${encounter.id}:order-lab`,
     { tests: [{ code: testCode }] },

@@ -92,6 +92,8 @@ jobs:
         run: docker compose up -d --build
         env:
           JWT_SECRET: ci-test-jwt-secret-not-for-production-use-only
+          NEXT_PUBLIC_API_URL: http://127.0.0.1:9021
+          TENANCY_DEV_HEADER_ENABLED: "true"
       - name: Show API logs on failure
         if: failure()
         run: docker compose logs api --tail=100 || true

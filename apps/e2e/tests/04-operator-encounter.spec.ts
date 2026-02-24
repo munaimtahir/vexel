@@ -25,7 +25,8 @@ test.describe('Operator — Encounter management', () => {
       accessToken,
     );
 
-    await page.goto('/encounters/new');
+    // Navigate directly to the new encounter form (not via redirect)
+    await page.goto('/lims/encounters/new');
     await expect(page.getByRole('heading', { name: 'Register Encounter' })).toBeVisible();
 
     // Wait for patient dropdown to be populated
@@ -36,9 +37,9 @@ test.describe('Operator — Encounter management', () => {
 
     await page.getByRole('button', { name: 'Register Encounter' }).click();
 
-    // Redirects to /encounters list after creation
-    await page.waitForURL('**/encounters', { timeout: 15_000 });
-    await expect(page).toHaveURL(/\/encounters$/);
+    // Redirects to /lims/encounters list after creation
+    await page.waitForURL('**/lims/encounters', { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/lims\/encounters$/);
 
     // The encounter list shows the newly created encounter row
     await expect(page.getByRole('cell', { name: /enc patient/i }).first()).toBeVisible({ timeout: 10_000 });
@@ -59,22 +60,22 @@ test.describe('Operator — Encounter management', () => {
       accessToken,
     );
 
-    await page.goto(`/encounters/${encounter.id}`);
+    // Navigate directly to the lims encounter detail (skip client redirect)
+    await page.goto(`/lims/encounters/${encounter.id}`);
 
     // IdentityHeader renders patient name prominently
-    // TODO: add data-testid="identity-header" to IdentityHeader component
     await expect(page.locator('text=Detail Patient')).toBeVisible({ timeout: 10_000 });
 
     // Status badge should show "registered"
     await expect(page.locator('text=registered')).toBeVisible();
 
-    // Action buttons present for registered status
-    await expect(page.getByRole('link', { name: 'Enter Results' })).toBeVisible();
+    // Action button for registered status is "Place Lab Order"
+    await expect(page.getByRole('link', { name: 'Place Lab Order' })).toBeVisible();
   });
 
   test('encounters list page loads with headers', async ({ authedPage: page }) => {
-    await page.goto('/encounters');
-    await expect(page.getByRole('heading', { name: 'Encounters' })).toBeVisible();
+    await page.goto('/lims/encounters');
+    await expect(page.getByRole('main').getByRole('heading', { name: 'Encounters' })).toBeVisible();
     await expect(page.locator('text=Loading encounters...')).not.toBeVisible({ timeout: 10_000 });
 
     await expect(page.getByRole('columnheader', { name: 'Patient' })).toBeVisible();

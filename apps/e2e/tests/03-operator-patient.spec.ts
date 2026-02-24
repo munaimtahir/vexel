@@ -9,7 +9,7 @@ test.describe('Operator — Patient management', () => {
   test('create patient via UI and see in list', async ({ authedPage: page }) => {
     await page.goto('/patients/new');
 
-    await expect(page.getByRole('heading', { name: 'New Patient' })).toBeVisible();
+    await expect(page.getByRole('main').getByRole('heading', { name: 'New Patient' })).toBeVisible();
 
     const suffix = Date.now().toString(36).toUpperCase();
     const mrn = `E2E-${suffix}`;
@@ -27,9 +27,9 @@ test.describe('Operator — Patient management', () => {
 
     await page.getByRole('button', { name: 'Create Patient' }).click();
 
-    // After creation the page redirects to /patients list
-    await page.waitForURL('**/patients', { timeout: 15_000 });
-    await expect(page).toHaveURL(/\/patients$/);
+    // After creation the page redirects to /lims/patients list
+    await page.waitForURL('**/lims/patients', { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/lims\/patients$/);
 
     // The new patient should appear in the table
     await expect(page.getByRole('cell', { name: mrn })).toBeVisible({ timeout: 10_000 });
@@ -38,7 +38,7 @@ test.describe('Operator — Patient management', () => {
   test('patients list page loads with table headers', async ({ authedPage: page }) => {
     await page.goto('/patients');
 
-    await expect(page.getByRole('heading', { name: 'Patients' })).toBeVisible();
+    await expect(page.getByRole('main').getByRole('heading', { name: 'Patients' })).toBeVisible();
     await expect(page.locator('text=Loading patients...')).not.toBeVisible({ timeout: 10_000 });
 
     // Table headers defined in the page
@@ -56,7 +56,7 @@ test.describe('Operator — Patient management', () => {
     await page.getByLabel('Last Name *').fill('Patient');
     await page.getByLabel('MRN *').fill(mrn);
     await page.getByRole('button', { name: 'Create Patient' }).click();
-    await page.waitForURL('**/patients', { timeout: 15_000 });
+    await page.waitForURL('**/lims/patients', { timeout: 15_000 });
 
     // Attempt to create the same MRN again
     await page.goto('/patients/new');
