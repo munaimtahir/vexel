@@ -26,6 +26,7 @@ export const FLAG_DEFAULTS: Record<string, boolean> = {
   'lims.verification.enabled': true,
   'lims.operator.verificationPages.enabled': true,
   'lims.operator.sample.receiveSeparate.enabled': false,
+  'lims.operator.barcode.enabled': false,
 };
 
 @Injectable()

@@ -161,24 +161,23 @@ export class EncountersService {
     // Auto-create SpecimenItem for the test's specimenType
     try {
       const catalogTest = await this.prisma.catalogTest.findUnique({ where: { id: resolvedTestId } });
-      if (catalogTest?.specimenType) {
-        await this.prisma.specimenItem.upsert({
-          where: {
-            tenantId_encounterId_catalogSpecimenType: {
-              tenantId,
-              encounterId,
-              catalogSpecimenType: catalogTest.specimenType,
-            },
-          },
-          create: {
+      const specimenType = catalogTest?.specimenType ?? 'Blood';
+      await this.prisma.specimenItem.upsert({
+        where: {
+          tenantId_encounterId_catalogSpecimenType: {
             tenantId,
             encounterId,
-            catalogSpecimenType: catalogTest.specimenType,
-            status: 'PENDING',
+            catalogSpecimenType: specimenType,
           },
-          update: {},
-        });
-      }
+        },
+        create: {
+          tenantId,
+          encounterId,
+          catalogSpecimenType: specimenType,
+          status: 'PENDING',
+        },
+        update: {},
+      });
     } catch (err) {
       console.error('[encounters] Failed to auto-create SpecimenItem:', (err as Error).message);
     }

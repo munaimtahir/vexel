@@ -8,6 +8,7 @@ export interface ResolvedFlags {
   'lims.verification.mode'?: { mode: 'separate' | 'inline' | 'disabled' };
   'lims.operator.verificationPages.enabled'?: boolean;
   'lims.operator.sample.receiveSeparate.enabled'?: boolean;
+  'lims.operator.barcode.enabled'?: boolean;
   [key: string]: unknown;
 }
 
@@ -16,6 +17,7 @@ const DEFAULTS: ResolvedFlags = {
   'lims.verification.mode': { mode: 'separate' },
   'lims.operator.verificationPages.enabled': true,
   'lims.operator.sample.receiveSeparate.enabled': false,
+  'lims.operator.barcode.enabled': false,
 };
 
 let _cache: ResolvedFlags | null = null;
@@ -73,4 +75,12 @@ export function showSubmitAndVerify(flags: ResolvedFlags): boolean {
 export function showSubmitOnly(flags: ResolvedFlags): boolean {
   const mode = getVerificationMode(flags);
   return mode === 'separate' || mode === 'inline';
+}
+
+export function isReceiveSeparate(flags: ResolvedFlags): boolean {
+  return flags['lims.operator.sample.receiveSeparate.enabled'] ?? false;
+}
+
+export function isBarcodeEnabled(flags: ResolvedFlags): boolean {
+  return flags['lims.operator.barcode.enabled'] ?? false;
 }

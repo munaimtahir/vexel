@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { useFeatureFlags, isReceiveSeparate, isBarcodeEnabled } from '@/hooks/use-feature-flags';
 
 type SpecimenStatus = 'PENDING' | 'COLLECTED' | 'POSTPONED' | 'RECEIVED';
 type FilterStatus = 'PENDING' | 'POSTPONED' | 'RECEIVED' | '';
@@ -22,7 +23,33 @@ function todayStr() { return new Date().toISOString().split('T')[0]; }
 function fmt(dt: string) { return new Date(dt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit', hour12: true }); }
 function fmtDate(dt: string) { return new Date(dt).toLocaleDateString('en-PK', { day: '2-digit', month: 'short' }); }
 
+function ageFromDob(dob: string): string {
+  const birth = new Date(dob);
+  const now = new Date();
+  const years = now.getFullYear() - birth.getFullYear() - (now < new Date(now.getFullYear(), birth.getMonth(), birth.getDate()) ? 1 : 0);
+  return `${years}y`;
+}
+
+function printBarcodeLabel(encounterCode: string, patientName: string, specimenType: string) {
+  const win = window.open('', '_blank', 'width=400,height=200');
+  if (!win) return;
+  win.document.write(`
+    <html><head><title>Barcode Label</title>
+    <style>body{font-family:monospace;padding:16px;font-size:13px;}h2{margin:0 0 6px;font-size:16px;}p{margin:2px 0;}</style>
+    </head><body>
+    <h2>${encounterCode}</h2>
+    <p>Patient: ${patientName}</p>
+    <p>Specimen: ${specimenType}</p>
+    <script>window.print();window.close();</script>
+    </body></html>
+  `);
+}
+
 export default function SampleCollectionPage() {
+  const { flags } = useFeatureFlags();
+  const receiveSeparate = isReceiveSeparate(flags);
+  const barcodeEnabled = isBarcodeEnabled(flags);
+
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -40,7 +67,7 @@ export default function SampleCollectionPage() {
   const [postponeError, setPostponeError] = useState('');
   const [postponing, setPostponing] = useState(false);
 
-  // Per-row action loading (key: specimenItemId)
+  // Per-row action loading (key: specimenItemId or `all-{encounterId}`)
   const [acting, setActing] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState('');
 
@@ -60,7 +87,10 @@ export default function SampleCollectionPage() {
       // @ts-ignore
       const { data, error: apiErr } = await api.GET('/sample-collection/worklist', { params: { query: params as any } });
       if (apiErr) { setError('Failed to load worklist'); return; }
-      setRows((data as any)?.data ?? []);
+      const loaded: any[] = (data as any)?.data ?? [];
+      setRows(loaded);
+      // Auto-expand rows that have pending specimens
+      setExpanded(new Set(loaded.filter((r: any) => r.pendingCount > 0).map((r: any) => r.id)));
     } catch {
       setError('Failed to load worklist');
     } finally {
@@ -81,7 +111,7 @@ export default function SampleCollectionPage() {
 
   // ── collect specimens ────────────────────────────────────────────
   const collectSpecimens = async (encounterId: string, specimenItemIds: string[]) => {
-    const key = specimenItemIds[0] ?? `all-${encounterId}`;
+    const key = specimenItemIds.length === 1 ? specimenItemIds[0] : `all-${encounterId}`;
     setActing(prev => new Set(prev).add(key));
     try {
       const api = getApiClient(getToken() ?? undefined);
@@ -91,7 +121,7 @@ export default function SampleCollectionPage() {
         body: { specimenItemIds } as any,
       });
       if (apiErr) { showToast('Error: ' + ((apiErr as any)?.message ?? 'Collect failed')); return; }
-      showToast('Specimen collected');
+      showToast(receiveSeparate ? 'Specimen collected' : 'Specimen collected & received');
       load();
     } catch {
       showToast('Collect failed');
@@ -136,7 +166,7 @@ export default function SampleCollectionPage() {
       });
       if (apiErr) {
         const status = (apiErr as any)?.status ?? 0;
-        showToast(status === 403 ? 'Not authorised to receive specimen' : 'Receive failed');
+        showToast(status === 403 ? 'Receive feature not enabled' : 'Receive failed');
         return;
       }
       showToast('Specimen received');
@@ -195,7 +225,10 @@ export default function SampleCollectionPage() {
       {/* Header */}
       <div style={{ marginBottom: '20px' }}>
         <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#1e293b' }}>Sample Collection</h1>
-        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '14px' }}>Collect, postpone, and receive specimens</p>
+        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '14px' }}>
+          Collect, postpone, and{receiveSeparate ? ' receive' : ''} specimens
+          {barcodeEnabled && <span style={{ marginLeft: '8px', background: '#dbeafe', color: '#1e40af', borderRadius: '4px', padding: '1px 8px', fontSize: '12px' }}>Barcode labels enabled</span>}
+        </p>
       </div>
 
       {/* Filters */}
@@ -237,13 +270,13 @@ export default function SampleCollectionPage() {
       {/* Table */}
       <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
         {/* Table header */}
-        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 120px 80px 120px 120px', gap: '0', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '10px 16px', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 60px 140px 60px', gap: '0', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '10px 16px', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           <div>Time</div>
           <div>Patient</div>
           <div>Order ID</div>
           <div>Tests</div>
           <div>Specimens</div>
-          <div>Actions</div>
+          <div></div>
         </div>
 
         {loading && (
@@ -255,22 +288,25 @@ export default function SampleCollectionPage() {
         {!loading && !error && rows.length === 0 && (
           <div style={{ padding: '48px', textAlign: 'center', color: '#94a3b8' }}>
             <div style={{ fontSize: '32px', marginBottom: '8px' }}>🧪</div>
-            <div>No specimen work items found</div>
+            <div>No specimen work items found for the selected date range</div>
           </div>
         )}
 
         {!loading && rows.map((row: any) => {
-          const isOpen = expanded.has(row.encounterId);
+          const isOpen = expanded.has(row.id);
           const patient = row.patient;
           const specimens: any[] = row.specimenItems ?? [];
           const pendingSpecimens = specimens.filter((s: any) => s.status === 'PENDING');
+          const testNames: string[] = (row.labOrders ?? []).map((o: any) => o.testNameSnapshot).filter(Boolean);
+          const patientName = patient ? `${patient.firstName ?? ''} ${patient.lastName ?? ''}`.trim() : '—';
+          const displayAge = patient?.dateOfBirth ? ageFromDob(patient.dateOfBirth) : patient?.ageYears != null ? `${patient.ageYears}y` : null;
 
           return (
-            <div key={row.encounterId} style={{ borderBottom: '1px solid #f1f5f9' }}>
+            <div key={row.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
               {/* Main row */}
               <div
-                style={{ display: 'grid', gridTemplateColumns: '80px 1fr 120px 80px 120px 120px', gap: '0', padding: '12px 16px', alignItems: 'center', cursor: 'pointer' }}
-                onClick={() => toggleExpand(row.encounterId)}
+                style={{ display: 'grid', gridTemplateColumns: '80px 1fr 130px 60px 140px 60px', gap: '0', padding: '12px 16px', alignItems: 'center', cursor: 'pointer', background: isOpen ? '#fafbfc' : 'white' }}
+                onClick={() => toggleExpand(row.id)}
               >
                 <div style={{ fontSize: '12px', color: '#64748b' }}>
                   <div>{fmtDate(row.createdAt)}</div>
@@ -279,29 +315,27 @@ export default function SampleCollectionPage() {
                 <div>
                   {patient ? (
                     <>
-                      <div style={{ fontWeight: 600, fontSize: '14px', color: '#1e293b' }}>
-                        {patient.firstName} {patient.lastName}
-                      </div>
+                      <div style={{ fontWeight: 600, fontSize: '14px', color: '#1e293b' }}>{patientName}</div>
                       <div style={{ fontSize: '12px', color: '#94a3b8' }}>
                         MRN: {patient.mrn}
-                        {patient.ageYears != null && ` · ${patient.ageYears}y`}
+                        {displayAge && ` · ${displayAge}`}
                         {patient.gender && ` · ${patient.gender.charAt(0).toUpperCase()}`}
                       </div>
                     </>
                   ) : <span style={{ color: '#94a3b8', fontSize: '13px' }}>—</span>}
                 </div>
                 <div style={{ fontSize: '12px', color: '#64748b', fontFamily: 'monospace' }}>
-                  {row.encounterCode ?? row.encounterId.slice(0, 8)}
+                  {row.encounterCode ?? row.id.slice(0, 8)}
                 </div>
                 <div style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>
-                  {row.testsCount ?? '—'}
+                  {row.testCount ?? row.labOrders?.length ?? '—'}
                 </div>
                 <div style={{ fontSize: '12px' }}>
                   <span style={{ color: row.pendingCount > 0 ? '#d97706' : '#64748b', fontWeight: row.pendingCount > 0 ? 600 : 400 }}>
                     {row.pendingCount}/{row.totalCount} pending
                   </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ fontSize: '12px', color: '#94a3b8' }}>{isOpen ? '▼' : '▶'}</span>
                 </div>
               </div>
@@ -309,63 +343,84 @@ export default function SampleCollectionPage() {
               {/* Expanded: specimen rows */}
               {isOpen && (
                 <div style={{ background: '#f8fafc', borderTop: '1px solid #f1f5f9', padding: '0 16px 12px 48px' }}>
+                  {/* Tests summary */}
+                  {testNames.length > 0 && (
+                    <div style={{ paddingTop: '10px', fontSize: '12px', color: '#64748b' }}>
+                      Tests: <span style={{ color: '#1e293b', fontWeight: 500 }}>{testNames.join(' · ')}</span>
+                    </div>
+                  )}
+
                   {/* Collect all button */}
                   {pendingSpecimens.length > 1 && (
                     <div style={{ paddingTop: '10px', marginBottom: '8px' }}>
                       <button
-                        onClick={() => collectSpecimens(row.encounterId, [])}
-                        disabled={acting.has(`all-${row.encounterId}`)}
-                        style={btn({ background: '#059669', color: 'white', padding: '6px 14px', opacity: acting.has(`all-${row.encounterId}`) ? 0.6 : 1 })}
+                        onClick={() => collectSpecimens(row.id, [])}
+                        disabled={acting.has(`all-${row.id}`)}
+                        style={btn({ background: '#059669', color: 'white', padding: '6px 14px', opacity: acting.has(`all-${row.id}`) ? 0.6 : 1 })}
                       >
-                        ✓ Collect All Pending
+                        ✓ {receiveSeparate ? 'Collect All' : 'Collect & Receive All'}
                       </button>
                     </div>
                   )}
 
                   {specimens.length === 0 && (
-                    <p style={{ color: '#94a3b8', fontSize: '13px', padding: '12px 0' }}>No specimen items</p>
+                    <p style={{ color: '#94a3b8', fontSize: '13px', padding: '12px 0' }}>No specimen items found for this encounter</p>
                   )}
 
                   {specimens.map((sp: any) => {
                     const colors = STATUS_COLOR[sp.status as SpecimenStatus] ?? STATUS_COLOR.PENDING;
                     const isActing = acting.has(sp.id);
+                    const specimenLabel = sp.catalogSpecimenType || '—';
+                    // When barcode enabled, barcode = encounterCode
+                    const barcodeValue = barcodeEnabled ? (row.encounterCode ?? row.id.slice(0, 8)) : sp.barcode;
 
                     return (
                       <div key={sp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', marginTop: '6px', background: 'white', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                           <span style={{ background: colors.bg, color: colors.color, borderRadius: '4px', padding: '2px 10px', fontSize: '11px', fontWeight: 700 }}>
                             {colors.label}
                           </span>
-                          <span style={{ fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>{sp.catalogSpecimenType}</span>
-                          {sp.barcode && (
-                            <span style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'monospace' }}>#{sp.barcode}</span>
+                          <span style={{ fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>{specimenLabel}</span>
+                          {barcodeEnabled && (
+                            <span style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                              #{barcodeValue}
+                            </span>
                           )}
                           {sp.postponeReason && (
                             <span style={{ fontSize: '12px', color: '#dc2626', fontStyle: 'italic' }}>Reason: {sp.postponeReason}</span>
                           )}
                         </div>
 
-                        <div style={{ display: 'flex', gap: '8px' }}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          {barcodeEnabled && sp.status !== 'POSTPONED' && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); printBarcodeLabel(row.encounterCode ?? row.id.slice(0, 8), patientName, specimenLabel); }}
+                              style={btn({ background: 'white', border: '1px solid #e2e8f0', color: '#64748b' })}
+                              title="Print barcode label"
+                            >
+                              🖨 Label
+                            </button>
+                          )}
                           {sp.status === 'PENDING' && (
                             <>
                               <button
-                                onClick={() => collectSpecimens(row.encounterId, [sp.id])}
+                                onClick={() => collectSpecimens(row.id, [sp.id])}
                                 disabled={isActing}
                                 style={btn({ background: '#059669', color: 'white', opacity: isActing ? 0.6 : 1 })}
                               >
-                                Collect
+                                {receiveSeparate ? 'Collect' : 'Collect & Receive'}
                               </button>
                               <button
-                                onClick={() => { setPostponeModal({ encounterId: row.encounterId, specimenItemId: sp.id, label: sp.catalogSpecimenType }); setPostponeReason(''); setPostponeError(''); }}
+                                onClick={() => { setPostponeModal({ encounterId: row.id, specimenItemId: sp.id, label: specimenLabel }); setPostponeReason(''); setPostponeError(''); }}
                                 style={btn({ background: '#f59e0b', color: 'white' })}
                               >
                                 Postpone
                               </button>
                             </>
                           )}
-                          {sp.status === 'COLLECTED' && (
+                          {sp.status === 'COLLECTED' && receiveSeparate && (
                             <button
-                              onClick={() => receiveSpecimen(row.encounterId, sp.id)}
+                              onClick={() => receiveSpecimen(row.id, sp.id)}
                               disabled={isActing}
                               style={btn({ background: '#2563eb', color: 'white', opacity: isActing ? 0.6 : 1 })}
                             >
@@ -374,7 +429,7 @@ export default function SampleCollectionPage() {
                           )}
                           {sp.status === 'POSTPONED' && (
                             <button
-                              onClick={() => collectSpecimens(row.encounterId, [sp.id])}
+                              onClick={() => collectSpecimens(row.id, [sp.id])}
                               disabled={isActing}
                               style={btn({ background: '#8b5cf6', color: 'white', opacity: isActing ? 0.6 : 1 })}
                             >
@@ -394,3 +449,4 @@ export default function SampleCollectionPage() {
     </div>
   );
 }
+

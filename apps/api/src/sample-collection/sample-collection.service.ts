@@ -26,7 +26,10 @@ export class SampleCollectionService {
     const fromDate = filters.fromDate
       ? new Date(filters.fromDate)
       : new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-    const toDate = filters.toDate ? new Date(filters.toDate) : undefined;
+    // Include the full toDate day (add 1 day so encounters created any time on that day are included)
+    const toDate = filters.toDate
+      ? new Date(new Date(filters.toDate).getTime() + 24 * 60 * 60 * 1000)
+      : undefined;
 
     // Build encounter where clause
     const encounterWhere: any = {
@@ -58,11 +61,12 @@ export class SampleCollectionService {
               mrn: true,
               mobile: true,
               ageYears: true,
+              dateOfBirth: true,
               gender: true,
             },
           },
           specimenItems: { where: { tenantId } },
-          labOrders: { select: { id: true, status: true } },
+          labOrders: { select: { id: true, status: true, testNameSnapshot: true } },
         },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,

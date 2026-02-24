@@ -41,15 +41,24 @@ export class SampleCollectionController {
     @Param('encounterId') encounterId: string,
     @Body() body: { specimenItemIds?: string[] },
   ) {
+    const tenantId = this.resolveTenantId(req);
     const user = (req as any).user;
     const correlationId = req.headers[CORRELATION_ID_HEADER] as string | undefined;
-    return this.svc.collectSpecimens(
-      this.resolveTenantId(req),
+    const result = await this.svc.collectSpecimens(
+      tenantId,
       user.userId,
       encounterId,
       body.specimenItemIds ?? [],
       correlationId,
     );
+    // Auto-receive when receiveSeparate is disabled (single-click collect+receive)
+    const receiveSeparate = await this.featureFlags.isEnabled(tenantId, 'lims.operator.sample.receiveSeparate.enabled');
+    if (!receiveSeparate) {
+      try {
+        await this.svc.receiveSpecimens(tenantId, user.userId, encounterId, body.specimenItemIds ?? [], correlationId);
+      } catch { /* non-fatal */ }
+    }
+    return result;
   }
 
   @Post('encounters/:encounterId/postpone-specimen')
