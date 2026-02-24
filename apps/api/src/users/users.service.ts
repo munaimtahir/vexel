@@ -11,7 +11,9 @@ export class UsersService {
   ) {}
 
   async list(tenantId: string, opts: { page?: number; limit?: number; status?: string } = {}) {
-    const { page = 1, limit = 20, status } = opts;
+    const { status } = opts;
+    const page = Number(opts.page ?? 1);
+    const limit = Number(opts.limit ?? 20);
     const where: any = { tenantId };
     if (status) where.status = status;
 

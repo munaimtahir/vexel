@@ -45,6 +45,8 @@ export class AuditService {
       action, correlationId, from, to,
       page = 1, limit = 20,
     } = filters;
+    const pageN = Number(page);
+    const limitN = Number(limit);
 
     const where: any = {};
     if (tenantId) where.tenantId = tenantId;
@@ -63,8 +65,8 @@ export class AuditService {
       this.prisma.auditEvent.findMany({
         where,
         orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: (pageN - 1) * limitN,
+        take: limitN,
       }),
       this.prisma.auditEvent.count({ where }),
     ]);
@@ -72,10 +74,10 @@ export class AuditService {
     return {
       data,
       pagination: {
-        page,
-        limit,
+        page: pageN,
+        limit: limitN,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limitN),
       },
     };
   }

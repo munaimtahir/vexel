@@ -13,7 +13,9 @@ export class PatientsService {
     tenantId: string,
     opts: { page?: number; limit?: number; lastName?: string; mrn?: string; mobile?: string } = {},
   ) {
-    const { page = 1, limit = 20, lastName, mrn, mobile } = opts;
+    const { lastName, mrn, mobile } = opts;
+    const page = Number(opts.page ?? 1);
+    const limit = Number(opts.limit ?? 20);
     const where: any = { tenantId };
     if (lastName) where.lastName = { contains: lastName, mode: 'insensitive' };
     if (mrn) where.mrn = mrn;

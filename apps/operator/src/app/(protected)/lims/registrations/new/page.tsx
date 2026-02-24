@@ -39,6 +39,7 @@ export default function NewRegistrationPage() {
   const [mob1, setMob1] = useState('');
   const [mob2, setMob2] = useState('');
   const mobileValue = mob1 || mob2 ? `${mob1}-${mob2}` : '';
+  const [lookupDone, setLookupDone] = useState(false);
 
   // Patient
   const [patient, setPatient] = useState<PatientData>(EMPTY);
@@ -71,6 +72,8 @@ export default function NewRegistrationPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [savedEncounterId, setSavedEncounterId] = useState<string | null>(null);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+  const [pollingReceipt, setPollingReceipt] = useState(false);
 
   // ── Field refs for keyboard nav ──────────────────────────────────
   const mob1Ref = useRef<HTMLInputElement>(null);
@@ -117,7 +120,8 @@ export default function NewRegistrationPage() {
         setExistingPatient(null);
         setRegisteredMRN(null);
       }
-    } catch { setExistingPatient(null); setPickerPatients([]); }
+      setLookupDone(true);
+    } catch { setExistingPatient(null); setPickerPatients([]); setLookupDone(true); }
     finally { setMobileLooking(false); }
   }, [mobileValue]);
 
@@ -312,22 +316,26 @@ export default function NewRegistrationPage() {
         });
       } catch { /* best-effort */ }
 
-      // Poll for receipt PDF
-      let receiptUrl: string | null = null;
-      for (let i = 0; i < 4; i++) {
-        await new Promise(r => setTimeout(r, 1000));
-        try {
-          const { data: docs } = await api.GET('/documents' as any, { params: { query: { sourceRef: encounterId, status: 'PUBLISHED', limit: 1 } } });
-          const items: any[] = (docs as any)?.items ?? [];
-          if (items.length > 0) {
-            const { data: dl } = await api.GET('/documents/{id}/download' as any, { params: { path: { id: items[0].id } } });
-            const url = (dl as any)?.url;
-            if (url) { receiptUrl = url; break; }
-          }
-        } catch { /* keep trying */ }
-      }
-      if (receiptUrl) window.open(receiptUrl, '_blank');
+      // Show success screen immediately
       setSavedEncounterId(encounterId);
+
+      // Poll for receipt PDF in background (up to 12 seconds)
+      setPollingReceipt(true);
+      (async () => {
+        for (let i = 0; i < 12; i++) {
+          await new Promise(r => setTimeout(r, 1000));
+          try {
+            const { data: docs } = await api.GET('/documents' as any, { params: { query: { sourceRef: encounterId, status: 'PUBLISHED', limit: 1 } } });
+            const items: any[] = (docs as any)?.items ?? [];
+            if (items.length > 0) {
+              const { data: dl } = await api.GET('/documents/{id}/download' as any, { params: { path: { id: items[0].id } } });
+              const url = (dl as any)?.url;
+              if (url) { setReceiptUrl(url); break; }
+            }
+          } catch { /* keep trying */ }
+        }
+        setPollingReceipt(false);
+      })();
     } catch (err: any) {
       setSaveError(err?.message ?? 'Save failed');
     } finally { setSaving(false); }
@@ -337,11 +345,11 @@ export default function NewRegistrationPage() {
   const handleReset = () => {
     setMob1(''); setMob2('');
     setPatient(EMPTY); setExistingPatient(null); setRegisteredMRN(null);
-    setPickerPatients([]);
+    setPickerPatients([]); setLookupDone(false);
     setFieldErrors({}); setSelectedTests([]);
     setTestSearch(''); setTestResults([]); setTestDropOpen(false);
     setDiscountPKR('0'); setDiscountPct('0'); setPaid('0');
-    setSaveError(''); setSavedEncounterId(null);
+    setSaveError(''); setSavedEncounterId(null); setReceiptUrl(null); setPollingReceipt(false);
     setTimeout(() => mob1Ref.current?.focus(), 50);
   };
 
@@ -359,7 +367,24 @@ export default function NewRegistrationPage() {
             MRN: <strong style={{ color: '#1e293b' }}>{registeredMRN}</strong>
           </p>
         )}
-        <p style={{ margin: '0 0 28px', color: '#94a3b8', fontSize: '14px' }}>Receipt printed (if ready). What next?</p>
+        <div style={{ margin: '16px 0 24px', minHeight: '40px' }}>
+          {pollingReceipt && !receiptUrl && (
+            <p style={{ color: '#94a3b8', fontSize: '14px' }}>⏳ Generating receipt…</p>
+          )}
+          {receiptUrl && (
+            <a
+              href={receiptUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-block', padding: '10px 24px', background: '#0891b2', color: 'white', borderRadius: '6px', fontWeight: 600, fontSize: '14px', textDecoration: 'none' }}
+            >
+              🖨 Download / Print Receipt
+            </a>
+          )}
+          {!pollingReceipt && !receiptUrl && (
+            <p style={{ color: '#94a3b8', fontSize: '13px' }}>Receipt not ready — check reports later.</p>
+          )}
+        </div>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button
             onClick={() => router.push(`/lims/encounters/${savedEncounterId}`)}
@@ -461,7 +486,7 @@ export default function NewRegistrationPage() {
               MRN: {registeredMRN}
             </span>
           )}
-          {!registeredMRN && mob1 && !mobileLooking && (
+          {!registeredMRN && lookupDone && pickerPatients.length === 0 && !mobileLooking && (
             <span style={{ background: '#fef9c3', color: '#854d0e', borderRadius: '20px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>
               New Patient · MRN: Auto-generated
             </span>
@@ -481,6 +506,7 @@ export default function NewRegistrationPage() {
               onChange={e => {
                 const v = e.target.value.replace(/\D/g, '').slice(0, 4);
                 setMob1(v);
+                setLookupDone(false);
                 if (v.length === 4) mob2Ref.current?.focus();
               }}
               onKeyDown={e => {
@@ -497,6 +523,7 @@ export default function NewRegistrationPage() {
               onChange={e => {
                 const v = e.target.value.replace(/\D/g, '').slice(0, 7);
                 setMob2(v);
+                setLookupDone(false);
               }}
               onKeyDown={e => {
                 if (e.key === 'Backspace' && mob2 === '') { e.preventDefault(); mob1Ref.current?.focus(); }

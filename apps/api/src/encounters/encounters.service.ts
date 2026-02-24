@@ -48,7 +48,9 @@ export class EncountersService {
   }
 
   async list(tenantId: string, opts: { page?: number; limit?: number; status?: string; patientId?: string } = {}) {
-    const { page = 1, limit = 20, status, patientId } = opts;
+    const { status, patientId } = opts;
+    const page = Number(opts.page ?? 1);
+    const limit = Number(opts.limit ?? 20);
     const where: any = { tenantId };
     if (status) where.status = status;
     if (patientId) where.patientId = patientId;

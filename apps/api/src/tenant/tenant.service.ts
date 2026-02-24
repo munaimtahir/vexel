@@ -21,6 +21,8 @@ export class TenantService {
   }
 
   async list(page = 1, limit = 20) {
+    page = Number(page);
+    limit = Number(limit);
     const [data, total] = await Promise.all([
       this.prisma.tenant.findMany({
         include: { domains: true },
