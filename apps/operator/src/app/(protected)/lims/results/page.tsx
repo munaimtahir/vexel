@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-type Tab = 'pending' | 'submitted';
+type Tab = 'pending' | 'submitted' | 'verified';
 
 function patientAge(p: any): string {
   if (!p) return '';
@@ -29,8 +29,7 @@ function patientLabel(p: any): string {
 
 export default function ResultsWorklistPage() {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>('pending');
-  const [search, setSearch] = useState('');
+  const [tab, setTab] = useState<Tab>('pending');  const [search, setSearch] = useState('');
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -48,6 +47,7 @@ export default function ResultsWorklistPage() {
         if (apiErr) { setError('Failed to load'); return; }
         setRows((data as any)?.data ?? []);
       } else {
+        // submitted tab shows both submitted (awaiting verification) and verified tests
         // @ts-ignore
         const { data, error: apiErr } = await api.GET('/results/tests/submitted', {
           params: { query: search ? { search } : {} },
@@ -70,8 +70,8 @@ export default function ResultsWorklistPage() {
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="mb-4">
         <TabsList>
-          <TabsTrigger value="pending">Pending tests</TabsTrigger>
-          <TabsTrigger value="submitted">Submitted tests</TabsTrigger>
+          <TabsTrigger value="pending">Pending entry</TabsTrigger>
+          <TabsTrigger value="submitted">Submitted / Verified</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -136,14 +136,22 @@ export default function ResultsWorklistPage() {
             {
               key: 'status',
               header: 'Status',
-              cell: (row: any) => (
-                <span className={row.resultStatus === 'SUBMITTED'
-                  ? 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700'
-                  : 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-700'
-                }>
-                  {row.resultStatus}
-                </span>
-              ),
+              cell: (row: any) => {
+                const s = row.resultStatus;
+                const labStatus = row.labOrderStatus;
+                const isVerified = labStatus === 'verified';
+                return (
+                  <span className={
+                    isVerified
+                      ? 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700'
+                      : s === 'SUBMITTED'
+                        ? 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700'
+                        : 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-700'
+                  }>
+                    {isVerified ? 'Verified' : s}
+                  </span>
+                );
+              },
             },
             {
               key: 'action',

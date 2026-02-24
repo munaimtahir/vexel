@@ -129,6 +129,7 @@ export class ResultsService {
       testId: order.testId,
       testName: order.test?.name ?? order.testNameSnapshot,
       resultStatus: order.resultStatus,
+      labOrderStatus: order.status,
       submittedAt: order.submittedAt,
       filledCount,
       totalCount,

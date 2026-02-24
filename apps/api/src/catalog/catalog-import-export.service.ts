@@ -60,6 +60,74 @@ export class CatalogImportExportService {
     return Buffer.from(buf);
   }
 
+  // ─── Export Real Data ─────────────────────────────────────────────────────
+
+  async generateExportWorkbook(tenantId: string): Promise<Buffer> {
+    const wb = new ExcelJS.Workbook();
+
+    const [tests, parameters, panels, testParamMappings, panelTestMappings] = await Promise.all([
+      this.prisma.catalogTest.findMany({ where: { tenantId }, orderBy: { externalId: 'asc' } }),
+      this.prisma.parameter.findMany({ where: { tenantId }, orderBy: { externalId: 'asc' } }),
+      this.prisma.catalogPanel.findMany({ where: { tenantId }, orderBy: { externalId: 'asc' } }),
+      this.prisma.testParameterMapping.findMany({
+        where: { tenantId },
+        include: { test: { select: { externalId: true } }, parameter: { select: { externalId: true } } },
+        orderBy: [{ test: { externalId: 'asc' } }, { displayOrder: 'asc' }],
+      }),
+      this.prisma.panelTestMapping.findMany({
+        where: { tenantId },
+        include: { panel: { select: { externalId: true } }, test: { select: { externalId: true } } },
+        orderBy: [{ panel: { externalId: 'asc' } }, { displayOrder: 'asc' }],
+      }),
+    ]);
+
+    this._addSheet(wb, 'Parameters',
+      ['externalId', 'userCode', 'name', 'resultType', 'defaultUnit', 'decimals', 'allowedValues', 'loincCode', 'defaultValue', 'isActive'],
+      parameters.map(p => [
+        p.externalId ?? '', p.userCode ?? '', p.name,
+        p.resultType ?? 'numeric', p.defaultUnit ?? '',
+        p.decimals != null ? String(p.decimals) : '2',
+        p.allowedValues ?? '', p.loincCode ?? '', p.defaultValue ?? '',
+        p.isActive ? 'true' : 'false',
+      ]),
+    );
+
+    this._addSheet(wb, 'Tests',
+      ['externalId', 'userCode', 'name', 'department', 'specimenType', 'method', 'loincCode', 'price', 'isActive'],
+      tests.map(t => [
+        t.externalId ?? '', t.userCode ?? '', t.name,
+        t.department ?? '', t.sampleType ?? '', t.method ?? '',
+        t.loincCode ?? '', t.price != null ? String(t.price) : '', t.isActive ? 'true' : 'false',
+      ]),
+    );
+
+    this._addSheet(wb, 'TestParameters',
+      ['testExternalId', 'parameterExternalId', 'displayOrder', 'isRequired', 'unitOverride'],
+      testParamMappings.map(m => [
+        m.test?.externalId ?? '', m.parameter?.externalId ?? '',
+        String(m.displayOrder ?? 0), m.isRequired ? 'true' : 'false', m.unitOverride ?? '',
+      ]),
+    );
+
+    this._addSheet(wb, 'Panels',
+      ['externalId', 'userCode', 'name', 'loincCode', 'price', 'isActive'],
+      panels.map(p => [
+        p.externalId ?? '', p.userCode ?? '', p.name,
+        p.loincCode ?? '', p.price != null ? String(p.price) : '', p.isActive ? 'true' : 'false',
+      ]),
+    );
+
+    this._addSheet(wb, 'PanelTests',
+      ['panelExternalId', 'testExternalId', 'displayOrder'],
+      panelTestMappings.map(m => [
+        m.panel?.externalId ?? '', m.test?.externalId ?? '', String(m.displayOrder ?? 0),
+      ]),
+    );
+
+    const buf = await wb.xlsx.writeBuffer();
+    return Buffer.from(buf);
+  }
+
   private _addSheet(wb: ExcelJS.Workbook, name: string, headers: string[], rows: string[][]) {
     const ws = wb.addWorksheet(name);
     const headerRow = ws.addRow(headers);

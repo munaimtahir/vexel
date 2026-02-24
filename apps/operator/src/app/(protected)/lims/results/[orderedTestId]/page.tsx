@@ -299,8 +299,10 @@ export default function ResultsEntryPage() {
   const parameters: any[] = detail.parameters ?? [];
 
   const inputCls = (locked: boolean) => cn(
-    'px-2.5 py-1.5 border rounded-md text-sm w-40',
-    locked ? 'bg-muted text-muted-foreground' : 'bg-background text-foreground'
+    'px-2.5 py-1.5 border rounded-md text-sm w-40 transition-colors',
+    locked
+      ? 'bg-muted/50 text-muted-foreground border-transparent cursor-default'
+      : 'bg-white dark:bg-slate-800 border-blue-200 dark:border-slate-600 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm'
   );
 
   return (
@@ -482,7 +484,11 @@ export default function ResultsEntryPage() {
                 };
 
                 return (
-                  <tr key={p.parameterId} className="border-t border-muted/50">
+                  <tr key={p.parameterId} className={cn(
+                    'border-t border-muted/50',
+                    !isLocked && 'bg-blue-50/30 dark:bg-slate-800/30 hover:bg-blue-50/50',
+                    isLocked && 'bg-muted/20',
+                  )}>
                     <td className="px-4 py-2.5 text-sm text-foreground font-medium">
                       {p.name}
                       {isLocked && <span className="ml-1.5 text-xs">🔒</span>}

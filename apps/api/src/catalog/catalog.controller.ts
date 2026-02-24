@@ -313,9 +313,10 @@ export class CatalogController {
   @Get('export')
   @RequirePermissions(Permission.CATALOG_READ)
   async exportCatalog(@Req() req: Request, @Res() res: Response) {
-    const buf = await this.importExportSvc.generateWorkbookTemplate();
+    const user = (req as any).user;
+    const buf = await this.importExportSvc.generateExportWorkbook(user.tenantId);
     res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.set('Content-Disposition', 'attachment; filename="catalog-export.xlsx"');
+    res.set('Content-Disposition', `attachment; filename="catalog-export-${new Date().toISOString().slice(0, 10)}.xlsx"`);
     res.send(buf);
   }
 }

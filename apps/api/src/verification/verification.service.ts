@@ -36,7 +36,7 @@ export class VerificationService {
 
     const baseWhere: any = {
       tenantId,
-      status: { notIn: ['verified', 'cancelled'] },
+      status: { not: 'cancelled' },
       labOrders: {
         some: {
           resultStatus: 'SUBMITTED',
@@ -178,6 +178,12 @@ export class VerificationService {
 
     const now = new Date();
 
+    // Determine final encounter status: only 'verified' if no tests remain PENDING
+    const stillPendingCount = await this.prisma.labOrder.count({
+      where: { encounterId, tenantId, resultStatus: 'PENDING' },
+    });
+    const newEncounterStatus = stillPendingCount === 0 ? 'verified' : 'resulted';
+
     await this.prisma.$transaction(async (tx) => {
       for (const order of pendingOrders) {
         await tx.labResult.updateMany({
@@ -191,7 +197,7 @@ export class VerificationService {
       }
       await tx.encounter.update({
         where: { id: encounterId },
-        data: { status: 'verified' },
+        data: { status: newEncounterStatus },
       });
     });
 
@@ -218,9 +224,9 @@ export class VerificationService {
       entityType: 'Encounter',
       entityId: encounterId,
       correlationId,
-      after: { status: 'verified', verifiedBy: actorId },
+      after: { status: newEncounterStatus, verifiedBy: actorId },
     });
 
-    return { encounterId, status: 'verified', documentJobId };
+    return { encounterId, status: newEncounterStatus, documentJobId };
   }
 }
