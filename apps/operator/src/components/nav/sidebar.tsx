@@ -13,13 +13,13 @@ const S = {
   headerBg:      'hsl(215,44%,16%)',
   bodyBg:        'hsl(215,42%,19%)',
   footerBg:      'hsl(215,44%,14%)',
-  activeBg:      'rgba(81,88,153,0.14)',
-  activeBar:     'hsl(229,32%,46%)',
-  activeBarGlow: '0 0 8px rgba(81,88,153,0.55)',
+  activeBg:      'rgba(32,111,244,0.14)',
+  activeBar:     'hsl(217,90%,54%)',
+  activeBarGlow: '0 0 8px rgba(32,111,244,0.55)',
   activeText:    'hsl(215,10%,92%)',
   inactiveText:  'hsl(215,22%,52%)',
   hoverText:     'hsl(215,15%,78%)',
-  iconActive:    'hsl(229,40%,68%)',
+  iconActive:    'hsl(217,85%,70%)',
   iconInactive:  'hsl(215,25%,42%)',
   sectionLabel:  'hsl(215,35%,36%)',
 };
@@ -28,7 +28,7 @@ function GlowDivider() {
   return (
     <div style={{
       height: '1px',
-      background: 'linear-gradient(90deg, transparent 0%, rgba(81,88,153,0.45) 38%, rgba(81,88,153,0.20) 65%, transparent 100%)',
+      background: 'linear-gradient(90deg, transparent 0%, rgba(32,111,244,0.45) 38%, rgba(32,111,244,0.18) 65%, transparent 100%)',
       flexShrink: 0,
     }} />
   );
@@ -98,7 +98,7 @@ export function Sidebar() {
       display: 'flex',
       flexDirection: 'column',
       background: S.bodyBg,
-      borderRight: '1px solid rgba(81,88,153,0.22)',
+      borderRight: '1px solid rgba(32,111,244,0.20)',
       transition: 'width 0.22s cubic-bezier(.4,0,.2,1), min-width 0.22s cubic-bezier(.4,0,.2,1)',
       position: 'sticky',
       top: 0,
@@ -118,7 +118,7 @@ export function Sidebar() {
         {/* Warm spotlight from top-left — terracotta glow */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at 25% -10%, rgba(81,88,153,0.18) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 25% -10%, rgba(32,111,244,0.16) 0%, transparent 60%)',
         }} />
 
         {/* Logo row */}
@@ -132,9 +132,9 @@ export function Sidebar() {
               width: collapsed ? '38px' : '36px',
               height: collapsed ? '38px' : '36px',
               borderRadius: '10px', flexShrink: 0,
-              background: 'linear-gradient(140deg, hsl(229,38%,58%) 0%, hsl(232,34%,48%) 55%, hsl(235,30%,40%) 100%)',
+              background: 'linear-gradient(140deg, hsl(217,85%,62%) 0%, hsl(218,88%,52%) 55%, hsl(220,82%,44%) 100%)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 14px rgba(81,88,153,0.45), inset 0 1px 0 rgba(255,255,255,0.22)',
+              boxShadow: '0 4px 14px rgba(32,111,244,0.45), inset 0 1px 0 rgba(255,255,255,0.22)',
             }}>
               <FlaskConical style={{ width: '17px', height: '17px', color: 'hsl(0,0%,100%)' }} />
             </div>
@@ -151,7 +151,7 @@ export function Sidebar() {
           </div>
           {!collapsed && (
             <button onClick={toggle} style={{ ...iconBtn, width: '26px', height: '26px' }}
-              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(81,88,153,0.42)'; el.style.background = 'rgba(81,88,153,0.12)'; }}
+              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(32,111,244,0.38)'; el.style.background = 'rgba(32,111,244,0.12)'; }}
               onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
               title="Collapse sidebar (Ctrl+B)">
               <ChevronLeft style={{ width: '13px', height: '13px' }} />
@@ -165,12 +165,12 @@ export function Sidebar() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: '5px',
               padding: '5px 12px', borderRadius: '99px',
-              background: 'rgba(81,88,153,0.18)',
-              border: '1px solid rgba(81,88,153,0.42)',
-              boxShadow: '0 0 12px rgba(81,88,153,0.18)',
+              background: 'rgba(32,111,244,0.16)',
+              border: '1px solid rgba(32,111,244,0.38)',
+              boxShadow: '0 0 12px rgba(32,111,244,0.16)',
             }}>
-              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'hsl(229,40%,62%)', boxShadow: '0 0 5px rgba(81,88,153,0.8)' }} />
-              <span style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(229,40%,88%)', letterSpacing: '0.07em' }}>LIMS</span>
+              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'hsl(217,85%,68%)', boxShadow: '0 0 5px rgba(32,111,244,0.75)' }} />
+              <span style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(217,85%,90%)', letterSpacing: '0.07em' }}>LIMS</span>
             </div>
             {FUTURE_MODULES.map(m => (
               <div key={m.label} style={{
@@ -191,7 +191,7 @@ export function Sidebar() {
       {/* Expand button when collapsed */}
       {collapsed && (
         <button onClick={toggle} style={{ ...iconBtn, width: '32px', height: '32px', margin: '10px auto 6px' }}
-          onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(81,88,153,0.42)'; el.style.background = 'rgba(81,88,153,0.12)'; }}
+          onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(32,111,244,0.38)'; el.style.background = 'rgba(32,111,244,0.12)'; }}
           onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
           title="Expand sidebar (Ctrl+B)">
           <ChevronRight style={{ width: '13px', height: '13px' }} />
@@ -243,7 +243,7 @@ export function Sidebar() {
               <Icon size={15} className="shrink-0 transition-colors" color={isActive ? S.iconActive : S.iconInactive} />
               {!collapsed && <span style={{ flex: 1 }}>{item.label}</span>}
               {!collapsed && isActive && (
-                <div style={{ width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0, background: 'hsl(229,32%,46%)', boxShadow: '0 0 6px rgba(81,88,153,0.75)' }} />
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0, background: 'hsl(217,90%,54%)', boxShadow: '0 0 6px rgba(32,111,244,0.70)' }} />
               )}
             </Link>
           );
@@ -272,10 +272,10 @@ export function Sidebar() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden', flex: 1 }}>
               <div style={{
                 width: '32px', height: '32px', borderRadius: '9px', flexShrink: 0,
-                background: 'linear-gradient(135deg, hsl(229,38%,54%) 0%, hsl(235,32%,42%) 100%)',
+                background: 'linear-gradient(135deg, hsl(217,88%,58%) 0%, hsl(220,82%,46%) 100%)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '11.5px', fontWeight: 700, color: 'hsl(0,0%,100%)',
-                boxShadow: '0 2px 10px rgba(81,88,153,0.42), inset 0 1px 0 rgba(255,255,255,0.22)',
+                boxShadow: '0 2px 10px rgba(32,111,244,0.38), inset 0 1px 0 rgba(255,255,255,0.22)',
                 letterSpacing: '0.02em',
               }}>
                 {initials}

@@ -11,7 +11,7 @@
    Core palette:
      Cool Off-White Slate ....... page canvas    hsl(215,18%,94%)
      Deep Slate/Navy ............ sidebar bg     hsl(215,42%,18%)
-     Morandi Periwinkle ......... primary/CTA    hsl(229,32%,46%)  ~#5158A1
+     Vivid Cobalt Blue .......... primary/CTA    hsl(217,90%,54%)  ~#206FF4
      Dusty Sage Green ........... success        hsl(143,22%,42%)
      Dusty Amber ................ warning        hsl(38,42%,46%)
      Morandi Lavender ........... info/accent    hsl(229,25%,66%)
@@ -30,7 +30,7 @@
     --popover-foreground:  215 28% 14%;
 
     /* ── Primary — Morandi dusty periwinkle ─────────── */
-    --primary:             229 32% 46%;   /* ~#5158A1 darkened Morandi lavender */
+    --primary:             217 90% 54%;   /* ~#206FF4 vivid cobalt blue */ 
     --primary-foreground:  0 0% 100%;     /* white */
 
     /* ── Secondary ──────────────────────────────────── */
@@ -52,7 +52,7 @@
     /* ── Structure ──────────────────────────────────── */
     --border:              215 14% 82%;   /* cool border */
     --input:               215 14% 82%;
-    --ring:                229 32% 46%;   /* same as primary */
+    --ring:                217 90% 54%;   /* same as primary */
     --radius:              0.625rem;
 
     /* ── Sidebar — deep navy ──────────────────────────*/
@@ -61,8 +61,8 @@
     --sidebar-accent:      215 38% 25%;
     --sidebar-accent-foreground: 215 10% 95%;
     --sidebar-border:      215 40% 14%;
-    --sidebar-primary:     229 32% 46%;   /* periwinkle active accent */
-    --sidebar-ring:        229 32% 46%;
+    --sidebar-primary:     217 90% 54%;
+    --sidebar-ring:        217 90% 54%;
 
     /* ── Status chip tokens ───────────────────────────*/
     --status-success-bg:   143 28% 88%;
@@ -70,7 +70,7 @@
     --status-warning-bg:   38 45% 88%;
     --status-warning-fg:   35 52% 30%;
     --status-info-bg:      229 28% 90%;   /* periwinkle-tinted info */
-    --status-info-fg:      229 32% 38%;
+    --status-info-fg:      217 75% 32%;
     --status-neutral-bg:   215 14% 88%;
     --status-neutral-fg:   215 18% 38%;
     --status-destructive-bg: 0 28% 92%;
@@ -90,7 +90,7 @@
     --card-foreground:     215 15% 88%;
     --popover:             215 22% 14%;
     --popover-foreground:  215 15% 88%;
-    --primary:             229 35% 58%;
+    --primary:             217 85% 62%;
     --primary-foreground:  0 0% 100%;
     --secondary:           215 18% 20%;
     --secondary-foreground:215 15% 80%;
@@ -171,8 +171,8 @@
   /* Primary gradient — Morandi dusty periwinkle */
   .gradient-primary {
     background: linear-gradient(135deg,
-      hsl(229, 38%, 52%) 0%,
-      hsl(235, 34%, 42%) 100%
+      hsl(217, 88%, 58%) 0%,
+      hsl(220, 84%, 46%) 100%
     );
   }
 
@@ -199,8 +199,8 @@
   }
   .gradient-info {
     background: linear-gradient(135deg,
-      hsl(229, 30%, 52%) 0%,
-      hsl(235, 28%, 44%) 100%
+      hsl(217, 85%, 56%) 0%,
+      hsl(220, 80%, 46%) 100%
     );
   }
 }
