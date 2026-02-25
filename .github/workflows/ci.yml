@@ -30,15 +30,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Scan operator app for raw fetch/axios
         run: |
-          if grep -rn "fetch\(" apps/operator/src/app --include="*.tsx" --include="*.ts" | grep -v "getApiClient\|api-client\|node_modules"; then
-            echo "FAIL: raw fetch() found in operator app"
+          if rg -n --glob '*.{ts,tsx}' "fetch\\(|from ['\\\"]axios['\\\"]|require\\(['\\\"]axios['\\\"]\\)" apps/operator/src | rg -v "getApiClient|api-client|node_modules"; then
+            echo "FAIL: raw fetch()/axios found in operator app"
             exit 1
           fi
           echo "PASS: no raw fetch/axios in operator app"
       - name: Scan admin app for raw fetch/axios
         run: |
-          if grep -rn "fetch\(" apps/admin/src/app --include="*.tsx" --include="*.ts" | grep -v "getApiClient\|api-client\|node_modules"; then
-            echo "FAIL: raw fetch() found in admin app"
+          if rg -n --glob '*.{ts,tsx}' "fetch\\(|from ['\\\"]axios['\\\"]|require\\(['\\\"]axios['\\\"]\\)" apps/admin/src | rg -v "getApiClient|api-client|node_modules"; then
+            echo "FAIL: raw fetch()/axios found in admin app"
             exit 1
           fi
           echo "PASS: no raw fetch/axios in admin app"
@@ -126,8 +126,7 @@ jobs:
       - name: Run database migrations and seed
         run: |
           docker compose exec -T api npx prisma migrate deploy
-          docker compose exec -T api npx ts-node --transpile-only --skip-project prisma/seed.ts
-        continue-on-error: true
+          docker compose exec -T api npx ts-node --transpile-only --skip-project --compiler-options '{"module":"NodeNext","moduleResolution":"NodeNext"}' prisma/seed.ts
       - name: Install Playwright browsers
         run: pnpm --filter @vexel/e2e exec playwright install --with-deps chromium
       - name: Run E2E tests

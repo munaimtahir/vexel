@@ -1,8 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
+import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 // ── Template metadata ────────────────────────────────────────────────────────
 const TEMPLATES = [
@@ -15,10 +14,10 @@ const TEMPLATES = [
 ];
 
 async function downloadFile(url: string, filename: string) {
-  const token = getToken();
-  const res = await fetch(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
-  if (!res.ok) throw new Error(`Download failed: ${res.status}`);
-  const blob = await res.blob();
+  const api = getApiClient(getToken() ?? undefined);
+  const { data, error } = await api.GET(url as any, { parseAs: 'blob' } as any);
+  if (error || !data) throw new Error((error as any)?.message ?? 'Download failed');
+  const blob = data as Blob;
   const objectUrl = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = objectUrl;
@@ -53,17 +52,17 @@ export default function ImportExportPage() {
     if (!file) return;
     setImporting(true); setImportResult(null); setImportError(null);
     try {
-      const token = getToken();
+      const api = getApiClient(getToken() ?? undefined);
       const formData = new FormData();
       formData.append('file', file);
       formData.append('mode', mode);
-      const res = await fetch(`${API_BASE}/api/catalog/import`, {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formData,
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.message ?? `Import failed: ${res.status}`);
+      const { data, error } = await api.POST('/catalog/import' as any, {
+        body: formData as any,
+        bodySerializer: (body: FormData) => body as any,
+        headers: { 'Content-Type': undefined as any },
+      } as any);
+      if (error || !data) throw new Error((error as any)?.message ?? 'Import failed');
+      const json = data as any;
       setImportResult(json);
     } catch (err: any) {
       setImportError(err.message ?? 'Import failed');
@@ -77,18 +76,12 @@ export default function ImportExportPage() {
     setMappingImporting(true); setMappingError(null); setMappingResult(null);
     try {
       const csv = await mappingFile.text();
-      const token = getToken();
-      const res = await fetch(`${API_BASE}/api/catalog/test-parameter-mappings/import`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ csv }),
+      const api = getApiClient(getToken() ?? undefined);
+      const { data, error } = await api.POST('/catalog/test-parameter-mappings/import', {
+        body: { csv },
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.message ?? `Import failed: ${res.status}`);
-      setMappingResult(json);
+      if (error || !data) throw new Error((error as any)?.message ?? 'Import failed');
+      setMappingResult(data as any);
     } catch (err: any) {
       setMappingError(err.message ?? 'Import failed');
     } finally {
@@ -100,7 +93,7 @@ export default function ImportExportPage() {
     setExporting(true); setExportError(null);
     try {
       await downloadFile(
-        `${API_BASE}/api/catalog/export`,
+        '/catalog/export',
         `catalog-export-${new Date().toISOString().slice(0, 10)}.xlsx`,
       );
     } catch (err: any) {
@@ -112,7 +105,7 @@ export default function ImportExportPage() {
 
   async function handleTemplateDownload(templatePath: string) {
     try {
-      await downloadFile(`${API_BASE}/api/catalog/templates/${templatePath}`, templatePath);
+      await downloadFile(`/catalog/templates/${templatePath}`, templatePath);
     } catch {
       alert('Template download failed');
     }

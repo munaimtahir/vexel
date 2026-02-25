@@ -473,3 +473,18 @@ HASH_2=$(curl -s -X POST http://127.0.0.1:3002/api/documents/receipt:generate \
 [ "$HASH_1" = "$HASH_2" ] && echo "✅ Hash reproducibility OK" || echo "❌ Hash mismatch"
 ```
 Expected: `✅ Hash reproducibility OK`
+
+---
+
+## OPD MVP (pending)
+
+- [ ] `module.opd` feature flag enabled for test tenant
+- [ ] Operator `/opd` placeholder or OPD worklist route loads (depending on deployed slice)
+- [ ] Admin `/admin/opd` OPD config route loads
+- [ ] OPD API namespace reserved/implemented under `/api/opd/*` per contract
+- [ ] Appointment command transition smoke (`book/reschedule/cancel/arrive/no-show`) passes
+- [ ] OPD visit command workflow smoke (`start/record-vitals/update-note/add-rx-item/finalize/close`) passes
+- [ ] OPD invoice/payment smoke (`create-invoice/issue/add-line/record-payment`) passes
+- [ ] OPD invoice/receipt deterministic PDF smoke (idempotent payloadHash + published document) passes
+- [ ] OPD tenant isolation smoke checks pass (no cross-tenant reads/writes)
+- [ ] OPD RBAC smoke checks pass for `opd-operator`, `opd-doctor`, `opd-finance`

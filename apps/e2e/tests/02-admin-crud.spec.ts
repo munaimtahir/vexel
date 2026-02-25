@@ -36,9 +36,9 @@ test.describe('Admin CRUD', () => {
     // Wait for list to load (spinner disappears)
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
 
-    // The tenant cards are rendered as div elements with tenant names
-    const tenantCards = page.locator('[style*="background: white"]').filter({ hasText: /.+/ });
-    await expect(tenantCards.first()).toBeVisible();
+    // Assert against stable content/actions instead of presentation styles.
+    await expect(page.getByText(/system|vexel/i).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Edit' }).first()).toBeVisible();
   });
 
   test('create a new test user via UI and verify in list', async ({ page }) => {

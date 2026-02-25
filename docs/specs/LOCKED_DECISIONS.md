@@ -29,6 +29,34 @@
    - audit events for workflow commands + admin changes
 8) **No legacy compatibility** in v1.
 
+## B.1) OPD Module — MVP Scope (LOCKED)
+
+OPD MVP scope is governance-locked and defined authoritatively in `docs/specs/opd/OPD_MVP_SPEC.md`.
+
+MVP In (locked):
+- Multi-doctor support (providers)
+- Appointment booking
+- Patient registration using shared core `Patient`
+- Vitals capture
+- Structured clinical notes
+- Billing + payments (desk/cash flow)
+- Free-text prescription only
+
+MVP Out (deferred):
+- Payment gateway integration
+- Patient portal
+- Drug catalog / formulary
+- Reminders (SMS / WhatsApp / email)
+- Insurance / claims / payer workflows
+
+Namespace + governance locks:
+- Operator/Admin OPD routes live under `/opd/*`
+- OPD API routes live under `/api/opd/*` (global `/api` prefix preserved)
+- OPD workflow state changes remain command-only (no direct CRUD status edits)
+- OPD invoice/receipt documents remain deterministic + idempotent
+- OPD entities remain tenant-scoped (`tenantId`, tenant-scoped uniques, tenant-filtered queries)
+- Admin app may edit OPD config/reference data only; no workflow status mutation
+
 ## C) Tech stack (locked default)
 Backend:
 - API: **NestJS (TypeScript)**

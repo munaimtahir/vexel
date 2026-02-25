@@ -57,6 +57,11 @@ Verifier permissions: `catalog.read, encounter.manage, result.enter, result.veri
 - MinIO uses `forcePathStyle: true` for S3 client compatibility
 - Seed runs via `ts-node --transpile-only --skip-project prisma/seed.ts` (avoid tsconfig conflict)
 - **All query-param integers (page, limit) arrive as strings** — always cast with `Number()` in service `list()` methods before passing to Prisma `take`/`skip`
+- OPD MVP governance is locked in `docs/specs/opd/OPD_MVP_SPEC.md` (contract-first, tenant-scoped, command-only workflows)
+- OPD UI routes are reserved under `/opd/*` in Operator/Admin apps
+- OPD API routes must live under `/api/opd/*` (global API prefix preserved)
+- OPD workflow states must change only via command endpoints; Admin is config/reference only
+- OPD invoice/receipt documents must use deterministic document pipeline (`payloadHash` / `pdfHash`, idempotent)
 
 #### Known gotchas / bugs fixed (cumulative)
 - `GET /api/documents?limit=N` — limit arrives as string → cast `Number(filters.limit)` ✅ `2729139`
@@ -383,6 +388,7 @@ No page may be placed outside these groups.
 ### Module Namespacing
 - All LIMS routes MUST be under `/lims/*`
 - Future modules: `/rims/*`, `/opd/*`, `/billing/*`
+- OPD routes must live under `/opd/*` in Operator/Admin, and OPD backend endpoints must live under `/api/opd/*`
 - Never create top-level unnamespaced LIMS routes (`/encounters`, `/results` etc.). Use redirects if legacy routes must be preserved.
 
 ### Component-First Development
