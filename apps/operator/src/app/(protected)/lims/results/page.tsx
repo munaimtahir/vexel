@@ -145,8 +145,8 @@ export default function ResultsWorklistPage() {
                     isVerified
                       ? 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700'
                       : s === 'SUBMITTED'
-                        ? 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700'
-                        : 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-700'
+                        ? 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]'
+                        : 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))]'
                   }>
                     {isVerified ? 'Verified' : s}
                   </span>

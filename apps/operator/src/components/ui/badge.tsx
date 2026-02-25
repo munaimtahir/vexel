@@ -8,20 +8,19 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:     'border-transparent bg-primary text-primary-foreground',
-        secondary:   'border-[hsl(32,14%,76%)] bg-[hsl(32,18%,90%)] text-[hsl(25,22%,28%)]',
-        destructive: 'border-transparent bg-[hsl(0,28%,88%)] text-[hsl(0,38%,40%)]',
+        secondary:   'border-transparent bg-[hsl(var(--status-neutral-bg))] text-[hsl(var(--status-neutral-fg))]',
+        destructive: 'border-transparent bg-[hsl(var(--status-destructive-bg))] text-[hsl(var(--status-destructive-fg))]',
         outline:     'border-border text-foreground bg-transparent',
-        success:     'border-transparent bg-[hsl(143,22%,85%)] text-[hsl(143,28%,32%)]',
-        warning:     'border-transparent bg-[hsl(40,40%,86%)] text-[hsl(36,38%,32%)]',
-        info:        'border-transparent bg-[hsl(205,30%,86%)] text-[hsl(205,38%,28%)]',
-        purple:      'border-transparent bg-[hsl(229,25%,86%)] text-[hsl(229,30%,30%)]',
+        success:     'border-transparent bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]',
+        warning:     'border-transparent bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))]',
+        info:        'border-transparent bg-[hsl(var(--status-info-bg))] text-[hsl(var(--status-info-fg))]',
       },
     },
     defaultVariants: { variant: 'default' },
   },
 );
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {}
+export type BadgeProps = React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof badgeVariants>;
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   return <div className={cn(badgeVariants({ variant }), className)} {...props} />;

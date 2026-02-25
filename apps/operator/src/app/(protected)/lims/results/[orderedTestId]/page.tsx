@@ -344,7 +344,7 @@ export default function ResultsEntryPage() {
               )}
               <span className={cn(
                 'px-2.5 py-0.5 rounded-full text-xs font-semibold',
-                isSubmitted ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+                isSubmitted ? 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]' : 'bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))]'
               )}>
                 {detail.resultStatus}
               </span>

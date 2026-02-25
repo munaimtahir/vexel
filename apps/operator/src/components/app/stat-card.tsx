@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
 const ICON_COLORS = [
-  'from-orange-500 to-orange-600',
+  'from-violet-600 to-violet-700',
   'from-sky-600 to-sky-700',
   'from-emerald-500 to-emerald-600',
   'from-amber-500 to-amber-600',
@@ -29,7 +29,7 @@ export function StatCard({ label, value, icon: Icon, trend, className, colorInde
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest truncate">{label}</p>
             <p className="text-2xl font-bold mt-1.5 text-foreground">{value}</p>
             {trend && (
-              <p className={cn('text-xs mt-1.5 font-medium', trend.positive ? 'text-emerald-600' : 'text-red-500')}>{trend.value}</p>
+              <p className={cn('text-xs mt-1.5 font-medium', trend.positive ? 'text-[hsl(var(--status-success-fg))]' : 'text-[hsl(var(--status-destructive-fg))]')}>{trend.value}</p>
             )}
           </div>
           {Icon && (
