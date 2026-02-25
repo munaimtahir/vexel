@@ -83,3 +83,62 @@ pnpm --filter @vexel/api test -- encounters/__tests__/encounter-workflow.spec.ts
 - Jest PASS/FAIL summary with spec counts
 - Any skipped smoke steps and why (e.g., local stack not running, missing seeded OPD patient/provider permissions)
 - If failures occur: failing assertion, root cause, and whether runtime code changes are required (out of scope for subagent G)
+
+## Fresh Redeploy Smoke Evidence (2026-02-25)
+
+Purpose:
+- Validate the freshly rebuilt local deployment after `docker compose down && docker compose up -d --build`
+- Confirm core health, authenticated API access, LIMS route availability, and OPD route availability
+
+Executed commands (repo root):
+
+```bash
+pnpm --filter @vexel/api test -- --passWithNoTests --testPathPattern='spec.ts$'
+pnpm --filter @vexel/e2e test
+
+docker compose down
+JWT_SECRET=ci-test-jwt-secret-not-for-production-use-only \
+NEXT_PUBLIC_API_URL=http://127.0.0.1:9021 \
+TENANCY_DEV_HEADER_ENABLED=true \
+docker compose up -d --build
+
+curl -fsS http://127.0.0.1:9021/api/health
+curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9023/admin/login
+curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9024/lims/worklist
+curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9024/opd/worklist
+```
+
+Authenticated smoke script (API + routes):
+
+```bash
+API=http://127.0.0.1:9021/api
+
+ADMIN_TOKEN=$(curl -s -X POST "$API/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@vexel.system","password":"Admin@vexel123!"}' | jq -r .accessToken)
+
+OP_TOKEN=$(curl -s -X POST "$API/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"operator@demo.vexel.pk","password":"Operator@demo123!"}' | jq -r .accessToken)
+
+curl -s "$API/me" -H "Authorization: Bearer $ADMIN_TOKEN" | jq '{email,tenantId}'
+curl -s "$API/me" -H "Authorization: Bearer $OP_TOKEN" | jq '{email,tenantId}'
+curl -s "$API/patients?page=1&limit=1" -H "Authorization: Bearer $OP_TOKEN"
+```
+
+Observed results:
+
+- API health: `200` (`{"status":"ok","version":"0.1.0",...}`)
+- Admin login page: `200`
+- Operator LIMS worklist route: `200`
+- Operator OPD worklist route: `200`
+- Admin auth login: success (`accessToken` returned)
+- Operator auth login: success (`accessToken` returned)
+- `GET /api/me` (admin): `{"email":"admin@vexel.system","tenantId":"system"}`
+- `GET /api/me` (operator): `{"email":"operator@demo.vexel.pk","tenantId":"system"}`
+- `GET /api/patients?page=1&limit=1` (operator): `200` with data payload (`count=1`)
+
+Validation summary:
+- Existing LIMS behavior remained reachable after fresh rebuild (`/lims/worklist`, API auth/patients)
+- OPD route namespace remained available after fresh rebuild (`/opd/worklist`)
+- Fresh rebuilt stack is usable for manual testing and feature verification
