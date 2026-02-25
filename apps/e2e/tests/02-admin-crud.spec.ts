@@ -88,8 +88,8 @@ test.describe('Admin CRUD', () => {
 
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
 
-    // Pick the first module toggle
-    const toggle = page.getByRole('button', { name: /Toggle module\./i }).first();
+    // Pick the module.lims toggle (seeded as enabled=true, so aria-pressed="true")
+    const toggle = page.getByRole('button', { name: 'Toggle module.lims' });
     await expect(toggle).toBeVisible({ timeout: 15_000 });
     const initialPressed = await toggle.getAttribute('aria-pressed');
 

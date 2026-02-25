@@ -73,9 +73,9 @@ export class TenantsController {
   setTenantFeatureFlags(
     @Req() req: Request,
     @Param('id') id: string,
-    @Body() body: { flags: Array<{ key: string; enabled: boolean }> },
+    @Body() body: Array<{ key: string; enabled: boolean; variantJson?: string }>,
     @Headers(CORRELATION_ID_HEADER) cid?: string,
   ) {
-    return this.featureFlags.setForTenant(id, body.flags, (req as any).user.userId, cid);
+    return this.featureFlags.setForTenant(id, body, (req as any).user.userId, cid);
   }
 }
