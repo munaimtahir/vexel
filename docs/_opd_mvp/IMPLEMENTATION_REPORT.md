@@ -231,3 +231,34 @@ PASS — end-to-end OPD happy path completed through payment.
 3. Add real OPD visit clinical payload commands (`record-vitals`, `update-note`, `add-rx-item`, `finalize`, `close`) if not fully implemented yet.
 4. Run end-to-end OPD happy-path smoke against live stack with `module.opd` enabled for demo tenant.
 5. Add OPD invoice/receipt deterministic document generation E2E (same payload hash idempotency) to automated tests.
+
+## Final Validation Update (Post-Fix E2E Run)
+
+Date (UTC): `2026-02-25`
+
+### Additional Fixes Applied During Final Verification
+
+- Tenant isolation hardening (backend):
+  - `apps/api/src/auth/jwt-auth.guard.ts`
+  - Authenticated requests can no longer override tenant scope via `x-tenant-id`; mismatched tenant header now returns `403`, and request tenant context is forced to the JWT tenant.
+- Admin E2E stabilization:
+  - `apps/e2e/tests/02-admin-crud.spec.ts`
+  - Create-user test updated to use scoped form selectors (avoids brittle label/ID assumptions).
+  - Feature-flag toggle test verifies state by backend readback and uses a non-LIMS flag (`module.rad`) to avoid cross-project interference in parallel E2E runs.
+
+### Playwright E2E Results (Final)
+
+- `pnpm --filter @vexel/e2e test apps/e2e/tests/07-tenant-isolation.spec.ts` ✅ `3/3 passed`
+- `pnpm --filter @vexel/e2e test apps/e2e/tests/02-admin-crud.spec.ts` ✅ `5/5 passed`
+- `pnpm --filter @vexel/e2e test` ✅ `25/25 passed` (`22.8s`)
+
+### Important Local State Note
+
+- A failing intermediate full-suite run was caused by local DB state where `module.lims` had been toggled `false`.
+- Re-enabled `module.lims` for the system tenant before the final full-suite run.
+- This was a test-environment state issue, not a product regression in the LIMS encounter/workflow/document flows.
+
+### CI Status Clarification
+
+- Playwright E2E (local equivalent of the CI E2E job) is green.
+- Full GitHub Actions matrix was not executed locally end-to-end in this session; CI should be run in the repository pipeline to confirm all jobs beyond E2E.
