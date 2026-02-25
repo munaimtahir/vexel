@@ -35,15 +35,15 @@ export default function AuditPage() {
     <div>
       {/* Detail Modal */}
       {detailEvent && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '10px', maxWidth: '640px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ background: 'hsl(var(--card))', borderRadius: '10px', maxWidth: '640px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--muted))', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 700 }}>Audit Event Detail</h2>
-              <button onClick={() => setDetailEvent(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8' }}>×</button>
+              <button onClick={() => setDetailEvent(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}>×</button>
             </div>
             <div style={{ padding: '16px 20px', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <Row label="ID" value={detailEvent.id} mono />
-              <Row label="Action" value={detailEvent.action} mono badge="#ede9fe" badgeText="#6d28d9" />
+              <Row label="Action" value={detailEvent.action} mono badge="hsl(var(--status-info-bg))" badgeText="hsl(var(--primary))" />
               <Row label="Entity Type" value={detailEvent.entityType ?? '—'} />
               <Row label="Entity ID" value={detailEvent.entityId ?? '—'} mono />
               <Row label="Actor User ID" value={detailEvent.actorUserId ?? 'system'} mono />
@@ -52,24 +52,24 @@ export default function AuditPage() {
               <Row label="Time" value={new Date(detailEvent.createdAt).toLocaleString()} />
               {detailEvent.before != null && (
                 <div>
-                  <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>Before</div>
-                  <pre style={{ fontSize: '11px', background: '#fef9c3', padding: '10px', borderRadius: '6px', overflow: 'auto', maxHeight: '200px', margin: 0, color: '#7c2d12' }}>
+                  <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>Before</div>
+                  <pre style={{ fontSize: '11px', background: 'hsl(var(--status-warning-bg))', padding: '10px', borderRadius: '6px', overflow: 'auto', maxHeight: '200px', margin: 0, color: 'hsl(var(--status-warning-fg))' }}>
                     {JSON.stringify(detailEvent.before, null, 2)}
                   </pre>
                 </div>
               )}
               {detailEvent.after != null && (
                 <div>
-                  <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>After</div>
-                  <pre style={{ fontSize: '11px', background: '#f0fdf4', padding: '10px', borderRadius: '6px', overflow: 'auto', maxHeight: '200px', margin: 0, color: '#166534' }}>
+                  <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>After</div>
+                  <pre style={{ fontSize: '11px', background: 'hsl(var(--status-success-bg))', padding: '10px', borderRadius: '6px', overflow: 'auto', maxHeight: '200px', margin: 0, color: 'hsl(var(--status-success-fg))' }}>
                     {JSON.stringify(detailEvent.after, null, 2)}
                   </pre>
                 </div>
               )}
               {detailEvent.metadata != null && (
                 <div>
-                  <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>Metadata</div>
-                  <pre style={{ fontSize: '11px', background: '#f1f5f9', padding: '10px', borderRadius: '6px', overflow: 'auto', maxHeight: '200px', margin: 0 }}>
+                  <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>Metadata</div>
+                  <pre style={{ fontSize: '11px', background: 'hsl(var(--muted))', padding: '10px', borderRadius: '6px', overflow: 'auto', maxHeight: '200px', margin: 0 }}>
                     {JSON.stringify(detailEvent.metadata, null, 2)}
                   </pre>
                 </div>
@@ -79,15 +79,15 @@ export default function AuditPage() {
         </div>
       )}
 
-      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: '#1e293b' }}>Audit Log</h1>
+      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'hsl(var(--foreground))' }}>Audit Log</h1>
 
-      <div style={{ background: 'white', padding: '16px 20px', borderRadius: '8px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+      <div style={{ background: 'hsl(var(--card))', padding: '16px 20px', borderRadius: '8px', marginBottom: '16px', boxShadow: 'var(--shadow-sm)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
         <div>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Action</label>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Action</label>
           <select
             value={filters.action}
             onChange={(e) => setFilters({ ...filters, action: e.target.value, page: 1 })}
-            style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', minWidth: '200px' }}
+            style={{ padding: '6px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', minWidth: '200px' }}
           >
             <option value="">All actions</option>
             <optgroup label="Auth">
@@ -134,11 +134,11 @@ export default function AuditPage() {
           </select>
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Entity Type</label>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Entity Type</label>
           <select
             value={filters.entityType}
             onChange={(e) => setFilters({ ...filters, entityType: e.target.value, page: 1 })}
-            style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', minWidth: '160px' }}
+            style={{ padding: '6px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', minWidth: '160px' }}
           >
             <option value="">All types</option>
             <option value="User">User</option>
@@ -152,58 +152,58 @@ export default function AuditPage() {
           </select>
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Actor User ID</label>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Actor User ID</label>
           <input
             value={filters.actorUserId}
             onChange={(e) => setFilters({ ...filters, actorUserId: e.target.value, page: 1 })}
             placeholder="UUID prefix…"
-            style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', width: '160px' }}
+            style={{ padding: '6px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', width: '160px' }}
           />
         </div>
         <div style={{ alignSelf: 'flex-end' }}>
           <button onClick={() => setFilters({ action: '', entityType: '', actorUserId: '', page: 1 })}
-            style={{ padding: '6px 12px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>
+            style={{ padding: '6px 12px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>
             Clear
           </button>
         </div>
       </div>
 
-      <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: '#f8fafc' }}>
+          <thead style={{ background: 'hsl(var(--background))' }}>
             <tr>
               {['Action', 'Entity', 'Actor', 'Correlation ID', 'Time', ''].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 16px', color: '#64748b', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
+                <th key={h} style={{ textAlign: 'left', padding: '10px 16px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>Loading...</td></tr>
+              <tr><td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading...</td></tr>
             ) : events.length === 0 ? (
-              <tr><td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>No audit events found.</td></tr>
+              <tr><td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No audit events found.</td></tr>
             ) : events.map((e: any) => (
-              <tr key={e.id} style={{ borderTop: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '10px 16px' }}><code style={{ background: '#ede9fe', color: '#6d28d9', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>{e.action}</code></td>
-                <td style={{ padding: '10px 16px', color: '#475569' }}>{e.entityType ?? '—'}{e.entityId ? ` (${e.entityId.slice(0, 8)}…)` : ''}</td>
-                <td style={{ padding: '10px 16px', color: '#475569', fontFamily: 'monospace', fontSize: '11px' }}>{e.actorUserId ? e.actorUserId.slice(0, 12) : 'system'}</td>
-                <td style={{ padding: '10px 16px', color: '#94a3b8', fontFamily: 'monospace', fontSize: '11px' }}>{e.correlationId?.slice(0, 12) ?? '—'}</td>
-                <td style={{ padding: '10px 16px', color: '#94a3b8', whiteSpace: 'nowrap' }}>{new Date(e.createdAt).toLocaleString()}</td>
+              <tr key={e.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
+                <td style={{ padding: '10px 16px' }}><code style={{ background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>{e.action}</code></td>
+                <td style={{ padding: '10px 16px', color: 'hsl(var(--muted-foreground))' }}>{e.entityType ?? '—'}{e.entityId ? ` (${e.entityId.slice(0, 8)}…)` : ''}</td>
+                <td style={{ padding: '10px 16px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>{e.actorUserId ? e.actorUserId.slice(0, 12) : 'system'}</td>
+                <td style={{ padding: '10px 16px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>{e.correlationId?.slice(0, 12) ?? '—'}</td>
+                <td style={{ padding: '10px 16px', color: 'hsl(var(--muted-foreground))', whiteSpace: 'nowrap' }}>{new Date(e.createdAt).toLocaleString()}</td>
                 <td style={{ padding: '10px 16px' }}>
-                  <button onClick={() => setDetailEvent(e)} style={{ padding: '3px 8px', fontSize: '11px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: 'pointer' }}>Detail</button>
+                  <button onClick={() => setDetailEvent(e)} style={{ padding: '3px 8px', fontSize: '11px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Detail</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         {pagination && pagination.totalPages > 1 && (
-          <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #f1f5f9', fontSize: '13px', color: '#64748b' }}>
+          <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid hsl(var(--muted))', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
             <span>Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)</span>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button disabled={filters.page <= 1} onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
-                style={{ padding: '4px 12px', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: 'pointer', background: 'white' }}>← Prev</button>
+                style={{ padding: '4px 12px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer', background: 'hsl(var(--card))' }}>← Prev</button>
               <button disabled={filters.page >= pagination.totalPages} onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
-                style={{ padding: '4px 12px', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: 'pointer', background: 'white' }}>Next →</button>
+                style={{ padding: '4px 12px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer', background: 'hsl(var(--card))' }}>Next →</button>
             </div>
           </div>
         )}
@@ -215,7 +215,7 @@ export default function AuditPage() {
 function Row({ label, value, mono, badge, badgeText }: { label: string; value: string; mono?: boolean; badge?: string; badgeText?: string }) {
   return (
     <div style={{ display: 'flex', gap: '12px' }}>
-      <span style={{ width: '120px', flexShrink: 0, color: '#64748b', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', paddingTop: '2px' }}>{label}</span>
+      <span style={{ width: '120px', flexShrink: 0, color: 'hsl(var(--muted-foreground))', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', paddingTop: '2px' }}>{label}</span>
       {badge ? (
         <code style={{ background: badge, color: badgeText, padding: '2px 8px', borderRadius: '4px', fontSize: '12px' }}>{value}</code>
       ) : (

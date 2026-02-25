@@ -385,7 +385,7 @@ export default function NewRegistrationPage() {
               href={receiptUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-6 py-2.5 bg-cyan-600 text-white rounded-md font-semibold text-sm no-underline hover:bg-cyan-700"
+              className="inline-block px-6 py-2.5 bg-primary text-white rounded-md font-semibold text-sm no-underline hover:bg-primary/90"
             >
               🖨 Download / Print Receipt
             </a>
@@ -398,7 +398,7 @@ export default function NewRegistrationPage() {
           <Button onClick={() => router.push(`/lims/encounters/${savedEncounterId}`)}>
             Open Encounter →
           </Button>
-          <Button variant="outline" className="bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white" onClick={handleReset}>
+          <Button variant="outline" className="bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" onClick={handleReset}>
             + New Patient
           </Button>
         </div>
@@ -444,7 +444,7 @@ export default function NewRegistrationPage() {
                     onClick={() => selectPickerPatient(p)}
                     className={cn(
                       'px-5 py-3.5 cursor-pointer border-b border-border flex justify-between items-center border-l-[3px]',
-                      i === pickerIdx ? 'bg-blue-50 border-l-blue-600' : 'bg-background border-l-transparent hover:bg-muted/30'
+                      i === pickerIdx ? 'bg-muted border-l-blue-600' : 'bg-background border-l-transparent hover:bg-muted/30'
                     )}
                     onMouseEnter={() => setPickerIdx(i)}
                   >
@@ -480,7 +480,7 @@ export default function NewRegistrationPage() {
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-sm font-semibold text-foreground mb-0 uppercase tracking-wide">Patient Registration</h3>
           {registeredMRN && (
-            <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200">
+            <Badge variant="outline" className="bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] border-[hsl(var(--status-success-border))]">
               MRN: {registeredMRN}
             </Badge>
           )}
@@ -625,7 +625,7 @@ export default function NewRegistrationPage() {
             {saving ? 'Registering…' : '👤 Register Patient'}
           </Button>
           {registeredMRN && (
-            <span className="text-sm text-emerald-700 font-semibold">
+            <span className="text-sm text-[hsl(var(--status-success-fg))] font-semibold">
               ✓ Registered — MRN: {registeredMRN}
             </span>
           )}
@@ -661,7 +661,7 @@ export default function NewRegistrationPage() {
                     onMouseDown={() => addTest(t)}
                     className={cn(
                       'px-3.5 py-2.5 cursor-pointer border-b border-border flex justify-between items-center',
-                      i === testDropIdx ? 'bg-blue-50' : 'bg-background hover:bg-muted/30'
+                      i === testDropIdx ? 'bg-muted' : 'bg-background hover:bg-muted/30'
                     )}
                   >
                     <div>
@@ -737,9 +737,9 @@ export default function NewRegistrationPage() {
               className="w-full px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
-          <div className={cn('px-3.5 py-2.5 rounded-md border', due > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200')}>
+          <div className={cn('px-3.5 py-2.5 rounded-md border', due > 0 ? 'bg-[hsl(var(--status-destructive-bg))] border-[hsl(var(--status-destructive-border))]' : 'bg-[hsl(var(--status-success-bg))] border-[hsl(var(--status-success-border))]')}>
             <div className="text-xs text-muted-foreground">Due (PKR)</div>
-            <div className={cn('text-2xl font-bold', due > 0 ? 'text-destructive' : 'text-emerald-700')}>{due.toLocaleString()}</div>
+            <div className={cn('text-2xl font-bold', due > 0 ? 'text-destructive' : 'text-[hsl(var(--status-success-fg))]')}>{due.toLocaleString()}</div>
           </div>
         </SectionCard>
       </div>
@@ -751,7 +751,7 @@ export default function NewRegistrationPage() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white"
+          className="bg-primary hover:bg-primary/90 text-white"
         >
           {saving ? 'Saving…' : '💾 Save & Print Receipt'}
         </Button>

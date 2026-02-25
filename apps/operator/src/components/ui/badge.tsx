@@ -8,12 +8,12 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:     'border-transparent bg-primary text-primary-foreground',
-        secondary:   'border-transparent bg-[hsl(var(--status-neutral-bg))] text-[hsl(var(--status-neutral-fg))]',
-        destructive: 'border-transparent bg-[hsl(var(--status-destructive-bg))] text-[hsl(var(--status-destructive-fg))]',
+        secondary:   'chip-neutral border-transparent',
+        destructive: 'chip-destructive border-transparent',
         outline:     'border-border text-foreground bg-transparent',
-        success:     'border-transparent bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]',
-        warning:     'border-transparent bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))]',
-        info:        'border-transparent bg-[hsl(var(--status-info-bg))] text-[hsl(var(--status-info-fg))]',
+        success:     'chip-success border-transparent',
+        warning:     'chip-warning border-transparent',
+        info:        'chip-info border-transparent',
       },
     },
     defaultVariants: { variant: 'default' },

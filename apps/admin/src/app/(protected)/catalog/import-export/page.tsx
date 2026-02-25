@@ -120,84 +120,84 @@ export default function ImportExportPage() {
 
   // ── Styles ────────────────────────────────────────────────────────────────────
   const sectionStyle: React.CSSProperties = {
-    background: 'white', borderRadius: '8px', padding: '24px',
-    marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+    background: 'hsl(var(--card))', borderRadius: '8px', padding: '24px',
+    marginBottom: '20px', boxShadow: 'var(--shadow-sm)',
   };
   const btn = (color: string, disabled?: boolean): React.CSSProperties => ({
-    padding: '9px 20px', background: disabled ? '#e2e8f0' : color,
-    color: disabled ? '#94a3b8' : 'white', border: 'none', borderRadius: '6px',
+    padding: '9px 20px', background: disabled ? 'hsl(var(--border))' : color,
+    color: disabled ? 'hsl(var(--muted-foreground))' : 'white', border: 'none', borderRadius: '6px',
     cursor: disabled ? 'default' : 'pointer', fontSize: '14px', fontWeight: 600,
   });
 
   return (
     <div>
-      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>Import / Export</h1>
-      <p style={{ color: '#64748b', marginBottom: '24px', fontSize: '14px' }}>
+      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>Import / Export</h1>
+      <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '24px', fontSize: '14px' }}>
         Upload XLSX or CSV to bulk-import catalog data, or export the full catalog.
       </p>
 
       {/* ── Import ─────────────────────────────────────────────────────────────── */}
       <section style={sectionStyle}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: '#1e293b' }}>📥 Import Catalog</h2>
-        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>📥 Import Catalog</h2>
+        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
           Upload the full workbook (.xlsx) or any individual CSV sheet. Supported sheets: Parameters, Tests, TestParameters, Panels, PanelTests.
         </p>
 
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '16px' }}>
           <div style={{ flex: 1, minWidth: '220px' }}>
-            <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>File (.xlsx or .csv)</label>
+            <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>File (.xlsx or .csv)</label>
             <input ref={fileRef} type="file" accept=".xlsx,.csv"
               onChange={e => { setFile(e.target.files?.[0] ?? null); setImportResult(null); setImportError(null); }}
-              style={{ display: 'block', padding: '7px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', width: '100%' }} />
+              style={{ display: 'block', padding: '7px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', width: '100%' }} />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Mode</label>
+            <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Mode</label>
             <select value={mode} onChange={e => setMode(e.target.value as any)}
-              style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}>
+              style={{ padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}>
               <option value="UPSERT_PATCH">UPSERT_PATCH — update existing, insert new</option>
               <option value="CREATE_ONLY">CREATE_ONLY — insert new, skip existing</option>
             </select>
           </div>
         </div>
 
-        <button onClick={handleImport} disabled={importing || !file} style={btn('#2563eb', importing || !file)}>
+        <button onClick={handleImport} disabled={importing || !file} style={btn('hsl(var(--primary))', importing || !file)}>
           {importing ? '⏳ Importing…' : '▶ Upload & Import'}
         </button>
 
         {importError && (
-          <div style={{ marginTop: '14px', background: '#fee2e2', color: '#991b1b', padding: '12px 16px', borderRadius: '6px', fontSize: '13px' }}>
+          <div style={{ marginTop: '14px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '12px 16px', borderRadius: '6px', fontSize: '13px' }}>
             ✗ {importError}
           </div>
         )}
 
         {importResult && (
-          <div style={{ marginTop: '14px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '14px 16px' }}>
-            <div style={{ fontWeight: 700, color: '#166534', marginBottom: '10px', fontSize: '14px' }}>✓ Import complete</div>
+          <div style={{ marginTop: '14px', background: 'hsl(var(--status-success-bg))', border: '1px solid hsl(var(--status-success-border))', borderRadius: '6px', padding: '14px 16px' }}>
+            <div style={{ fontWeight: 700, color: 'hsl(var(--status-success-fg))', marginBottom: '10px', fontSize: '14px' }}>✓ Import complete</div>
             <div style={{ display: 'flex', gap: '24px', fontSize: '13px', flexWrap: 'wrap' }}>
               {[
-                ['Inserted', importResult.inserted ?? 0, '#166534'],
-                ['Updated', importResult.updated ?? 0, '#1d4ed8'],
-                ['Skipped', importResult.skipped ?? 0, '#6b7280'],
+                ['Inserted', importResult.inserted ?? 0, 'hsl(var(--status-success-fg))'],
+                ['Updated', importResult.updated ?? 0, 'hsl(var(--status-info-fg))'],
+                ['Skipped', importResult.skipped ?? 0, 'hsl(var(--muted-foreground))'],
               ].map(([label, val, color]) => (
                 <div key={label as string}>
-                  <span style={{ color: '#64748b' }}>{label}: </span>
+                  <span style={{ color: 'hsl(var(--muted-foreground))' }}>{label}: </span>
                   <span style={{ fontWeight: 700, color: color as string }}>{val as number}</span>
                 </div>
               ))}
             </div>
             {importResult.errors?.length > 0 && (
               <div style={{ marginTop: '10px' }}>
-                <div style={{ fontSize: '12px', color: '#991b1b', fontWeight: 700, marginBottom: '4px' }}>
+                <div style={{ fontSize: '12px', color: 'hsl(var(--status-destructive-fg))', fontWeight: 700, marginBottom: '4px' }}>
                   {importResult.errors.length} error(s):
                 </div>
                 <ul style={{ margin: 0, paddingLeft: '16px' }}>
                   {importResult.errors.slice(0, 10).map((e: any, i: number) => (
-                    <li key={i} style={{ fontSize: '12px', color: '#991b1b' }}>
+                    <li key={i} style={{ fontSize: '12px', color: 'hsl(var(--status-destructive-fg))' }}>
                       {e.sheet ? `[${e.sheet}] ` : ''}{e.row ? `Row ${e.row}: ` : ''}{e.message}
                     </li>
                   ))}
                   {importResult.errors.length > 10 && (
-                    <li style={{ fontSize: '12px', color: '#991b1b' }}>…and {importResult.errors.length - 10} more</li>
+                    <li style={{ fontSize: '12px', color: 'hsl(var(--status-destructive-fg))' }}>…and {importResult.errors.length - 10} more</li>
                   )}
                 </ul>
               </div>
@@ -208,40 +208,40 @@ export default function ImportExportPage() {
 
       {/* ── Parameter Mappings Import ──────────────────────────────────────────── */}
       <section style={sectionStyle}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: '#1e293b' }}>🔗 Import Parameter Mappings (CSV)</h2>
-        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '4px' }}>
-          Dedicated sheet-based CSV import. First column = <code style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '1px 4px', borderRadius: '3px' }}>testExternalId</code> (e.g. <strong>t1</strong>),
-          second column = <code style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '1px 4px', borderRadius: '3px' }}>parameterExternalId</code> (e.g. <strong>p1</strong>).
+        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>🔗 Import Parameter Mappings (CSV)</h2>
+        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>
+          Dedicated sheet-based CSV import. First column = <code style={{ fontFamily: 'monospace', background: 'hsl(var(--muted))', padding: '1px 4px', borderRadius: '3px' }}>testExternalId</code> (e.g. <strong>t1</strong>),
+          second column = <code style={{ fontFamily: 'monospace', background: 'hsl(var(--muted))', padding: '1px 4px', borderRadius: '3px' }}>parameterExternalId</code> (e.g. <strong>p1</strong>).
         </p>
-        <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '16px' }}>
+        <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
           Alternatively, use the TestParameters sheet in the full XLSX workbook above.
         </p>
 
         <div style={{ marginBottom: '14px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>File (.csv only)</label>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>File (.csv only)</label>
           <input ref={mappingFileRef} type="file" accept=".csv"
             onChange={e => { setMappingFile(e.target.files?.[0] ?? null); setMappingResult(null); setMappingError(null); }}
-            style={{ display: 'block', padding: '7px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }} />
+            style={{ display: 'block', padding: '7px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }} />
         </div>
 
-        <button onClick={handleMappingImport} disabled={mappingImporting || !mappingFile} style={btn('#0369a1', mappingImporting || !mappingFile)}>
+        <button onClick={handleMappingImport} disabled={mappingImporting || !mappingFile} style={btn('hsl(var(--primary))', mappingImporting || !mappingFile)}>
           {mappingImporting ? '⏳ Importing…' : '▶ Import Mappings'}
         </button>
 
         {mappingError && (
-          <div style={{ marginTop: '12px', background: '#fee2e2', color: '#991b1b', padding: '10px 12px', borderRadius: '6px', fontSize: '13px' }}>
+          <div style={{ marginTop: '12px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px 12px', borderRadius: '6px', fontSize: '13px' }}>
             ✗ {mappingError}
           </div>
         )}
         {mappingResult && (
-          <div style={{ marginTop: '12px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '12px 16px', fontSize: '13px' }}>
-            <div style={{ fontWeight: 600, color: '#166534', marginBottom: '6px' }}>
+          <div style={{ marginTop: '12px', background: 'hsl(var(--status-success-bg))', border: '1px solid hsl(var(--status-success-border))', borderRadius: '6px', padding: '12px 16px', fontSize: '13px' }}>
+            <div style={{ fontWeight: 600, color: 'hsl(var(--status-success-fg))', marginBottom: '6px' }}>
               ✓ Imported {mappingResult.imported ?? 0} mappings, Skipped {mappingResult.skipped ?? 0} rows
             </div>
             {(mappingResult.warnings?.length ?? 0) > 0 && (
               <ul style={{ margin: 0, paddingLeft: '16px' }}>
                 {mappingResult.warnings.map((w: any, i: number) => (
-                  <li key={i} style={{ fontSize: '12px', color: '#92400e' }}>
+                  <li key={i} style={{ fontSize: '12px', color: 'hsl(var(--status-warning-fg))' }}>
                     {w.row != null ? `Row ${w.row}: ` : ''}{w.message}
                   </li>
                 ))}
@@ -253,15 +253,15 @@ export default function ImportExportPage() {
 
       {/* ── Export ────────────────────────────────────────────────────────────────── */}
       <section style={sectionStyle}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: '#1e293b' }}>📤 Export Catalog</h2>
-        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>📤 Export Catalog</h2>
+        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
           Export all catalog data as a ready-to-re-import XLSX workbook with all 5 sheets.
         </p>
-        <button onClick={handleExport} disabled={exporting} style={btn('#7c3aed', exporting)}>
+        <button onClick={handleExport} disabled={exporting} style={btn('hsl(var(--primary))', exporting)}>
           {exporting ? '⏳ Preparing…' : '⬇ Export All as XLSX'}
         </button>
         {exportError && (
-          <div style={{ marginTop: '12px', background: '#fee2e2', color: '#991b1b', padding: '10px 12px', borderRadius: '6px', fontSize: '13px' }}>
+          <div style={{ marginTop: '12px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px 12px', borderRadius: '6px', fontSize: '13px' }}>
             ✗ {exportError}
           </div>
         )}
@@ -269,15 +269,15 @@ export default function ImportExportPage() {
 
       {/* ── Template Downloads ──────────────────────────────────────────────────── */}
       <section style={sectionStyle}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: '#1e293b' }}>📋 Download Templates</h2>
-        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>📋 Download Templates</h2>
+        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
           Fill in these templates and upload above. IDs use format: tests = <strong>t1, t2…</strong>, parameters = <strong>p1, p2…</strong>, panels = <strong>g1, g2…</strong>.
-          Leave <code style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '1px 4px', borderRadius: '3px' }}>externalId</code> blank to auto-assign the next available ID.
+          Leave <code style={{ fontFamily: 'monospace', background: 'hsl(var(--muted))', padding: '1px 4px', borderRadius: '3px' }}>externalId</code> blank to auto-assign the next available ID.
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '10px' }}>
           {TEMPLATES.map(t => (
             <button key={t.path} onClick={() => handleTemplateDownload(t.path)}
-              style={{ padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', color: '#374151', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              style={{ padding: '10px 14px', background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', color: 'hsl(var(--foreground))', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '16px' }}>{t.icon}</span>
               {t.label}
             </button>

@@ -43,20 +43,20 @@ export default function LoginPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#f1f5f9',
+      background: 'hsl(var(--muted))',
     }}>
       <div style={{
-        background: 'white',
+        background: 'hsl(var(--card))',
         padding: '40px',
         borderRadius: '8px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        boxShadow: 'var(--shadow-sm)',
         width: '100%',
         maxWidth: '400px',
       }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: '#1e293b' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: 'hsl(var(--foreground))' }}>
           Vexel Admin
         </h1>
-        <p style={{ color: '#64748b', marginBottom: '32px' }}>Sign in to your admin account</p>
+        <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '32px' }}>Sign in to your admin account</p>
 
         <form onSubmit={handleLogin}>
           <div style={{ marginBottom: '16px' }}>
@@ -72,7 +72,7 @@ export default function LoginPage() {
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid hsl(var(--border))',
                 borderRadius: '6px',
                 fontSize: '14px',
                 boxSizing: 'border-box',
@@ -92,7 +92,7 @@ export default function LoginPage() {
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid hsl(var(--border))',
                 borderRadius: '6px',
                 fontSize: '14px',
                 boxSizing: 'border-box',
@@ -100,7 +100,7 @@ export default function LoginPage() {
             />
           </div>
           {error && (
-            <p style={{ color: '#ef4444', marginBottom: '16px', fontSize: '14px' }}>{error}</p>
+            <p style={{ color: 'hsl(var(--status-destructive-fg))', marginBottom: '16px', fontSize: '14px' }}>{error}</p>
           )}
           <button
             type="submit"
@@ -108,8 +108,8 @@ export default function LoginPage() {
             style={{
               width: '100%',
               padding: '10px',
-              background: '#3b82f6',
-              color: 'white',
+              background: 'hsl(var(--primary))',
+              color: 'hsl(var(--primary-foreground))',
               border: 'none',
               borderRadius: '6px',
               fontSize: '14px',

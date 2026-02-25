@@ -46,9 +46,11 @@ const config: Config = {
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar))',
           foreground: 'hsl(var(--sidebar-foreground))',
+          muted: 'hsl(var(--sidebar-muted))',
           accent: 'hsl(var(--sidebar-accent))',
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
+          highlight: 'hsl(var(--sidebar-highlight))',
         },
       },
       borderRadius: {
@@ -58,6 +60,12 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        xs: 'var(--shadow-xs)',
+        card: 'var(--shadow-sm)',
+        'card-hover': 'var(--shadow-md)',
+        float: 'var(--shadow-lg)',
       },
     },
   },

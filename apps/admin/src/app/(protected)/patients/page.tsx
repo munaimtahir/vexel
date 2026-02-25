@@ -30,15 +30,15 @@ export default function PatientsPage() {
   const totalPages = Math.ceil(total / LIMIT);
 
   function genderBadge(gender: string) {
-    if (!gender) return <span style={{ color: '#94a3b8' }}>—</span>;
-    return <span style={{ padding: '2px 8px', borderRadius: '10px', fontSize: '11px', background: gender === 'M' ? '#dbeafe' : '#fce7f3', color: gender === 'M' ? '#1d4ed8' : '#9d174d' }}>{gender === 'M' ? 'Male' : 'Female'}</span>;
+    if (!gender) return <span style={{ color: 'hsl(var(--muted-foreground))' }}>—</span>;
+    return <span style={{ padding: '2px 8px', borderRadius: '10px', fontSize: '11px', background: gender === 'M' ? 'hsl(var(--status-info-bg))' : 'hsl(var(--status-info-bg))', color: gender === 'M' ? 'hsl(var(--status-info-fg))' : 'hsl(var(--status-info-fg))' }}>{gender === 'M' ? 'Male' : 'Female'}</span>;
   }
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b' }}>Patients</h1>
-        <span style={{ fontSize: '13px', color: '#94a3b8' }}>Read-only — manage via Operator app</span>
+        <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Patients</h1>
+        <span style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>Read-only — manage via Operator app</span>
       </div>
 
       <form onSubmit={handleSearch} style={{ marginBottom: '16px', display: 'flex', gap: '8px' }}>
@@ -46,49 +46,49 @@ export default function PatientsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, MR number…"
-          style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', minWidth: '300px' }}
+          style={{ padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', minWidth: '300px' }}
         />
-        <button type="submit" style={{ padding: '8px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>Search</button>
-        {search && <button type="button" onClick={() => { setSearch(''); load(1, ''); }} style={{ padding: '8px 12px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>Clear</button>}
+        <button type="submit" style={{ padding: '8px 16px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>Search</button>
+        {search && <button type="button" onClick={() => { setSearch(''); load(1, ''); }} style={{ padding: '8px 12px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>Clear</button>}
       </form>
 
-      <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: '#f8fafc' }}>
+          <thead style={{ background: 'hsl(var(--background))' }}>
             <tr>
               {['MR #', 'Name', 'Gender', 'DOB', 'Phone', 'CNIC', 'Tenant', 'Created'].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: '#64748b', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
+                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Loading…</td></tr>
+              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
             ) : patients.length === 0 ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>No patients found.</td></tr>
+              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No patients found.</td></tr>
             ) : patients.map((p: any) => (
-              <tr key={p.id} style={{ borderTop: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '12px', color: '#2563eb', fontWeight: 600 }}>{p.mrNumber ?? '—'}</td>
+              <tr key={p.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
+                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '12px', color: 'hsl(var(--primary))', fontWeight: 600 }}>{p.mrNumber ?? '—'}</td>
                 <td style={{ padding: '10px 12px', fontWeight: 500 }}>{p.firstName} {p.lastName}</td>
                 <td style={{ padding: '10px 12px' }}>{genderBadge(p.gender)}</td>
-                <td style={{ padding: '10px 12px', color: '#64748b', fontSize: '12px' }}>{p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString() : '—'}</td>
-                <td style={{ padding: '10px 12px', color: '#64748b', fontSize: '12px' }}>{p.phone ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: '#64748b', fontSize: '12px', fontFamily: 'monospace' }}>{p.cnic ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: '#94a3b8', fontSize: '11px', fontFamily: 'monospace' }}>{p.tenantId?.slice(0, 8) ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: '#94a3b8', fontSize: '11px' }}>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '—'}</td>
+                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString() : '—'}</td>
+                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{p.phone ?? '—'}</td>
+                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: 'monospace' }}>{p.cnic ?? '—'}</td>
+                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontFamily: 'monospace' }}>{p.tenantId?.slice(0, 8) ?? '—'}</td>
+                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '—'}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', fontSize: '13px', color: '#64748b' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
         <span>{total} total patients</span>
         {totalPages > 1 && (
           <div style={{ display: 'flex', gap: '6px' }}>
-            <button disabled={page <= 1} onClick={() => handlePage(page - 1)} style={{ padding: '5px 10px', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: page > 1 ? 'pointer' : 'default', background: 'white' }}>← Prev</button>
+            <button disabled={page <= 1} onClick={() => handlePage(page - 1)} style={{ padding: '5px 10px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: page > 1 ? 'pointer' : 'default', background: 'hsl(var(--card))' }}>← Prev</button>
             <span style={{ padding: '5px 10px' }}>Page {page} of {totalPages}</span>
-            <button disabled={page >= totalPages} onClick={() => handlePage(page + 1)} style={{ padding: '5px 10px', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: page < totalPages ? 'pointer' : 'default', background: 'white' }}>Next →</button>
+            <button disabled={page >= totalPages} onClick={() => handlePage(page + 1)} style={{ padding: '5px 10px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: page < totalPages ? 'pointer' : 'default', background: 'hsl(var(--card))' }}>Next →</button>
           </div>
         )}
       </div>

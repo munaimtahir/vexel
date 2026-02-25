@@ -125,7 +125,7 @@ export default function NewPatientPage() {
             <button
               type="submit"
               disabled={loading}
-              style={{ flex: 1, padding: '10px', background: loading ? 'hsl(var(--muted))' : 'hsl(var(--primary))', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
+              style={{ flex: 1, padding: '10px', background: loading ? 'hsl(var(--muted))' : 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
             >
               {loading ? 'Creating...' : 'Create Patient'}
             </button>

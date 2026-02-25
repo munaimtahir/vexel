@@ -24,6 +24,9 @@ importers:
       '@vexel/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
+      '@vexel/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
       autoprefixer:
         specifier: ^10.4.24
         version: 10.4.24(postcss@8.5.6)
@@ -239,6 +242,9 @@ importers:
       '@vexel/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
+      '@vexel/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
       autoprefixer:
         specifier: ^10.4.24
         version: 10.4.24(postcss@8.5.6)
@@ -341,6 +347,21 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
+
+  packages/theme:
+    dependencies:
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react:
+        specifier: ^19.0.0
+        version: 19.2.4
+      tailwind-merge:
+        specifier: ^3.5.0
+        version: 3.5.0
 
 packages:
 

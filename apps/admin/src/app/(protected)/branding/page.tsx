@@ -52,7 +52,7 @@ export default function BrandingPage() {
   const fields = [
     { key: 'brandName', label: 'Brand Name' },
     { key: 'logoUrl', label: 'Logo URL' },
-    { key: 'primaryColor', label: 'Primary Color (hex)', placeholder: '#3b82f6' },
+    { key: 'primaryColor', label: 'Primary Color (hex)', placeholder: 'hsl(var(--primary))' },
     { key: 'reportHeader', label: 'Report Header' },
     { key: 'reportFooter', label: 'Report Footer' },
     { key: 'headerText', label: 'App Header Text' },
@@ -63,51 +63,51 @@ export default function BrandingPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: '#1e293b' }}>Branding &amp; Config</h1>
+      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: 'hsl(var(--foreground))' }}>Branding &amp; Config</h1>
 
       {/* Tenant selector */}
       {tenants.length > 1 && (
         <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <label style={{ fontSize: '13px', color: '#64748b' }}>Tenant:</label>
+          <label style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>Tenant:</label>
           <select value={tenantId} onChange={(e) => setTenantId(e.target.value)}
-            style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', background: 'white' }}>
+            style={{ padding: '6px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', background: 'hsl(var(--card))' }}>
             {tenants.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
         </div>
       )}
 
       {selectedTenant && (
-        <p style={{ color: '#64748b', marginBottom: '8px' }}>Configuring: <strong>{selectedTenant.name}</strong></p>
+        <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '8px' }}>Configuring: <strong>{selectedTenant.name}</strong></p>
       )}
-      <p style={{ color: '#3b82f6', fontSize: '13px', marginBottom: '24px', background: '#eff6ff', padding: '8px 12px', borderRadius: '6px', borderLeft: '3px solid #3b82f6' }}>
+      <p style={{ color: 'hsl(var(--primary))', fontSize: '13px', marginBottom: '24px', background: 'hsl(var(--status-info-bg))', padding: '8px 12px', borderRadius: '6px', borderLeft: '3px solid hsl(var(--primary))' }}>
         ℹ️ <strong>brandName</strong>, <strong>logoUrl</strong>, <strong>reportHeader</strong>, and <strong>reportFooter</strong> are injected into all generated PDF documents.
       </p>
 
       {loading ? <p>Loading...</p> : (
-        <div style={{ background: 'white', padding: '24px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', maxWidth: '600px' }}>
+        <div style={{ background: 'hsl(var(--card))', padding: '24px', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', maxWidth: '600px' }}>
           <form onSubmit={handleSave} style={{ display: 'grid', gap: '16px' }}>
             {fields.map(({ key, label, placeholder }) => (
               <div key={key}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: '#374151' }}>{label}</label>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>{label}</label>
                 <input
                   value={config[key] ?? ''}
                   onChange={(e) => setConfig({ ...config, [key]: e.target.value })}
                   placeholder={placeholder}
-                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' }}
                 />
               </div>
             ))}
             {config.primaryColor && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#64748b' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: config.primaryColor, border: '1px solid #e2e8f0' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: config.primaryColor, border: '1px solid hsl(var(--border))' }} />
                 Preview: {config.primaryColor}
               </div>
             )}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <button type="submit" disabled={saving} style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>
+              <button type="submit" disabled={saving} style={{ padding: '10px 20px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
-              {saved && <span style={{ color: '#22c55e', fontSize: '14px' }}>✓ Saved</span>}
+              {saved && <span style={{ color: 'hsl(var(--status-success-fg))', fontSize: '14px' }}>✓ Saved</span>}
             </div>
           </form>
         </div>

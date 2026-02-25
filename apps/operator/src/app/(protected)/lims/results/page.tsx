@@ -7,8 +7,9 @@ import { PageHeader, EmptyState, SkeletonPage, DataTable } from '@/components/ap
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
-type Tab = 'pending' | 'submitted' | 'verified';
+type Tab = 'pending' | 'submitted';
 
 function patientAge(p: any): string {
   if (!p) return '';
@@ -27,9 +28,29 @@ function patientLabel(p: any): string {
   return `${age}${gender}`;
 }
 
+/** Group flat test rows by encounterId, returning one row per encounter */
+function groupByEncounter(rows: any[]): any[] {
+  const map = new Map<string, any>();
+  for (const row of rows) {
+    const key = row.encounterId;
+    if (!map.has(key)) {
+      map.set(key, {
+        encounterId: key,
+        encounterCode: row.encounterCode,
+        patient: row.patient,
+        createdAt: row.createdAt,
+        tests: [],
+      });
+    }
+    map.get(key).tests.push(row);
+  }
+  return Array.from(map.values());
+}
+
 export default function ResultsWorklistPage() {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>('pending');  const [search, setSearch] = useState('');
+  const [tab, setTab] = useState<Tab>('pending');
+  const [search, setSearch] = useState('');
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -47,7 +68,6 @@ export default function ResultsWorklistPage() {
         if (apiErr) { setError('Failed to load'); return; }
         setRows((data as any)?.data ?? []);
       } else {
-        // submitted tab shows both submitted (awaiting verification) and verified tests
         // @ts-ignore
         const { data, error: apiErr } = await api.GET('/results/tests/submitted', {
           params: { query: search ? { search } : {} },
@@ -64,6 +84,8 @@ export default function ResultsWorklistPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  const encounters = groupByEncounter(rows);
+
   return (
     <div>
       <PageHeader title="Results" />
@@ -76,7 +98,7 @@ export default function ResultsWorklistPage() {
       </Tabs>
 
       <Input
-        placeholder="Search by name, MRN, order ID or test name…"
+        placeholder="Search by name, MRN, order ID…"
         value={search}
         onChange={e => setSearch(e.target.value)}
         className="max-w-sm mb-4"
@@ -85,34 +107,34 @@ export default function ResultsWorklistPage() {
       {loading && <SkeletonPage />}
       {error && <p className="text-destructive">{error}</p>}
 
-      {!loading && !error && rows.length === 0 && (
-        <EmptyState title={tab === 'pending' ? 'No pending tests' : 'No submitted tests'} />
+      {!loading && !error && encounters.length === 0 && (
+        <EmptyState title={tab === 'pending' ? 'No patients with pending tests' : 'No submitted tests'} />
       )}
 
-      {!loading && !error && rows.length > 0 && (
+      {!loading && !error && encounters.length > 0 && (
         <DataTable
-          data={rows}
-          keyExtractor={(row: any) => row.id}
+          data={encounters}
+          keyExtractor={(enc: any) => enc.encounterId}
           columns={[
             {
               key: 'time',
               header: 'Time',
-              cell: (row: any) => (
+              cell: (enc: any) => (
                 <span className="text-muted-foreground text-sm">
-                  {row.createdAt ? new Date(row.createdAt).toLocaleString() : '—'}
+                  {enc.createdAt ? new Date(enc.createdAt).toLocaleString() : '—'}
                 </span>
               ),
             },
             {
               key: 'patient',
               header: 'Patient',
-              cell: (row: any) => row.patient ? (
+              cell: (enc: any) => enc.patient ? (
                 <div>
                   <div className="font-semibold text-foreground text-sm">
-                    {row.patient.firstName} {row.patient.lastName}
+                    {enc.patient.firstName} {enc.patient.lastName}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {row.patient.mrn} · {patientLabel(row.patient)}
+                    {enc.patient.mrn} · {patientLabel(enc.patient)}
                   </div>
                 </div>
               ) : <span className="text-muted-foreground">—</span>,
@@ -120,45 +142,48 @@ export default function ResultsWorklistPage() {
             {
               key: 'orderId',
               header: 'Order ID',
-              cell: (row: any) => (
+              cell: (enc: any) => (
                 <span className="font-mono text-sm text-muted-foreground">
-                  {row.encounterCode ?? row.encounterId?.slice(0, 8) ?? '—'}
+                  {enc.encounterCode ?? enc.encounterId?.slice(0, 8) ?? '—'}
                 </span>
               ),
             },
             {
-              key: 'testName',
-              header: 'Test name',
-              cell: (row: any) => (
-                <span className="font-medium text-foreground">{row.testName}</span>
+              key: 'tests',
+              header: 'Tests',
+              cell: (enc: any) => (
+                <div className="flex flex-wrap gap-1">
+                  {enc.tests.map((t: any) => {
+                    const isVerified = t.labOrderStatus === 'verified';
+                    const isSubmitted = t.resultStatus === 'SUBMITTED';
+                    return (
+                      <Badge
+                        key={t.id}
+                        variant="outline"
+                        className={
+                          isVerified
+                            ? 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] border-[hsl(var(--status-success-border))] text-xs'
+                            : isSubmitted
+                              ? 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] border-transparent text-xs'
+                              : 'bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))] border-transparent text-xs'
+                        }
+                      >
+                        {t.testName}
+                      </Badge>
+                    );
+                  })}
+                </div>
               ),
             },
             {
-              key: 'status',
-              header: 'Status',
-              cell: (row: any) => {
-                const s = row.resultStatus;
-                const labStatus = row.labOrderStatus;
-                const isVerified = labStatus === 'verified';
-                return (
-                  <span className={
-                    isVerified
-                      ? 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700'
-                      : s === 'SUBMITTED'
-                        ? 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]'
-                        : 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))]'
-                  }>
-                    {isVerified ? 'Verified' : s}
-                  </span>
-                );
-              },
-            },
-            {
               key: 'action',
-              header: 'Action',
-              cell: (row: any) => (
-                <Button size="sm" onClick={() => router.push(`/lims/results/${row.id}`)}>
-                  {tab === 'pending' ? 'Enter results' : 'View / Add missing'}
+              header: '',
+              cell: (enc: any) => (
+                <Button
+                  size="sm"
+                  onClick={() => router.push(`/lims/results/encounters/${enc.encounterId}`)}
+                >
+                  {tab === 'pending' ? 'Enter results' : 'View results'}
                 </Button>
               ),
             },

@@ -28,16 +28,16 @@ export default function CatalogPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>Catalog</h1>
-      <p style={{ color: '#64748b', marginBottom: '24px', fontSize: '14px' }}>Manage lab tests, parameters, panels, and bulk import/export.</p>
+      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>Catalog</h1>
+      <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '24px', fontSize: '14px' }}>Manage lab tests, parameters, panels, and bulk import/export.</p>
 
       {/* Quick stats */}
       {stats && (
         <div style={{ display: 'flex', gap: '12px', marginBottom: '28px' }}>
           {[
-            { label: 'Parameters', value: stats.params, color: '#6d28d9', bg: '#ede9fe' },
-            { label: 'Tests', value: stats.tests, color: '#0369a1', bg: '#e0f2fe' },
-            { label: 'Panels', value: stats.panels, color: '#166534', bg: '#dcfce7' },
+            { label: 'Parameters', value: stats.params, color: 'hsl(var(--primary))', bg: 'hsl(var(--status-info-bg))' },
+            { label: 'Tests', value: stats.tests, color: 'hsl(var(--primary))', bg: 'hsl(var(--status-info-bg))' },
+            { label: 'Panels', value: stats.panels, color: 'hsl(var(--status-success-fg))', bg: 'hsl(var(--status-success-bg))' },
           ].map((s) => (
             <div key={s.label} style={{ background: s.bg, borderRadius: '8px', padding: '14px 20px', minWidth: '120px' }}>
               <div style={{ fontSize: '26px', fontWeight: 700, color: s.color }}>{s.value}</div>
@@ -54,10 +54,10 @@ export default function CatalogPage() {
           { href: '/catalog/panels', label: 'Panels', icon: '📋', desc: 'Test panels / profiles' },
           { href: '/catalog/import-export', label: 'Import / Export', icon: '⬆️', desc: 'Bulk import & XLSX export' },
         ].map((item) => (
-          <Link key={item.href} href={item.href} style={{ display: 'block', padding: '20px', background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', textDecoration: 'none', color: 'inherit', border: '1px solid #f1f5f9' }}>
+          <Link key={item.href} href={item.href} style={{ display: 'block', padding: '20px', background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', textDecoration: 'none', color: 'inherit', border: '1px solid hsl(var(--muted))' }}>
             <div style={{ fontSize: '28px', marginBottom: '8px' }}>{item.icon}</div>
-            <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>{item.label}</div>
-            <div style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>{item.desc}</div>
+            <div style={{ fontSize: '16px', fontWeight: 600, color: 'hsl(var(--foreground))' }}>{item.label}</div>
+            <div style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '4px' }}>{item.desc}</div>
           </Link>
         ))}
       </div>

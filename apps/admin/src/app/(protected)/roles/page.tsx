@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
-const inputStyle: React.CSSProperties = { width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' };
+const inputStyle: React.CSSProperties = { width: '100%', padding: '8px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px' };
 
 export default function RolesPage() {
@@ -77,13 +77,13 @@ export default function RolesPage() {
       {/* Edit drawer */}
       {editRole && (
         <>
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 40 }} onClick={() => setEditRole(null)} />
-          <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '440px', background: 'white', zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.12)', overflowY: 'auto', padding: '24px' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.3)', zIndex: 40 }} onClick={() => setEditRole(null)} />
+          <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '440px', background: 'hsl(var(--card))', zIndex: 50, boxShadow: 'var(--shadow-lg)', overflowY: 'auto', padding: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#1e293b' }}>Edit Role</h2>
-              <button onClick={() => setEditRole(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8' }}>×</button>
+              <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Edit Role</h2>
+              <button onClick={() => setEditRole(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}>×</button>
             </div>
-            {editError && <div style={{ background: '#fee2e2', color: '#991b1b', padding: '10px', borderRadius: '6px', fontSize: '13px', marginBottom: '14px' }}>{editError}</div>}
+            {editError && <div style={{ background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px', borderRadius: '6px', fontSize: '13px', marginBottom: '14px' }}>{editError}</div>}
             <form onSubmit={handleEditSave}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
@@ -101,14 +101,14 @@ export default function RolesPage() {
                   {permissions.map((p) => (
                     <label key={p} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '12px' }}>
                       <input type="checkbox" checked={editForm.permissions.includes(p)} onChange={() => togglePerm(p, editForm.permissions, (v) => setEditForm({ ...editForm, permissions: v }))} />
-                      <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>{p}</code>
+                      <code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px' }}>{p}</code>
                     </label>
                   ))}
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button type="submit" disabled={editSaving} style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{editSaving ? 'Saving...' : 'Save'}</button>
-                <button type="button" onClick={() => setEditRole(null)} style={{ padding: '8px 16px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
+                <button type="submit" disabled={editSaving} style={{ padding: '8px 16px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{editSaving ? 'Saving...' : 'Save'}</button>
+                <button type="button" onClick={() => setEditRole(null)} style={{ padding: '8px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
               </div>
             </form>
           </div>
@@ -118,13 +118,13 @@ export default function RolesPage() {
       {/* Delete confirm */}
       {deleteId && (
         <>
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ background: 'white', padding: '24px', borderRadius: '8px', maxWidth: '400px', width: '90%' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#1e293b' }}>Delete Role?</h2>
-              <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px' }}>This will remove the role and unassign it from all users. This cannot be undone.</p>
+          <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: 'hsl(var(--card))', padding: '24px', borderRadius: '8px', maxWidth: '400px', width: '90%' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: 'hsl(var(--foreground))' }}>Delete Role?</h2>
+              <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px' }}>This will remove the role and unassign it from all users. This cannot be undone.</p>
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={() => handleDelete(deleteId)} disabled={deleting} style={{ padding: '8px 16px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{deleting ? 'Deleting...' : 'Delete'}</button>
-                <button onClick={() => setDeleteId(null)} style={{ padding: '8px 16px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
+                <button onClick={() => handleDelete(deleteId)} disabled={deleting} style={{ padding: '8px 16px', background: 'hsl(var(--status-destructive-fg))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{deleting ? 'Deleting...' : 'Delete'}</button>
+                <button onClick={() => setDeleteId(null)} style={{ padding: '8px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
               </div>
             </div>
           </div>
@@ -132,12 +132,12 @@ export default function RolesPage() {
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b' }}>Roles</h1>
-        <button onClick={() => setShowCreate(true)} style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>+ New Role</button>
+        <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Roles</h1>
+        <button onClick={() => setShowCreate(true)} style={{ padding: '8px 16px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>+ New Role</button>
       </div>
 
       {showCreate && (
-        <div style={{ background: 'white', padding: '24px', borderRadius: '8px', marginBottom: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+        <div style={{ background: 'hsl(var(--card))', padding: '24px', borderRadius: '8px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Create Role</h2>
           <form onSubmit={handleCreate}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
@@ -156,42 +156,42 @@ export default function RolesPage() {
                 {permissions.map((p) => (
                   <label key={p} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '12px' }}>
                     <input type="checkbox" checked={form.permissions.includes(p)} onChange={() => togglePerm(p, form.permissions, (v) => setForm({ ...form, permissions: v }))} />
-                    <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>{p}</code>
+                    <code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px' }}>{p}</code>
                   </label>
                 ))}
               </div>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button type="submit" style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Create</button>
-              <button type="button" onClick={() => setShowCreate(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
+              <button type="submit" style={{ padding: '8px 16px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Create</button>
+              <button type="button" onClick={() => setShowCreate(false)} style={{ padding: '8px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
             </div>
           </form>
         </div>
       )}
 
       <div style={{ display: 'grid', gap: '12px' }}>
-        {roles.length === 0 ? <p style={{ color: '#94a3b8' }}>No roles found.</p> : roles.map((r: any) => (
-          <div key={r.id} style={{ background: 'white', padding: '16px 20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+        {roles.length === 0 ? <p style={{ color: 'hsl(var(--muted-foreground))' }}>No roles found.</p> : roles.map((r: any) => (
+          <div key={r.id} style={{ background: 'hsl(var(--card))', padding: '16px 20px', borderRadius: '8px', boxShadow: 'var(--shadow-sm)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ fontWeight: 600 }}>{r.name}</span>
-                  {r.isSystem && <span style={{ fontSize: '11px', background: '#ede9fe', color: '#6d28d9', padding: '2px 6px', borderRadius: '4px' }}>system</span>}
+                  {r.isSystem && <span style={{ fontSize: '11px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', padding: '2px 6px', borderRadius: '4px' }}>system</span>}
                 </div>
-                {r.description && <p style={{ color: '#64748b', fontSize: '13px', margin: '2px 0 0' }}>{r.description}</p>}
+                {r.description && <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', margin: '2px 0 0' }}>{r.description}</p>}
               </div>
               <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                <button onClick={() => openEdit(r)} style={{ padding: '4px 10px', fontSize: '12px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+                <button onClick={() => openEdit(r)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
                 {!r.isSystem && (
-                  <button onClick={() => setDeleteId(r.id)} style={{ padding: '4px 10px', fontSize: '12px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
+                  <button onClick={() => setDeleteId(r.id)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', border: '1px solid hsl(var(--status-destructive-border))', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
                 )}
               </div>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
               {(r.permissions ?? []).map((p: string) => (
-                <code key={p} style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', color: '#475569' }}>{p}</code>
+                <code key={p} style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{p}</code>
               ))}
-              {(r.permissions ?? []).length === 0 && <span style={{ color: '#94a3b8', fontSize: '13px' }}>No permissions assigned</span>}
+              {(r.permissions ?? []).length === 0 && <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px' }}>No permissions assigned</span>}
             </div>
           </div>
         ))}

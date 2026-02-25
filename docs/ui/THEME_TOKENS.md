@@ -1,154 +1,93 @@
-# Vexel Health Platform — UI Theme Token System
+# NeoSlate + Ember Theme Tokens
 
-Version: 2.0 (Cool Slate + Orange)  
-Date: 2026-02-24
+## Intent
 
-## Design Philosophy
+NeoSlate + Ember is the canonical UI theme for all Vexel Next.js apps.
 
-**"Cool Futuristic Elite"** — A clinical dashboard for health professionals. Cool, precise, authoritative. Not warm, artistic, or cozy.
+- Neutrals: cool slate surfaces and borders (no warm/beige canvases)
+- Accent: Ember orange is the only primary action accent
+- Status: tinted semantic chips (subtle, enterprise) instead of saturated stickers
+- Hierarchy: consistent semantic surfaces (`background`, `card`, `muted`) and text tokens
 
-- **Backgrounds**: Cool blue-gray slate tint (not beige/warm)
-- **Primary action**: Orange — reserved for CTAs and key emphasis only
-- **Sidebar**: Deep navy slate — authority and calm
-- **Status chips**: Muted, tinted, systematic — never saturated stickers
-- **Typography**: High contrast, clean hierarchy
+## Canonical Source
 
----
+- CSS variables: `packages/theme/styles/neoslate-ember.css`
+- Shared status component: `packages/theme/src/status-badge.tsx`
 
-## Token Reference
+## Core Token Baseline (HSL)
 
-### Semantic Surfaces
+Implemented in `packages/theme/styles/neoslate-ember.css`.
 
-| Token | Light Value | Used for |
-|-------|-------------|----------|
-| `--background` | `hsl(215 20% 95%)` | Page canvas |
-| `--foreground` | `hsl(215 25% 15%)` | Body text |
-| `--card` | `hsl(0 0% 100%)` | Card / surface bg |
-| `--card-foreground` | `hsl(215 25% 15%)` | Text on cards |
-| `--popover` | `hsl(0 0% 100%)` | Popover bg |
-| `--muted` | `hsl(215 18% 92%)` | Table headers, muted surfaces |
-| `--muted-foreground` | `hsl(215 12% 46%)` | Secondary text, labels |
-| `--border` | `hsl(215 15% 88%)` | Borders, dividers |
-| `--input` | `hsl(215 15% 88%)` | Input borders |
+- `--background: 210 40% 98%`
+- `--foreground: 222 47% 8%`
+- `--card: 0 0% 100%`
+- `--muted: 214 32% 94%`
+- `--muted-foreground: 215 16% 40%`
+- `--border: 214 22% 87%`
+- `--primary: 18 78% 54%` (Ember orange)
+- `--primary-foreground: 0 0% 100%`
+- `--ring: 18 78% 54%`
 
-### Brand Colors
+## NeoSlate Neutral Hierarchy
 
-| Token | Value | Used for |
-|-------|-------|----------|
-| `--primary` | `hsl(24 95% 53%)` | Primary buttons, key CTA, primary links |
-| `--primary-foreground` | `hsl(0 0% 100%)` | Text on primary buttons |
-| `--secondary` | `hsl(215 15% 90%)` | Secondary surfaces |
-| `--secondary-foreground` | `hsl(215 20% 28%)` | Text on secondary |
-| `--accent` | `hsl(215 25% 88%)` | Light accent surfaces |
-| `--accent-foreground` | `hsl(215 40% 25%)` | Text on accent surfaces |
-| `--destructive` | `hsl(0 72% 51%)` | Error states, destructive actions |
-| `--destructive-foreground` | `hsl(0 0% 100%)` | Text on destructive |
-| `--ring` | `hsl(24 95% 53%)` | Focus rings (matches primary) |
+- Page canvas: `bg-background`
+- Primary content surfaces: `bg-card`
+- Secondary/grouping surfaces: `bg-muted`
+- Structure lines and inputs: `border-border`, `border-input`
+- Body copy: `text-foreground`
+- Secondary labels/meta: `text-muted-foreground`
 
-### Sidebar Tokens
+## Sidebar Tokens
 
-| Token | Value | Used for |
-|-------|-------|----------|
-| `--sidebar` | `hsl(215 42% 18%)` | Sidebar background body |
-| `--sidebar-foreground` | `hsl(215 20% 78%)` | Sidebar text (general) |
-| `--sidebar-accent` | `hsl(215 38% 26%)` | Hover state bg |
-| `--sidebar-accent-foreground` | `hsl(215 15% 92%)` | Hover state text |
-| `--sidebar-border` | `hsl(215 38% 14%)` | Sidebar dividers |
-| `--sidebar-highlight` | `hsl(24 95% 53%)` | Active indicator bar (= primary) |
+Use sidebar-specific tokens for all app shells and nav chrome:
 
-Derived sidebar values (not CSS vars — used in sidebar component):
-| Concept | Value | Derivation |
-|---------|-------|------------|
-| Header bg | `hsl(215, 44%, 16%)` | sidebar -2% lightness |
-| Footer bg | `hsl(215, 44%, 14%)` | sidebar -4% lightness |
-| Inactive text | `hsl(215, 22%, 52%)` | muted slate |
-| Hover text | `hsl(215, 15%, 78%)` | lighter slate |
-| Active text | `hsl(215, 10%, 92%)` | near-white |
-| Active bg | `rgba(249, 115, 22, 0.14)` | primary orange at 14% |
-| Inactive icon | `hsl(215, 25%, 42%)` | dark muted slate |
-| Active icon | `hsl(24, 85%, 68%)` | light orange |
-| Section label | `hsl(215, 35%, 36%)` | dark muted |
+- `--sidebar`
+- `--sidebar-foreground`
+- `--sidebar-muted`
+- `--sidebar-accent`
+- `--sidebar-border`
+- `--sidebar-highlight` (mapped to Ember primary for active indicators)
 
-### Status Chip Tokens
+Sidebar active item style:
 
-All status colors follow the pattern: muted tinted bg + darker matching text for readability.
+- Background: subtle `sidebar-accent`
+- Left bar: `primary` / `sidebar-highlight`
+- Divider to main content: `1px solid hsl(var(--sidebar-border))`
 
-| Token | Bg Value | Fg Value | Used for |
-|-------|----------|----------|---------|
-| `--status-success-bg` | `hsl(142 55% 88%)` | — | success chip background |
-| `--status-success-fg` | `hsl(142 50% 25%)` | — | success chip text |
-| `--status-warning-bg` | `hsl(38 90% 87%)` | — | warning chip background |
-| `--status-warning-fg` | `hsl(38 80% 28%)` | — | warning chip text |
-| `--status-info-bg` | `hsl(210 75% 88%)` | — | info chip background |
-| `--status-info-fg` | `hsl(210 75% 28%)` | — | info chip text |
-| `--status-neutral-bg` | `hsl(215 15% 92%)` | — | neutral/secondary chip bg |
-| `--status-neutral-fg` | `hsl(215 15% 40%)` | — | neutral chip text |
-| `--status-destructive-bg` | `hsl(0 72% 91%)` | — | destructive chip bg |
-| `--status-destructive-fg` | `hsl(0 60% 35%)` | — | destructive chip text |
+## Ember Primary Usage Rules
 
-### Encounter Status → Badge Variant Mapping
+Use Ember orange (`primary`) only for primary actions and key focus states:
 
-| Status | Variant | Rationale |
-|--------|---------|-----------|
-| `registered` | `secondary` (neutral) | Initial state, no urgency |
-| `lab_ordered` | `info` (slate-blue) | Ordered, waiting collection |
-| `specimen_collected` | `warning` (amber) | In transit, needs receiving |
-| `specimen_received` | `info` (slate-blue) | Received, awaiting results |
-| `partial_resulted` | `warning` (amber) | Incomplete, attention needed |
-| `resulted` | `success` (green) | Complete results |
-| `verified` | `success` (green, solid) | Fully verified — positive end state |
-| `cancelled` | `outline` | Terminated |
+- Primary buttons: Save, Create, Submit, Publish, Enter Results, New Registration
+- Key links/interactive emphasis (not all links)
+- Focus ring: `ring-ring`
+- Active nav indicator bar (sidebar)
 
-### Document Status → Badge Variant Mapping
+Do not reintroduce blue/purple/green as the default CTA color.
 
-| Status | Variant |
-|--------|---------|
-| `DRAFT` | `secondary` |
-| `RENDERING` | `warning` |
-| `RENDERED` | `info` |
-| `PUBLISHED` | `success` |
-| `FAILED` | `destructive` |
+## Status Semantics (Tinted Chips)
 
----
+Status chips must be muted/tinted, not saturated blocks.
 
-## Utilities
+- `success`: verified / published / completed / active-success states
+- `warning`: partial / in-progress / rendering / attention-needed states
+- `info`: queued / ordered / received / informational-progress states
+- `neutral`: pending / draft / unspecified states
+- `destructive`: failed / rejected / cancelled / error states
 
-### `.page-canvas`
-Cool slate-tinted page gradient. Used in `AppShell` `<main>`.
+Shared helpers:
 
-### `.sidebar-bg`
-Deep navy gradient. Used when sidebar uses class-based bg (currently inline).
+- `StatusBadge` from `@vexel/theme`
+- `statusToneFromWorkflowStatus()` for default tone mapping
 
-### `.gradient-primary`
-Orange gradient for decorative elements (PageHeader accent bar, logo icon).
+## Accessibility Notes
 
-### Shadow Scale
-- `--shadow-xs` — subtle 1px (topbar, inputs)
-- `--shadow-sm` — card default
-- `--shadow-md` — card hover
-- `--shadow-lg` — modals, floats
+- Body text on `background` and `card` should maintain strong contrast (target WCAG AA minimum)
+- Tinted chips must preserve readable text contrast against tinted backgrounds
+- Focus indicators use `ring` (Ember) and should remain visible on both light/dark themes
+- Avoid using color alone where possible; labels/icons should reinforce status meaning
 
----
+## Enforcement
 
-## Enforcement Rules
-
-1. **No hardcoded hex in components** — use CSS variables or Tailwind semantic classes
-2. **No arbitrary Tailwind color values** — `bg-[#xxx]` is banned except for CSS variable references
-3. **Primary orange only for CTAs** — not for info states, links, or decorative fills
-4. **No purple** — replace with `info` (slate-blue tint) or `warning` (amber)
-5. **Status badges via `<Badge>` component** — never inline `style={{ background, color }}`
-6. **Lint guard**: `pnpm ui:color-lint` must pass before deploy
-
----
-
-## Color Psychology
-
-| Hue | Role | Rationale |
-|-----|------|-----------|
-| Slate navy | Structure / sidebar | Authority, trust, clinical precision |
-| Cool off-white | Canvas | Clean, hygienic, modern |
-| Orange | Action / CTA | Energy, urgency, brand identity |
-| Muted green | Success / verified | Universal positive |
-| Muted amber | Warning / in-progress | Attention without alarm |
-| Muted slate-blue | Info / received | Informational, calm |
-| Muted red | Error / failed | Universal negative, muted to not alarm |
+- No hex colors or Tailwind arbitrary hex classes in app/package code outside the canonical token CSS
+- Command: `pnpm ui:color-lint`

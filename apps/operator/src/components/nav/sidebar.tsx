@@ -10,25 +10,25 @@ import { useFeatureFlags } from '@/hooks/use-feature-flags';
 const STORAGE_KEY = 'vexel-sidebar-collapsed';
 
 const S = {
-  headerBg:      'hsl(215,44%,16%)',
-  bodyBg:        'hsl(215,42%,19%)',
-  footerBg:      'hsl(215,44%,14%)',
-  activeBg:      'rgba(32,111,244,0.14)',
-  activeBar:     'hsl(217,90%,54%)',
-  activeBarGlow: '0 0 8px rgba(32,111,244,0.55)',
-  activeText:    'hsl(215,10%,92%)',
-  inactiveText:  'hsl(215,22%,52%)',
-  hoverText:     'hsl(215,15%,78%)',
-  iconActive:    'hsl(217,85%,70%)',
-  iconInactive:  'hsl(215,25%,42%)',
-  sectionLabel:  'hsl(215,35%,36%)',
+  headerBg: 'hsl(var(--sidebar))',
+  bodyBg: 'hsl(var(--sidebar))',
+  footerBg: 'hsl(var(--sidebar))',
+  activeBg: 'hsl(var(--sidebar-accent))',
+  activeBar: 'hsl(var(--primary))',
+  activeBarGlow: '0 0 8px hsl(var(--primary) / 0.4)',
+  activeText: 'hsl(var(--sidebar-foreground))',
+  inactiveText: 'hsl(var(--sidebar-muted))',
+  hoverText: 'hsl(var(--sidebar-foreground))',
+  iconActive: 'hsl(var(--primary) / 0.95)',
+  iconInactive: 'hsl(var(--sidebar-muted))',
+  sectionLabel: 'hsl(var(--sidebar-muted) / 0.55)',
 };
 
 function GlowDivider() {
   return (
     <div style={{
       height: '1px',
-      background: 'linear-gradient(90deg, transparent 0%, rgba(32,111,244,0.45) 38%, rgba(32,111,244,0.18) 65%, transparent 100%)',
+      background: 'linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.3) 38%, hsl(var(--sidebar-foreground) / 0.14) 65%, transparent 100%)',
       flexShrink: 0,
     }} />
   );
@@ -82,8 +82,8 @@ export function Sidebar() {
   const iconBtn: React.CSSProperties = {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     borderRadius: '7px',
-    background: 'rgba(255,255,255,0.07)',
-    border: '1px solid rgba(255,255,255,0.13)',
+    background: 'hsl(var(--sidebar-foreground) / 0.07)',
+    border: '1px solid hsl(var(--sidebar-foreground) / 0.13)',
     color: S.iconInactive,
     cursor: 'pointer',
     transition: 'all 0.15s ease',
@@ -98,7 +98,7 @@ export function Sidebar() {
       display: 'flex',
       flexDirection: 'column',
       background: S.bodyBg,
-      borderRight: '1px solid rgba(32,111,244,0.20)',
+      borderRight: '1px solid hsl(var(--sidebar-border))',
       transition: 'width 0.22s cubic-bezier(.4,0,.2,1), min-width 0.22s cubic-bezier(.4,0,.2,1)',
       position: 'sticky',
       top: 0,
@@ -118,7 +118,7 @@ export function Sidebar() {
         {/* Warm spotlight from top-left — terracotta glow */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at 25% -10%, rgba(32,111,244,0.16) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 25% -10%, hsl(var(--primary) / 0.14) 0%, transparent 60%)',
         }} />
 
         {/* Logo row */}
@@ -132,18 +132,18 @@ export function Sidebar() {
               width: collapsed ? '38px' : '36px',
               height: collapsed ? '38px' : '36px',
               borderRadius: '10px', flexShrink: 0,
-              background: 'linear-gradient(140deg, hsl(217,85%,62%) 0%, hsl(218,88%,52%) 55%, hsl(220,82%,44%) 100%)',
+              background: 'linear-gradient(140deg, hsl(var(--primary) / 1) 0%, hsl(var(--primary) / 0.92) 55%, hsl(var(--primary) / 0.78) 100%)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 14px rgba(32,111,244,0.45), inset 0 1px 0 rgba(255,255,255,0.22)',
+              boxShadow: '0 4px 14px hsl(var(--primary) / 0.28), inset 0 1px 0 hsl(var(--sidebar-foreground) / 0.22)',
             }}>
-              <FlaskConical style={{ width: '17px', height: '17px', color: 'hsl(0,0%,100%)' }} />
+              <FlaskConical style={{ width: '17px', height: '17px', color: 'hsl(var(--primary-foreground))' }} />
             </div>
             {!collapsed && (
               <div>
-                <div style={{ fontSize: '15.5px', fontWeight: 800, color: 'hsl(215,10%,92%)', letterSpacing: '-0.025em', lineHeight: 1 }}>
+                <div style={{ fontSize: '15.5px', fontWeight: 800, color: 'hsl(var(--sidebar-foreground))', letterSpacing: '-0.025em', lineHeight: 1 }}>
                   Vexel
                 </div>
-                <div style={{ fontSize: '9px', fontWeight: 600, color: 'hsl(215,28%,52%)', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '3px' }}>
+                <div style={{ fontSize: '9px', fontWeight: 600, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '3px' }}>
                   Health Platform
                 </div>
               </div>
@@ -151,8 +151,8 @@ export function Sidebar() {
           </div>
           {!collapsed && (
             <button onClick={toggle} style={{ ...iconBtn, width: '26px', height: '26px' }}
-              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(32,111,244,0.38)'; el.style.background = 'rgba(32,111,244,0.12)'; }}
-              onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
+              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'hsl(var(--primary) / 0.3)'; el.style.background = 'hsl(var(--primary) / 0.1)'; }}
+              onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
               title="Collapse sidebar (Ctrl+B)">
               <ChevronLeft style={{ width: '13px', height: '13px' }} />
             </button>
@@ -165,21 +165,21 @@ export function Sidebar() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: '5px',
               padding: '5px 12px', borderRadius: '99px',
-              background: 'rgba(32,111,244,0.16)',
-              border: '1px solid rgba(32,111,244,0.38)',
-              boxShadow: '0 0 12px rgba(32,111,244,0.16)',
+              background: 'hsl(var(--sidebar-accent))',
+              border: '1px solid hsl(var(--sidebar-border))',
+              boxShadow: '0 0 12px hsl(var(--primary) / 0.12)',
             }}>
-              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'hsl(217,85%,68%)', boxShadow: '0 0 5px rgba(32,111,244,0.75)' }} />
-              <span style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(217,85%,90%)', letterSpacing: '0.07em' }}>LIMS</span>
+              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'hsl(var(--primary))', boxShadow: '0 0 5px hsl(var(--primary) / 0.55)' }} />
+              <span style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(var(--sidebar-foreground))', letterSpacing: '0.07em' }}>LIMS</span>
             </div>
             {FUTURE_MODULES.map(m => (
               <div key={m.label} style={{
                 padding: '5px 11px', borderRadius: '99px',
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'hsl(var(--sidebar-foreground) / 0.04)',
+                border: '1px solid hsl(var(--sidebar-foreground) / 0.08)',
                 cursor: 'not-allowed',
               }}>
-                <span style={{ fontSize: '10px', fontWeight: 500, color: 'hsl(215,28%,42%)', letterSpacing: '0.04em' }}>{m.label}</span>
+                <span style={{ fontSize: '10px', fontWeight: 500, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.04em' }}>{m.label}</span>
               </div>
             ))}
           </div>
@@ -191,8 +191,8 @@ export function Sidebar() {
       {/* Expand button when collapsed */}
       {collapsed && (
         <button onClick={toggle} style={{ ...iconBtn, width: '32px', height: '32px', margin: '10px auto 6px' }}
-          onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'rgba(32,111,244,0.38)'; el.style.background = 'rgba(32,111,244,0.12)'; }}
-          onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
+          onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'hsl(var(--primary) / 0.3)'; el.style.background = 'hsl(var(--primary) / 0.1)'; }}
+          onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
           title="Expand sidebar (Ctrl+B)">
           <ChevronRight style={{ width: '13px', height: '13px' }} />
         </button>
@@ -228,7 +228,7 @@ export function Sidebar() {
                 transition: 'all 0.15s ease',
                 overflow: 'hidden', whiteSpace: 'nowrap',
               }}
-              onMouseOver={e => { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'rgba(255,255,255,0.09)'; el.style.color = S.hoverText; } }}
+              onMouseOver={e => { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'hsl(var(--sidebar-foreground) / 0.09)'; el.style.color = S.hoverText; } }}
               onMouseOut={e =>  { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = S.inactiveText; } }}
             >
               {isActive && (
@@ -243,7 +243,7 @@ export function Sidebar() {
               <Icon size={15} className="shrink-0 transition-colors" color={isActive ? S.iconActive : S.iconInactive} />
               {!collapsed && <span style={{ flex: 1 }}>{item.label}</span>}
               {!collapsed && isActive && (
-                <div style={{ width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0, background: 'hsl(217,90%,54%)', boxShadow: '0 0 6px rgba(32,111,244,0.70)' }} />
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0, background: 'hsl(var(--primary))', boxShadow: '0 0 6px hsl(var(--primary) / 0.55)' }} />
               )}
             </Link>
           );
@@ -262,8 +262,8 @@ export function Sidebar() {
       }}>
         {collapsed ? (
           <button onClick={handleLogout} style={{ ...iconBtn, width: '36px', height: '36px' }}
-            onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(0,72%,72%)'; el.style.borderColor = 'rgba(220,80,80,0.3)'; el.style.background = 'rgba(220,80,80,0.10)'; }}
-            onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
+            onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(var(--status-destructive-fg))'; el.style.borderColor = 'hsl(var(--status-destructive-border))'; el.style.background = 'hsl(var(--status-destructive-bg))'; }}
+            onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
             title="Sign Out">
             <LogOut style={{ width: '14px', height: '14px' }} />
           </button>
@@ -274,24 +274,24 @@ export function Sidebar() {
                 width: '32px', height: '32px', borderRadius: '9px', flexShrink: 0,
                 background: 'linear-gradient(135deg, hsl(217,88%,58%) 0%, hsl(220,82%,46%) 100%)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '11.5px', fontWeight: 700, color: 'hsl(0,0%,100%)',
-                boxShadow: '0 2px 10px rgba(32,111,244,0.38), inset 0 1px 0 rgba(255,255,255,0.22)',
+                fontSize: '11.5px', fontWeight: 700, color: 'hsl(var(--primary-foreground))',
+                boxShadow: '0 2px 10px hsl(var(--primary) / 0.24), inset 0 1px 0 hsl(var(--sidebar-foreground) / 0.22)',
                 letterSpacing: '0.02em',
               }}>
                 {initials}
               </div>
               <div style={{ overflow: 'hidden', flex: 1 }}>
-                <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'hsl(215,15%,85%)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'capitalize', lineHeight: 1.3 }}>
+                <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'hsl(var(--sidebar-foreground))', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'capitalize', lineHeight: 1.3 }}>
                   {userName || 'Operator'}
                 </div>
-                <div style={{ fontSize: '10px', color: 'hsl(215,28%,42%)', fontWeight: 500, marginTop: '2px', letterSpacing: '0.03em' }}>
+                <div style={{ fontSize: '10px', color: 'hsl(var(--sidebar-muted))', fontWeight: 500, marginTop: '2px', letterSpacing: '0.03em' }}>
                   LIMS Operator
                 </div>
               </div>
             </div>
             <button onClick={handleLogout} style={{ ...iconBtn, width: '30px', height: '30px' }}
-              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(0,72%,72%)'; el.style.borderColor = 'rgba(220,80,80,0.3)'; el.style.background = 'rgba(220,80,80,0.10)'; }}
-              onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'rgba(255,255,255,0.13)'; el.style.background = 'rgba(255,255,255,0.07)'; }}
+              onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(var(--status-destructive-fg))'; el.style.borderColor = 'hsl(var(--status-destructive-border))'; el.style.background = 'hsl(var(--status-destructive-bg))'; }}
+              onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
               title="Sign Out">
               <LogOut style={{ width: '13px', height: '13px' }} />
             </button>

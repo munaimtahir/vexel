@@ -1,41 +1,39 @@
-import { Badge } from '@/components/ui/badge';
+import { StatusBadge, statusToneFromWorkflowStatus, type StatusTone } from '@vexel/theme';
 
-type V = 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'info' | 'destructive';
-
-const ENCOUNTER_STATUS: Record<string, { label: string; variant: V }> = {
-  registered:          { label: 'Registered',    variant: 'secondary' },
-  lab_ordered:         { label: 'Ordered',        variant: 'info' },
-  specimen_collected:  { label: 'Collected',      variant: 'warning' },
-  specimen_received:   { label: 'Received',       variant: 'warning' },
-  partial_resulted:    { label: 'Partial Result', variant: 'info' },
-  resulted:            { label: 'Resulted',       variant: 'success' },
-  verified:            { label: 'Verified',       variant: 'success' },
-  cancelled:           { label: 'Cancelled',      variant: 'destructive' },
+const ENCOUNTER_STATUS: Record<string, { label: string; tone: StatusTone }> = {
+  registered: { label: 'Registered', tone: 'neutral' },
+  lab_ordered: { label: 'Ordered', tone: 'info' },
+  specimen_collected: { label: 'Collected', tone: 'warning' },
+  specimen_received: { label: 'Received', tone: 'warning' },
+  partial_resulted: { label: 'Partial Result', tone: 'info' },
+  resulted: { label: 'Resulted', tone: 'success' },
+  verified: { label: 'Verified', tone: 'success' },
+  cancelled: { label: 'Cancelled', tone: 'destructive' },
 };
 
-const DOC_STATUS: Record<string, { label: string; variant: V }> = {
-  QUEUED:    { label: 'Queued',    variant: 'secondary' },
-  RENDERING: { label: 'Rendering', variant: 'warning' },
-  RENDERED:  { label: 'Rendered',  variant: 'info' },
-  PUBLISHED: { label: 'Published', variant: 'success' },
-  FAILED:    { label: 'Failed',    variant: 'destructive' },
+const DOC_STATUS: Record<string, { label: string; tone: StatusTone }> = {
+  QUEUED: { label: 'Queued', tone: 'neutral' },
+  RENDERING: { label: 'Rendering', tone: 'warning' },
+  RENDERED: { label: 'Rendered', tone: 'info' },
+  PUBLISHED: { label: 'Published', tone: 'success' },
+  FAILED: { label: 'Failed', tone: 'destructive' },
 };
 
 export function EncounterStatusBadge({ status }: { status: string }) {
-  const cfg = ENCOUNTER_STATUS[status] ?? { label: status, variant: 'outline' as V };
-  return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
+  const cfg = ENCOUNTER_STATUS[status] ?? { label: status, tone: statusToneFromWorkflowStatus(status) };
+  return <StatusBadge tone={cfg.tone}>{cfg.label}</StatusBadge>;
 }
 
 export function DocumentStatusBadge({ status }: { status: string }) {
-  const cfg = DOC_STATUS[status] ?? { label: status, variant: 'outline' as V };
-  return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
+  const cfg = DOC_STATUS[status] ?? { label: status, tone: statusToneFromWorkflowStatus(status) };
+  return <StatusBadge tone={cfg.tone}>{cfg.label}</StatusBadge>;
 }
 
 export function DueBadge({ amount }: { amount?: number | null }) {
   if (!amount || amount <= 0) return null;
   return (
-    <Badge variant="destructive" className="font-bold">
+    <StatusBadge tone="destructive" className="font-bold">
       DUE ₨{amount.toLocaleString()}
-    </Badge>
+    </StatusBadge>
   );
 }

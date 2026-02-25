@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@vexel/sdk": "workspace:*",
+    "@vexel/theme": "workspace:*",
     "autoprefixer": "^10.4.24",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

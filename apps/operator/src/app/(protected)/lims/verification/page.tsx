@@ -140,7 +140,7 @@ export default function VerificationPage() {
                 key: 'tests',
                 header: 'Tests',
                 cell: (row) => (
-                  <Badge variant="secondary" className="bg-amber-50 text-amber-800">
+                  <Badge variant="secondary" className="bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))]">
                     {row.submittedTestsCount} test{row.submittedTestsCount !== 1 ? 's' : ''}
                   </Badge>
                 ),

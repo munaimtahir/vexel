@@ -78,7 +78,7 @@ export default function FeatureFlagsPage() {
     setSaving(null);
   }
 
-  if (!tenantId && !loading) return <p style={{ padding: '32px', color: '#94a3b8' }}>No tenant found.</p>;
+  if (!tenantId && !loading) return <p style={{ padding: '32px', color: 'hsl(var(--muted-foreground))' }}>No tenant found.</p>;
 
   const VERIFICATION_KEYS = new Set([
     'lims.verification.enabled',
@@ -107,35 +107,35 @@ export default function FeatureFlagsPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: '#1e293b' }}>Feature Flags</h1>
+      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: 'hsl(var(--foreground))' }}>Feature Flags</h1>
 
       {/* Tenant selector */}
       {tenants.length > 1 && (
         <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <label style={{ fontSize: '13px', color: '#64748b' }}>Tenant:</label>
+          <label style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>Tenant:</label>
           <select value={tenantId} onChange={(e) => setTenantId(e.target.value)}
-            style={{ padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', background: 'white' }}>
+            style={{ padding: '6px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', background: 'hsl(var(--card))' }}>
             {tenants.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
-          {selectedTenant && <span style={{ fontSize: '12px', color: '#64748b', background: '#f1f5f9', padding: '3px 8px', borderRadius: '4px' }}>{selectedTenant.status}</span>}
+          {selectedTenant && <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', background: 'hsl(var(--muted))', padding: '3px 8px', borderRadius: '4px' }}>{selectedTenant.status}</span>}
         </div>
       )}
 
-      <p style={{ color: '#64748b', marginBottom: '32px' }}>Control which modules and features are active for this tenant.</p>
+      <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '32px' }}>Control which modules and features are active for this tenant.</p>
 
-      {loading ? <p style={{ color: '#94a3b8' }}>Loading flags...</p> : (
+      {loading ? <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading flags...</p> : (
         <>
           <section style={{ marginBottom: '32px' }}>
-            <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: '#374151' }}>Module Toggles</h2>
+            <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: 'hsl(var(--foreground))' }}>Module Toggles</h2>
             <div style={{ display: 'grid', gap: '8px' }}>
               {modules.map((f) => <FlagRow key={f.key} flag={f} saving={saving} onToggle={handleToggle} />)}
-              {modules.length === 0 && <p style={{ color: '#94a3b8', fontSize: '13px' }}>No module flags configured for this tenant.</p>}
+              {modules.length === 0 && <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px' }}>No module flags configured for this tenant.</p>}
             </div>
           </section>
 
           {subFeatures.length > 0 && (
             <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: '#374151' }}>Sub-Features</h2>
+              <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: 'hsl(var(--foreground))' }}>Sub-Features</h2>
               <div style={{ display: 'grid', gap: '8px' }}>
                 {subFeatures.map((f) => <FlagRow key={f.key} flag={f} saving={saving} onToggle={handleToggle} />)}
               </div>
@@ -143,7 +143,7 @@ export default function FeatureFlagsPage() {
           )}
 
           <section>
-            <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: '#374151' }}>Verification Workflow</h2>
+            <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: 'hsl(var(--foreground))' }}>Verification Workflow</h2>
             <div style={{ display: 'grid', gap: '8px' }}>
               <FlagRow flag={verificationEnabledFlag} saving={saving} onToggle={handleToggle}
                 labelOverride="Verification Enabled"
@@ -169,21 +169,21 @@ function FlagRow({ flag, saving, onToggle, labelOverride, descriptionOverride }:
   labelOverride?: string; descriptionOverride?: string;
 }) {
   return (
-    <div style={{ background: 'white', padding: '16px 20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div style={{ background: 'hsl(var(--card))', padding: '16px 20px', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {labelOverride && <span style={{ fontSize: '14px', fontWeight: 500, color: '#1e293b' }}>{labelOverride}</span>}
-          <code style={{ background: '#f1f5f9', padding: '3px 8px', borderRadius: '4px', fontSize: '13px' }}>{flag.key}</code>
+          {labelOverride && <span style={{ fontSize: '14px', fontWeight: 500, color: 'hsl(var(--foreground))' }}>{labelOverride}</span>}
+          <code style={{ background: 'hsl(var(--muted))', padding: '3px 8px', borderRadius: '4px', fontSize: '13px' }}>{flag.key}</code>
         </div>
-        <p style={{ color: '#64748b', fontSize: '13px', margin: '4px 0 0' }}>
+        <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', margin: '4px 0 0' }}>
           {descriptionOverride ?? FLAG_DESCRIPTIONS[flag.key] ?? flag.description ?? ''}
         </p>
       </div>
       <button onClick={() => onToggle(flag.key, !flag.enabled)} disabled={saving === flag.key}
-        style={{ width: '48px', height: '26px', borderRadius: '13px', background: flag.enabled ? '#22c55e' : '#d1d5db', border: 'none', cursor: saving === flag.key ? 'wait' : 'pointer', transition: 'background 0.2s', position: 'relative', flexShrink: 0 }}
+        style={{ width: '48px', height: '26px', borderRadius: '13px', background: flag.enabled ? 'hsl(var(--status-success-fg))' : 'hsl(var(--border))', border: 'none', cursor: saving === flag.key ? 'wait' : 'pointer', transition: 'background 0.2s', position: 'relative', flexShrink: 0 }}
         aria-label={`Toggle ${flag.key}`}
         aria-pressed={flag.enabled}>
-        <span style={{ position: 'absolute', top: '3px', left: flag.enabled ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+        <span style={{ position: 'absolute', top: '3px', left: flag.enabled ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'hsl(var(--card))', transition: 'left 0.2s', boxShadow: '0 1px 3px hsl(var(--foreground) / 0.2)' }} />
       </button>
     </div>
   );
@@ -204,16 +204,16 @@ function VariantFlagRow({ flagKey, label, currentMode, saving, onSave }: {
     disabled: 'No verification step. Results are published immediately.',
   };
   return (
-    <div style={{ background: 'white', padding: '16px 20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+    <div style={{ background: 'hsl(var(--card))', padding: '16px 20px', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '14px', fontWeight: 500, color: '#1e293b' }}>{label}</span>
-          <code style={{ background: '#f1f5f9', padding: '3px 8px', borderRadius: '4px', fontSize: '13px' }}>{flagKey}</code>
+          <span style={{ fontSize: '14px', fontWeight: 500, color: 'hsl(var(--foreground))' }}>{label}</span>
+          <code style={{ background: 'hsl(var(--muted))', padding: '3px 8px', borderRadius: '4px', fontSize: '13px' }}>{flagKey}</code>
         </div>
-        <p style={{ color: '#64748b', fontSize: '13px', margin: '4px 0 0' }}>{modeDescriptions[currentMode] ?? ''}</p>
+        <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', margin: '4px 0 0' }}>{modeDescriptions[currentMode] ?? ''}</p>
       </div>
       <select value={currentMode} disabled={saving === flagKey} onChange={(e) => onSave(e.target.value)}
-        style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '13px', color: '#1e293b', background: 'white', cursor: saving === flagKey ? 'wait' : 'pointer', minWidth: '220px' }}
+        style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid hsl(var(--border))', fontSize: '13px', color: 'hsl(var(--foreground))', background: 'hsl(var(--card))', cursor: saving === flagKey ? 'wait' : 'pointer', minWidth: '220px' }}
         aria-label={`Select ${flagKey}`}>
         {MODE_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
       </select>

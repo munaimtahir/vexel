@@ -80,7 +80,7 @@ export default function NewEncounterPage() {
           <div style={{ display: 'flex', gap: '12px' }}>
             <button
               type="submit" disabled={loading || loadingPatients}
-              style={{ flex: 1, padding: '10px', background: loading ? 'hsl(var(--muted))' : 'hsl(var(--primary))', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
+              style={{ flex: 1, padding: '10px', background: loading ? 'hsl(var(--muted))' : 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
             >
               {loading ? 'Registering...' : 'Register Encounter'}
             </button>

@@ -239,7 +239,7 @@ export default function VerificationEncounterPage() {
               Order: <span className="font-mono font-semibold">{encounter?.encounterCode ?? '—'}</span>
               <span className="ml-4">
                 Submitted: <strong>{submittedTestsCount}</strong> tests ·{' '}
-                Pending: <strong className={pendingVerificationCount > 0 ? 'text-amber-600' : 'text-emerald-600'}>
+                Pending: <strong className={pendingVerificationCount > 0 ? 'text-[hsl(var(--status-warning-fg))]' : 'text-[hsl(var(--status-success-fg))]'}>
                   {pendingVerificationCount}
                 </strong>
               </span>
@@ -253,7 +253,7 @@ export default function VerificationEncounterPage() {
               variant="outline"
               size="sm"
               onClick={() => setLoadAll(v => !v)}
-              className={cn(loadAll ? "bg-blue-50 border-blue-200 text-blue-700" : "")}
+              className={cn(loadAll ? "bg-muted border-border text-primary" : "")}
             >
               {loadAll ? 'Show one test' : 'Load all tests'}
             </Button>
@@ -262,7 +262,7 @@ export default function VerificationEncounterPage() {
               <Button
                 onClick={handleVerify}
                 disabled={verifying || pendingVerificationCount === 0}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="bg-primary hover:bg-primary/90 text-white"
               >
                 {verifying ? 'Verifying…' : '✅ Verify patient'}
               </Button>
@@ -279,17 +279,17 @@ export default function VerificationEncounterPage() {
 
       {/* Success banner */}
       {verified && (
-        <div className="mx-6 mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <div className="text-base font-semibold text-emerald-800 mb-1.5">
+        <div className="mx-6 mt-4 p-4 chip-success rounded-lg">
+          <div className="text-base font-semibold text-[hsl(var(--status-success-fg))] mb-1.5">
             ✅ All tests verified. Publishing report…
           </div>
           {pollingMsg && (
-            <div className="text-sm text-emerald-700">{pollingMsg}</div>
+            <div className="text-sm text-[hsl(var(--status-success-fg))]">{pollingMsg}</div>
           )}
           {publishedDocUrl && (
             <div className="mt-2 flex gap-3 items-center">
-              <span className="text-sm font-medium text-emerald-700">📄 Report published</span>
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" asChild>
+              <span className="text-sm font-medium text-[hsl(var(--status-success-fg))]">📄 Report published</span>
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-white" asChild>
                 <a href={publishedDocUrl} target="_blank" rel="noopener noreferrer">Open PDF</a>
               </Button>
             </div>
@@ -313,9 +313,9 @@ export default function VerificationEncounterPage() {
             <button
               key={card.labOrderId}
               onClick={() => scrollToTest(card.labOrderId)}
-              className={cn("flex items-center gap-1.5 w-full text-left rounded-md px-2 py-1.5 text-xs mb-0.5 cursor-pointer border-none", selectedTest === card.labOrderId ? "bg-blue-50 text-blue-700 font-medium" : "text-muted-foreground hover:bg-muted/50")}
+              className={cn("flex items-center gap-1.5 w-full text-left rounded-md px-2 py-1.5 text-xs mb-0.5 cursor-pointer border-none", selectedTest === card.labOrderId ? "bg-muted text-primary font-medium" : "text-muted-foreground hover:bg-muted/50")}
             >
-              <span className={cn("w-2 h-2 rounded-full flex-shrink-0", card.resultStatus === 'VERIFIED' ? "bg-emerald-500" : "bg-amber-500")} />
+              <span className={cn("w-2 h-2 rounded-full flex-shrink-0", card.resultStatus === 'VERIFIED' ? "bg-[hsl(var(--status-success-bg))]0" : "bg-primary")} />
               <span className="leading-snug">{card.testName}</span>
             </button>
           ))}
@@ -337,8 +337,8 @@ export default function VerificationEncounterPage() {
                 <div className="font-bold text-base text-foreground">{card.testName}</div>
                 <div className="flex gap-3 items-center">
                   {card.resultStatus === 'VERIFIED'
-                    ? <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">Verified</Badge>
-                    : <Badge className="bg-amber-50 text-amber-700 border-amber-200">Pending Verification</Badge>
+                    ? <Badge className="bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] border-[hsl(var(--status-success-border))]">Verified</Badge>
+                    : <Badge className="bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))] border-[hsl(var(--status-warning-border))]">Pending Verification</Badge>
                   }
                   <span className="text-xs text-muted-foreground ml-2">{fmtTime(card.submittedAt)}</span>
                 </div>
@@ -374,8 +374,8 @@ export default function VerificationEncounterPage() {
                             <td className="px-2.5 py-2">
                               {fp.flag ? (
                                 fp.flag !== 'normal'
-                                  ? <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-50 text-red-600">{flagLabel}</span>
-                                  : <span className="px-2 py-0.5 rounded text-xs font-bold bg-emerald-50 text-emerald-600">{flagLabel}</span>
+                                  ? <span className="px-2 py-0.5 rounded text-xs font-bold bg-[hsl(var(--status-destructive-bg))] text-[hsl(var(--status-destructive-fg))]">{flagLabel}</span>
+                                  : <span className="px-2 py-0.5 rounded text-xs font-bold bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]">{flagLabel}</span>
                               ) : '—'}
                             </td>
                           </tr>

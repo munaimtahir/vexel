@@ -10,7 +10,7 @@ const SPECIMEN_TYPES = ['blood', 'urine', 'serum', 'other'];
 
 const inputStyle: React.CSSProperties = {
   padding: '8px 10px',
-  border: '1px solid #e2e8f0',
+  border: '1px solid hsl(var(--border))',
   borderRadius: '6px',
   fontSize: '14px',
   width: '100%',
@@ -65,18 +65,18 @@ export default function SampleCollectionPage() {
     }
   };
 
-  if (loading) return <p style={{ color: '#64748b' }}>Loading...</p>;
-  if (error) return <p style={{ color: '#ef4444' }}>{error}</p>;
+  if (loading) return <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading...</p>;
+  if (error) return <p style={{ color: 'hsl(var(--status-destructive-fg))' }}>{error}</p>;
   if (!encounter) return null;
 
   if (success) {
     return (
       <div>
         <EncounterSummaryCard encounter={encounter} />
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '24px', marginBottom: '16px' }}>
-          <p style={{ margin: '0 0 12px', color: '#15803d', fontWeight: 600, fontSize: '16px' }}>✓ Sample collected successfully</p>
+        <div style={{ background: 'hsl(var(--status-success-bg))', border: '1px solid hsl(var(--status-success-border))', borderRadius: '8px', padding: '24px', marginBottom: '16px' }}>
+          <p style={{ margin: '0 0 12px', color: 'hsl(var(--status-success-fg))', fontWeight: 600, fontSize: '16px' }}>✓ Sample collected successfully</p>
         </div>
-        <Link href={`/encounters/${id}/results`} style={{ padding: '10px 20px', background: '#2563eb', color: 'white', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
+        <Link href={`/encounters/${id}/results`} style={{ padding: '10px 20px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '6px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
           Enter Results →
         </Link>
       </div>
@@ -87,15 +87,15 @@ export default function SampleCollectionPage() {
     return (
       <div>
         <div style={{ marginBottom: '16px' }}>
-          <Link href={`/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Back to Encounter</Link>
+          <Link href={`/encounters/${id}`} style={{ color: 'hsl(var(--primary))', fontSize: '14px', textDecoration: 'none' }}>← Back to Encounter</Link>
         </div>
         <EncounterSummaryCard encounter={encounter} />
-        <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '8px', padding: '16px 20px' }}>
-          <p style={{ margin: 0, color: '#92400e', fontWeight: 500 }}>
+        <div style={{ background: 'hsl(var(--status-warning-bg))', border: '1px solid hsl(var(--status-warning-border))', borderRadius: '8px', padding: '16px 20px' }}>
+          <p style={{ margin: 0, color: 'hsl(var(--status-warning-fg))', fontWeight: 500 }}>
             ⚠ Not ready for sample collection. Encounter must be in <strong>lab_ordered</strong> status. Current: <strong>{encounter.status}</strong>
           </p>
           <p style={{ margin: '8px 0 0' }}>
-            <Link href={`/encounters/${id}`} style={{ color: '#92400e', fontWeight: 600 }}>← Return to encounter</Link>
+            <Link href={`/encounters/${id}`} style={{ color: 'hsl(var(--status-warning-fg))', fontWeight: 600 }}>← Return to encounter</Link>
           </p>
         </div>
       </div>
@@ -105,17 +105,17 @@ export default function SampleCollectionPage() {
   return (
     <div>
       <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Link href={`/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Collect Sample</span>
+        <Link href={`/encounters/${id}`} style={{ color: 'hsl(var(--primary))', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
+        <span style={{ color: 'hsl(var(--border))' }}>/</span>
+        <span style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))' }}>Collect Sample</span>
       </div>
 
       <EncounterSummaryCard encounter={encounter} />
 
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '24px', maxWidth: '480px' }}>
-        <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Sample Collection</h3>
+      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))', padding: '24px', maxWidth: '480px' }}>
+        <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: 600, color: 'hsl(var(--foreground))' }}>Sample Collection</h3>
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Barcode *</label>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Barcode *</label>
           <input
             value={form.barcode}
             onChange={e => setForm(f => ({ ...f, barcode: e.target.value }))}
@@ -124,13 +124,13 @@ export default function SampleCollectionPage() {
           />
         </div>
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Specimen Type</label>
-          <select value={form.specimenType} onChange={e => setForm(f => ({ ...f, specimenType: e.target.value }))} style={{ ...inputStyle, background: 'white' }}>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Specimen Type</label>
+          <select value={form.specimenType} onChange={e => setForm(f => ({ ...f, specimenType: e.target.value }))} style={{ ...inputStyle, background: 'hsl(var(--card))' }}>
             {SPECIMEN_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
           </select>
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Notes (optional)</label>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Notes (optional)</label>
           <textarea
             value={form.notes}
             onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
@@ -139,11 +139,11 @@ export default function SampleCollectionPage() {
             placeholder="Any collection notes..."
           />
         </div>
-        {apiError && <p style={{ color: '#ef4444', fontSize: '13px', marginBottom: '12px' }}>{apiError}</p>}
+        {apiError && <p style={{ color: 'hsl(var(--status-destructive-fg))', fontSize: '13px', marginBottom: '12px' }}>{apiError}</p>}
         <button
           onClick={handleCollect}
           disabled={submitting}
-          style={{ width: '100%', padding: '12px', background: submitting ? '#94a3b8' : '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer' }}
+          style={{ width: '100%', padding: '12px', background: submitting ? 'hsl(var(--muted-foreground))' : 'hsl(var(--status-success-fg))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer' }}
         >
           {submitting ? 'Collecting...' : 'Mark Collected'}
         </button>

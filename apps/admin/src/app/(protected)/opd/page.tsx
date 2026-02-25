@@ -35,11 +35,11 @@ export default function OpdAdminHomePage() {
           <Link
             key={card.href}
             href={card.href}
-            className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow"
+            className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-border hover:shadow"
           >
             <div className="text-sm font-semibold text-slate-900">{card.title}</div>
             <p className="mt-2 text-sm leading-5 text-slate-600">{card.description}</p>
-            <div className="mt-4 text-sm font-medium text-blue-600 group-hover:text-blue-700">
+            <div className="mt-4 text-sm font-medium text-primary group-hover:text-primary">
               Open
             </div>
           </Link>

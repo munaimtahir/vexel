@@ -181,7 +181,7 @@ export default function OpdProvidersPage() {
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-700">Create Provider</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">Create Provider</h2>
         <form onSubmit={handleCreate} className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <Field label="Provider Name *">
             <input
@@ -226,7 +226,7 @@ export default function OpdProvidersPage() {
               placeholder="1500"
             />
           </Field>
-          <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+          <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-foreground">
             <input
               type="checkbox"
               checked={createForm.isActive}
@@ -235,7 +235,7 @@ export default function OpdProvidersPage() {
             Active
           </label>
           {createError ? (
-            <div className="md:col-span-2 xl:col-span-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div className="md:col-span-2 xl:col-span-3 rounded-md border border-[hsl(var(--status-destructive-border))] bg-[hsl(var(--status-destructive-bg))] px-3 py-2 text-sm text-[hsl(var(--status-destructive-fg))]">
               {createError}
             </div>
           ) : null}
@@ -243,7 +243,7 @@ export default function OpdProvidersPage() {
             <button
               type="submit"
               disabled={creating}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               {creating ? 'Creating...' : 'Create Provider'}
             </button>
@@ -273,17 +273,17 @@ export default function OpdProvidersPage() {
                 <option value="inactive">Inactive only</option>
               </select>
             </Field>
-            <button type="submit" className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700">
+            <button type="submit" className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-foreground">
               Apply
             </button>
           </form>
-          <button onClick={() => void loadProviders()} className="rounded-md border border-slate-300 px-4 py-2 text-sm text-slate-700">
+          <button onClick={() => void loadProviders()} className="rounded-md border border-slate-300 px-4 py-2 text-sm text-foreground">
             Refresh
           </button>
         </div>
 
         {error ? (
-          <div className="mt-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>
+          <div className="mt-4 rounded-md border border-[hsl(var(--status-destructive-border))] bg-[hsl(var(--status-destructive-bg))] px-3 py-2 text-sm text-[hsl(var(--status-destructive-fg))]">{error}</div>
         ) : null}
 
         <div className="mt-4 overflow-x-auto">
@@ -320,7 +320,7 @@ export default function OpdProvidersPage() {
                     <td className="px-3 py-2">{provider.specialty ?? '—'}</td>
                     <td className="px-3 py-2">{provider.consultationFee == null ? '—' : provider.consultationFee}</td>
                     <td className="px-3 py-2">
-                      <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${provider.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-700'}`}>
+                      <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${provider.isActive ? 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]' : 'bg-slate-200 text-foreground'}`}>
                         {provider.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
@@ -329,7 +329,7 @@ export default function OpdProvidersPage() {
                       <button
                         type="button"
                         onClick={() => startEdit(provider)}
-                        className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700"
+                        className="rounded-md border border-slate-300 px-2 py-1 text-xs text-foreground"
                       >
                         Edit
                       </button>
@@ -342,7 +342,7 @@ export default function OpdProvidersPage() {
         </div>
 
         {editingId ? (
-          <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50/40 p-4">
+          <div className="mt-6 rounded-lg border border-border bg-muted p-4">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-slate-900">Edit Provider</h3>
@@ -366,24 +366,24 @@ export default function OpdProvidersPage() {
                 <Field label="Consultation Fee">
                   <input type="number" min="0" step="0.01" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={editForm.consultationFee} onChange={(e) => setEditForm((s) => ({ ...s, consultationFee: e.target.value }))} />
                 </Field>
-                <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
+                <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-foreground">
                   <input type="checkbox" checked={editForm.isActive} onChange={(e) => setEditForm((s) => ({ ...s, isActive: e.target.checked }))} />
                   Active
                 </label>
               </div>
               {editError ? (
-                <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{editError}</div>
+                <div className="rounded-md border border-[hsl(var(--status-destructive-border))] bg-[hsl(var(--status-destructive-bg))] px-3 py-2 text-sm text-[hsl(var(--status-destructive-fg))]">{editError}</div>
               ) : null}
               <div className="flex gap-2">
                 <button
                   type="button"
                   disabled={savingEdit}
                   onClick={() => void handleEditSave(editingId)}
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {savingEdit ? 'Saving...' : 'Save Changes'}
                 </button>
-                <button type="button" onClick={() => setEditingId(null)} className="rounded-md border border-slate-300 px-4 py-2 text-sm text-slate-700">
+                <button type="button" onClick={() => setEditingId(null)} className="rounded-md border border-slate-300 px-4 py-2 text-sm text-foreground">
                   Cancel
                 </button>
               </div>

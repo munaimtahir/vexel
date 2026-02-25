@@ -137,7 +137,7 @@ export default function PublishPage() {
         <div className="flex flex-wrap gap-3">
           {docStatus === 'PUBLISHED' && (
             <>
-              <Button onClick={handleDownload} className="bg-emerald-600 hover:bg-emerald-700">
+              <Button onClick={handleDownload} className="bg-primary hover:bg-primary/90">
                 ⬇ Download PDF
               </Button>
               <Button variant="outline" onClick={() => window.print()}>

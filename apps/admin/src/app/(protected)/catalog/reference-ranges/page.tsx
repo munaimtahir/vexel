@@ -3,8 +3,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
-const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
-const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' };
+const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
+const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' };
 
 const emptyForm = () => ({
   parameterId: '', testId: '', gender: '', ageMinYears: '', ageMaxYears: '',
@@ -119,15 +119,15 @@ export default function ReferenceRangesPage() {
   return (
     <div>
       {/* Drawer */}
-      {drawerOpen && <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 40 }} onClick={() => setDrawerOpen(false)} />}
+      {drawerOpen && <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.3)', zIndex: 40 }} onClick={() => setDrawerOpen(false)} />}
       {drawerOpen && (
-        <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '460px', background: 'white', zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.12)', overflowY: 'auto' }}>
-          <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#1e293b' }}>{editingId ? 'Edit Reference Range' : 'New Reference Range'}</h2>
-            <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8' }}>×</button>
+        <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '460px', background: 'hsl(var(--card))', zIndex: 50, boxShadow: 'var(--shadow-lg)', overflowY: 'auto' }}>
+          <div style={{ padding: '20px 24px', borderBottom: '1px solid hsl(var(--muted))', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>{editingId ? 'Edit Reference Range' : 'New Reference Range'}</h2>
+            <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}>×</button>
           </div>
           <form onSubmit={handleSubmit} style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {error && <div style={{ background: '#fee2e2', color: '#991b1b', padding: '10px', borderRadius: '6px', fontSize: '13px' }}>{error}</div>}
+            {error && <div style={{ background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px', borderRadius: '6px', fontSize: '13px' }}>{error}</div>}
 
             <div>
               <label style={labelStyle}>Parameter *</label>
@@ -203,10 +203,10 @@ export default function ReferenceRangesPage() {
             </div>
 
             <div style={{ marginTop: '8px', display: 'flex', gap: '10px' }}>
-              <button type="submit" disabled={saving} style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
+              <button type="submit" disabled={saving} style={{ flex: 1, padding: '10px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
                 {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Create Range'}
               </button>
-              <button type="button" onClick={() => setDrawerOpen(false)} style={{ padding: '10px 16px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>Cancel</button>
+              <button type="button" onClick={() => setDrawerOpen(false)} style={{ padding: '10px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>Cancel</button>
             </div>
           </form>
         </div>
@@ -214,66 +214,66 @@ export default function ReferenceRangesPage() {
 
       {/* Delete confirm */}
       {deleteId && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', padding: '24px', borderRadius: '8px', maxWidth: '380px', width: '90%' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'hsl(var(--card))', padding: '24px', borderRadius: '8px', maxWidth: '380px', width: '90%' }}>
             <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>Delete Reference Range?</h2>
-            <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px' }}>This cannot be undone.</p>
+            <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px' }}>This cannot be undone.</p>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => handleDelete(deleteId)} disabled={deleting} style={{ padding: '8px 16px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{deleting ? 'Deleting...' : 'Delete'}</button>
-              <button onClick={() => setDeleteId(null)} style={{ padding: '8px 16px', background: '#f1f5f9', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
+              <button onClick={() => handleDelete(deleteId)} disabled={deleting} style={{ padding: '8px 16px', background: 'hsl(var(--status-destructive-fg))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{deleting ? 'Deleting...' : 'Delete'}</button>
+              <button onClick={() => setDeleteId(null)} style={{ padding: '8px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
             </div>
           </div>
         </div>
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b' }}>Reference Ranges</h1>
-        <button onClick={openCreate} style={{ padding: '8px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>+ New Range</button>
+        <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Reference Ranges</h1>
+        <button onClick={openCreate} style={{ padding: '8px 16px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>+ New Range</button>
       </div>
 
       <div style={{ marginBottom: '16px' }}>
         <select value={filterParamId} onChange={(e) => handleFilter(e.target.value)}
-          style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', minWidth: '260px' }}>
+          style={{ padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', minWidth: '260px' }}>
           <option value="">All parameters</option>
           {parameters.map((p) => <option key={p.id} value={p.id}>{p.name} {p.userCode ? `(${p.userCode})` : ''}</option>)}
         </select>
       </div>
 
-      <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: '#f8fafc' }}>
+          <thead style={{ background: 'hsl(var(--background))' }}>
             <tr>
               {['Parameter', 'Test', 'Gender', 'Age', 'Normal Range', 'Critical', 'Unit', ''].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: '#64748b', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
+                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Loading…</td></tr>
+              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
             ) : ranges.length === 0 ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>No reference ranges found.</td></tr>
+              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No reference ranges found.</td></tr>
             ) : ranges.map((r: any) => (
-              <tr key={r.id} style={{ borderTop: '1px solid #f1f5f9' }}>
+              <tr key={r.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
                 <td style={{ padding: '10px 12px', fontWeight: 500 }}>{getParamName(r.parameterId)}</td>
-                <td style={{ padding: '10px 12px', color: '#64748b', fontSize: '12px' }}>{r.testId ? getTestName(r.testId) : '—'}</td>
+                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{r.testId ? getTestName(r.testId) : '—'}</td>
                 <td style={{ padding: '10px 12px' }}>
-                  {r.gender ? <span style={{ padding: '2px 6px', borderRadius: '10px', fontSize: '11px', background: r.gender === 'M' ? '#dbeafe' : '#fce7f3', color: r.gender === 'M' ? '#1d4ed8' : '#9d174d' }}>{r.gender === 'M' ? 'Male' : 'Female'}</span> : <span style={{ color: '#94a3b8' }}>Any</span>}
+                  {r.gender ? <span style={{ padding: '2px 6px', borderRadius: '10px', fontSize: '11px', background: r.gender === 'M' ? 'hsl(var(--status-info-bg))' : 'hsl(var(--status-info-bg))', color: r.gender === 'M' ? 'hsl(var(--status-info-fg))' : 'hsl(var(--status-info-fg))' }}>{r.gender === 'M' ? 'Male' : 'Female'}</span> : <span style={{ color: 'hsl(var(--muted-foreground))' }}>Any</span>}
                 </td>
-                <td style={{ padding: '10px 12px', color: '#64748b', fontSize: '12px' }}>
+                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>
                   {r.ageMinYears != null || r.ageMaxYears != null ? `${r.ageMinYears ?? 0}–${r.ageMaxYears ?? '∞'} yrs` : 'Any'}
                 </td>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '12px', color: '#1e293b' }}>
+                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '12px', color: 'hsl(var(--foreground))' }}>
                   {r.lowValue != null || r.highValue != null ? `${r.lowValue ?? '?'} – ${r.highValue ?? '?'}` : r.normalText ?? '—'}
                 </td>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: '#dc2626' }}>
+                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>
                   {r.criticalLow != null || r.criticalHigh != null ? `${r.criticalLow ?? '?'} / ${r.criticalHigh ?? '?'}` : '—'}
                 </td>
-                <td style={{ padding: '10px 12px', color: '#64748b', fontSize: '12px' }}>{r.unit ?? '—'}</td>
+                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{r.unit ?? '—'}</td>
                 <td style={{ padding: '10px 12px' }}>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    <button onClick={() => openEdit(r)} style={{ padding: '3px 8px', fontSize: '12px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                    <button onClick={() => setDeleteId(r.id)} style={{ padding: '3px 8px', fontSize: '12px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '4px', cursor: 'pointer' }}>Del</button>
+                    <button onClick={() => openEdit(r)} style={{ padding: '3px 8px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+                    <button onClick={() => setDeleteId(r.id)} style={{ padding: '3px 8px', fontSize: '12px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', border: '1px solid hsl(var(--status-destructive-border))', borderRadius: '4px', cursor: 'pointer' }}>Del</button>
                   </div>
                 </td>
               </tr>
@@ -283,10 +283,10 @@ export default function ReferenceRangesPage() {
       </div>
 
       {totalPages > 1 && (
-        <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
-          <button disabled={page <= 1} onClick={() => handlePage(page - 1)} style={{ padding: '5px 10px', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: page > 1 ? 'pointer' : 'default', background: 'white' }}>← Prev</button>
+        <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
+          <button disabled={page <= 1} onClick={() => handlePage(page - 1)} style={{ padding: '5px 10px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: page > 1 ? 'pointer' : 'default', background: 'hsl(var(--card))' }}>← Prev</button>
           <span>Page {page} of {totalPages} ({total} total)</span>
-          <button disabled={page >= totalPages} onClick={() => handlePage(page + 1)} style={{ padding: '5px 10px', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: page < totalPages ? 'pointer' : 'default', background: 'white' }}>Next →</button>
+          <button disabled={page >= totalPages} onClick={() => handlePage(page + 1)} style={{ padding: '5px 10px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: page < totalPages ? 'pointer' : 'default', background: 'hsl(var(--card))' }}>Next →</button>
         </div>
       )}
     </div>

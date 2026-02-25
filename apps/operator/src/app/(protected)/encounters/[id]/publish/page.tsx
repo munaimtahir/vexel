@@ -7,11 +7,11 @@ import { getToken } from '@/lib/auth';
 import IdentityHeader from '@/components/identity-header';
 
 const DOC_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  DRAFT:      { bg: '#f1f5f9', text: '#475569' },
-  RENDERING:  { bg: '#fef3c7', text: '#b45309' },
-  RENDERED:   { bg: '#d1fae5', text: '#065f46' },
-  PUBLISHED:  { bg: '#bbf7d0', text: '#14532d' },
-  FAILED:     { bg: '#fee2e2', text: '#991b1b' },
+  DRAFT:      { bg: 'hsl(var(--muted))', text: 'hsl(var(--muted-foreground))' },
+  RENDERING:  { bg: 'hsl(var(--status-warning-bg))', text: 'hsl(var(--status-warning-fg))' },
+  RENDERED:   { bg: 'hsl(var(--status-success-bg))', text: 'hsl(var(--status-success-fg))' },
+  PUBLISHED:  { bg: 'hsl(var(--status-success-border))', text: 'hsl(var(--status-success-fg))' },
+  FAILED:     { bg: 'hsl(var(--status-destructive-bg))', text: 'hsl(var(--status-destructive-fg))' },
 };
 
 export default function PublishPage() {
@@ -93,8 +93,8 @@ export default function PublishPage() {
     }
   };
 
-  if (loadingEncounter) return <p style={{ color: '#64748b' }}>Loading encounter...</p>;
-  if (encounterError) return <p style={{ color: '#ef4444' }}>{encounterError}</p>;
+  if (loadingEncounter) return <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading encounter...</p>;
+  if (encounterError) return <p style={{ color: 'hsl(var(--status-destructive-fg))' }}>{encounterError}</p>;
   if (!encounter) return null;
 
   const docStatus: string | undefined = document?.status;
@@ -103,9 +103,9 @@ export default function PublishPage() {
   return (
     <div>
       <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Link href={`/encounters/${id}`} style={{ color: '#3b82f6', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
-        <span style={{ color: '#cbd5e1' }}>/</span>
-        <span style={{ fontSize: '14px', color: '#64748b' }}>Report Status</span>
+        <Link href={`/encounters/${id}`} style={{ color: 'hsl(var(--primary))', fontSize: '14px', textDecoration: 'none' }}>← Encounter</Link>
+        <span style={{ color: 'hsl(var(--border))' }}>/</span>
+        <span style={{ fontSize: '14px', color: 'hsl(var(--muted-foreground))' }}>Report Status</span>
       </div>
 
       <IdentityHeader
@@ -115,15 +115,15 @@ export default function PublishPage() {
         createdAt={encounter.createdAt}
       />
 
-      <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '32px' }}>
-        <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>Lab Report</h3>
-        <p style={{ margin: '0 0 24px', color: '#64748b', fontSize: '14px' }}>
+      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))', padding: '32px' }}>
+        <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Lab Report</h3>
+        <p style={{ margin: '0 0 24px', color: 'hsl(var(--muted-foreground))', fontSize: '14px' }}>
           Report is automatically generated and published when the encounter is verified.
         </p>
 
         {/* Document status */}
         {!document && (
-          <p style={{ color: '#64748b', fontSize: '14px' }}>⏳ Waiting for report to be generated...</p>
+          <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '14px' }}>⏳ Waiting for report to be generated...</p>
         )}
 
         {document && docColors && (
@@ -136,7 +136,7 @@ export default function PublishPage() {
         )}
 
         {downloadError && (
-          <p style={{ color: '#ef4444', marginBottom: '16px', background: '#fee2e2', padding: '10px 16px', borderRadius: '6px', fontSize: '14px' }}>
+          <p style={{ color: 'hsl(var(--status-destructive-fg))', marginBottom: '16px', background: 'hsl(var(--status-destructive-bg))', padding: '10px 16px', borderRadius: '6px', fontSize: '14px' }}>
             {downloadError}
           </p>
         )}
@@ -146,13 +146,13 @@ export default function PublishPage() {
             <>
               <button
                 onClick={handleDownload}
-                style={{ padding: '12px 28px', background: '#059669', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+                style={{ padding: '12px 28px', background: 'hsl(var(--status-success-fg))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
               >
                 ⬇ Download PDF
               </button>
               <button
                 onClick={() => window.print()}
-                style={{ padding: '12px 24px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
+                style={{ padding: '12px 24px', background: 'hsl(var(--card))', color: 'hsl(var(--muted-foreground))', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
               >
                 🖨 Print
               </button>

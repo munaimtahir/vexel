@@ -124,20 +124,20 @@ export default function PanelsPage() {
   const assignedTestIds = new Set(panelTests.map((t: any) => t.testId ?? t.id));
   const availableTests = allTests.filter((t: any) => !assignedTestIds.has(t.id));
 
-  const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
-  const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' };
+  const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
+  const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' };
 
   return (
     <div>
-      {drawerOpen && <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 40 }} onClick={() => setDrawerOpen(false)} />}
+      {drawerOpen && <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.3)', zIndex: 40 }} onClick={() => setDrawerOpen(false)} />}
       {drawerOpen && (
-        <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '420px', background: 'white', zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.12)', overflowY: 'auto' }}>
-          <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#1e293b' }}>{editingId ? 'Edit Panel' : 'New Panel'}</h2>
-            <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8' }}>×</button>
+        <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '420px', background: 'hsl(var(--card))', zIndex: 50, boxShadow: 'var(--shadow-lg)', overflowY: 'auto' }}>
+          <div style={{ padding: '20px 24px', borderBottom: '1px solid hsl(var(--muted))', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>{editingId ? 'Edit Panel' : 'New Panel'}</h2>
+            <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}>×</button>
           </div>
           <form onSubmit={handleSubmit} style={{ padding: '20px 24px' }}>
-            {error && <div style={{ background: '#fee2e2', color: '#991b1b', padding: '10px 12px', borderRadius: '6px', marginBottom: '14px', fontSize: '13px' }}>{error}</div>}
+            {error && <div style={{ background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px 12px', borderRadius: '6px', marginBottom: '14px', fontSize: '13px' }}>{error}</div>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={labelStyle}>Name *</label>
@@ -145,8 +145,8 @@ export default function PanelsPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={labelStyle}>Panel ID <span style={{ color: '#94a3b8', fontWeight: 400 }}>· Auto-generated</span></label>
-                  <input value={form.externalId} readOnly style={{ ...inputStyle, background: '#f8fafc', color: '#64748b', cursor: 'default' }} />
+                  <label style={labelStyle}>Panel ID <span style={{ color: 'hsl(var(--muted-foreground))', fontWeight: 400 }}>· Auto-generated</span></label>
+                  <input value={form.externalId} readOnly style={{ ...inputStyle, background: 'hsl(var(--background))', color: 'hsl(var(--muted-foreground))', cursor: 'default' }} />
                 </div>
                 <div>
                   <label style={labelStyle}>User Code</label>
@@ -165,16 +165,16 @@ export default function PanelsPage() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="panel-active" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} style={{ width: '16px', height: '16px' }} />
-                <label htmlFor="panel-active" style={{ fontSize: '14px', color: '#374151', cursor: 'pointer' }}>Active</label>
+                <label htmlFor="panel-active" style={{ fontSize: '14px', color: 'hsl(var(--foreground))', cursor: 'pointer' }}>Active</label>
               </div>
             </div>
             <div style={{ marginTop: '24px', display: 'flex', gap: '10px' }}>
               <button type="submit" disabled={saving}
-                style={{ flex: 1, padding: '10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
+                style={{ flex: 1, padding: '10px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
                 {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Create Panel'}
               </button>
               <button type="button" onClick={() => setDrawerOpen(false)}
-                style={{ padding: '10px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>
+                style={{ padding: '10px 16px', background: 'hsl(var(--muted))', color: 'hsl(var(--foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>
                 Cancel
               </button>
             </div>
@@ -183,8 +183,8 @@ export default function PanelsPage() {
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b' }}>Panels</h1>
-        <button onClick={openCreate} style={{ padding: '8px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Panels</h1>
+        <button onClick={openCreate} style={{ padding: '8px 16px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
           + New Panel
         </button>
       </div>
@@ -192,43 +192,43 @@ export default function PanelsPage() {
       <div style={{ marginBottom: '16px' }}>
         <input value={search} onChange={(e) => handleSearch(e.target.value)}
           placeholder="Search by name, code, user code, LOINC…"
-          style={{ width: '320px', padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '14px' }} />
+          style={{ width: '320px', padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px' }} />
       </div>
 
       <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
         {/* Panels table */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+          <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-              <thead style={{ background: '#f8fafc' }}>
+              <thead style={{ background: 'hsl(var(--background))' }}>
                 <tr>
                   {['User Code', 'Ext ID', 'Name', 'Price (PKR)', 'LOINC', 'Status', ''].map((h) => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: '#64748b', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
+                    <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Loading…</td></tr>
+                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
                 ) : panels.length === 0 ? (
-                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>No panels found.</td></tr>
+                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No panels found.</td></tr>
                 ) : panels.map((p: any) => (
-                  <tr key={p.id} style={{ borderTop: '1px solid #f1f5f9', background: selectedPanel?.id === p.id ? '#eff6ff' : undefined, cursor: 'pointer' }}
+                  <tr key={p.id} style={{ borderTop: '1px solid hsl(var(--muted))', background: selectedPanel?.id === p.id ? 'hsl(var(--status-info-bg))' : undefined, cursor: 'pointer' }}
                     onClick={() => selectPanel(p)}>
                     <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 600 }}>{p.userCode ?? '—'}</td>
-                    <td style={{ padding: '10px 12px', color: '#64748b' }}>{p.externalId ?? '—'}</td>
+                    <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{p.externalId ?? '—'}</td>
                     <td style={{ padding: '10px 12px', fontWeight: 500 }}>{p.name}</td>
-                    <td style={{ padding: '10px 12px', color: '#0f172a', fontWeight: 500 }}>
+                    <td style={{ padding: '10px 12px', color: 'hsl(var(--foreground))', fontWeight: 500 }}>
                       {p.price != null ? p.price.toLocaleString() : '—'}
                     </td>
-                    <td style={{ padding: '10px 12px', color: '#64748b', fontFamily: 'monospace', fontSize: '12px' }}>{p.loincCode ?? '—'}</td>
+                    <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '12px' }}>{p.loincCode ?? '—'}</td>
                     <td style={{ padding: '10px 12px' }}>
-                      <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: p.isActive ? '#dcfce7' : '#fee2e2', color: p.isActive ? '#166534' : '#991b1b' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: p.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: p.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
                         {p.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td style={{ padding: '10px 12px' }} onClick={(e) => { e.stopPropagation(); openEdit(p); }}>
-                      <button style={{ padding: '4px 10px', fontSize: '12px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+                      <button style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
                     </td>
                   </tr>
                 ))}
@@ -236,14 +236,14 @@ export default function PanelsPage() {
             </table>
           </div>
           {totalPages > 1 && (
-            <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
+            <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
               <button disabled={page <= 1} onClick={() => handlePage(page - 1)}
-                style={{ padding: '5px 10px', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: page > 1 ? 'pointer' : 'default', background: 'white', color: page > 1 ? '#374151' : '#94a3b8' }}>
+                style={{ padding: '5px 10px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: page > 1 ? 'pointer' : 'default', background: 'hsl(var(--card))', color: page > 1 ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}>
                 ← Prev
               </button>
               <span style={{ padding: '0 8px' }}>Page {page} of {totalPages} ({total} total)</span>
               <button disabled={page >= totalPages} onClick={() => handlePage(page + 1)}
-                style={{ padding: '5px 10px', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: page < totalPages ? 'pointer' : 'default', background: 'white', color: page < totalPages ? '#374151' : '#94a3b8' }}>
+                style={{ padding: '5px 10px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: page < totalPages ? 'pointer' : 'default', background: 'hsl(var(--card))', color: page < totalPages ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}>
                 Next →
               </button>
             </div>
@@ -252,30 +252,30 @@ export default function PanelsPage() {
 
         {/* Test assignments panel */}
         {selectedPanel && (
-          <div style={{ width: '340px', flexShrink: 0, background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', padding: '16px' }}>
+          <div style={{ width: '340px', flexShrink: 0, background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>Test Assignments</div>
-                <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>{selectedPanel.name}</div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Test Assignments</div>
+                <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>{selectedPanel.name}</div>
               </div>
-              <button onClick={() => setSelectedPanel(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '16px' }}>×</button>
+              <button onClick={() => setSelectedPanel(null)} style={{ background: 'none', border: 'none', color: 'hsl(var(--muted-foreground))', cursor: 'pointer', fontSize: '16px' }}>×</button>
             </div>
 
             {testLoading ? (
-              <p style={{ fontSize: '12px', color: '#94a3b8' }}>Loading…</p>
+              <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>Loading…</p>
             ) : panelTests.length === 0 ? (
-              <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '12px' }}>No tests assigned.</p>
+              <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '12px' }}>No tests assigned.</p>
             ) : (
               <div style={{ marginBottom: '12px' }}>
                 {panelTests
                   .slice()
                   .sort((a: any, b: any) => (a.displayOrder ?? a.ordering ?? 0) - (b.displayOrder ?? b.ordering ?? 0))
                   .map((pt: any) => (
-                    <div key={pt.testId ?? pt.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>
-                      <span style={{ fontSize: '11px', color: '#94a3b8', width: '20px', flexShrink: 0, textAlign: 'right' }}>#{pt.displayOrder ?? pt.ordering ?? '—'}</span>
-                      <span style={{ flex: 1, fontSize: '13px', color: '#1e293b' }}>{pt.test?.name ?? pt.name ?? pt.testId}</span>
+                    <div key={pt.testId ?? pt.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderBottom: '1px solid hsl(var(--muted))' }}>
+                      <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', width: '20px', flexShrink: 0, textAlign: 'right' }}>#{pt.displayOrder ?? pt.ordering ?? '—'}</span>
+                      <span style={{ flex: 1, fontSize: '13px', color: 'hsl(var(--foreground))' }}>{pt.test?.name ?? pt.name ?? pt.testId}</span>
                       <button onClick={() => removeTest(pt.testId ?? pt.id)}
-                        style={{ padding: '2px 7px', fontSize: '11px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                        style={{ padding: '2px 7px', fontSize: '11px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                         ×
                       </button>
                     </div>
@@ -285,18 +285,18 @@ export default function PanelsPage() {
 
             <div style={{ position: 'relative' }}>
               <button onClick={() => { setTestPickerOpen(!testPickerOpen); if (!testPickerOpen) loadAllTests(); }}
-                style={{ width: '100%', padding: '7px', background: '#f0f9ff', border: '1px dashed #bae6fd', borderRadius: '6px', color: '#0369a1', fontSize: '13px', cursor: 'pointer' }}>
+                style={{ width: '100%', padding: '7px', background: 'hsl(var(--status-info-bg))', border: '1px dashed hsl(var(--status-info-border))', borderRadius: '6px', color: 'hsl(var(--primary))', fontSize: '13px', cursor: 'pointer' }}>
                 + Add Test
               </button>
               {testPickerOpen && (
-                <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, marginBottom: '4px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', maxHeight: '200px', overflowY: 'auto', zIndex: 10 }}>
+                <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, marginBottom: '4px', background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '6px', boxShadow: '0 4px 12px hsl(var(--foreground) / 0.1)', maxHeight: '200px', overflowY: 'auto', zIndex: 10 }}>
                   {availableTests.length === 0 ? (
-                    <div style={{ padding: '10px', fontSize: '12px', color: '#94a3b8' }}>No more tests available.</div>
+                    <div style={{ padding: '10px', fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>No more tests available.</div>
                   ) : availableTests.map((t: any) => (
                     <button key={t.id} onClick={() => addTest(t.id)} disabled={addingTest}
-                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 12px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', borderBottom: '1px solid #f1f5f9' }}>
+                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 12px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', borderBottom: '1px solid hsl(var(--muted))' }}>
                       <span style={{ fontWeight: 500 }}>{t.name}</span>
-                      {t.userCode && <span style={{ marginLeft: '6px', fontSize: '11px', color: '#94a3b8', fontFamily: 'monospace' }}>{t.userCode}</span>}
+                      {t.userCode && <span style={{ marginLeft: '6px', fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace' }}>{t.userCode}</span>}
                     </button>
                   ))}
                 </div>

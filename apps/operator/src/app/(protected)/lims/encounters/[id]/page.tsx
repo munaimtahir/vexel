@@ -139,18 +139,18 @@ export default function EncounterDetailPage() {
       {/* Action Buttons */}
       <div className="flex gap-3 mb-6 flex-wrap">
         {status === 'registered' && (
-          <Button asChild className="bg-violet-600 hover:bg-violet-700">
+          <Button asChild className="bg-primary hover:bg-primary/90">
             <Link href={`/lims/encounters/${id}/order`}>Place Lab Order</Link>
           </Button>
         )}
         {status === 'lab_ordered' && (
-          <Button asChild className="bg-amber-500 hover:bg-amber-600">
+          <Button asChild className="bg-primary hover:bg-primary/90">
             <Link href={`/lims/encounters/${id}/sample`}>Collect Sample</Link>
           </Button>
         )}
         {status === 'specimen_collected' && receiveSeparate && (
           <>
-            <Button asChild className="bg-sky-500 hover:bg-sky-600">
+            <Button asChild className="bg-primary hover:bg-primary/90">
               <Link href={`/lims/encounters/${id}/receive`}>Receive Specimen</Link>
             </Button>
             <Button asChild>
@@ -169,12 +169,12 @@ export default function EncounterDetailPage() {
           </Button>
         )}
         {status === 'resulted' && (
-          <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+          <Button asChild className="bg-primary hover:bg-primary/90">
             <Link href={`/lims/encounters/${id}/verify`}>Verify Results</Link>
           </Button>
         )}
         {status === 'verified' && (
-          <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+          <Button asChild className="bg-primary hover:bg-primary/90">
             <Link href={`/lims/encounters/${id}/reports`}>View / Download Report</Link>
           </Button>
         )}
@@ -195,10 +195,10 @@ export default function EncounterDetailPage() {
           {receiptDoc && (
             <div className="flex items-center gap-2.5 mb-3 flex-wrap">
               <span className="text-sm font-semibold text-foreground">Receipt</span>
-              <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-sm">
+              <span className="px-3 py-1 rounded-full bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] font-semibold text-sm">
                 {receiptDoc.status}
               </span>
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handleDownload(receiptDoc)}>
+              <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handleDownload(receiptDoc)}>
                 ⬇ Print Receipt Again
               </Button>
             </div>
@@ -211,11 +211,11 @@ export default function EncounterDetailPage() {
               <span className="text-sm font-semibold text-foreground">Lab Report</span>
               <DocumentStatusBadge status={docStatus!} />
               {(docStatus === 'RENDERING' || docStatus === 'RENDERED') && (
-                <span className="text-amber-600 text-sm">⏳ Generating PDF...</span>
+                <span className="text-[hsl(var(--status-warning-fg))] text-sm">⏳ Generating PDF...</span>
               )}
               {docStatus === 'PUBLISHED' && (
                 <>
-                  <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handleDownload(reportDoc)}>
+                  <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handleDownload(reportDoc)}>
                     ⬇ Download Report
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => { handleDownload(reportDoc).then(() => window.print()); }}>
@@ -227,7 +227,7 @@ export default function EncounterDetailPage() {
                 </>
               )}
               {docStatus === 'FAILED' && (
-                <Button size="sm" asChild className="bg-amber-500 hover:bg-amber-600">
+                <Button size="sm" asChild className="bg-primary hover:bg-primary/90">
                   <Link href={`/lims/encounters/${id}/publish`}>Retry Report</Link>
                 </Button>
               )}

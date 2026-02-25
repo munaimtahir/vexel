@@ -34,10 +34,10 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
   };
 
   return (
-    <aside style={{ width: '220px', background: '#1e293b', color: 'white', display: 'flex', flexDirection: 'column', padding: '24px 0' }}>
-      <div style={{ padding: '0 20px 24px', borderBottom: '1px solid #334155' }}>
-        <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0, color: '#f1f5f9' }}>Vexel Operator</h1>
-        <p style={{ fontSize: '12px', color: '#94a3b8', margin: '4px 0 0' }}>LIMS Workflow</p>
+    <aside style={{ width: '220px', background: 'hsl(var(--foreground))', color: 'hsl(var(--primary-foreground))', display: 'flex', flexDirection: 'column', padding: '24px 0' }}>
+      <div style={{ padding: '0 20px 24px', borderBottom: '1px solid hsl(var(--sidebar-border))' }}>
+        <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0, color: 'hsl(var(--muted))' }}>Vexel Operator</h1>
+        <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', margin: '4px 0 0' }}>LIMS Workflow</p>
       </div>
       <nav style={{ flex: 1, padding: '16px 0' }}>
         {navItems.map((item) => {
@@ -51,8 +51,8 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
                 alignItems: 'center',
                 gap: '10px',
                 padding: '10px 20px',
-                color: isActive ? '#f1f5f9' : '#94a3b8',
-                background: isActive ? '#334155' : 'transparent',
+                color: isActive ? 'hsl(var(--muted))' : 'hsl(var(--muted-foreground))',
+                background: isActive ? 'hsl(var(--sidebar-accent))' : 'transparent',
                 textDecoration: 'none',
                 fontSize: '14px',
                 fontWeight: isActive ? 600 : 400,
@@ -67,7 +67,7 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
       <div style={{ padding: '0 20px' }}>
         <button
           onClick={handleLogout}
-          style={{ width: '100%', padding: '8px 0', background: 'transparent', border: '1px solid #475569', borderRadius: '6px', color: '#94a3b8', cursor: 'pointer', fontSize: '14px' }}
+          style={{ width: '100%', padding: '8px 0', background: 'transparent', border: '1px solid hsl(var(--muted-foreground))', borderRadius: '6px', color: 'hsl(var(--muted-foreground))', cursor: 'pointer', fontSize: '14px' }}
         >
           Sign Out
         </button>

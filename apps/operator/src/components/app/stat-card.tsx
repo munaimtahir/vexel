@@ -3,11 +3,11 @@ import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
 const ICON_COLORS = [
-  'from-violet-600 to-violet-700',
-  'from-sky-600 to-sky-700',
-  'from-emerald-500 to-emerald-600',
-  'from-amber-500 to-amber-600',
-  'from-indigo-500 to-indigo-600',
+  'from-primary to-primary/85',
+  'from-primary to-primary/90',
+  'from-primary to-primary/80',
+  'from-primary to-primary/75',
+  'from-primary to-primary/80',
 ];
 
 interface StatCardProps {

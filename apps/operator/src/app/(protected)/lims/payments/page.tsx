@@ -243,7 +243,7 @@ export default function PaymentsPage() {
       )}
 
       {actionSuccess && (
-        <div className="px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-md text-emerald-700 text-sm mb-4">
+        <div className="px-4 py-3 chip-success rounded-md text-[hsl(var(--status-success-fg))] text-sm mb-4">
           ✓ {actionSuccess}
         </div>
       )}
@@ -270,7 +270,7 @@ export default function PaymentsPage() {
                 </div>
                 <Badge
                   variant="secondary"
-                  className={isCancelled ? 'bg-red-50 text-red-700 mt-1' : 'bg-blue-50 text-blue-700 mt-1'}
+                  className={isCancelled ? 'bg-[hsl(var(--status-destructive-bg))] text-[hsl(var(--status-destructive-fg))] mt-1' : 'bg-muted text-primary mt-1'}
                 >
                   {enc.status.replace(/_/g, ' ').toUpperCase()}
                 </Badge>
@@ -306,14 +306,14 @@ export default function PaymentsPage() {
               {hasDue && (
                 <Button
                   onClick={() => { setShowCollectDue(v => !v); setShowApplyDiscount(false); setShowCancelConfirm(false); }}
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="bg-primary hover:bg-primary/90"
                 >
                   💵 Collect Due
                 </Button>
               )}
               <Button
                 onClick={() => { setShowApplyDiscount(v => !v); setShowCollectDue(false); setShowCancelConfirm(false); }}
-                className="bg-amber-500 hover:bg-amber-600"
+                className="bg-primary hover:bg-primary/90"
               >
                 🏷 Apply Discount
               </Button>
@@ -328,8 +328,8 @@ export default function PaymentsPage() {
 
           {/* Collect Due form */}
           {showCollectDue && (
-            <SectionCard className="bg-emerald-50 border-emerald-200">
-              <h3 className="text-sm font-bold text-emerald-700 mb-3">Collect Due Payment</h3>
+            <SectionCard className="bg-[hsl(var(--status-success-bg))] border-[hsl(var(--status-success-border))]">
+              <h3 className="text-sm font-bold text-[hsl(var(--status-success-fg))] mb-3">Collect Due Payment</h3>
               <div className="flex gap-2.5 items-end flex-wrap">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Amount (PKR)</Label>
@@ -340,7 +340,7 @@ export default function PaymentsPage() {
                     className="w-40"
                   />
                 </div>
-                <Button onClick={handleCollectDue} disabled={collectLoading} className="bg-emerald-600 hover:bg-emerald-700">
+                <Button onClick={handleCollectDue} disabled={collectLoading} className="bg-primary hover:bg-primary/90">
                   {collectLoading ? 'Saving…' : 'Confirm'}
                 </Button>
                 <Button variant="outline" onClick={() => setShowCollectDue(false)}>Cancel</Button>
@@ -351,8 +351,8 @@ export default function PaymentsPage() {
 
           {/* Apply Discount form */}
           {showApplyDiscount && (
-            <SectionCard className="bg-amber-50 border-amber-200">
-              <h3 className="text-sm font-bold text-amber-700 mb-3">Apply Discount</h3>
+            <SectionCard className="bg-[hsl(var(--status-warning-bg))] border-[hsl(var(--status-warning-border))]">
+              <h3 className="text-sm font-bold text-[hsl(var(--status-warning-fg))] mb-3">Apply Discount</h3>
               <div className="flex flex-col gap-2.5 max-w-sm">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Discount Amount (PKR)</Label>
@@ -372,7 +372,7 @@ export default function PaymentsPage() {
                   />
                 </div>
                 <div className="flex gap-2.5">
-                  <Button onClick={handleApplyDiscount} disabled={discountLoading} className="bg-amber-500 hover:bg-amber-600">
+                  <Button onClick={handleApplyDiscount} disabled={discountLoading} className="bg-primary hover:bg-primary/90">
                     {discountLoading ? 'Saving…' : 'Apply'}
                   </Button>
                   <Button variant="outline" onClick={() => setShowApplyDiscount(false)}>Cancel</Button>
@@ -384,8 +384,8 @@ export default function PaymentsPage() {
 
           {/* Cancel confirmation */}
           {showCancelConfirm && (
-            <SectionCard className="bg-red-50 border-red-200">
-              <h3 className="text-sm font-bold text-red-700 mb-2">Cancel Encounter</h3>
+            <SectionCard className="bg-[hsl(var(--status-destructive-bg))] border-[hsl(var(--status-destructive-border))]">
+              <h3 className="text-sm font-bold text-[hsl(var(--status-destructive-fg))] mb-2">Cancel Encounter</h3>
               <p className="text-sm text-muted-foreground mb-3">
                 This will cancel the encounter. This action cannot be undone.
               </p>
@@ -396,7 +396,7 @@ export default function PaymentsPage() {
                     value={cancelReason}
                     onChange={e => setCancelReason(e.target.value)}
                     rows={2}
-                    className="border-red-200"
+                    className="border-[hsl(var(--status-destructive-border))]"
                   />
                 </div>
                 <div className="flex gap-2.5">

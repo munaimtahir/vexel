@@ -61,7 +61,7 @@ export default function OperatorLandingPage() {
             className={cn(
               'rounded-2xl p-7 transition-all duration-150',
               mod.enabled
-                ? 'bg-slate-800 border-2 border-blue-500 cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/25'
+                ? 'bg-slate-800 border-2 border-primary cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-[hsl(var(--primary)/0.18)]'
                 : 'bg-gray-900 border-2 border-gray-800 opacity-50 cursor-default'
             )}
           >
@@ -69,7 +69,7 @@ export default function OperatorLandingPage() {
             <h2 className="text-lg font-bold text-slate-100 mb-2">{mod.label}</h2>
             <p className="text-slate-400 text-sm mb-5 leading-relaxed">{mod.description}</p>
             {mod.enabled ? (
-              <span className="inline-block px-4 py-1.5 bg-blue-500 text-white rounded-md text-sm font-semibold">
+              <span className="inline-block px-4 py-1.5 bg-primary text-white rounded-md text-sm font-semibold">
                 Open →
               </span>
             ) : (

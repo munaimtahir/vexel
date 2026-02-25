@@ -297,7 +297,7 @@ export default function ResultsEntryPage() {
     'px-2.5 py-1.5 border rounded-md text-sm w-40 transition-colors',
     locked
       ? 'bg-muted/50 text-muted-foreground border-transparent cursor-default'
-      : 'bg-white dark:bg-slate-800 border-blue-200 dark:border-slate-600 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm'
+      : 'bg-white dark:bg-slate-800 border-border dark:border-slate-600 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm'
   );
 
   return (
@@ -310,7 +310,7 @@ export default function ResultsEntryPage() {
             <Link href="/lims/results">← Back to Results</Link>
           </Button>
           {!specimenReady && (
-            <Button variant="ghost" size="sm" asChild className="text-amber-600">
+            <Button variant="ghost" size="sm" asChild className="text-[hsl(var(--status-warning-fg))]">
               <Link href="/lims/sample-collection">Go to Sample Collection</Link>
             </Button>
           )}
@@ -338,7 +338,7 @@ export default function ResultsEntryPage() {
             <div className="text-xl font-bold text-foreground">{detail.testName}</div>
             <div className="flex gap-2 mt-1 justify-end flex-wrap">
               {detail.specimenStatus && (
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-muted text-muted-foreground">
                   {detail.specimenStatus}
                 </span>
               )}
@@ -355,10 +355,10 @@ export default function ResultsEntryPage() {
 
       {/* Specimen gate warning */}
       {!specimenReady && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+        <div className="chip-warning rounded-lg p-4 mb-6 flex items-center gap-3">
           <span className="text-xl">⚠️</span>
           <div>
-            <span className="text-sm font-semibold text-amber-700">
+            <span className="text-sm font-semibold text-[hsl(var(--status-warning-fg))]">
               Sample not collected. Collect the sample first before entering results.
             </span>
             <span className="ml-2">
@@ -377,21 +377,21 @@ export default function ResultsEntryPage() {
 
       {/* Verify / publish status banners */}
       {verifyStatus === 'verifying' && (
-        <div className="bg-sky-50 border border-sky-200 rounded-lg px-5 py-3.5 mb-4 text-sky-700 text-sm font-medium">
+        <div className="chip-neutral rounded-lg px-5 py-3.5 mb-4 text-muted-foreground text-sm font-medium">
           Verifying…
         </div>
       )}
       {verifyStatus === 'verified' && (
-        <div className="bg-green-50 border border-green-200 rounded-lg px-5 py-3.5 mb-4 text-green-700 text-sm font-medium">
+        <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-border))] rounded-lg px-5 py-3.5 mb-4 text-[hsl(var(--status-success-fg))] text-sm font-medium">
           ✅ Verified. Publishing report…
         </div>
       )}
       {verifyStatus === 'published' && publishedDoc && (
-        <div className="bg-green-50 border border-green-200 rounded-lg px-5 py-4 mb-4">
-          <div className="font-bold text-green-700 mb-2.5">✅ Report Published</div>
+        <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-border))] rounded-lg px-5 py-4 mb-4">
+          <div className="font-bold text-[hsl(var(--status-success-fg))] mb-2.5">✅ Report Published</div>
           <div className="flex gap-2.5 flex-wrap">
             <Button onClick={() => handleOpenPdf(publishedDoc)}>Open PDF</Button>
-            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handleDownloadPdf(publishedDoc)}>Download PDF</Button>
+            <Button className="bg-primary hover:bg-primary/90" onClick={() => handleDownloadPdf(publishedDoc)}>Download PDF</Button>
             <Button variant="outline" onClick={() => navigateAfterAction(detail.encounterId)}>Next test →</Button>
           </div>
         </div>
@@ -481,7 +481,7 @@ export default function ResultsEntryPage() {
                 return (
                   <tr key={p.parameterId} className={cn(
                     'border-t border-muted/50',
-                    !isLocked && 'bg-blue-50/30 dark:bg-slate-800/30 hover:bg-blue-50/50',
+                    !isLocked && 'bg-muted/30 dark:bg-slate-800/30 hover:bg-muted/50',
                     isLocked && 'bg-muted/20',
                   )}>
                     <td className="px-4 py-2.5 text-sm text-foreground font-medium">
@@ -529,7 +529,7 @@ export default function ResultsEntryPage() {
           <Button
             onClick={handleSubmitAndVerify}
             disabled={!specimenReady || verifying || verifyStatus !== 'idle'}
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-primary hover:bg-primary/90"
           >
             {verifying ? 'Verifying…' : 'Submit & Verify'}
           </Button>

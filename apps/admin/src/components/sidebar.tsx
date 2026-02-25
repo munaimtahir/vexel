@@ -36,22 +36,21 @@ const NAV_ITEMS = [
   { href: '/system/health',label: 'System Health',  icon: '❤️' },
 ];
 
-/* Morandi dusty slate-blue sidebar */
 const S = {
-  headerBg:  'hsl(205,32%,28%)',
-  bodyBg:    'hsl(205,30%,33%)',
-  footerBg:  'hsl(205,32%,26%)',
-  textActive:'#F2EAD8',
-  textInact: '#7FABBE',
-  textHover: '#D0DBE4',
-  iconInact: '#4A6E82',
+  headerBg: 'hsl(var(--sidebar))',
+  bodyBg: 'hsl(var(--sidebar))',
+  footerBg: 'hsl(var(--sidebar))',
+  textActive: 'hsl(var(--sidebar-foreground))',
+  textInact: 'hsl(var(--sidebar-muted))',
+  textHover: 'hsl(var(--sidebar-foreground))',
+  iconInact: 'hsl(var(--sidebar-muted))',
 };
 
 function GlowLine() {
   return (
     <div style={{
       height: '1px',
-      background: 'linear-gradient(90deg, transparent 0%, rgba(196,138,94,0.55) 38%, rgba(135,175,196,0.35) 65%, transparent 100%)',
+      background: 'linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.35) 38%, hsl(var(--sidebar-foreground) / 0.18) 65%, transparent 100%)',
     }} />
   );
 }
@@ -66,7 +65,7 @@ export function Sidebar() {
       width: '240px', minHeight: '100vh',
       display: 'flex', flexDirection: 'column',
       background: S.bodyBg,
-      borderRight: '1px solid rgba(196,138,94,0.28)',
+      borderRight: '1px solid hsl(var(--sidebar-border))',
     }}>
       {/* HEADER */}
       <div style={{
@@ -75,20 +74,20 @@ export function Sidebar() {
       }}>
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at 25% -10%, rgba(196,138,94,0.25) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 25% -10%, hsl(var(--primary) / 0.16) 0%, transparent 60%)',
         }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: '11px', position: 'relative', zIndex: 1 }}>
           <div style={{
             width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
-            background: 'linear-gradient(140deg, #D4956A 0%, #C07850 55%, #A86040 100%)',
+            background: 'linear-gradient(140deg, hsl(var(--primary) / 1) 0%, hsl(var(--primary) / 0.92) 55%, hsl(var(--primary) / 0.78) 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px',
-            boxShadow: '0 4px 14px rgba(192,120,80,0.50), inset 0 1px 0 rgba(255,255,255,0.22)',
+            boxShadow: '0 4px 14px hsl(var(--primary) / 0.28), inset 0 1px 0 hsl(var(--sidebar-foreground) / 0.22)',
           }}>🧬</div>
           <div>
-            <div style={{ fontSize: '15.5px', fontWeight: 800, color: '#EDE6DA', letterSpacing: '-0.025em', lineHeight: 1 }}>
+            <div style={{ fontSize: '15.5px', fontWeight: 800, color: 'hsl(var(--sidebar-foreground))', letterSpacing: '-0.025em', lineHeight: 1 }}>
               Vexel Admin
             </div>
-            <div style={{ fontSize: '9px', fontWeight: 600, color: '#4A7A90', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '3px' }}>
+            <div style={{ fontSize: '9px', fontWeight: 600, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '3px' }}>
               Back Office
             </div>
           </div>
@@ -99,7 +98,7 @@ export function Sidebar() {
 
       {/* NAV */}
       <nav style={{ flex: 1, padding: '10px 8px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <div style={{ padding: '2px 8px 8px', fontSize: '9px', fontWeight: 700, color: '#2C5268', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+        <div style={{ padding: '2px 8px 8px', fontSize: '9px', fontWeight: 700, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
           Administration
         </div>
         {NAV_ITEMS.map((item) => {
@@ -112,21 +111,21 @@ export function Sidebar() {
                 display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '9px 11px 9px 13px', borderRadius: '8px',
                 color: isParentActive ? S.textActive : S.textInact,
-                background: isParentActive && !item.children ? 'rgba(196,138,94,0.17)' : 'transparent',
+                background: isParentActive && !item.children ? 'hsl(var(--sidebar-accent))' : 'transparent',
                 textDecoration: 'none', fontSize: '13.5px',
                 fontWeight: isParentActive ? 600 : 400,
                 transition: 'all 0.15s',
                 overflow: 'hidden', whiteSpace: 'nowrap',
               }}
-                onMouseOver={e => { if (!isParentActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'rgba(255,255,255,0.09)'; el.style.color = S.textHover; } }}
+                onMouseOver={e => { if (!isParentActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'hsl(var(--sidebar-foreground) / 0.09)'; el.style.color = S.textHover; } }}
                 onMouseOut={e =>  { if (!isParentActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = S.textInact; } }}
               >
                 {isParentActive && !item.children && (
                   <div style={{
                     position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
                     width: '3px', height: '60%', minHeight: '18px',
-                    borderRadius: '0 4px 4px 0', background: '#C48A5E',
-                    boxShadow: '0 0 10px rgba(196,138,94,0.65)',
+                    borderRadius: '0 4px 4px 0', background: 'hsl(var(--primary))',
+                    boxShadow: '0 0 10px hsl(var(--primary) / 0.4)',
                   }} />
                 )}
                 <span style={{ fontSize: '14px', flexShrink: 0 }}>{item.icon}</span>
@@ -147,15 +146,15 @@ export function Sidebar() {
                         position: 'relative',
                         display: 'block', padding: '7px 11px 7px 36px',
                         borderRadius: '7px', marginBottom: '1px',
-                        color: childActive ? S.textActive : '#5A8298',
-                        background: childActive ? 'rgba(196,138,94,0.15)' : 'transparent',
+                        color: childActive ? S.textActive : 'hsl(var(--sidebar-muted))',
+                        background: childActive ? 'hsl(var(--sidebar-accent))' : 'transparent',
                         textDecoration: 'none', fontSize: '12.5px',
                         fontWeight: childActive ? 600 : 400,
                         transition: 'all 0.12s',
-                        borderLeft: childActive ? '2px solid #C48A5E' : '2px solid transparent',
+                        borderLeft: childActive ? '2px solid hsl(var(--primary))' : '2px solid transparent',
                       }}
-                        onMouseOver={e => { if (!childActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'rgba(255,255,255,0.07)'; el.style.color = S.textHover; } }}
-                        onMouseOut={e =>  { if (!childActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = '#5A8298'; } }}
+                        onMouseOver={e => { if (!childActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; el.style.color = S.textHover; } }}
+                        onMouseOut={e =>  { if (!childActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = 'hsl(var(--sidebar-muted))'; } }}
                       >
                         {child.label}
                       </Link>
@@ -177,15 +176,15 @@ export function Sidebar() {
       }}>
         <button onClick={handleLogout} style={{
           width: '100%', padding: '9px 12px',
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.10)',
-          borderRadius: '8px', color: '#5A8298',
+          background: 'hsl(var(--sidebar-foreground) / 0.04)',
+          border: '1px solid hsl(var(--sidebar-foreground) / 0.10)',
+          borderRadius: '8px', color: 'hsl(var(--sidebar-muted))',
           cursor: 'pointer', fontSize: '13px',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
           transition: 'all 0.15s',
         }}
-          onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = '#E88888'; el.style.borderColor = 'rgba(232,136,136,0.3)'; el.style.background = 'rgba(232,136,136,0.08)'; }}
-          onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = '#5A8298'; el.style.borderColor = 'rgba(255,255,255,0.10)'; el.style.background = 'rgba(255,255,255,0.04)'; }}
+          onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(var(--status-destructive-fg))'; el.style.borderColor = 'hsl(var(--status-destructive-border))'; el.style.background = 'hsl(var(--status-destructive-bg))'; }}
+          onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(var(--sidebar-muted))'; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.10)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.04)'; }}
         >
           Sign Out
         </button>

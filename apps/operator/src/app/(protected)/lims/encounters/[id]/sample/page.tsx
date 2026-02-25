@@ -156,7 +156,7 @@ export default function SampleCollectionPage() {
         <button
           onClick={handleCollect}
           disabled={submitting}
-          style={{ width: '100%', padding: '12px', background: submitting ? 'hsl(var(--muted))' : 'hsl(var(--status-success-fg))', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer' }}
+          style={{ width: '100%', padding: '12px', background: submitting ? 'hsl(var(--muted))' : 'hsl(var(--status-success-fg))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer' }}
         >
           {submitting ? 'Collecting...' : 'Mark Collected'}
         </button>

@@ -6,6 +6,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "ui:color-lint": "node scripts/ui-color-lint.mjs",
     "sdk:generate": "pnpm --filter @vexel/contracts sdk:generate",
     "mock:api": "docker compose --profile mock up mock-api mock-gateway",
     "dev:ui-mock": "NEXT_PUBLIC_API_URL=http://127.0.0.1:9031 turbo run dev --filter=@vexel/admin --filter=@vexel/operator",

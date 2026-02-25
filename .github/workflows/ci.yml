@@ -56,6 +56,22 @@ jobs:
           fi
           echo "PASS: no Prisma in frontends"
 
+  ui-color-lint:
+    name: UI Color Lint (no hard-coded hex)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run UI color lint
+        run: pnpm ui:color-lint
+
   api-unit-tests:
     name: API Unit Tests
     runs-on: ubuntu-latest

@@ -1,0 +1,181 @@
+:root {
+  --background: 210 40% 98%;
+  --foreground: 222 47% 8%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 8%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 8%;
+  --muted: 214 32% 94%;
+  --muted-foreground: 215 16% 40%;
+  --border: 214 22% 87%;
+  --input: 214 22% 87%;
+  --ring: 18 78% 54%;
+  --primary: 18 78% 54%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 214 32% 94%;
+  --secondary-foreground: 222 47% 12%;
+  --accent: 214 32% 94%;
+  --accent-foreground: 222 47% 12%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --radius: 0.75rem;
+
+  --sidebar: 222 57% 9%;
+  --sidebar-foreground: 210 40% 96%;
+  --sidebar-muted: 214 20% 72%;
+  --sidebar-accent: 222 49% 14%;
+  --sidebar-accent-foreground: 210 40% 96%;
+  --sidebar-border: 221 40% 19%;
+  --sidebar-primary: 18 78% 54%;
+  --sidebar-ring: 18 78% 54%;
+  --sidebar-highlight: 18 78% 54%;
+
+  --status-success-bg: 142 45% 94%;
+  --status-success-fg: 142 55% 26%;
+  --status-success-border: 142 28% 82%;
+  --status-warning-bg: 30 86% 94%;
+  --status-warning-fg: 25 70% 34%;
+  --status-warning-border: 28 60% 82%;
+  --status-info-bg: 214 42% 94%;
+  --status-info-fg: 219 38% 32%;
+  --status-info-border: 214 28% 84%;
+  --status-neutral-bg: 214 24% 94%;
+  --status-neutral-fg: 215 16% 40%;
+  --status-neutral-border: 214 22% 87%;
+  --status-destructive-bg: 0 86% 96%;
+  --status-destructive-fg: 0 60% 40%;
+  --status-destructive-border: 0 55% 86%;
+
+  --shadow-xs: 0 1px 2px 0 hsl(222 47% 8% / 0.05);
+  --shadow-sm: 0 1px 3px 0 hsl(222 47% 8% / 0.06), 0 1px 2px -1px hsl(222 47% 8% / 0.04);
+  --shadow-md: 0 4px 12px -2px hsl(222 47% 8% / 0.08), 0 2px 4px -2px hsl(222 47% 8% / 0.05);
+  --shadow-lg: 0 10px 30px -8px hsl(222 47% 8% / 0.12), 0 4px 10px -6px hsl(222 47% 8% / 0.06);
+}
+
+.dark {
+  --background: 222 47% 8%;
+  --foreground: 210 40% 96%;
+  --card: 222 40% 11%;
+  --card-foreground: 210 40% 96%;
+  --popover: 222 40% 11%;
+  --popover-foreground: 210 40% 96%;
+  --muted: 221 28% 16%;
+  --muted-foreground: 215 14% 70%;
+  --border: 221 24% 20%;
+  --input: 221 24% 20%;
+  --ring: 18 78% 58%;
+  --primary: 18 78% 58%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 221 28% 16%;
+  --secondary-foreground: 210 40% 96%;
+  --accent: 221 28% 16%;
+  --accent-foreground: 210 40% 96%;
+  --destructive: 0 72% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  --sidebar: 222 57% 9%;
+  --sidebar-foreground: 210 40% 96%;
+  --sidebar-muted: 214 16% 62%;
+  --sidebar-accent: 222 49% 14%;
+  --sidebar-accent-foreground: 210 40% 96%;
+  --sidebar-border: 221 40% 19%;
+  --sidebar-primary: 18 78% 58%;
+  --sidebar-ring: 18 78% 58%;
+  --sidebar-highlight: 18 78% 58%;
+
+  --status-success-bg: 142 32% 18%;
+  --status-success-fg: 142 45% 70%;
+  --status-success-border: 142 28% 28%;
+  --status-warning-bg: 28 45% 18%;
+  --status-warning-fg: 28 68% 72%;
+  --status-warning-border: 28 45% 28%;
+  --status-info-bg: 220 30% 18%;
+  --status-info-fg: 214 50% 75%;
+  --status-info-border: 220 28% 28%;
+  --status-neutral-bg: 221 22% 18%;
+  --status-neutral-fg: 215 14% 70%;
+  --status-neutral-border: 221 24% 24%;
+  --status-destructive-bg: 0 32% 18%;
+  --status-destructive-fg: 0 65% 74%;
+  --status-destructive-border: 0 32% 28%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--muted-foreground) / 0.45);
+}
+
+.shadow-xs { box-shadow: var(--shadow-xs); }
+.shadow-card { box-shadow: var(--shadow-sm); }
+.shadow-card-hover { box-shadow: var(--shadow-md); }
+.shadow-float { box-shadow: var(--shadow-lg); }
+
+.page-canvas {
+  background:
+    radial-gradient(circle at 15% 0%, hsl(var(--primary) / 0.05), transparent 36%),
+    linear-gradient(160deg, hsl(var(--background)) 0%, hsl(214 34% 96%) 100%);
+  min-height: 100%;
+}
+
+.sidebar-bg {
+  background: linear-gradient(180deg, hsl(var(--sidebar)) 0%, hsl(222 52% 10%) 38%, hsl(222 57% 8%) 100%);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(20 82% 50%) 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, hsl(216 20% 36%) 0%, hsl(220 22% 28%) 100%);
+}
+
+.chip-neutral {
+  border: 1px solid hsl(var(--status-neutral-border));
+  background: hsl(var(--status-neutral-bg));
+  color: hsl(var(--status-neutral-fg));
+}
+
+.chip-info {
+  border: 1px solid hsl(var(--status-info-border));
+  background: hsl(var(--status-info-bg));
+  color: hsl(var(--status-info-fg));
+}
+
+.chip-warning {
+  border: 1px solid hsl(var(--status-warning-border));
+  background: hsl(var(--status-warning-bg));
+  color: hsl(var(--status-warning-fg));
+}
+
+.chip-success {
+  border: 1px solid hsl(var(--status-success-border));
+  background: hsl(var(--status-success-bg));
+  color: hsl(var(--status-success-fg));
+}
+
+.chip-destructive {
+  border: 1px solid hsl(var(--status-destructive-border));
+  background: hsl(var(--status-destructive-bg));
+  color: hsl(var(--status-destructive-fg));
+}

@@ -17,10 +17,10 @@ type SpecimenStatus = 'PENDING' | 'COLLECTED' | 'POSTPONED' | 'RECEIVED';
 type FilterStatus = 'PENDING' | 'POSTPONED' | 'RECEIVED' | '';
 
 const SPECIMEN_STATUS_CLASS: Record<SpecimenStatus, string> = {
-  PENDING:   'bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded',
-  COLLECTED: 'bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded',
-  POSTPONED: 'bg-red-100 text-red-800 text-xs font-semibold px-2 py-0.5 rounded',
-  RECEIVED:  'bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded',
+  PENDING:   'bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))] text-xs font-semibold px-2 py-0.5 rounded',
+  COLLECTED: 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] text-xs font-semibold px-2 py-0.5 rounded',
+  POSTPONED: 'bg-[hsl(var(--status-destructive-bg))] text-[hsl(var(--status-destructive-fg))] text-xs font-semibold px-2 py-0.5 rounded',
+  RECEIVED:  'bg-[hsl(var(--status-info-bg))] text-[hsl(var(--status-info-fg))] text-xs font-semibold px-2 py-0.5 rounded',
 };
 
 const SPECIMEN_STATUS_LABEL: Record<SpecimenStatus, string> = {
@@ -240,7 +240,7 @@ export default function SampleCollectionPage() {
         title="Sample Collection"
         description={`Collect, postpone, and${receiveSeparate ? ' receive' : ''} specimens`}
         actions={barcodeEnabled ? (
-          <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5 text-xs font-medium">Barcode labels enabled</span>
+          <span className="bg-[hsl(var(--status-info-bg))] text-primary rounded px-2 py-0.5 text-xs font-medium">Barcode labels enabled</span>
         ) : undefined}
       />
 
@@ -351,7 +351,7 @@ export default function SampleCollectionPage() {
                   {row.testCount ?? row.labOrders?.length ?? '—'}
                 </div>
                 <div className="text-xs">
-                  <span className={cn(row.pendingCount > 0 ? 'text-amber-600 font-semibold' : 'text-muted-foreground')}>
+                  <span className={cn(row.pendingCount > 0 ? 'text-[hsl(var(--status-warning-fg))] font-semibold' : 'text-muted-foreground')}>
                     {row.pendingCount}/{row.totalCount} pending
                   </span>
                 </div>
@@ -375,7 +375,7 @@ export default function SampleCollectionPage() {
                     <div className="pt-2.5 mb-2">
                       <Button
                         size="sm"
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                        className="bg-primary hover:bg-primary/90 text-white"
                         onClick={() => collectSpecimens(row.id, [])}
                         disabled={acting.has(`all-${row.id}`)}
                       >
@@ -423,7 +423,7 @@ export default function SampleCollectionPage() {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                className="bg-primary hover:bg-primary/90 text-white"
                                 onClick={() => collectSpecimens(row.id, [sp.id])}
                                 disabled={isActing}
                               >
@@ -431,7 +431,7 @@ export default function SampleCollectionPage() {
                               </Button>
                               <Button
                                 size="sm"
-                                className="bg-amber-500 hover:bg-amber-600 text-white"
+                                className="bg-primary hover:bg-primary/90 text-white"
                                 onClick={() => { setPostponeModal({ encounterId: row.id, specimenItemId: sp.id, label: specimenLabel }); setPostponeReason(''); setPostponeError(''); }}
                               >
                                 Postpone
@@ -450,7 +450,7 @@ export default function SampleCollectionPage() {
                           {sp.status === 'POSTPONED' && (
                             <Button
                               size="sm"
-                              className="bg-violet-600 hover:bg-violet-700 text-white"
+                              className="bg-primary hover:bg-primary/90 text-white"
                               onClick={() => collectSpecimens(row.id, [sp.id])}
                               disabled={isActing}
                             >

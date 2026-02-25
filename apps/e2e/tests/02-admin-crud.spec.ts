@@ -5,6 +5,7 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { apiGet, apiLogin } from '../helpers/api-client';
 
 const ADMIN_EMAIL = process.env.OPERATOR_EMAIL || 'admin@vexel.system';
 const ADMIN_PASSWORD = process.env.OPERATOR_PASSWORD || 'Admin@vexel123!';
@@ -55,10 +56,15 @@ test.describe('Admin CRUD', () => {
     const suffix = Date.now().toString(36);
     const testEmail = `e2e-${suffix}@test.vexel.internal`;
 
-    await page.getByLabel('email').fill(testEmail);
-    await page.getByLabel('firstName').fill('E2E');
-    await page.getByLabel('lastName').fill('User');
-    await page.getByLabel('password').fill('Test@12345!');
+    const createForm = page.locator('form').filter({
+      has: page.getByRole('button', { name: 'Create' }),
+    }).first();
+    await expect(createForm).toBeVisible({ timeout: 10_000 });
+
+    await createForm.locator('input[type=\"email\"]').first().fill(testEmail);
+    await createForm.locator('input[type=\"text\"]').nth(0).fill('E2E');
+    await createForm.locator('input[type=\"text\"]').nth(1).fill('User');
+    await createForm.locator('input[type=\"password\"]').first().fill('Test@12345!');
 
     await page.getByRole('button', { name: 'Create' }).click();
 
@@ -83,23 +89,38 @@ test.describe('Admin CRUD', () => {
   });
 
   test('toggle a feature flag and verify state changes', async ({ page }) => {
+    const { accessToken } = await apiLogin(ADMIN_EMAIL, ADMIN_PASSWORD);
+    const me = await apiGet<{ tenantId: string }>('/me', accessToken);
+    const tenantId = (me as any).tenantId as string;
+
+    const getTenantFlags = async () =>
+      apiGet<Array<{ key: string; enabled: boolean }>>(`/tenants/${tenantId}/feature-flags`, accessToken);
+
+    const targetFlagKey = 'module.rad';
+
+    const readTargetFlag = async () => {
+      const flags = await getTenantFlags();
+      const row = (flags as any[]).find((f) => f.key === targetFlagKey);
+      expect(row).toBeTruthy();
+      return !!row.enabled;
+    };
+
+    const initialEnabled = await readTargetFlag();
+
     await adminLogin(page);
     await page.goto('/admin/feature-flags');
 
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
 
-    // Pick the module.lims toggle (seeded as enabled=true, so aria-pressed="true")
-    const toggle = page.getByRole('button', { name: 'Toggle module.lims' });
+    // Use a non-LIMS module flag to avoid interfering with operator LIMS E2E tests running in parallel.
+    const toggle = page.getByRole('button', { name: `Toggle ${targetFlagKey}` });
     await expect(toggle).toBeVisible({ timeout: 15_000 });
-    const initialPressed = await toggle.getAttribute('aria-pressed');
 
     await toggle.click();
-
-    // aria-pressed should flip (true ↔ false)
-    await expect(toggle).toHaveAttribute('aria-pressed', initialPressed === 'true' ? 'false' : 'true', { timeout: 5_000 });
+    await expect.poll(async () => await readTargetFlag(), { timeout: 10_000 }).toBe(!initialEnabled);
 
     // Toggle back to restore original state
     await toggle.click();
-    await expect(toggle).toHaveAttribute('aria-pressed', initialPressed ?? 'true', { timeout: 5_000 });
+    await expect.poll(async () => await readTargetFlag(), { timeout: 10_000 }).toBe(initialEnabled);
   });
 });
