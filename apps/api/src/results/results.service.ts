@@ -167,8 +167,7 @@ export class ResultsService {
 
     const parameters = (parameterMappings as any[]).map((m) => {
       const existing = (order.results as any[]).find((r) => r.parameterId === m.parameterId);
-      const locked =
-        order.resultStatus === 'SUBMITTED' && !!existing && existing.value !== '';
+      const locked = !!existing?.verifiedAt || !!existing?.locked;
       return {
         parameterId: m.parameterId,
         name: m.parameter.name,
@@ -309,11 +308,6 @@ export class ResultsService {
       data: { resultStatus: 'SUBMITTED', submittedAt: now, submittedById: actorId },
     });
 
-    await this.prisma.labResult.updateMany({
-      where: { labOrderId: orderedTestId, value: { not: '' } },
-      data: { locked: true },
-    });
-
     // Advance encounter status based on whether all orders are submitted
     const allOrders = await this.prisma.labOrder.findMany({
       where: { encounterId: order.encounterId, tenantId },
@@ -382,7 +376,7 @@ export class ResultsService {
     // Mark results as verified
     await this.prisma.labResult.updateMany({
       where: { labOrderId: orderedTestId, value: { not: '' } },
-      data: { verifiedAt: now, verifiedBy: actorId },
+      data: { verifiedAt: now, verifiedBy: actorId, locked: true },
     });
 
     // Set encounter to verified

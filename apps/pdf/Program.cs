@@ -113,15 +113,18 @@ record RenderRequest(
 
 record BrandingConfig
 {
-    public string? BrandName            { get; init; }
-    public string? LogoUrl              { get; init; }
-    public string? ReportHeader         { get; init; }
-    public string? ReportFooter         { get; init; }
-    public string? HeaderText           { get; init; }
-    public string? FooterText           { get; init; }
-    public string? ReportHeaderLayout   { get; init; }  // default | classic | minimal
-    public string? ReceiptLayout        { get; init; }  // a4 | thermal (thermal TBD)
-    public string? ReportFooterImageUrl { get; init; }  // URL to footer image
+    public string? BrandName              { get; init; }
+    public string? LogoUrl                { get; init; }
+    public string? ReportHeader           { get; init; }  // address / contact line for header
+    public string? ReportFooter           { get; init; }  // footer text
+    public string? HeaderText             { get; init; }
+    public string? FooterText             { get; init; }
+    public string? ReportHeaderLayout     { get; init; }  // default | classic | minimal  (lab report)
+    public string? ReceiptHeaderLayout    { get; init; }  // default | classic | minimal  (receipt)
+    public string? ReceiptLayout          { get; init; }  // a4 | thermal
+    public string? ReportFooterImageUrl   { get; init; }  // URL to footer image
+    public string? ReportFooterLayout     { get; init; }  // text | image | both  (lab report)
+    public string? ReceiptFooterLayout    { get; init; }  // text | image | both  (receipt)
 }
 
 // ─── Shared Document Helpers ──────────────────────────────────────────────────
@@ -493,12 +496,20 @@ class LabReportDocument : IDocument
     {
         var footerText = _branding.FooterText ?? _branding.ReportFooter
                          ?? "This report is generated electronically and is valid without signature.";
+        var layout = _branding.ReportFooterLayout ?? (footerImageBytes != null ? "image" : "text");
         container.BorderTop(0.5f).BorderColor(Colors.Grey.Lighten1).PaddingTop(4).Row(row =>
         {
             row.RelativeItem().Element(left =>
             {
-                if (footerImageBytes != null)
-                    left.MaxHeight(25).Image(footerImageBytes).FitHeight();
+                if (layout == "both" && footerImageBytes != null)
+                {
+                    left.Column(c => {
+                        c.Item().Height(20).Image(footerImageBytes).FitHeight();
+                        c.Item().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    });
+                }
+                else if ((layout == "image" || layout == "both") && footerImageBytes != null)
+                    left.Height(20).Image(footerImageBytes).FitHeight();
                 else
                     left.Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
             });
@@ -575,12 +586,14 @@ class ReceiptDocument : IDocument
 
     void ComposeReceiptHalf(IContainer container, string copyLabel, byte[]? barcodeBytes, string encounterCode)
     {
-        var brandName  = _branding.BrandName ?? "Vexel Health";
-        var address    = _branding.ReportHeader ?? "";
-        var footerText = _branding.ReportFooter
-                         ?? (_branding.BrandName is { } bn
-                             ? $"Thank you for choosing {bn}"
-                             : "Thank you for choosing us");
+        var brandName     = _branding.BrandName ?? "Vexel Health";
+        var address       = _branding.ReportHeader ?? "";
+        var footerText    = _branding.ReportFooter
+                            ?? (_branding.BrandName is { } bn
+                                ? $"Thank you for choosing {bn}"
+                                : "Thank you for choosing us");
+        var headerLayout  = _branding.ReceiptHeaderLayout ?? _branding.ReportHeaderLayout ?? "default";
+        var footerLayout  = _branding.ReceiptFooterLayout ?? "text";
 
         container.Column(col =>
         {
@@ -588,29 +601,31 @@ class ReceiptDocument : IDocument
             col.Item().PaddingBottom(3).AlignCenter()
                .Text(copyLabel).Bold().FontSize(8).FontColor(Colors.Grey.Darken2);
 
-            // 2. Header block
+            // 2. Header block — respects headerLayout
             col.Item().PaddingBottom(3).Element(c =>
             {
-                if (_logoBytes != null)
+                if (_logoBytes != null && headerLayout != "minimal")
                 {
+                    // classic or default: logo left
                     c.Row(row =>
                     {
-                        row.ConstantItem(50, Unit.Millimetre).MaxHeight(30).Image(_logoBytes).FitHeight();
-                        row.RelativeItem().AlignCenter().Column(hc =>
+                        row.ConstantItem(40, Unit.Millimetre).Height(28).Image(_logoBytes).FitHeight();
+                        row.RelativeItem().Column(hc =>
                         {
-                            hc.Item().AlignCenter().Text(brandName).Bold().FontSize(14);
+                            hc.Item().AlignCenter().Text(brandName).Bold().FontSize(13);
                             if (!string.IsNullOrWhiteSpace(address))
-                                hc.Item().AlignRight().Text(address).FontSize(8).FontColor(Colors.Grey.Darken1);
+                                hc.Item().AlignRight().Text(address).FontSize(7).FontColor(Colors.Grey.Darken1);
                         });
                     });
                 }
                 else
                 {
+                    // minimal or no logo: text only
                     c.Column(hc =>
                     {
-                        hc.Item().AlignCenter().Text(brandName).Bold().FontSize(14);
+                        hc.Item().AlignCenter().Text(brandName).Bold().FontSize(13);
                         if (!string.IsNullOrWhiteSpace(address))
-                            hc.Item().AlignCenter().Text(address).FontSize(8).FontColor(Colors.Grey.Darken1);
+                            hc.Item().AlignCenter().Text(address).FontSize(7).FontColor(Colors.Grey.Darken1);
                     });
                 }
             });
@@ -653,8 +668,20 @@ class ReceiptDocument : IDocument
                 });
             }
 
-            // 9. Footer
-            col.Item().AlignCenter().Text(footerText).Italic().FontSize(7).FontColor(Colors.Grey.Darken1);
+            // 9. Footer — respects footerLayout
+            col.Item().PaddingTop(2).Element(footer =>
+            {
+                if (footerLayout == "both" && _logoBytes != null)
+                {
+                    footer.Column(fc => {
+                        fc.Item().AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    });
+                }
+                else
+                {
+                    footer.AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+                }
+            });
         });
     }
 

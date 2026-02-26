@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, UserPlus, FlaskConical, BarChart2, CheckSquare, FileText, Users, CreditCard, Stethoscope,
+  LayoutDashboard, UserPlus, FlaskConical, BarChart2, CheckSquare, FileText, CreditCard, Stethoscope,
 } from 'lucide-react';
 
 export type NavItem = {
@@ -12,12 +12,11 @@ export type NavItem = {
 export const LIMS_NAV: NavItem[] = [
   { label: 'Worklist',         href: '/lims/worklist',          icon: LayoutDashboard },
   { label: 'New Registration', href: '/lims/registrations/new', icon: UserPlus },
-  { label: 'Payments',         href: '/lims/payments',          icon: CreditCard },
   { label: 'Sample Collection',href: '/lims/sample-collection', icon: FlaskConical },
-  { label: 'Results',          href: '/lims/results',           icon: BarChart2 },
+  { label: 'Result Entry',     href: '/lims/results',           icon: BarChart2 },
   { label: 'Verification',     href: '/lims/verification',      icon: CheckSquare, featureFlag: 'lims.verification' },
-  { label: 'Patients',         href: '/lims/patients',          icon: Users },
-  { label: 'Reports',          href: '/lims/reports',           icon: FileText },
+  { label: 'Published Reports',href: '/lims/reports',           icon: FileText },
+  { label: 'Payments',         href: '/lims/payments',          icon: CreditCard },
 ];
 
 export const FUTURE_MODULES = [

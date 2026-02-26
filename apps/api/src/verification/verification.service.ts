@@ -188,7 +188,7 @@ export class VerificationService {
       for (const order of pendingOrders) {
         await tx.labResult.updateMany({
           where: { labOrderId: order.id, value: { not: '' } },
-          data: { verifiedAt: now, verifiedBy: actorId },
+          data: { verifiedAt: now, verifiedBy: actorId, locked: true },
         });
         await tx.labOrder.update({
           where: { id: order.id },

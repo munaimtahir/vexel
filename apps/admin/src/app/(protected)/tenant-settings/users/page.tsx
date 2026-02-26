@@ -4,10 +4,6 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PermissionGuard } from '@/components/permission-guard';
 
-function q(path: string, tenantId: string | null) {
-  return tenantId ? `${path}?tenantId=${encodeURIComponent(tenantId)}` : path;
-}
-
 export default function TenantUsersHubPage() {
   const searchParams = useSearchParams();
   const tenantId = searchParams.get('tenantId');
@@ -23,11 +19,11 @@ export default function TenantUsersHubPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Link href={q('/users', tenantId)} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
+          <Link href="/users" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
             <div className="text-lg font-semibold text-slate-900">Open Users List</div>
-            <p className="mt-1 text-sm text-slate-600">Create, edit, enable/disable tenant users.</p>
+            <p className="mt-1 text-sm text-slate-600">Create, edit, enable/disable users for the current authenticated tenant scope.</p>
           </Link>
-          <Link href={q('/tenant-settings/roles', tenantId)} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
+          <Link href={tenantId ? `/tenant-settings/roles?tenantId=${tenantId}` : '/tenant-settings/roles'} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
             <div className="text-lg font-semibold text-slate-900">Go To Tenant Roles</div>
             <p className="mt-1 text-sm text-slate-600">Manage role definitions and permissions used by these users.</p>
           </Link>
@@ -36,4 +32,3 @@ export default function TenantUsersHubPage() {
     </PermissionGuard>
   );
 }
-

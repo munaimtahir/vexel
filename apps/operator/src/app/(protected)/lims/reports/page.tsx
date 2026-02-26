@@ -84,6 +84,7 @@ export default function ReportsPage() {
       const range = getDateRange(datePreset);
       const query: any = {
         status: 'PUBLISHED',
+        docType: 'LAB_REPORT',
         limit: 100,
         ...range,
       };
@@ -92,6 +93,7 @@ export default function ReportsPage() {
       const { data, error: err } = await api.GET('/documents' as any, { params: { query } });
       if (err) throw new Error('Failed to load documents');
       let rows: any[] = Array.isArray(data) ? data : ((data as any)?.items ?? (data as any)?.data ?? []);
+      rows = rows.filter((d: any) => (d.type ?? d.docType) === 'LAB_REPORT');
 
       // Filter by selected patient
       if (patientEncounterIds.length > 0) {
@@ -212,7 +214,7 @@ export default function ReportsPage() {
     <div>
       <PageHeader
         title="Published Reports"
-        description="Lab reports and receipts for your lab"
+        description="Published lab reports for your lab"
         actions={<Button variant="outline" size="sm" onClick={fetchDocs}>Refresh</Button>}
       />
 

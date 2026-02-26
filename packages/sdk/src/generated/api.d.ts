@@ -772,6 +772,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Legacy direct catalog import (sync) used by current Admin Import/Export UI
+         * @description Temporary compatibility endpoint. Prefer import-jobs endpoints for new integrations.
+         */
+        post: operations["importCatalogLegacy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Legacy direct catalog export (sync XLSX) used by current Admin Import/Export UI
+         * @description Temporary compatibility endpoint. Prefer export-jobs endpoints for new integrations.
+         */
+        get: operations["exportCatalogLegacy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog/tests/next-id": {
         parameters: {
             query?: never;
@@ -4637,6 +4677,66 @@ export interface operations {
                 };
                 content: {
                     "text/csv": string;
+                };
+            };
+        };
+    };
+    importCatalogLegacy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    /** @enum {string} */
+                    mode?: "UPSERT_PATCH" | "CREATE_ONLY";
+                    /** @description Optional 'true' for validation mode */
+                    validate?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Import result summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        inserted?: number;
+                        updated?: number;
+                        skipped?: number;
+                        errors?: {
+                            sheet?: string;
+                            row?: number;
+                            message?: string;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    exportCatalogLegacy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export workbook download */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
                 };
             };
         };

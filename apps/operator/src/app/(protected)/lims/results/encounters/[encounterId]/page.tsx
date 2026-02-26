@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
-import { useFeatureFlags, showSubmitAndVerify, showSubmitOnly } from '@/hooks/use-feature-flags';
 import { PageHeader, SectionCard } from '@/components/app';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -93,7 +92,6 @@ export default function EncounterResultsPage() {
   const params = useParams();
   const encounterId = params.encounterId as string;
   const router = useRouter();
-  const { flags } = useFeatureFlags();
 
   const [tests, setTests] = useState<TestDetail[]>([]);
   const [activeTestId, setActiveTestId] = useState<string>('');
@@ -253,14 +251,16 @@ export default function EncounterResultsPage() {
         params: { path: { orderedTestId: testId } },
         body: {},
       });
-      if (apiErr) { setActionError('Submit failed'); return; }
+      if (apiErr) { setActionError('Save failed'); return; }
       await refreshTest(testId);
-      setToast('Submitted ✓');
+      setToast('Saved and forwarded ✓');
       // Move to next pending test tab
-      const nextPending = tests.find(t => t.id !== testId && t.resultStatus !== 'SUBMITTED');
+      const nextPending = tests.find(
+        t => t.id !== testId && !((t.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
+      );
       if (nextPending) setActiveTestId(nextPending.id);
     } catch {
-      setActionError('Submit failed');
+      setActionError('Save failed');
     } finally {
       setSubmitting(prev => ({ ...prev, [testId]: false }));
     }
@@ -331,13 +331,15 @@ export default function EncounterResultsPage() {
     setSubmittingAll(true);
     setActionError('');
     try {
-      const pending = tests.filter(t => t.resultStatus !== 'SUBMITTED');
+      const pending = tests.filter(
+        t => !((t.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
+      );
       for (const t of pending) {
         await handleSubmit(t.id);
       }
-      setToast('All tests submitted ✓');
+      setToast('All tests saved and forwarded ✓');
     } catch {
-      setActionError('Submit all failed');
+      setActionError('Save all failed');
     } finally {
       setSubmittingAll(false);
     }
@@ -375,11 +377,15 @@ export default function EncounterResultsPage() {
 
   const activeTest = tests.find(t => t.id === activeTestId) ?? tests[0];
   const isTestSubmitted = activeTest?.resultStatus === 'SUBMITTED';
+  const isTestVerified = ((activeTest?.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
+    || ((activeTest?.specimenStatus ?? '').toLowerCase() === 'verified');
   const testValues = localValues[activeTest?.id] ?? {};
   const testFlags = localFlags[activeTest?.id] ?? {};
   const parameters: any[] = activeTest?.parameters ?? [];
 
-  const allPendingDone = tests.every(t => t.resultStatus === 'SUBMITTED');
+  const allPendingDone = tests.every(t =>
+    ((t.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
+  );
 
   return (
     <div className="pb-24">
@@ -524,7 +530,7 @@ export default function EncounterResultsPage() {
             </thead>
             <tbody>
               {parameters.map((p: any) => {
-                const isLocked = isTestSubmitted && p.locked;
+                const isLocked = !!p.locked || !!p.verifiedAt;
                 const currentValue = testValues[p.parameterId] ?? '';
                 const currentFlag = testFlags[p.parameterId] ?? null;
 
@@ -598,38 +604,28 @@ export default function EncounterResultsPage() {
 
       {/* Per-test action buttons */}
       <div className="flex gap-2 flex-wrap mb-6">
-        {showSubmitOnly(flags) && !isTestSubmitted && (
-          <Button
-            size="sm"
-            onClick={() => handleSubmit(activeTest.id)}
-            disabled={!specimenReady || submitting[activeTest.id] || saving[activeTest.id]}
-          >
-            {submitting[activeTest.id] || saving[activeTest.id] ? 'Submitting…' : 'Submit'}
-          </Button>
-        )}
-        {showSubmitAndVerify(flags) && !isTestSubmitted && (
-          <Button
-            size="sm"
-            onClick={() => handleSubmitAndVerify(activeTest.id)}
-            disabled={!specimenReady || verifying[activeTest.id] || saving[activeTest.id] || (verifyStatus[activeTest.id] ?? 'idle') !== 'idle'}
-            className="bg-primary hover:bg-primary/90"
-          >
-            {verifying[activeTest.id] || saving[activeTest.id] ? 'Verifying…' : 'Submit & Verify'}
-          </Button>
-        )}
+        <Button
+          size="sm"
+          onClick={() => handleSubmit(activeTest.id)}
+          disabled={!specimenReady || submitting[activeTest.id] || saving[activeTest.id] || isTestVerified}
+          title={isTestVerified ? 'Verified results are locked' : 'Saves changes and forwards to verification'}
+        >
+          {submitting[activeTest.id] || saving[activeTest.id] ? 'Saving…' : 'Save & Forward'}
+        </Button>
       </div>
 
       {/* Divider + bulk actions */}
       {tests.length > 1 && (
         <div className="border-t pt-4 flex gap-3 flex-wrap">
           <span className="text-xs text-muted-foreground self-center">All tests:</span>
-          {showSubmitOnly(flags) && !allPendingDone && (
+          {!allPendingDone && (
             <Button
               size="sm"
               onClick={handleSubmitAll}
               disabled={!specimenReady || submittingAll}
+              title="Saves changes and forwards all editable tests to verification"
             >
-              {submittingAll ? 'Submitting all…' : 'Submit all'}
+              {submittingAll ? 'Saving all…' : 'Save All & Forward'}
             </Button>
           )}
         </div>

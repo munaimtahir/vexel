@@ -3702,6 +3702,68 @@ paths:
               schema:
                 type: string
 
+  /catalog/import:
+    post:
+      operationId: importCatalogLegacy
+      summary: Legacy direct catalog import (sync) used by current Admin Import/Export UI
+      description: Temporary compatibility endpoint. Prefer import-jobs endpoints for new integrations.
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                mode:
+                  type: string
+                  enum: [UPSERT_PATCH, CREATE_ONLY]
+                validate:
+                  type: string
+                  description: "Optional 'true' for validation mode"
+      responses:
+        "200":
+          description: Import result summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inserted: { type: integer }
+                  updated: { type: integer }
+                  skipped: { type: integer }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sheet: { type: string }
+                        row: { type: integer }
+                        message: { type: string }
+
+  /catalog/export:
+    get:
+      operationId: exportCatalogLegacy
+      summary: Legacy direct catalog export (sync XLSX) used by current Admin Import/Export UI
+      description: Temporary compatibility endpoint. Prefer export-jobs endpoints for new integrations.
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Export workbook download
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
   /catalog/tests/next-id:
     get:
       operationId: getNextTestId

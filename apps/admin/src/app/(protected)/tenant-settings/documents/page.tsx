@@ -4,10 +4,6 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PermissionGuard } from '@/components/permission-guard';
 
-function q(path: string, tenantId: string | null) {
-  return tenantId ? `${path}?tenantId=${encodeURIComponent(tenantId)}` : path;
-}
-
 export default function TenantDocumentsHubPage() {
   const searchParams = useSearchParams();
   const tenantId = searchParams.get('tenantId');
@@ -23,17 +19,16 @@ export default function TenantDocumentsHubPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Link href={q('/documents', tenantId)} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
+          <Link href="/documents" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
             <div className="text-lg font-semibold text-slate-900">Open Documents List</div>
-            <p className="mt-1 text-sm text-slate-600">View document statuses and re-publish failed documents.</p>
+            <p className="mt-1 text-sm text-slate-600">View document statuses and re-publish failed documents for the current authenticated tenant scope.</p>
           </Link>
-          <Link href={q('/tenant-settings', tenantId)} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
+          <Link href="/tenant-settings" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
             <div className="text-lg font-semibold text-slate-900">Back To Tenant Overview</div>
-            <p className="mt-1 text-sm text-slate-600">Manage branding and feature flags that affect generated documents.</p>
+            <p className="mt-1 text-sm text-slate-600">Return to the tenant hub and open Branding / Feature Flags (explicit tenant selection supported there).</p>
           </Link>
         </div>
       </div>
     </PermissionGuard>
   );
 }
-

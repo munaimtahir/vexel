@@ -310,6 +310,10 @@ export default function TenantSettingsPage() {
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900">Tenant Modules</h2>
           <p className="mt-1 text-sm text-slate-600">Quick links for tenant-specific back-office areas.</p>
+          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+            Explicit tenant selection from this page currently applies to `Branding & Config` and `Feature Flags`.
+            The Users, Roles, Catalog, and Documents pages are tenant-scoped by current authenticated tenant/host and do not switch by `tenantId` query param.
+          </div>
           <div className="mt-4 grid gap-2 text-sm">
             <Link href={tenantId ? `/tenant-settings/users?tenantId=${tenantId}` : '/tenant-settings/users'} className="rounded-lg border border-slate-200 px-3 py-2 text-slate-700 hover:bg-slate-50">Users</Link>
             <Link href={tenantId ? `/tenant-settings/roles?tenantId=${tenantId}` : '/tenant-settings/roles'} className="rounded-lg border border-slate-200 px-3 py-2 text-slate-700 hover:bg-slate-50">Roles</Link>

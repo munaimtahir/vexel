@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
-import { useFeatureFlags, showSubmitAndVerify, showSubmitOnly } from '@/hooks/use-feature-flags';
 import { PageHeader, SectionCard } from '@/components/app';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -73,7 +72,6 @@ export default function ResultsEntryPage() {
   const params = useParams();
   const orderedTestId = params.orderedTestId as string;
   const router = useRouter();
-  const { flags } = useFeatureFlags();
 
   const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -124,6 +122,10 @@ export default function ResultsEntryPage() {
     : false;
 
   const isSubmitted = detail?.resultStatus === 'SUBMITTED';
+  const isVerified = detail
+    ? ((detail.specimenStatus ?? '').toLowerCase() === 'verified') ||
+      ((detail.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
+    : false;
 
   const saveCurrentValues = async ({ silent = false }: { silent?: boolean } = {}) => {
     if (!detail || saving) return;
@@ -194,12 +196,12 @@ export default function ResultsEntryPage() {
         params: { path: { orderedTestId } },
         body: {},
       });
-      if (apiErr) { setActionError('Submit failed'); return; }
+      if (apiErr) { setActionError('Save failed'); return; }
       if (data) setDetail(data);
-      setToast('Submitted ✓');
+      setToast('Saved and forwarded ✓');
       await navigateAfterAction(detail.encounterId);
     } catch {
-      setActionError('Submit failed');
+      setActionError('Save failed');
     } finally {
       setSubmitting(false);
     }
@@ -420,7 +422,7 @@ export default function ResultsEntryPage() {
             </thead>
             <tbody>
               {parameters.map((p: any) => {
-                const isLocked = isSubmitted && p.locked;
+                const isLocked = !!p.locked || !!p.verifiedAt;
                 const currentValue = localValues[p.parameterId] ?? '';
                 const currentFlag = localFlags[p.parameterId] ?? null;
 
@@ -516,23 +518,13 @@ export default function ResultsEntryPage() {
 
       {/* Action buttons footer */}
       <div className="flex gap-3 flex-wrap pt-4 border-t">
-        {showSubmitOnly(flags) && (
-          <Button
-            onClick={handleSubmit}
-            disabled={!specimenReady || submitting || saving}
-          >
-            {submitting || saving ? 'Submitting…' : 'Submit'}
-          </Button>
-        )}
-        {showSubmitAndVerify(flags) && (
-          <Button
-            onClick={handleSubmitAndVerify}
-            disabled={!specimenReady || verifying || saving || verifyStatus !== 'idle'}
-            className="bg-primary hover:bg-primary/90"
-          >
-            {verifying || saving ? 'Verifying…' : 'Submit & Verify'}
-          </Button>
-        )}
+        <Button
+          onClick={handleSubmit}
+          disabled={!specimenReady || submitting || saving || isVerified}
+          title={isVerified ? 'Verified results are locked' : 'Saves changes and forwards to verification'}
+        >
+          {submitting || saving ? 'Saving…' : 'Save & Forward'}
+        </Button>
       </div>
 
       {/* Toast */}

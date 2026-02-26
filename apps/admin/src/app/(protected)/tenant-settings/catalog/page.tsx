@@ -4,10 +4,6 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PermissionGuard } from '@/components/permission-guard';
 
-function q(path: string, tenantId: string | null) {
-  return tenantId ? `${path}?tenantId=${encodeURIComponent(tenantId)}` : path;
-}
-
 export default function TenantCatalogHubPage() {
   const searchParams = useSearchParams();
   const tenantId = searchParams.get('tenantId');
@@ -31,9 +27,9 @@ export default function TenantCatalogHubPage() {
             { href: '/catalog/reference-ranges', label: 'Reference Ranges', desc: 'Age/gender ranges' },
             { href: '/catalog/import-export', label: 'Import / Export', desc: 'XLSX bulk operations' },
           ].map((item) => (
-            <Link key={item.href} href={q(item.href, tenantId)} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
+            <Link key={item.href} href={item.href} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
               <div className="text-base font-semibold text-slate-900">{item.label}</div>
-              <p className="mt-1 text-sm text-slate-600">{item.desc}</p>
+              <p className="mt-1 text-sm text-slate-600">{item.desc} (current authenticated tenant scope)</p>
             </Link>
           ))}
         </div>
@@ -41,4 +37,3 @@ export default function TenantCatalogHubPage() {
     </PermissionGuard>
   );
 }
-
