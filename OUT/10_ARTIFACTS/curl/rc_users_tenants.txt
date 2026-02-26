@@ -1,0 +1,6 @@
+          email          |               tenantId               | isSuperAdmin 
+-------------------------+--------------------------------------+--------------
+ rc.tenant.a@vexel.local | af7db6ce-0617-450d-94d0-01bbe629d342 | t
+ rc.tenant.b@vexel.local | bd071759-4c03-4b19-9a65-d930e9fc6a6b | t
+(2 rows)
+

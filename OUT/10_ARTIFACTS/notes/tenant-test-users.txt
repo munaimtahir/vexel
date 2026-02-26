@@ -1,0 +1,2 @@
+tenant_a_user=rc.tenant.a@vexel.local/RcTenantA123!
+tenant_b_user=rc.tenant.b@vexel.local/RcTenantB123!

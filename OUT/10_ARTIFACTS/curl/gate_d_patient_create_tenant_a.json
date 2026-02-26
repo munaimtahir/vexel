@@ -1,0 +1,1 @@
+{"message":"Cross-tenant header override is not allowed for authenticated requests","error":"Forbidden","statusCode":403}

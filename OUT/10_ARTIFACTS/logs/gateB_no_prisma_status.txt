@@ -1,0 +1,1 @@
+frontend_no_prisma=pass

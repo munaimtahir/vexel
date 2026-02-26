@@ -1,0 +1,25 @@
+worker-1  | 🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render
+worker-1  | ✅ Worker connected to Redis
+worker-1  | ✅ Storage bucket 'vexel-documents' exists
+worker-1  | [document-render] Document eecc9d37-3025-4331-bad3-c58416f67fdd failed: PDF service returned 500: 
+worker-1  | [document-render] Job 1 failed: PDF service returned 500: 
+worker-1  | [document-render] Document 8937f1c3-3e74-4f6f-83e9-65591b5549cb rendered, key=af7db6ce-0617-450d-94d0-01bbe629d342/8937f1c3-3e74-4f6f-83e9-65591b5549cb/report.pdf
+worker-1  | [document-render] Job 2 completed
+worker-1  | [document-render] Document eba804fb-d0cf-4358-9406-c43d0b9c53ec rendered, key=af7db6ce-0617-450d-94d0-01bbe629d342/eba804fb-d0cf-4358-9406-c43d0b9c53ec/report.pdf
+worker-1  | [document-render] Job 3 completed
+worker-1  | [document-render] Document 8bb3a6b6-93b9-42ec-b7a4-4d0e0b8a8f61 failed: PDF service returned 500: 
+worker-1  | [document-render] Job 4 failed: PDF service returned 500: 
+worker-1  | [document-render] Document 36187540-9788-485c-9c0c-c2255d0b612d rendered, key=af7db6ce-0617-450d-94d0-01bbe629d342/36187540-9788-485c-9c0c-c2255d0b612d/report.pdf
+worker-1  | [document-render] Job 5 completed
+worker-1  | [document-render] Document 4d8a9806-4cfb-4d6a-891e-9512b06ad82c failed: PDF service returned 500: 
+worker-1  | [document-render] Job 6 failed: PDF service returned 500: 
+worker-1  | [document-render] Document 2e174a23-b8ab-4546-b75e-5247bc983311 rendered, key=af7db6ce-0617-450d-94d0-01bbe629d342/2e174a23-b8ab-4546-b75e-5247bc983311/report.pdf
+worker-1  | [document-render] Job 7 completed
+worker-1  | [document-render] Document 7a97370b-8db3-400c-8fe9-c763c48f1e08 failed: PDF service returned 500: 
+worker-1  | [document-render] Job 8 failed: PDF service returned 500: 
+worker-1  | [document-render] Document f6d11f31-19d3-4824-ae9f-2a828f3344d4 rendered, key=af7db6ce-0617-450d-94d0-01bbe629d342/f6d11f31-19d3-4824-ae9f-2a828f3344d4/report.pdf
+worker-1  | [document-render] Job 9 completed
+worker-1  | [document-render] Document 3829620f-c962-467b-ad29-d629af4883e4 failed: PDF service returned 500: 
+worker-1  | [document-render] Job 10 failed: PDF service returned 500: 
+worker-1  | [document-render] Document dcc8adeb-a168-4e31-8397-90f8c5520743 rendered, key=af7db6ce-0617-450d-94d0-01bbe629d342/dcc8adeb-a168-4e31-8397-90f8c5520743/report.pdf
+worker-1  | [document-render] Job 11 completed

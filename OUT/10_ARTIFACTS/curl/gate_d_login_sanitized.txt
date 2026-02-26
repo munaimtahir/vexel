@@ -1,0 +1,2 @@
+tenant_a_token_prefix=eyJhbGciOiJIUzI1NiIs
+tenant_b_token_prefix=eyJhbGciOiJIUzI1NiIs

@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 26 Feb 2026 22:41:12 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"status":"ok","version":"1.0.0","services":{"pdf":"ok"}}

@@ -1,0 +1,13 @@
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: rc-gate-d-tenant-b-read
+Content-Type: application/json; charset=utf-8
+Content-Length: 68
+ETag: W/"44-zp8BThCLD9lebPa8AZi6HsGlzJM"
+Date: Thu, 26 Feb 2026 22:44:35 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Patient not found","error":"Not Found","statusCode":404}

@@ -1,0 +1,1 @@
+{"id":"af7db6ce-0617-450d-94d0-01bbe629d342","name":"RC Tenant A","status":"active","isSuperAdmin":false,"createdAt":"2026-02-26T22:42:55.507Z","updatedAt":"2026-02-26T22:42:55.507Z","domains":[{"id":"02257247-ca88-4d57-909b-d1b6215400c5","tenantId":"af7db6ce-0617-450d-94d0-01bbe629d342","domain":"rc-a-1772145775.vexel.local"}]}

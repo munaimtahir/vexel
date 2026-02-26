@@ -1,0 +1,95 @@
+
+> vexel@0.1.0 lint /home/munaim/srv/apps/vexel
+> turbo run lint
+
+• turbo 2.8.10
+• Packages in scope: @vexel/admin, @vexel/api, @vexel/contracts, @vexel/e2e, @vexel/operator, @vexel/sdk, @vexel/theme, @vexel/worker
+• Running lint in 8 packages
+• Remote caching disabled
+@vexel/admin:lint: cache hit, replaying logs 09aa5116a24554f5
+@vexel/admin:lint: 
+@vexel/admin:lint: 
+@vexel/admin:lint: > @vexel/admin@0.1.0 lint /home/munaim/srv/apps/vexel/apps/admin
+@vexel/admin:lint: > next lint
+@vexel/admin:lint: 
+@vexel/admin:lint: [33m`next lint` is deprecated and will be removed in Next.js 16.
+@vexel/admin:lint: [39mFor new projects, use [1mcreate-next-app[22m to choose your preferred linter.
+@vexel/admin:lint: For existing projects, migrate to the ESLint CLI:
+@vexel/admin:lint: [1mnpx @next/codemod@canary next-lint-to-eslint-cli .[22m
+@vexel/admin:lint: 
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/audit/page.tsx[39m
+@vexel/admin:lint: [33m32[39m:[33m32[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/panels/page.tsx[39m
+@vexel/admin:lint: [33m39[39m:[33m32[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/parameters/page.tsx[39m
+@vexel/admin:lint: [33m35[39m:[33m32[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/reference-ranges/page.tsx[39m
+@vexel/admin:lint: [33m55[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/tests/page.tsx[39m
+@vexel/admin:lint: [33m40[39m:[33m32[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/opd/providers/page.tsx[39m
+@vexel/admin:lint: [33m99[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/opd/schedules/page.tsx[39m
+@vexel/admin:lint: [33m135[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: [33m143[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'loadSchedules'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36minfo[39m  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+@vexel/api:lint: cache hit, replaying logs e13e125196681963
+@vexel/api:lint: 
+@vexel/api:lint: 
+@vexel/api:lint: > @vexel/api@0.1.0 lint /home/munaim/srv/apps/vexel/apps/api
+@vexel/api:lint: > eslint "{src,test}/**/*.ts"
+@vexel/api:lint: 
+@vexel/operator:lint: cache hit, replaying logs 9eca9e74a82a0216
+@vexel/operator:lint: 
+@vexel/operator:lint: 
+@vexel/operator:lint: > @vexel/operator@0.1.0 lint /home/munaim/srv/apps/vexel/apps/operator
+@vexel/operator:lint: > next lint
+@vexel/operator:lint: 
+@vexel/operator:lint: [33m`next lint` is deprecated and will be removed in Next.js 16.
+@vexel/operator:lint: [39mFor new projects, use [1mcreate-next-app[22m to choose your preferred linter.
+@vexel/operator:lint: For existing projects, migrate to the ESLint CLI:
+@vexel/operator:lint: [1mnpx @next/codemod@canary next-lint-to-eslint-cli .[22m
+@vexel/operator:lint: 
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/encounters/[id]/reports/page.tsx[39m
+@vexel/operator:lint: [33m38[39m:[33m37[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/encounters/[id]/verify/page.tsx[39m
+@vexel/operator:lint: [33m38[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'startPolling'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/encounters/[id]/page.tsx[39m
+@vexel/operator:lint: [33m69[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has missing dependencies: 'fetchDocuments' and 'fetchEncounter'. Either include them or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: [33m80[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has missing dependencies: 'reportDoc' and 'startPolling'. Either include them or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/encounters/[id]/publish/page.tsx[39m
+@vexel/operator:lint: [33m67[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has missing dependencies: 'fetchDocument' and 'startPolling'. Either include them or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/encounters/[id]/reports/page.tsx[39m
+@vexel/operator:lint: [33m38[39m:[33m37[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/encounters/[id]/verify/page.tsx[39m
+@vexel/operator:lint: [33m40[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'startPolling'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx[39m
+@vexel/operator:lint: [33m191[39m:[33m30[39m  [33m[1mWarning[22m[39m: The ref value 'pollRefs.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'pollRefs.current' to a variable inside the effect, and use that variable in the cleanup function.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx[39m
+@vexel/operator:lint: [33m123[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'loadDetail'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/verification/page.tsx[39m
+@vexel/operator:lint: [33m71[39m:[33m38[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'search'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36minfo[39m  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+
+ Tasks:    3 successful, 3 total
+Cached:    3 cached, 3 total
+  Time:    77ms >>> FULL TURBO
+

@@ -1,0 +1,13 @@
+Operator URL: http://127.0.0.1:9024/lims/encounters/3277023d-3645-4309-86ee-b1f26f8a45be/publish
+Operator action: clicked "Publish report" button
+Operator result: backend encounter status became published; Download PDF button visible after reload
+Admin URL: http://127.0.0.1:9023/admin/feature-flags
+Admin result: feature flags route loaded (text match=false)
+Admin URL: http://127.0.0.1:9023/admin/tenants
+Admin result: tenants route loaded (body excerpt: ((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","light",null,["ligh)
+Admin URL: http://127.0.0.1:9023/admin/feature-flags (system admin)
+Admin result: feature flags route body excerpt: ((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","light",null,["light","dark"],null,false,true)Vexel AdminSign in to your admin accountEmailPasswordSign in(self.__next_f=self.__next_f||[]).push([0])self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[1802,[\"334\",\"sta
+Admin URL: http://127.0.0.1:9023/admin/login
+Admin action: signed in as system admin via UI form
+Admin URL: http://127.0.0.1:9023/admin/feature-flags
+Admin result: body excerpt after login: ((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","light",null,["light","dark"],null,false,true)🧬Vexel AdminBack OfficeADMINOPDOverviewDashboardOperationsPatientsEncountersDocumentsLIMSCatalogSettingsTenantsUsers & RolesBrandingFeature FlagsSystemAudit LogJobsSystem HealthSign OutFeature FlagsControl which modules and features are active. Planned flags are listed fo

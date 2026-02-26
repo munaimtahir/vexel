@@ -1,0 +1,5 @@
+
+> vexel@0.1.0 ui:color-lint /home/munaim/srv/apps/vexel
+> node scripts/ui-color-lint.mjs
+
+PASS: no hard-coded hex or arbitrary hex Tailwind classes outside token files

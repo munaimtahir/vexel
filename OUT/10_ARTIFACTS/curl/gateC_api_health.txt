@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: e076046e-28c4-46c6-a749-32dfb125ade6
+Content-Type: application/json; charset=utf-8
+Content-Length: 78
+ETag: W/"4e-z2Npf014iFloOe125+8f6evhzIw"
+Date: Thu, 26 Feb 2026 22:41:13 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"status":"ok","version":"0.1.0","uptime":7.541556355,"services":{"api":"ok"}}

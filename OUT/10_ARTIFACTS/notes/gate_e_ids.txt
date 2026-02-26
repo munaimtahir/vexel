@@ -1,0 +1,4 @@
+encounter=a1758429-c105-47fe-a2c0-7360477f9d1f
+labOrder=2b158fac-8e89-4f6d-b7ba-56c6e1312d07
+doc=eba804fb-d0cf-4358-9406-c43d0b9c53ec
+status=RENDERED

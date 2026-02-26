@@ -1,0 +1,9 @@
+NAME               IMAGE                COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+vexel-admin-1      vexel-admin          "docker-entrypoint.s…"   admin      12 seconds ago   Up Less than a second     127.0.0.1:9023->3001/tcp
+vexel-api-1        vexel-api            "./docker-entrypoint…"   api        22 seconds ago   Up 10 seconds (healthy)   127.0.0.1:9021->3000/tcp
+vexel-minio-1      minio/minio:latest   "/usr/bin/docker-ent…"   minio      18 minutes ago   Up 18 minutes (healthy)   127.0.0.1:9027->9000/tcp, 127.0.0.1:9025->9001/tcp
+vexel-operator-1   vexel-operator       "docker-entrypoint.s…"   operator   22 seconds ago   Up 11 seconds             127.0.0.1:9024->3000/tcp
+vexel-pdf-1        vexel-pdf            "dotnet VexelPdf.dll"    pdf        22 seconds ago   Up 11 seconds (healthy)   127.0.0.1:9022->8080/tcp
+vexel-postgres-1   postgres:16-alpine   "docker-entrypoint.s…"   postgres   18 minutes ago   Up 18 minutes (healthy)   127.0.0.1:5433->5432/tcp
+vexel-redis-1      redis:7-alpine       "docker-entrypoint.s…"   redis      18 minutes ago   Up 18 minutes (healthy)   127.0.0.1:6380->6379/tcp
+vexel-worker-1     vexel-worker         "docker-entrypoint.s…"   worker     22 seconds ago   Up 10 seconds             

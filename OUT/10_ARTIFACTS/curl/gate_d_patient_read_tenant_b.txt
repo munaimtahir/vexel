@@ -1,0 +1,13 @@
+HTTP/1.1 403 Forbidden
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: rc-gate-d-read-tenant-b
+Content-Type: application/json; charset=utf-8
+Content-Length: 121
+ETag: W/"79-3TUaKWGfXXkZy9bzjoOBCepbA18"
+Date: Thu, 26 Feb 2026 22:42:55 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Cross-tenant header override is not allowed for authenticated requests","error":"Forbidden","statusCode":403}

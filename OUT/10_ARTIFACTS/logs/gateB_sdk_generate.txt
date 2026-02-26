@@ -1,0 +1,12 @@
+
+> vexel@0.1.0 sdk:generate /home/munaim/srv/apps/vexel
+> pnpm --filter @vexel/contracts sdk:generate
+
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+> @vexel/contracts@0.1.0 sdk:generate /home/munaim/srv/apps/vexel/packages/contracts
+> openapi-typescript openapi.yaml -o ../sdk/src/generated/api.d.ts && node scripts/generate-client.js
+
+✨ openapi-typescript 7.13.0
+🚀 openapi.yaml → ../sdk/src/generated/api.d.ts [368.6ms]
+✅ SDK types generated at packages/sdk/src/generated/api.d.ts

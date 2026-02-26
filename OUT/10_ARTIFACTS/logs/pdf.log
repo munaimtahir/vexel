@@ -1,0 +1,300 @@
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.0977ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1328ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1839ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 534
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: POST /render'
+pdf-1  | fail: Microsoft.AspNetCore.Server.Kestrel[13]
+pdf-1  |       Connection id "0HNJLH0GGPLMS", Request id "0HNJLH0GGPLMS:00000001": An unhandled exception was thrown by the application.
+pdf-1  |       QuestPDF.Drawing.Exceptions.DocumentComposeException: You should not assign multiple child elements to a single-child container. This may happen when a container variable is used outside of its scope/closure OR the container is used in multiple fluent API chains OR the container is used incorrectly in a loop. This exception is thrown to help you detect that some part of the code is overriding fragments of the document layout with a new content - essentially destroying existing content.
+pdf-1  |          at QuestPDF.Fluent.PaddingExtensions.Padding(IContainer element, Single top, Single bottom, Single left, Single right)
+pdf-1  |          at QuestPDF.Fluent.PaddingExtensions.PaddingTop(IContainer element, Single value, Unit unit)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass10_0.<ComposeReceiptHalf>b__4(IContainer footer) in /src/Program.cs:line 846
+pdf-1  |          at QuestPDF.Fluent.ElementExtensions.Element(IContainer parent, Action`1 handler, String handlerName, String parentName, String sourceFilePath, Int32 sourceLineNumber)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass10_0.<ComposeReceiptHalf>b__0(ColumnDescriptor col) in /src/Program.cs:line 835
+pdf-1  |          at QuestPDF.Fluent.ColumnExtensions.Column(IContainer element, Action`1 handler)
+pdf-1  |          at ReceiptDocument.ComposeReceiptHalf(IContainer container, String copyLabel, Byte[] barcodeBytes, String encounterCode) in /src/Program.cs:line 758
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__6(IContainer c) in /src/Program.cs:line 589
+pdf-1  |          at QuestPDF.Fluent.ElementExtensions.Element(IContainer parent, Action`1 handler, String handlerName, String parentName, String sourceFilePath, Int32 sourceLineNumber)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__5(ColumnDescriptor col) in /src/Program.cs:line 589
+pdf-1  |          at QuestPDF.Fluent.ColumnExtensions.Column(IContainer element, Action`1 handler)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__1(PageDescriptor page) in /src/Program.cs:line 586
+pdf-1  |          at QuestPDF.Fluent.PageExtensions.Page(IDocumentContainer document, Action`1 handler)
+pdf-1  |          at ReceiptDocument.Compose(IDocumentContainer container) in /src/Program.cs:line 579
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.ConfigureContent(IDocument document, DocumentSettings settings, Boolean useOriginalImages)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.RenderSingleDocument[TCanvas](TCanvas canvas, IDocument document, DocumentSettings settings)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.RenderDocument[TCanvas](TCanvas canvas, IDocument document, DocumentSettings settings)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.GeneratePdf(SkWriteStream stream, IDocument document)
+pdf-1  |          at QuestPDF.Fluent.GenerateExtensions.GeneratePdf(IDocument document)
+pdf-1  |          at Program.<<Main>$>g__GenerateReceipt|0_3(JsonElement payload, BrandingConfig branding, Byte[] logoBytes) in /src/Program.cs:line 76
+pdf-1  |          at Program.<>c.<<<Main>$>b__0_1>d.MoveNext() in /src/Program.cs:line 46
+pdf-1  |       --- End of stack trace from previous location ---
+pdf-1  |          at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+pdf-1  |          at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 POST http://pdf:8080/render - 500 0 - 27.5452ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 698
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 44.9621ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.3188ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1364ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1142ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.0887ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.5190ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.3755ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 534
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: POST /render'
+pdf-1  | fail: Microsoft.AspNetCore.Server.Kestrel[13]
+pdf-1  |       Connection id "0HNJLH0GGPLN3", Request id "0HNJLH0GGPLN3:00000001": An unhandled exception was thrown by the application.
+pdf-1  |       QuestPDF.Drawing.Exceptions.DocumentComposeException: You should not assign multiple child elements to a single-child container. This may happen when a container variable is used outside of its scope/closure OR the container is used in multiple fluent API chains OR the container is used incorrectly in a loop. This exception is thrown to help you detect that some part of the code is overriding fragments of the document layout with a new content - essentially destroying existing content.
+pdf-1  |          at QuestPDF.Fluent.PaddingExtensions.Padding(IContainer element, Single top, Single bottom, Single left, Single right)
+pdf-1  |          at QuestPDF.Fluent.PaddingExtensions.PaddingTop(IContainer element, Single value, Unit unit)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass10_0.<ComposeReceiptHalf>b__4(IContainer footer) in /src/Program.cs:line 846
+pdf-1  |          at QuestPDF.Fluent.ElementExtensions.Element(IContainer parent, Action`1 handler, String handlerName, String parentName, String sourceFilePath, Int32 sourceLineNumber)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass10_0.<ComposeReceiptHalf>b__0(ColumnDescriptor col) in /src/Program.cs:line 835
+pdf-1  |          at QuestPDF.Fluent.ColumnExtensions.Column(IContainer element, Action`1 handler)
+pdf-1  |          at ReceiptDocument.ComposeReceiptHalf(IContainer container, String copyLabel, Byte[] barcodeBytes, String encounterCode) in /src/Program.cs:line 758
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__6(IContainer c) in /src/Program.cs:line 589
+pdf-1  |          at QuestPDF.Fluent.ElementExtensions.Element(IContainer parent, Action`1 handler, String handlerName, String parentName, String sourceFilePath, Int32 sourceLineNumber)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__5(ColumnDescriptor col) in /src/Program.cs:line 589
+pdf-1  |          at QuestPDF.Fluent.ColumnExtensions.Column(IContainer element, Action`1 handler)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__1(PageDescriptor page) in /src/Program.cs:line 586
+pdf-1  |          at QuestPDF.Fluent.PageExtensions.Page(IDocumentContainer document, Action`1 handler)
+pdf-1  |          at ReceiptDocument.Compose(IDocumentContainer container) in /src/Program.cs:line 579
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.ConfigureContent(IDocument document, DocumentSettings settings, Boolean useOriginalImages)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.RenderSingleDocument[TCanvas](TCanvas canvas, IDocument document, DocumentSettings settings)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.RenderDocument[TCanvas](TCanvas canvas, IDocument document, DocumentSettings settings)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.GeneratePdf(SkWriteStream stream, IDocument document)
+pdf-1  |          at QuestPDF.Fluent.GenerateExtensions.GeneratePdf(IDocument document)
+pdf-1  |          at Program.<<Main>$>g__GenerateReceipt|0_3(JsonElement payload, BrandingConfig branding, Byte[] logoBytes) in /src/Program.cs:line 76
+pdf-1  |          at Program.<>c.<<<Main>$>b__0_1>d.MoveNext() in /src/Program.cs:line 46
+pdf-1  |       --- End of stack trace from previous location ---
+pdf-1  |          at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+pdf-1  |          at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 POST http://pdf:8080/render - 500 0 - 42.8667ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 698
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 75.0983ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1927ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.3992ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 534
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: POST /render'
+pdf-1  | fail: Microsoft.AspNetCore.Server.Kestrel[13]
+pdf-1  |       Connection id "0HNJLH0GGPLN6", Request id "0HNJLH0GGPLN6:00000001": An unhandled exception was thrown by the application.
+pdf-1  |       QuestPDF.Drawing.Exceptions.DocumentComposeException: You should not assign multiple child elements to a single-child container. This may happen when a container variable is used outside of its scope/closure OR the container is used in multiple fluent API chains OR the container is used incorrectly in a loop. This exception is thrown to help you detect that some part of the code is overriding fragments of the document layout with a new content - essentially destroying existing content.
+pdf-1  |          at QuestPDF.Fluent.PaddingExtensions.Padding(IContainer element, Single top, Single bottom, Single left, Single right)
+pdf-1  |          at QuestPDF.Fluent.PaddingExtensions.PaddingTop(IContainer element, Single value, Unit unit)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass10_0.<ComposeReceiptHalf>b__4(IContainer footer) in /src/Program.cs:line 846
+pdf-1  |          at QuestPDF.Fluent.ElementExtensions.Element(IContainer parent, Action`1 handler, String handlerName, String parentName, String sourceFilePath, Int32 sourceLineNumber)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass10_0.<ComposeReceiptHalf>b__0(ColumnDescriptor col) in /src/Program.cs:line 835
+pdf-1  |          at QuestPDF.Fluent.ColumnExtensions.Column(IContainer element, Action`1 handler)
+pdf-1  |          at ReceiptDocument.ComposeReceiptHalf(IContainer container, String copyLabel, Byte[] barcodeBytes, String encounterCode) in /src/Program.cs:line 758
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__6(IContainer c) in /src/Program.cs:line 589
+pdf-1  |          at QuestPDF.Fluent.ElementExtensions.Element(IContainer parent, Action`1 handler, String handlerName, String parentName, String sourceFilePath, Int32 sourceLineNumber)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__5(ColumnDescriptor col) in /src/Program.cs:line 589
+pdf-1  |          at QuestPDF.Fluent.ColumnExtensions.Column(IContainer element, Action`1 handler)
+pdf-1  |          at ReceiptDocument.<>c__DisplayClass7_0.<Compose>b__1(PageDescriptor page) in /src/Program.cs:line 586
+pdf-1  |          at QuestPDF.Fluent.PageExtensions.Page(IDocumentContainer document, Action`1 handler)
+pdf-1  |          at ReceiptDocument.Compose(IDocumentContainer container) in /src/Program.cs:line 579
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.ConfigureContent(IDocument document, DocumentSettings settings, Boolean useOriginalImages)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.RenderSingleDocument[TCanvas](TCanvas canvas, IDocument document, DocumentSettings settings)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.RenderDocument[TCanvas](TCanvas canvas, IDocument document, DocumentSettings settings)
+pdf-1  |          at QuestPDF.Drawing.DocumentGenerator.GeneratePdf(SkWriteStream stream, IDocument document)
+pdf-1  |          at QuestPDF.Fluent.GenerateExtensions.GeneratePdf(IDocument document)
+pdf-1  |          at Program.<<Main>$>g__GenerateReceipt|0_3(JsonElement payload, BrandingConfig branding, Byte[] logoBytes) in /src/Program.cs:line 76
+pdf-1  |          at Program.<>c.<<<Main>$>b__0_1>d.MoveNext() in /src/Program.cs:line 46
+pdf-1  |       --- End of stack trace from previous location ---
+pdf-1  |          at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+pdf-1  |          at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 POST http://pdf:8080/render - 500 0 - 42.3305ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 698
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: POST /render'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 45.3785ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1393ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1040ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1313ms
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1  |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1  |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1  |       Setting HTTP status code 200.
+pdf-1  | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1  |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1  | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1  |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1  | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1  |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.2103ms

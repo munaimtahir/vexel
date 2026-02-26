@@ -1,0 +1,377 @@
+ Image vexel-api Building 
+ Image vexel-admin Building 
+ Image vexel-pdf Building 
+ Image vexel-operator Building 
+ Image vexel-worker Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 2.39kB done
+#1 DONE 0.0s
+
+#2 [operator internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.25kB done
+#2 DONE 0.0s
+
+#3 [pdf internal] load build definition from Dockerfile
+#3 transferring dockerfile: 743B done
+#3 DONE 0.0s
+
+#4 [api internal] load build definition from Dockerfile
+#4 transferring dockerfile: 742B done
+#4 DONE 0.1s
+
+#5 [worker internal] load build definition from Dockerfile
+#5 transferring dockerfile: 650B done
+#5 DONE 0.1s
+
+#6 [admin internal] load build definition from Dockerfile
+#6 transferring dockerfile: 1.23kB done
+#6 DONE 0.1s
+
+#7 [admin internal] load .dockerignore
+#7 transferring context: 428B done
+#7 DONE 0.0s
+
+#8 [worker internal] load metadata for docker.io/library/node:20-alpine
+#8 DONE 0.0s
+
+#9 [api internal] load .dockerignore
+#9 transferring context: 152B 0.0s done
+#9 DONE 0.0s
+
+#10 [pdf internal] load metadata for mcr.microsoft.com/dotnet/aspnet:8.0
+#10 DONE 0.1s
+
+#11 [admin base 1/3] FROM docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+#11 resolve docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8 0.0s done
+#11 DONE 0.0s
+
+#12 [api internal] load build context
+#12 transferring context: 25.31kB 0.0s done
+#12 DONE 0.1s
+
+#13 [admin internal] load build context
+#13 transferring context: 253.38kB 0.0s done
+#13 DONE 0.1s
+
+#14 [worker internal] load build context
+#14 transferring context: 55.63kB 0.0s done
+#14 DONE 0.1s
+
+#15 [operator internal] load build context
+#15 transferring context: 971.18kB 0.1s done
+#15 DONE 0.1s
+
+#16 [api base 3/3] RUN apk add --no-cache python3 make g++
+#16 CACHED
+
+#17 [api runtime 5/7] COPY --from=build /app/prisma ./prisma
+#17 CACHED
+
+#18 [api deps 2/2] RUN npm install
+#18 CACHED
+
+#19 [api runtime 4/7] COPY --from=build /app/node_modules ./node_modules
+#19 CACHED
+
+#20 [api deps 1/2] COPY package.json ./
+#20 CACHED
+
+#21 [api build 3/4] RUN npm run prisma:generate
+#21 CACHED
+
+#22 [api build 4/4] RUN npm run build
+#22 CACHED
+
+#23 [api runtime 3/7] COPY --from=build /app/dist ./dist
+#23 CACHED
+
+#24 [api build 2/4] COPY . .
+#24 CACHED
+
+#25 [api runtime 6/7] COPY docker-entrypoint.sh ./docker-entrypoint.sh
+#25 CACHED
+
+#26 [api build 1/4] COPY --from=deps /app/node_modules ./node_modules
+#26 CACHED
+
+#27 [api runtime 7/7] RUN chmod +x ./docker-entrypoint.sh
+#27 CACHED
+
+#28 [worker build 4/5] RUN npx prisma generate
+#28 CACHED
+
+#29 [worker build 5/5] RUN npm run build
+#29 CACHED
+
+#30 [worker deps 2/2] RUN npm install --ignore-scripts
+#30 CACHED
+
+#31 [worker build 1/5] COPY --from=deps /app/node_modules ./node_modules
+#31 CACHED
+
+#32 [worker build 2/5] COPY apps/worker/ .
+#32 CACHED
+
+#33 [worker runtime 3/4] COPY --from=build /app/dist ./dist
+#33 CACHED
+
+#34 [worker build 3/5] COPY apps/api/prisma/schema.prisma ./prisma/schema.prisma
+#34 CACHED
+
+#35 [worker deps 1/2] COPY apps/worker/package.json ./
+#35 CACHED
+
+#36 [worker runtime 4/4] COPY --from=build /app/node_modules ./node_modules
+#36 CACHED
+
+#37 [admin deps 2/5] COPY packages/sdk/package.json ./packages/sdk/
+#37 CACHED
+
+#38 [admin deps 4/5] COPY apps/admin/package.json ./apps/admin/
+#38 CACHED
+
+#39 [admin build 2/8] COPY --from=deps /app/node_modules ./node_modules
+#39 CACHED
+
+#40 [admin build 6/8] COPY apps/admin/ ./apps/admin/
+#40 CACHED
+
+#41 [admin build 3/8] COPY --from=deps /app/apps/admin/node_modules ./apps/admin/node_modules
+#41 CACHED
+
+#42 [admin build 8/8] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#42 CACHED
+
+#43 [admin build 7/8] WORKDIR /app/apps/admin
+#43 CACHED
+
+#44 [admin build 5/8] COPY packages/theme/ ./packages/theme/
+#44 CACHED
+
+#45 [admin build 4/8] COPY packages/sdk/ ./packages/sdk/
+#45 CACHED
+
+#46 [admin runtime 3/4] COPY --from=build /app/apps/admin/.next/standalone ./
+#46 CACHED
+
+#47 [admin deps 1/5] COPY pnpm-workspace.yaml package.json ./
+#47 CACHED
+
+#48 [admin deps 5/5] RUN pnpm install --ignore-scripts --shamefully-hoist
+#48 CACHED
+
+#49 [admin deps 3/5] COPY packages/theme/package.json ./packages/theme/
+#49 CACHED
+
+#50 [admin runtime 4/4] COPY --from=build /app/apps/admin/.next/static ./apps/admin/.next/static
+#50 CACHED
+
+#51 [operator build 5/8] COPY packages/theme/ ./packages/theme/
+#51 CACHED
+
+#52 [operator base 3/3] RUN npm install -g pnpm
+#52 CACHED
+
+#53 [operator build 6/8] COPY apps/operator/ ./apps/operator/
+#53 CACHED
+
+#54 [operator runtime 3/4] COPY --from=build /app/apps/operator/.next/standalone ./
+#54 CACHED
+
+#55 [operator base 2/3] WORKDIR /app
+#55 CACHED
+
+#56 [operator build 7/8] WORKDIR /app/apps/operator
+#56 CACHED
+
+#57 [operator deps 3/5] COPY packages/theme/package.json ./packages/theme/
+#57 CACHED
+
+#58 [operator build 2/8] COPY --from=deps /app/node_modules ./node_modules
+#58 CACHED
+
+#59 [operator deps 2/5] COPY packages/sdk/package.json ./packages/sdk/
+#59 CACHED
+
+#60 [operator deps 1/5] COPY pnpm-workspace.yaml package.json ./
+#60 CACHED
+
+#61 [operator build 3/8] COPY --from=deps /app/apps/operator/node_modules ./apps/operator/node_modules
+#61 CACHED
+
+#62 [operator build 4/8] COPY packages/sdk/ ./packages/sdk/
+#62 CACHED
+
+#63 [operator build 1/8] WORKDIR /app
+#63 CACHED
+
+#64 [operator build 8/8] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#64 CACHED
+
+#65 [operator deps 5/5] RUN pnpm install --ignore-scripts --shamefully-hoist
+#65 CACHED
+
+#66 [operator deps 4/5] COPY apps/operator/package.json ./apps/operator/
+#66 CACHED
+
+#67 [operator runtime 4/4] COPY --from=build /app/apps/operator/.next/static ./apps/operator/.next/static
+#67 CACHED
+
+#68 [operator] exporting to image
+#68 exporting layers done
+#68 exporting manifest sha256:43e11a38f436c3b3d4fff9e3a4d2d75417622f0a1cfa9d5443f367e8c0bb833d done
+#68 exporting config sha256:a6c9dc462765e930afe04d73c8b432a6dec52b6e6a583bfa31241adde34bd6bd 0.0s done
+#68 exporting attestation manifest sha256:4cb104603ae60bf53070cc5bde6ee28ef573f0e51c829839cf0c81abc41ede86
+#68 exporting attestation manifest sha256:4cb104603ae60bf53070cc5bde6ee28ef573f0e51c829839cf0c81abc41ede86 0.1s done
+#68 exporting manifest list sha256:6350976b2fa49a88b48a253f55be57a64772ea62b9be160815a90476a4e19dbb 0.0s done
+#68 naming to docker.io/library/vexel-operator:latest done
+#68 unpacking to docker.io/library/vexel-operator:latest 0.0s done
+#68 DONE 0.2s
+
+#69 [pdf internal] load metadata for mcr.microsoft.com/dotnet/sdk:8.0
+#69 DONE 0.4s
+
+#70 [pdf internal] load .dockerignore
+#70 transferring context: 2B done
+#70 DONE 0.0s
+
+#71 [pdf internal] load build context
+#71 DONE 0.0s
+
+#72 [admin] exporting to image
+#72 exporting layers done
+#72 exporting manifest sha256:48c0130dceb7b0e1055858a1686c3d0372ba8cc3ffcdd4a3324c3861da4f99e9 done
+#72 exporting config sha256:9650bedbb9e2cc0d230e427d6b5c5fd0368ba249ad63d99c783cdc39041403f6 done
+#72 exporting attestation manifest sha256:900f3d761da50dcdb080de3503e1b0aff57eb2e9837c521ac0bbb224f0f9ad61 0.1s done
+#72 exporting manifest list sha256:a2f64f29846bb5946138ec442beff1d153a0a077bbaaf62b3e83d41c9caa348e 0.1s done
+#72 naming to docker.io/library/vexel-admin:latest done
+#72 unpacking to docker.io/library/vexel-admin:latest 0.0s done
+#72 DONE 0.2s
+
+#73 [api] exporting to image
+#73 exporting layers done
+#73 exporting manifest sha256:07a6a385b52cabd6af84612a50773dd065f53ce989e52aef2a6e5dbae02251db done
+#73 exporting config sha256:6b24c32cadad23e458ec22da691a89e77de321b7b1d3bf2fda80809d86b91a11 done
+#73 exporting attestation manifest sha256:ddea6a724558066f9a170d5120c3d7364c7fcd2ff0718dd406bb6976df031d9c 0.1s done
+#73 exporting manifest list sha256:042e86426afdaf970a80436f950020584000d4e9eda2aacf2e4fa12793497eb4 0.0s done
+#73 naming to docker.io/library/vexel-api:latest done
+#73 unpacking to docker.io/library/vexel-api:latest 0.0s done
+#73 DONE 0.2s
+
+#74 [worker] exporting to image
+#74 exporting layers done
+#74 exporting manifest sha256:55888bea1b5bfad1041b655a562df97d0987f16f9b2999eded3a6f1c6c998278 0.0s done
+#74 exporting config sha256:6b061867525c8299a15118f30b11b4b13e2f270d083f4f489b3a354b6d71b41c 0.0s done
+#74 exporting attestation manifest sha256:2bddf2ac44920e089d30da164a4e9bca9d752dc9f3e36436ba99690c30f84da0 0.1s done
+#74 exporting manifest list sha256:e1d049d2178c84ec328413a5085359c1215cdf350de121a11efb998e86b8f085 0.0s done
+#74 naming to docker.io/library/vexel-worker:latest done
+#74 unpacking to docker.io/library/vexel-worker:latest 0.0s done
+#74 DONE 0.2s
+
+#75 [pdf build 1/6] FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:bfb6ed602caa605141700aea7dc7d42574b74b704368e67d683c71a002123808
+#75 resolve mcr.microsoft.com/dotnet/sdk:8.0@sha256:bfb6ed602caa605141700aea7dc7d42574b74b704368e67d683c71a002123808 0.1s done
+#75 DONE 0.1s
+
+#76 [pdf base 1/3] FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:88c86e5469c2b69969e07343193fd3dbe4ff6936d95b994dbfa27348299af111
+#76 resolve mcr.microsoft.com/dotnet/aspnet:8.0@sha256:88c86e5469c2b69969e07343193fd3dbe4ff6936d95b994dbfa27348299af111 0.1s done
+#76 DONE 0.1s
+
+#71 [pdf internal] load build context
+#71 transferring context: 17.02kB 0.0s done
+#71 DONE 0.0s
+
+#77 [pdf base 3/3] RUN apt-get update && apt-get install -y --no-install-recommends curl libfontconfig1 libgdiplus && rm -rf /var/lib/apt/lists/*
+#77 CACHED
+
+#78 [pdf build 2/6] WORKDIR /src
+#78 CACHED
+
+#79 [pdf build 6/6] RUN dotnet build "vexel-pdf.csproj" -c Release -o /app/build
+#79 CACHED
+
+#80 [pdf build 5/6] COPY . .
+#80 CACHED
+
+#81 [pdf publish 1/1] RUN dotnet publish "vexel-pdf.csproj" -c Release -o /app/publish
+#81 CACHED
+
+#82 [pdf build 4/6] RUN dotnet restore "./vexel-pdf.csproj"
+#82 CACHED
+
+#83 [pdf base 2/3] WORKDIR /app
+#83 CACHED
+
+#84 [pdf build 3/6] COPY [vexel-pdf.csproj, .]
+#84 CACHED
+
+#85 [pdf final 1/2] WORKDIR /app
+#85 CACHED
+
+#86 [pdf final 2/2] COPY --from=publish /app/publish .
+#86 CACHED
+
+#87 [pdf] exporting to image
+#87 exporting layers done
+#87 exporting manifest sha256:18d9665cdb80d73a8bf79dfc150253483665c8278ea1cd411c8b30814104a232 done
+#87 exporting config sha256:e9719cc2b4906a8671d030630f2252c9fed80b1db4ee73e7c5bae9979250eb56 done
+#87 exporting attestation manifest sha256:cd5c8e1601772ab25ab2157d6e9ba58da8457344207dd06ec749c19764e7ff62 0.0s done
+#87 exporting manifest list sha256:c5ca72e6846871991684548e93de7de4b5d8006fe3d7ddf221ccea10cccd1aa5 0.0s done
+#87 naming to docker.io/library/vexel-pdf:latest done
+#87 unpacking to docker.io/library/vexel-pdf:latest
+#87 unpacking to docker.io/library/vexel-pdf:latest 0.0s done
+#87 DONE 0.1s
+
+#88 [operator] resolving provenance for metadata file
+#88 DONE 0.1s
+
+#89 [worker] resolving provenance for metadata file
+#89 DONE 0.0s
+
+#90 [api] resolving provenance for metadata file
+#90 DONE 0.0s
+
+#91 [admin] resolving provenance for metadata file
+#91 DONE 0.1s
+
+#92 [pdf] resolving provenance for metadata file
+#92 DONE 0.0s
+ Image vexel-operator Built 
+ Image vexel-pdf Built 
+ Image vexel-worker Built 
+ Image vexel-api Built 
+ Image vexel-admin Built 
+ Container vexel-minio-1 Running 
+ Container vexel-pdf-1 Recreate 
+ Container vexel-postgres-1 Running 
+ Container vexel-operator-1 Recreate 
+ Container vexel-redis-1 Running 
+ Container vexel-worker-1 Recreate 
+ Container vexel-api-1 Recreate 
+ Container vexel-worker-1 Recreated 
+ Container vexel-pdf-1 Recreated 
+ Container vexel-operator-1 Recreated 
+ Container vexel-api-1 Recreated 
+ Container vexel-admin-1 Recreate 
+ Container vexel-admin-1 Recreated 
+ Container vexel-pdf-1 Starting 
+ Container vexel-operator-1 Starting 
+ Container vexel-postgres-1 Waiting 
+ Container vexel-redis-1 Waiting 
+ Container vexel-redis-1 Waiting 
+ Container vexel-minio-1 Waiting 
+ Container vexel-postgres-1 Waiting 
+ Container vexel-operator-1 Started 
+ Container vexel-pdf-1 Started 
+ Container vexel-minio-1 Healthy 
+ Container vexel-postgres-1 Healthy 
+ Container vexel-postgres-1 Healthy 
+ Container vexel-redis-1 Healthy 
+ Container vexel-redis-1 Healthy 
+ Container vexel-worker-1 Starting 
+ Container vexel-api-1 Starting 
+ Container vexel-worker-1 Started 
+ Container vexel-api-1 Started 
+ Container vexel-api-1 Waiting 
+ Container vexel-api-1 Healthy 
+ Container vexel-admin-1 Starting 
+ Container vexel-admin-1 Started 

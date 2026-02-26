@@ -1,0 +1,13 @@
+HTTP/1.1 201 Created
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: 07c9f355-0cc1-40f4-a5cc-3709766644c2
+Content-Type: application/json; charset=utf-8
+Content-Length: 306
+ETag: W/"132-b8rHNBhL56KZ+qR4TYioUN2Ju78"
+Date: Thu, 26 Feb 2026 22:43:49 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":"d1c70451-e799-407b-9c1d-aff8f0eb2300","tenantId":"system","email":"rc.operator.a@vexel.local","firstName":"RC","lastName":"OperatorA","status":"active","isSuperAdmin":false,"maxDiscountPct":null,"createdAt":"2026-02-26T22:43:49.139Z","updatedAt":"2026-02-26T22:43:49.139Z","userRoles":[],"roles":[]}
