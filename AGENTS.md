@@ -6,6 +6,16 @@
 
 ### Current State: LIMS Operator UI LIVE. Active bug fixing + UX improvements session completed.
 
+### Addendum (2026-02-26) — CI + coverage audit
+- CI failures were fixed and revalidated locally: UI color lint PASS, API unit tests PASS (`9/9`), Playwright E2E PASS (`25/25`).
+- Seed/migration drift fixed by adding migration `apps/api/prisma/migrations/20260226063000_add_catalog_test_print_alone/migration.sql` (adds `catalog_tests.printAlone`).
+- Truth-map mismatches resolved: added OpenAPI path `POST /encounters/{encounterId}:receive-specimen`, added role delete support end-to-end (`DELETE /roles/{roleId}` in OpenAPI + API controller/service), regenerated SDK.
+- Smoke checks completed for API/Admin/LIMS/OPD endpoints (health + auth + key list endpoints all 200 in local validation).
+- Enhanced truth-map v2 shows `frontend_missing_in_contract = 0`; remaining backend-not-directly-mapped paths are mostly utility/admin routes (import/export/template/auth refresh/logout), documented as non-blocking coverage items.
+
+### Pending / follow-up
+- Remote GitHub Actions confirmation run (push + CI on GitHub) can be treated as final external verification; another agent is currently handling CI follow-up.
+
 **Live URL:** https://vexel.alshifalab.pk  
 **Repo:** `git@github.com:munaimtahir/vexel.git` (SSH auth)  
 **HEAD commit:** `2287b59` on `main`  
