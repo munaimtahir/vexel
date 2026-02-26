@@ -561,19 +561,178 @@ class ReceiptDocument : IDocument
         if (encounterCode != "\u2014" && !string.IsNullOrWhiteSpace(encounterCode))
             barcodeBytes = DocHelpers.GenerateBarcodePng(encounterCode);
 
-        container.Page(page =>
-        {
-            page.Size(PageSizes.A4);
-            page.Margin(1f, Unit.Centimetre);
-            page.DefaultTextStyle(x => x.FontSize(8).FontFamily(Fonts.Arial));
+        var isThermal = string.Equals(_branding.ReceiptLayout ?? "a4", "thermal", StringComparison.OrdinalIgnoreCase);
 
-            page.Content().Column(col =>
+        if (isThermal)
+        {
+            // 80mm thermal roll — 80mm wide, auto-height
+            container.Page(page =>
             {
-                col.Spacing(0);
-                col.Item().Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode));
-                col.Item().PaddingVertical(4).Element(ComposeCutLine);
-                col.Item().Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode));
+                page.Size(80, 200, Unit.Millimetre); // width=80mm, height generous (auto-extends)
+                page.Margin(3f, Unit.Millimetre);
+                page.DefaultTextStyle(x => x.FontSize(7).FontFamily(Fonts.Arial));
+                page.Content().Element(c => ComposeThermalReceipt(c, barcodeBytes, encounterCode));
             });
+        }
+        else
+        {
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(1f, Unit.Centimetre);
+                page.DefaultTextStyle(x => x.FontSize(8).FontFamily(Fonts.Arial));
+
+                page.Content().Column(col =>
+                {
+                    col.Spacing(0);
+                    col.Item().Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode));
+                    col.Item().PaddingVertical(4).Element(ComposeCutLine);
+                    col.Item().Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode));
+                });
+            });
+        }
+    }
+
+    void ComposeThermalReceipt(IContainer container, byte[]? barcodeBytes, string encounterCode)
+    {
+        var brandName    = _branding.BrandName ?? "Vexel Health";
+        var address      = _branding.ReportHeader ?? "";
+        var footerText   = _branding.ReportFooter
+                           ?? (_branding.BrandName is { } bn ? $"Thank you for choosing {bn}" : "Thank you for choosing us");
+        var headerLayout = _branding.ReceiptHeaderLayout ?? _branding.ReportHeaderLayout ?? "default";
+
+        container.Column(col =>
+        {
+            // ── Header ──────────────────────────────────────────
+            col.Item().PaddingBottom(3).Element(hdr =>
+            {
+                if (_logoBytes != null && headerLayout != "minimal")
+                {
+                    hdr.Column(hc =>
+                    {
+                        hc.Item().AlignCenter().Height(24).Image(_logoBytes).FitHeight();
+                        hc.Item().AlignCenter().Text(brandName).Bold().FontSize(9);
+                        if (!string.IsNullOrWhiteSpace(address))
+                            hc.Item().AlignCenter().Text(address).FontSize(6).FontColor(Colors.Grey.Darken1);
+                    });
+                }
+                else
+                {
+                    hdr.Column(hc =>
+                    {
+                        hc.Item().AlignCenter().Text(brandName).Bold().FontSize(9);
+                        if (!string.IsNullOrWhiteSpace(address))
+                            hc.Item().AlignCenter().Text(address).FontSize(6).FontColor(Colors.Grey.Darken1);
+                    });
+                }
+            });
+
+            col.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+            col.Item().PaddingVertical(2).AlignCenter().Text("PAYMENT RECEIPT").Bold().FontSize(8);
+            col.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+            col.Item().PaddingBottom(4);
+
+            // ── Patient Info ─────────────────────────────────────
+            var mrn     = Get("patientMrn");
+            var orderId = Get("encounterCode");
+            col.Item().PaddingBottom(1).Text(t =>
+            {
+                t.Span($"MRN/Lab ID: ").Bold().FontSize(7);
+                t.Span($"{mrn} / {orderId}").FontSize(7);
+            });
+            col.Item().PaddingBottom(1).Text(t =>
+            {
+                t.Span("Patient: ").Bold().FontSize(7);
+                t.Span(Get("patientName")).FontSize(7);
+            });
+            col.Item().PaddingBottom(1).Text(t =>
+            {
+                t.Span("Age/Gender: ").Bold().FontSize(7);
+                t.Span($"{Get("patientAge")} / {Get("patientGender")}").FontSize(7);
+            });
+            col.Item().PaddingBottom(4).Text(t =>
+            {
+                t.Span("Date: ").Bold().FontSize(7);
+                t.Span(DocHelpers.FormatDate(Get("issuedAt"))).FontSize(7);
+            });
+
+            // ── Items ────────────────────────────────────────────
+            col.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+            col.Item().PaddingBottom(2).Row(r =>
+            {
+                r.RelativeItem().Text("Test").Bold().FontSize(7);
+                r.ConstantItem(36).AlignRight().Text("Price").Bold().FontSize(7);
+            });
+            col.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+
+            if (_payload.TryGetProperty("items", out var itemsEl) && itemsEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in itemsEl.EnumerateArray())
+                {
+                    var desc  = GetFrom(item, "description", GetFrom(item, "testName", GetFrom(item, "name", "\u2014")));
+                    var price = GetFrom(item, "unitPrice", GetFrom(item, "price", "0"));
+                    col.Item().PaddingVertical(1).Row(r =>
+                    {
+                        r.RelativeItem().Text(desc).FontSize(7);
+                        r.ConstantItem(36).AlignRight().Text(DocHelpers.Pkr(price)).FontSize(7);
+                    });
+                }
+            }
+
+            col.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+            col.Item().PaddingBottom(2);
+
+            // ── Totals ────────────────────────────────────────────
+            var subtotal   = Get("subtotalAmount",  Get("subtotal",    "0"));
+            var discount   = Get("discountAmount",  Get("discount",    "0"));
+            var grandTotal = Get("grandTotal",      Get("totalAmount", Get("payableAmount", "0")));
+            var paid       = Get("paidAmount",      Get("amountPaid",  "0"));
+            var due        = Get("balanceAmount",   Get("dueAmount",   Get("balanceDue",    "0")));
+
+            col.Item().PaddingBottom(1).Row(r =>
+            {
+                r.RelativeItem().Text("Subtotal:").FontSize(7);
+                r.ConstantItem(36).AlignRight().Text(DocHelpers.Pkr(subtotal)).FontSize(7);
+            });
+            if (decimal.TryParse(discount, out var discValT) && discValT > 0)
+            {
+                col.Item().PaddingBottom(1).Row(r =>
+                {
+                    r.RelativeItem().Text("Discount:").FontSize(7).FontColor(Colors.Green.Darken2);
+                    r.ConstantItem(36).AlignRight().Text(DocHelpers.Pkr(discount)).FontSize(7).FontColor(Colors.Green.Darken2);
+                });
+            }
+            col.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+            col.Item().PaddingVertical(1).Row(r =>
+            {
+                r.RelativeItem().Text("Payable:").Bold().FontSize(7);
+                r.ConstantItem(36).AlignRight().Text(DocHelpers.Pkr(grandTotal)).Bold().FontSize(7);
+            });
+            col.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+            col.Item().PaddingBottom(1).Row(r =>
+            {
+                r.RelativeItem().Text("Paid:").FontSize(7);
+                r.ConstantItem(36).AlignRight().Text(DocHelpers.Pkr(paid)).FontSize(7);
+            });
+            col.Item().PaddingBottom(3).Row(r =>
+            {
+                r.RelativeItem().Text("Due:").FontSize(7);
+                r.ConstantItem(36).AlignRight().Text(DocHelpers.Pkr(due)).FontSize(7);
+            });
+
+            // ── Barcode ───────────────────────────────────────────
+            if (barcodeBytes != null)
+            {
+                col.Item().PaddingTop(2).Column(bc =>
+                {
+                    bc.Item().AlignCenter().Height(22).Image(barcodeBytes).FitHeight();
+                    bc.Item().AlignCenter().Text(encounterCode).FontSize(6).FontColor(Colors.Grey.Darken1);
+                });
+            }
+
+            // ── Footer ────────────────────────────────────────────
+            col.Item().PaddingTop(4).AlignCenter().Text(footerText)
+               .FontSize(6).Italic().FontColor(Colors.Grey.Darken1);
         });
     }
 
