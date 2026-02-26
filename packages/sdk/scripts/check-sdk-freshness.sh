@@ -6,9 +6,20 @@ set -euo pipefail
 
 OPENAPI="packages/contracts/openapi.yaml"
 SDK_TYPES="packages/sdk/src/generated/api.d.ts"
+BASE_REF="${GITHUB_BASE_REF:-main}"
+DIFF_RANGE="origin/${BASE_REF}...HEAD"
 
-# Check if openapi.yaml changed in this PR/commit
-if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -q "$OPENAPI"; then
+# Ensure base branch exists locally for PR range diff
+if ! git rev-parse --verify "origin/${BASE_REF}" >/dev/null 2>&1; then
+  git fetch --no-tags --prune origin "${BASE_REF}:${BASE_REF}" || git fetch --no-tags --prune origin "${BASE_REF}"
+fi
+
+if ! git rev-parse --verify "origin/${BASE_REF}" >/dev/null 2>&1; then
+  DIFF_RANGE="HEAD~1...HEAD"
+fi
+
+# Check if openapi.yaml changed in this PR range
+if git diff --name-only "${DIFF_RANGE}" 2>/dev/null | grep -q "^${OPENAPI}$"; then
   echo "⚠️  openapi.yaml changed — verifying SDK is regenerated..."
 
   # Regenerate
