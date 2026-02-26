@@ -136,7 +136,7 @@ export default function NewRegistrationPage() {
       address: p.address ?? '',
     });
     setPickerPatients([]);
-    setTimeout(() => fullNameRef.current?.focus(), 50);
+    setTimeout(() => testSearchRef.current?.focus(), 50);
   };
 
   const closePickerNew = () => {
@@ -169,8 +169,10 @@ export default function NewRegistrationPage() {
     finally { setSearching(false); }
   }, []);
 
+  // Focus mobile field on mount
+  useEffect(() => { mob1Ref.current?.focus(); }, []);
+
   useEffect(() => {
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
     searchTimerRef.current = setTimeout(() => doTestSearch(testSearch), 300);
     return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current); };
   }, [testSearch, doTestSearch]);
