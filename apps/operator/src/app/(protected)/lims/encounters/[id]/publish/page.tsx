@@ -18,13 +18,14 @@ export default function PublishPage() {
 
   const [document, setDocument] = useState<any>(null);
   const [downloadError, setDownloadError] = useState('');
+  const [publishError, setPublishError] = useState('');
+  const [publishing, setPublishing] = useState(false);
 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchDocument = async () => {
     try {
       const api = getApiClient(getToken() ?? undefined);
-      // @ts-ignore
       const { data } = await api.GET('/documents', { params: { query: { sourceRef: id, sourceType: 'ENCOUNTER', limit: 1 } } });
       if (data && Array.isArray(data) && data.length > 0) {
         setDocument(data[0]);
@@ -38,7 +39,7 @@ export default function PublishPage() {
     if (pollRef.current) clearInterval(pollRef.current);
     pollRef.current = setInterval(async () => {
       const doc = await fetchDocument();
-      if (doc && (doc.status === 'PUBLISHED' || doc.status === 'FAILED')) {
+      if (doc && (doc.status === 'RENDERED' || doc.status === 'PUBLISHED' || doc.status === 'FAILED')) {
         clearInterval(pollRef.current!);
         pollRef.current = null;
       }
@@ -70,13 +71,12 @@ export default function PublishPage() {
     setDownloadError('');
     try {
       const client = getApiClient(getToken() ?? undefined);
-      // @ts-ignore – /documents/{id}/download not yet in SDK types
       const { data: blob, error: dlError } = await client.GET('/documents/{id}/download', {
         params: { path: { id: document.id } },
         parseAs: 'blob',
       });
       if (dlError || !blob) { setDownloadError('Download failed'); return; }
-      const url = URL.createObjectURL(blob as Blob);
+      const url = URL.createObjectURL(blob);
       const a = window.document.createElement('a');
       a.href = url;
       a.download = `report-${document.id}.pdf`;
@@ -87,11 +87,33 @@ export default function PublishPage() {
     }
   };
 
+  const handlePublish = async () => {
+    setPublishError('');
+    setPublishing(true);
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const { data, error: apiError } = await api.POST('/encounters/{encounterId}:publish-report', {
+        params: { path: { encounterId: id } },
+      });
+      if (apiError || !data) {
+        setPublishError('Publish failed');
+        return;
+      }
+      setEncounter((data as any).encounter ?? encounter);
+      setDocument((data as any).document ?? document);
+    } catch {
+      setPublishError('Publish failed');
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   if (loadingEncounter) return <p className="text-muted-foreground">Loading encounter...</p>;
   if (encounterError) return <p className="text-destructive">{encounterError}</p>;
   if (!encounter) return null;
 
   const docStatus: string | undefined = document?.status;
+  const canPublish = encounter.status === 'verified' && docStatus === 'RENDERED';
 
   return (
     <div>
@@ -111,7 +133,7 @@ export default function PublishPage() {
       <div className="bg-card rounded-lg border border-border p-8">
         <h3 className="mb-2 text-lg font-bold text-foreground">Lab Report</h3>
         <p className="mb-6 text-muted-foreground text-sm">
-          Report is automatically generated and published when the encounter is verified.
+          Verify generates the report; publish is a separate command step.
         </p>
 
         {/* Document status */}
@@ -133,8 +155,18 @@ export default function PublishPage() {
             {downloadError}
           </p>
         )}
+        {publishError && (
+          <p className="text-destructive mb-4 bg-[hsl(var(--status-destructive-bg))] px-4 py-2.5 rounded-md text-sm">
+            {publishError}
+          </p>
+        )}
 
         <div className="flex flex-wrap gap-3">
+          {canPublish && (
+            <Button onClick={handlePublish} disabled={publishing} className="bg-primary hover:bg-primary/90">
+              {publishing ? 'Publishing…' : 'Publish report'}
+            </Button>
+          )}
           {docStatus === 'PUBLISHED' && (
             <>
               <Button onClick={handleDownload} className="bg-primary hover:bg-primary/90">

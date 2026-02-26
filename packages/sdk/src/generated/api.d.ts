@@ -1268,6 +1268,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/encounters/{encounterId}:publish-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish rendered lab report and mark encounter as published (idempotent) */
+        post: operations["publishEncounterReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/encounters/{encounterId}:cancel": {
         parameters: {
             query?: never;
@@ -1377,8 +1394,25 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Download PDF bytes or redirect to signed URL */
+        /** Download PDF bytes */
         get: operations["downloadDocument"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/documents/{id}/render": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Render PDF bytes with optional receipt format override */
+        get: operations["renderDocument"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1597,7 +1631,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Submit + verify + trigger publish in one command (requires result.verify permission) */
+        /** Submit + verify + trigger report generation in one command (requires result.verify permission) */
         post: operations["submitAndVerifyTest"];
         delete?: never;
         options?: never;
@@ -1648,7 +1682,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Verify all submitted tests for an encounter and trigger publish */
+        /** Verify all submitted tests for an encounter and trigger report generation */
         post: operations["verifyEncounter"];
         delete?: never;
         options?: never;
@@ -5839,6 +5873,40 @@ export interface operations {
             };
         };
     };
+    publishEncounterReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Report published and encounter moved to published */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        encounter?: components["schemas"]["Encounter"];
+                        document?: components["schemas"]["Document"];
+                    };
+                };
+            };
+            /** @description Encounter not verified or report not rendered */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     cancelEncounter: {
         parameters: {
             query?: never;
@@ -6068,18 +6136,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description PDF download or placeholder response */
+            /** @description PDF bytes */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/pdf": string;
-                    "application/json": {
-                        documentId?: string;
-                        pdfHash?: string | null;
-                        message?: string;
-                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    renderDocument: {
+        parameters: {
+            query?: {
+                format?: "a4" | "thermal";
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rendered PDF bytes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
                 };
             };
             401: components["responses"]["Unauthorized"];
@@ -6633,7 +6723,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Encounter verified; document pipeline enqueued */
+            /** @description Encounter verified; report generation enqueued */
             200: {
                 headers: {
                     [name: string]: unknown;

@@ -70,7 +70,7 @@ export default function VerificationEncounterPage() {
   const [verifying, setVerifying] = useState(false);
   const [verifyError, setVerifyError] = useState('');
   const [verified, setVerified] = useState(false);
-  const [publishedDocUrl, setPublishedDocUrl] = useState<string | null>(null);
+  const [renderedDocId, setRenderedDocId] = useState<string | null>(null);
   const [pollingMsg, setPollingMsg] = useState('');
 
   // Queue navigation
@@ -133,27 +133,28 @@ export default function VerificationEncounterPage() {
   };
 
   const pollForDocument = async () => {
-    setPollingMsg('Waiting for report to publish…');
+    setPollingMsg('Waiting for report to finish rendering…');
     const start = Date.now();
     const api = getApiClient(getToken() ?? undefined);
     return new Promise<string | null>((resolve) => {
       const interval = setInterval(async () => {
         if (Date.now() - start > 30000) {
           clearInterval(interval);
-          setPollingMsg('Report publishing took longer than expected. Check documents later.');
+          setPollingMsg('Report rendering took longer than expected. Check documents later.');
           resolve(null);
           return;
         }
         try {
           const { data } = await api.GET('/documents', {
-            params: { query: { encounterId, status: 'PUBLISHED', docType: 'LAB_REPORT', limit: 1 } },
+            params: { query: { encounterId, docType: 'LAB_REPORT', limit: 1 } },
           });
           const docs: any[] = Array.isArray(data) ? data : [];
           if (docs.length > 0) {
-            // Fetch presigned download URL
-            const { data: dl } = await api.GET('/documents/{id}/download' as any, { params: { path: { id: docs[0].id } } });
-            const url = (dl as any)?.url;
-            if (url) { clearInterval(interval); resolve(url); }
+            const doc = docs[0];
+            if (doc.status === 'RENDERED' || doc.status === 'PUBLISHED') {
+              clearInterval(interval);
+              resolve(doc.id);
+            }
           }
         } catch { /* continue polling */ }
       }, 2000);
@@ -194,9 +195,9 @@ export default function VerificationEncounterPage() {
       const nextId = freshQueue.length > 0 ? freshQueue[0].encounterId : null;
       setNextEncounterId(nextId);
 
-      // Poll for published document
-      const docUrl = await pollForDocument();
-      setPublishedDocUrl(docUrl);
+      // Poll for rendered document
+      const docId = await pollForDocument();
+      setRenderedDocId(docId);
       setPollingMsg('');
 
       startCountdown(nextId);
@@ -281,16 +282,16 @@ export default function VerificationEncounterPage() {
       {verified && (
         <div className="mx-6 mt-4 p-4 chip-success rounded-lg">
           <div className="text-base font-semibold text-[hsl(var(--status-success-fg))] mb-1.5">
-            ✅ All tests verified. Publishing report…
+            ✅ All tests verified. Report rendering started…
           </div>
           {pollingMsg && (
             <div className="text-sm text-[hsl(var(--status-success-fg))]">{pollingMsg}</div>
           )}
-          {publishedDocUrl && (
+          {renderedDocId && (
             <div className="mt-2 flex gap-3 items-center">
-              <span className="text-sm font-medium text-[hsl(var(--status-success-fg))]">📄 Report published</span>
+              <span className="text-sm font-medium text-[hsl(var(--status-success-fg))]">📄 Report rendered</span>
               <Button size="sm" className="bg-primary hover:bg-primary/90 text-white" asChild>
-                <a href={publishedDocUrl} target="_blank" rel="noopener noreferrer">Open PDF</a>
+                <a href={`/lims/encounters/${encounterId}/publish`}>Publish report</a>
               </Button>
             </div>
           )}

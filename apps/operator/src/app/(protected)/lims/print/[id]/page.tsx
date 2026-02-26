@@ -19,19 +19,21 @@ export default function PrintPage() {
   const [downloading, setDownloading] = useState(false);
   const [docName, setDocName]     = useState('document');
 
-  const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
-
   async function loadPdf(docId: string, fmt?: Format) {
     setLoading(true);
     setError('');
     if (pdfUrl) { URL.revokeObjectURL(pdfUrl); setPdfUrl(null); }
     try {
-      const token = getToken() ?? '';
-      const url = `${NEXT_PUBLIC_API_URL}/api/documents/${docId}/render${fmt ? `?format=${fmt}` : ''}`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
-      const blob = await res.blob();
-      const objUrl = URL.createObjectURL(blob);
+      const api = getApiClient(getToken() ?? undefined);
+      const { data, error: apiError } = await api.GET('/documents/{id}/render', {
+        params: {
+          path: { id: docId },
+          query: fmt ? { format: fmt } : {},
+        },
+        parseAs: 'blob',
+      });
+      if (apiError || !data) throw new Error('Failed to render PDF');
+      const objUrl = URL.createObjectURL(data);
       setPdfUrl(objUrl);
     } catch (e: any) {
       setError(e.message ?? 'Failed to load PDF');
