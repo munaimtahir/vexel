@@ -1,0 +1,376 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e21]:
+    - complementary [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - img [ref=e27]
+            - generic [ref=e29]:
+              - generic [ref=e30]: Vexel
+              - generic [ref=e31]: Health Platform
+          - button "Collapse sidebar (Ctrl+B)" [ref=e32] [cursor=pointer]:
+            - img [ref=e33]
+        - generic [ref=e35]:
+          - link "LIMS" [ref=e36] [cursor=pointer]:
+            - /url: /lims/worklist
+            - generic [ref=e38]: LIMS
+          - link "OPD" [ref=e39] [cursor=pointer]:
+            - /url: /opd/worklist
+            - generic [ref=e41]: OPD
+          - generic [ref=e42]: Radiology
+      - navigation [ref=e44]:
+        - generic [ref=e45]: LIMS Workspace
+        - link "Worklist" [ref=e46] [cursor=pointer]:
+          - /url: /lims/worklist
+          - img [ref=e48]
+          - generic [ref=e53]: Worklist
+        - link "New Registration" [ref=e55] [cursor=pointer]:
+          - /url: /lims/registrations/new
+          - img [ref=e56]
+          - generic [ref=e59]: New Registration
+        - link "Sample Collection" [ref=e60] [cursor=pointer]:
+          - /url: /lims/sample-collection
+          - img [ref=e61]
+          - generic [ref=e63]: Sample Collection
+        - link "Result Entry" [ref=e64] [cursor=pointer]:
+          - /url: /lims/results
+          - img [ref=e65]
+          - generic [ref=e66]: Result Entry
+        - link "Verification" [ref=e67] [cursor=pointer]:
+          - /url: /lims/verification
+          - img [ref=e68]
+          - generic [ref=e71]: Verification
+        - link "Published Reports" [ref=e72] [cursor=pointer]:
+          - /url: /lims/reports
+          - img [ref=e73]
+          - generic [ref=e76]: Published Reports
+        - link "Payments" [ref=e77] [cursor=pointer]:
+          - /url: /lims/payments
+          - img [ref=e78]
+          - generic [ref=e80]: Payments
+      - generic [ref=e82]:
+        - generic [ref=e83]:
+          - generic [ref=e84]: A
+          - generic [ref=e85]:
+            - generic [ref=e86]: admin
+            - generic [ref=e87]: LIMS Operator
+        - button "Sign Out" [ref=e88] [cursor=pointer]:
+          - img [ref=e89]
+    - generic [ref=e92]:
+      - banner [ref=e93]:
+        - generic [ref=e95]:
+          - heading "Worklist" [level=1] [ref=e96]
+          - paragraph [ref=e97]: Thu, Feb 26
+        - generic [ref=e98]:
+          - button "Notifications" [ref=e99] [cursor=pointer]:
+            - img [ref=e100]
+          - button "Toggle theme" [ref=e103] [cursor=pointer]:
+            - img [ref=e104]
+            - generic [ref=e110]: Toggle theme
+          - generic [ref=e111]:
+            - generic [ref=e112]: A
+            - generic [ref=e113]: admin
+      - main [ref=e114]:
+        - generic [ref=e116]:
+          - generic [ref=e117]:
+            - heading "Worklist" [level=1] [ref=e121]
+            - link "+ New Registration" [ref=e123] [cursor=pointer]:
+              - /url: /lims/registrations/new
+          - combobox [ref=e125] [cursor=pointer]:
+            - generic: All Statuses
+            - img [ref=e126]
+          - table [ref=e129]:
+            - rowgroup [ref=e130]:
+              - row "Date/Time Patient Encounter ID Status Next Action" [ref=e131]:
+                - columnheader "Date/Time" [ref=e132]
+                - columnheader "Patient" [ref=e133]
+                - columnheader "Encounter ID" [ref=e134]
+                - columnheader "Status" [ref=e135]
+                - columnheader "Next Action" [ref=e136]
+            - rowgroup [ref=e137]:
+              - 'row "2/26/2026, 9:22:14 AM munaim munaim MRN: PT-26-0214 VXL-2602-157 Resulted Verify" [ref=e138]':
+                - cell "2/26/2026, 9:22:14 AM" [ref=e139]
+                - 'cell "munaim munaim MRN: PT-26-0214" [ref=e140]':
+                  - generic [ref=e141]:
+                    - generic [ref=e142]: munaim munaim
+                    - generic [ref=e143]: "MRN: PT-26-0214"
+                - cell "VXL-2602-157" [ref=e144]:
+                  - link "VXL-2602-157" [ref=e145] [cursor=pointer]:
+                    - /url: /lims/encounters/f66a525f-225a-4dd8-a363-1c1f74834ec5
+                - cell "Resulted" [ref=e146]:
+                  - generic [ref=e148]: Resulted
+                - cell "Verify" [ref=e149]:
+                  - link "Verify" [ref=e150] [cursor=pointer]:
+                    - /url: /lims/encounters/f66a525f-225a-4dd8-a363-1c1f74834ec5/verify
+              - 'row "2/26/2026, 9:22:13 AM munaim munaim MRN: PT-26-0214 VXL-2602-156 Ordered Collect Sample" [ref=e151]':
+                - cell "2/26/2026, 9:22:13 AM" [ref=e152]
+                - 'cell "munaim munaim MRN: PT-26-0214" [ref=e153]':
+                  - generic [ref=e154]:
+                    - generic [ref=e155]: munaim munaim
+                    - generic [ref=e156]: "MRN: PT-26-0214"
+                - cell "VXL-2602-156" [ref=e157]:
+                  - link "VXL-2602-156" [ref=e158] [cursor=pointer]:
+                    - /url: /lims/encounters/57bd1b1d-d154-42d9-97d6-692ba16fc4a8
+                - cell "Ordered" [ref=e159]:
+                  - generic [ref=e161]: Ordered
+                - cell "Collect Sample" [ref=e162]:
+                  - link "Collect Sample" [ref=e163] [cursor=pointer]:
+                    - /url: /lims/encounters/57bd1b1d-d154-42d9-97d6-692ba16fc4a8/sample
+              - 'row "2/26/2026, 4:11:43 AM Doc Patient MRN: DOC-MM2NFE8X VXL-2602-155 Collected Enter Results" [ref=e164]':
+                - cell "2/26/2026, 4:11:43 AM" [ref=e165]
+                - 'cell "Doc Patient MRN: DOC-MM2NFE8X" [ref=e166]':
+                  - generic [ref=e167]:
+                    - generic [ref=e168]: Doc Patient
+                    - generic [ref=e169]: "MRN: DOC-MM2NFE8X"
+                - cell "VXL-2602-155" [ref=e170]:
+                  - link "VXL-2602-155" [ref=e171] [cursor=pointer]:
+                    - /url: /lims/encounters/d2c89eb7-57ef-4b24-9389-4a02911e5221
+                - cell "Collected" [ref=e172]:
+                  - generic [ref=e174]: Collected
+                - cell "Enter Results" [ref=e175]:
+                  - link "Enter Results" [ref=e176] [cursor=pointer]:
+                    - /url: /lims/encounters/d2c89eb7-57ef-4b24-9389-4a02911e5221/results
+              - 'row "2/26/2026, 4:11:42 AM Doc Patient MRN: DOC-MM2NFDJ0 VXL-2602-154 Verified View Reports" [ref=e177]':
+                - cell "2/26/2026, 4:11:42 AM" [ref=e178]
+                - 'cell "Doc Patient MRN: DOC-MM2NFDJ0" [ref=e179]':
+                  - generic [ref=e180]:
+                    - generic [ref=e181]: Doc Patient
+                    - generic [ref=e182]: "MRN: DOC-MM2NFDJ0"
+                - cell "VXL-2602-154" [ref=e183]:
+                  - link "VXL-2602-154" [ref=e184] [cursor=pointer]:
+                    - /url: /lims/encounters/7f077ea6-8ba5-4897-b9f3-6d910b5ab47e
+                - cell "Verified" [ref=e185]:
+                  - generic [ref=e187]: Verified
+                - cell "View Reports" [ref=e188]:
+                  - link "View Reports" [ref=e189] [cursor=pointer]:
+                    - /url: /lims/encounters/7f077ea6-8ba5-4897-b9f3-6d910b5ab47e/reports
+              - 'row "2/26/2026, 4:11:41 AM Leak Test MRN: LK-MM2NFCV7 ac1848cd Registered Place Order" [ref=e190]':
+                - cell "2/26/2026, 4:11:41 AM" [ref=e191]
+                - 'cell "Leak Test MRN: LK-MM2NFCV7" [ref=e192]':
+                  - generic [ref=e193]:
+                    - generic [ref=e194]: Leak Test
+                    - generic [ref=e195]: "MRN: LK-MM2NFCV7"
+                - cell "ac1848cd" [ref=e196]:
+                  - link "ac1848cd" [ref=e197] [cursor=pointer]:
+                    - /url: /lims/encounters/ac1848cd-324d-45f0-9399-d1d8544c041d
+                - cell "Registered" [ref=e198]:
+                  - generic [ref=e200]: Registered
+                - cell "Place Order" [ref=e201]:
+                  - link "Place Order" [ref=e202] [cursor=pointer]:
+                    - /url: /lims/encounters/ac1848cd-324d-45f0-9399-d1d8544c041d/order
+              - 'row "2/26/2026, 4:11:40 AM Isolation Patient MRN: ISO-MM2NFC92 f47682aa Registered Place Order" [ref=e203]':
+                - cell "2/26/2026, 4:11:40 AM" [ref=e204]
+                - 'cell "Isolation Patient MRN: ISO-MM2NFC92" [ref=e205]':
+                  - generic [ref=e206]:
+                    - generic [ref=e207]: Isolation Patient
+                    - generic [ref=e208]: "MRN: ISO-MM2NFC92"
+                - cell "f47682aa" [ref=e209]:
+                  - link "f47682aa" [ref=e210] [cursor=pointer]:
+                    - /url: /lims/encounters/f47682aa-cb3b-4c4f-b208-4a7694eb36cf
+                - cell "Registered" [ref=e211]:
+                  - generic [ref=e213]: Registered
+                - cell "Place Order" [ref=e214]:
+                  - link "Place Order" [ref=e215] [cursor=pointer]:
+                    - /url: /lims/encounters/f47682aa-cb3b-4c4f-b208-4a7694eb36cf/order
+              - 'row "2/26/2026, 4:11:40 AM Doc Patient MRN: DOC-MM2NFC4J VXL-2602-153 Verified View Reports" [ref=e216]':
+                - cell "2/26/2026, 4:11:40 AM" [ref=e217]
+                - 'cell "Doc Patient MRN: DOC-MM2NFC4J" [ref=e218]':
+                  - generic [ref=e219]:
+                    - generic [ref=e220]: Doc Patient
+                    - generic [ref=e221]: "MRN: DOC-MM2NFC4J"
+                - cell "VXL-2602-153" [ref=e222]:
+                  - link "VXL-2602-153" [ref=e223] [cursor=pointer]:
+                    - /url: /lims/encounters/453902ce-a81d-4bb5-94be-50be21d97885
+                - cell "Verified" [ref=e224]:
+                  - generic [ref=e226]: Verified
+                - cell "View Reports" [ref=e227]:
+                  - link "View Reports" [ref=e228] [cursor=pointer]:
+                    - /url: /lims/encounters/453902ce-a81d-4bb5-94be-50be21d97885/reports
+              - 'row "2/26/2026, 4:11:39 AM Workflow Patient MRN: WF-MM2NFBCW VXL-2602-152 Verified View Reports" [ref=e229]':
+                - cell "2/26/2026, 4:11:39 AM" [ref=e230]
+                - 'cell "Workflow Patient MRN: WF-MM2NFBCW" [ref=e231]':
+                  - generic [ref=e232]:
+                    - generic [ref=e233]: Workflow Patient
+                    - generic [ref=e234]: "MRN: WF-MM2NFBCW"
+                - cell "VXL-2602-152" [ref=e235]:
+                  - link "VXL-2602-152" [ref=e236] [cursor=pointer]:
+                    - /url: /lims/encounters/c8c44076-0817-41e6-a108-2fdc27173c50
+                - cell "Verified" [ref=e237]:
+                  - generic [ref=e239]: Verified
+                - cell "View Reports" [ref=e240]:
+                  - link "View Reports" [ref=e241] [cursor=pointer]:
+                    - /url: /lims/encounters/c8c44076-0817-41e6-a108-2fdc27173c50/reports
+              - 'row "2/26/2026, 4:11:37 AM Detail Patient MRN: DET-MM2NF9LN db2452cf Registered Place Order" [ref=e242]':
+                - cell "2/26/2026, 4:11:37 AM" [ref=e243]
+                - 'cell "Detail Patient MRN: DET-MM2NF9LN" [ref=e244]':
+                  - generic [ref=e245]:
+                    - generic [ref=e246]: Detail Patient
+                    - generic [ref=e247]: "MRN: DET-MM2NF9LN"
+                - cell "db2452cf" [ref=e248]:
+                  - link "db2452cf" [ref=e249] [cursor=pointer]:
+                    - /url: /lims/encounters/db2452cf-661d-4a91-af51-adfd7b1cdfd4
+                - cell "Registered" [ref=e250]:
+                  - generic [ref=e252]: Registered
+                - cell "Place Order" [ref=e253]:
+                  - link "Place Order" [ref=e254] [cursor=pointer]:
+                    - /url: /lims/encounters/db2452cf-661d-4a91-af51-adfd7b1cdfd4/order
+              - 'row "2/26/2026, 4:11:37 AM Workflow Patient MRN: WF-MM2NF9DY VXL-2602-151 Verified View Reports" [ref=e255]':
+                - cell "2/26/2026, 4:11:37 AM" [ref=e256]
+                - 'cell "Workflow Patient MRN: WF-MM2NF9DY" [ref=e257]':
+                  - generic [ref=e258]:
+                    - generic [ref=e259]: Workflow Patient
+                    - generic [ref=e260]: "MRN: WF-MM2NF9DY"
+                - cell "VXL-2602-151" [ref=e261]:
+                  - link "VXL-2602-151" [ref=e262] [cursor=pointer]:
+                    - /url: /lims/encounters/5f31071e-b8f3-43b6-ac19-4a7962946e7e
+                - cell "Verified" [ref=e263]:
+                  - generic [ref=e265]: Verified
+                - cell "View Reports" [ref=e266]:
+                  - link "View Reports" [ref=e267] [cursor=pointer]:
+                    - /url: /lims/encounters/5f31071e-b8f3-43b6-ac19-4a7962946e7e/reports
+              - 'row "2/26/2026, 4:11:35 AM Enc Patient MRN: ENC-MM2NF7YC aa7200f2 Registered Place Order" [ref=e268]':
+                - cell "2/26/2026, 4:11:35 AM" [ref=e269]
+                - 'cell "Enc Patient MRN: ENC-MM2NF7YC" [ref=e270]':
+                  - generic [ref=e271]:
+                    - generic [ref=e272]: Enc Patient
+                    - generic [ref=e273]: "MRN: ENC-MM2NF7YC"
+                - cell "aa7200f2" [ref=e274]:
+                  - link "aa7200f2" [ref=e275] [cursor=pointer]:
+                    - /url: /lims/encounters/aa7200f2-146e-4a9a-9ef1-8228ee62b106
+                - cell "Registered" [ref=e276]:
+                  - generic [ref=e278]: Registered
+                - cell "Place Order" [ref=e279]:
+                  - link "Place Order" [ref=e280] [cursor=pointer]:
+                    - /url: /lims/encounters/aa7200f2-146e-4a9a-9ef1-8228ee62b106/order
+              - 'row "2/26/2026, 4:11:34 AM Workflow Patient MRN: WF-MM2NF7RU VXL-2602-150 Resulted Verify" [ref=e281]':
+                - cell "2/26/2026, 4:11:34 AM" [ref=e282]
+                - 'cell "Workflow Patient MRN: WF-MM2NF7RU" [ref=e283]':
+                  - generic [ref=e284]:
+                    - generic [ref=e285]: Workflow Patient
+                    - generic [ref=e286]: "MRN: WF-MM2NF7RU"
+                - cell "VXL-2602-150" [ref=e287]:
+                  - link "VXL-2602-150" [ref=e288] [cursor=pointer]:
+                    - /url: /lims/encounters/27957e64-1806-48a2-8cb6-a395e47b8db9
+                - cell "Resulted" [ref=e289]:
+                  - generic [ref=e291]: Resulted
+                - cell "Verify" [ref=e292]:
+                  - link "Verify" [ref=e293] [cursor=pointer]:
+                    - /url: /lims/encounters/27957e64-1806-48a2-8cb6-a395e47b8db9/verify
+              - 'row "2/26/2026, 3:59:46 AM Doc Patient MRN: DOC-MM2N012B VXL-2602-149 Verified View Reports" [ref=e294]':
+                - cell "2/26/2026, 3:59:46 AM" [ref=e295]
+                - 'cell "Doc Patient MRN: DOC-MM2N012B" [ref=e296]':
+                  - generic [ref=e297]:
+                    - generic [ref=e298]: Doc Patient
+                    - generic [ref=e299]: "MRN: DOC-MM2N012B"
+                - cell "VXL-2602-149" [ref=e300]:
+                  - link "VXL-2602-149" [ref=e301] [cursor=pointer]:
+                    - /url: /lims/encounters/e1617803-e641-4d7e-8e58-65e914fdaab1
+                - cell "Verified" [ref=e302]:
+                  - generic [ref=e304]: Verified
+                - cell "View Reports" [ref=e305]:
+                  - link "View Reports" [ref=e306] [cursor=pointer]:
+                    - /url: /lims/encounters/e1617803-e641-4d7e-8e58-65e914fdaab1/reports
+              - 'row "2/26/2026, 3:59:45 AM Doc Patient MRN: DOC-MM2N00D6 VXL-2602-148 Verified View Reports" [ref=e307]':
+                - cell "2/26/2026, 3:59:45 AM" [ref=e308]
+                - 'cell "Doc Patient MRN: DOC-MM2N00D6" [ref=e309]':
+                  - generic [ref=e310]:
+                    - generic [ref=e311]: Doc Patient
+                    - generic [ref=e312]: "MRN: DOC-MM2N00D6"
+                - cell "VXL-2602-148" [ref=e313]:
+                  - link "VXL-2602-148" [ref=e314] [cursor=pointer]:
+                    - /url: /lims/encounters/2bbdb60f-9d77-4b83-894c-260cbbf393f0
+                - cell "Verified" [ref=e315]:
+                  - generic [ref=e317]: Verified
+                - cell "View Reports" [ref=e318]:
+                  - link "View Reports" [ref=e319] [cursor=pointer]:
+                    - /url: /lims/encounters/2bbdb60f-9d77-4b83-894c-260cbbf393f0/reports
+              - 'row "2/26/2026, 3:59:44 AM Leak Test MRN: LK-MM2MZZSQ 220e8b0e Registered Place Order" [ref=e320]':
+                - cell "2/26/2026, 3:59:44 AM" [ref=e321]
+                - 'cell "Leak Test MRN: LK-MM2MZZSQ" [ref=e322]':
+                  - generic [ref=e323]:
+                    - generic [ref=e324]: Leak Test
+                    - generic [ref=e325]: "MRN: LK-MM2MZZSQ"
+                - cell "220e8b0e" [ref=e326]:
+                  - link "220e8b0e" [ref=e327] [cursor=pointer]:
+                    - /url: /lims/encounters/220e8b0e-0f84-42fd-a395-557dcf9ca9f6
+                - cell "Registered" [ref=e328]:
+                  - generic [ref=e330]: Registered
+                - cell "Place Order" [ref=e331]:
+                  - link "Place Order" [ref=e332] [cursor=pointer]:
+                    - /url: /lims/encounters/220e8b0e-0f84-42fd-a395-557dcf9ca9f6/order
+              - 'row "2/26/2026, 3:59:43 AM Isolation Patient MRN: ISO-MM2MZZ5Z 3383d3ef Registered Place Order" [ref=e333]':
+                - cell "2/26/2026, 3:59:43 AM" [ref=e334]
+                - 'cell "Isolation Patient MRN: ISO-MM2MZZ5Z" [ref=e335]':
+                  - generic [ref=e336]:
+                    - generic [ref=e337]: Isolation Patient
+                    - generic [ref=e338]: "MRN: ISO-MM2MZZ5Z"
+                - cell "3383d3ef" [ref=e339]:
+                  - link "3383d3ef" [ref=e340] [cursor=pointer]:
+                    - /url: /lims/encounters/3383d3ef-558f-4306-955f-402b2bc595c8
+                - cell "Registered" [ref=e341]:
+                  - generic [ref=e343]: Registered
+                - cell "Place Order" [ref=e344]:
+                  - link "Place Order" [ref=e345] [cursor=pointer]:
+                    - /url: /lims/encounters/3383d3ef-558f-4306-955f-402b2bc595c8/order
+              - 'row "2/26/2026, 3:59:43 AM Doc Patient MRN: DOC-MM2MZZ2S VXL-2602-147 Verified View Reports" [ref=e346]':
+                - cell "2/26/2026, 3:59:43 AM" [ref=e347]
+                - 'cell "Doc Patient MRN: DOC-MM2MZZ2S" [ref=e348]':
+                  - generic [ref=e349]:
+                    - generic [ref=e350]: Doc Patient
+                    - generic [ref=e351]: "MRN: DOC-MM2MZZ2S"
+                - cell "VXL-2602-147" [ref=e352]:
+                  - link "VXL-2602-147" [ref=e353] [cursor=pointer]:
+                    - /url: /lims/encounters/65b3e530-3926-4124-8c4b-182eee2894ac
+                - cell "Verified" [ref=e354]:
+                  - generic [ref=e356]: Verified
+                - cell "View Reports" [ref=e357]:
+                  - link "View Reports" [ref=e358] [cursor=pointer]:
+                    - /url: /lims/encounters/65b3e530-3926-4124-8c4b-182eee2894ac/reports
+              - 'row "2/26/2026, 3:59:42 AM Workflow Patient MRN: WF-MM2MZYB1 VXL-2602-146 Verified View Reports" [ref=e359]':
+                - cell "2/26/2026, 3:59:42 AM" [ref=e360]
+                - 'cell "Workflow Patient MRN: WF-MM2MZYB1" [ref=e361]':
+                  - generic [ref=e362]:
+                    - generic [ref=e363]: Workflow Patient
+                    - generic [ref=e364]: "MRN: WF-MM2MZYB1"
+                - cell "VXL-2602-146" [ref=e365]:
+                  - link "VXL-2602-146" [ref=e366] [cursor=pointer]:
+                    - /url: /lims/encounters/b3bdb23f-08f5-45fa-978d-189fc3056b86
+                - cell "Verified" [ref=e367]:
+                  - generic [ref=e369]: Verified
+                - cell "View Reports" [ref=e370]:
+                  - link "View Reports" [ref=e371] [cursor=pointer]:
+                    - /url: /lims/encounters/b3bdb23f-08f5-45fa-978d-189fc3056b86/reports
+              - 'row "2/26/2026, 3:59:40 AM Workflow Patient MRN: WF-MM2MZWGB VXL-2602-145 Verified View Reports" [ref=e372]':
+                - cell "2/26/2026, 3:59:40 AM" [ref=e373]
+                - 'cell "Workflow Patient MRN: WF-MM2MZWGB" [ref=e374]':
+                  - generic [ref=e375]:
+                    - generic [ref=e376]: Workflow Patient
+                    - generic [ref=e377]: "MRN: WF-MM2MZWGB"
+                - cell "VXL-2602-145" [ref=e378]:
+                  - link "VXL-2602-145" [ref=e379] [cursor=pointer]:
+                    - /url: /lims/encounters/bbaea98b-40b1-4df9-902b-f1a80b583828
+                - cell "Verified" [ref=e380]:
+                  - generic [ref=e382]: Verified
+                - cell "View Reports" [ref=e383]:
+                  - link "View Reports" [ref=e384] [cursor=pointer]:
+                    - /url: /lims/encounters/bbaea98b-40b1-4df9-902b-f1a80b583828/reports
+              - 'row "2/26/2026, 3:59:40 AM Detail Patient MRN: DET-MM2MZWCK a0fd2407 Registered Place Order" [ref=e385]':
+                - cell "2/26/2026, 3:59:40 AM" [ref=e386]
+                - 'cell "Detail Patient MRN: DET-MM2MZWCK" [ref=e387]':
+                  - generic [ref=e388]:
+                    - generic [ref=e389]: Detail Patient
+                    - generic [ref=e390]: "MRN: DET-MM2MZWCK"
+                - cell "a0fd2407" [ref=e391]:
+                  - link "a0fd2407" [ref=e392] [cursor=pointer]:
+                    - /url: /lims/encounters/a0fd2407-42c4-47be-85fb-e123e6568b30
+                - cell "Registered" [ref=e393]:
+                  - generic [ref=e395]: Registered
+                - cell "Place Order" [ref=e396]:
+                  - link "Place Order" [ref=e397] [cursor=pointer]:
+                    - /url: /lims/encounters/a0fd2407-42c4-47be-85fb-e123e6568b30/order
+          - generic [ref=e398]:
+            - button "← Prev" [disabled]
+            - generic [ref=e399]: Page 1
+            - button "Next →" [disabled]
+  - region "Notifications alt+T"
+  - alert [ref=e20]

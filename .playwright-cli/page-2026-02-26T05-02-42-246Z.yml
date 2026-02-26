@@ -1,0 +1,172 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e15]:
+    - complementary [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]: 🧬
+          - generic [ref=e20]:
+            - generic [ref=e21]: Vexel Admin
+            - generic [ref=e22]: Back Office
+        - generic [ref=e23]:
+          - link "ADMIN" [ref=e24] [cursor=pointer]:
+            - /url: /admin/dashboard
+            - generic [ref=e26]: ADMIN
+          - link "OPD" [ref=e27] [cursor=pointer]:
+            - /url: /admin/opd
+            - generic [ref=e29]: OPD
+      - navigation [ref=e31]:
+        - generic [ref=e32]: Administration
+        - link "D Dashboard" [ref=e34] [cursor=pointer]:
+          - /url: /admin/dashboard
+          - generic [ref=e36]: D
+          - generic [ref=e37]: Dashboard
+        - link "T Tenants" [ref=e39] [cursor=pointer]:
+          - /url: /admin/tenants
+          - generic [ref=e40]: T
+          - generic [ref=e41]: Tenants
+        - link "TB Tenant Back Office" [ref=e43] [cursor=pointer]:
+          - /url: /admin/tenant-settings
+          - generic [ref=e44]: TB
+          - generic [ref=e45]: Tenant Back Office
+          - img [ref=e46]
+        - link "U Users & Roles" [ref=e49] [cursor=pointer]:
+          - /url: /admin/users
+          - generic [ref=e50]: U
+          - generic [ref=e51]: Users & Roles
+          - img [ref=e52]
+        - link "C Catalog" [ref=e55] [cursor=pointer]:
+          - /url: /admin/catalog
+          - generic [ref=e56]: C
+          - generic [ref=e57]: Catalog
+          - img [ref=e58]
+        - link "P Patients" [ref=e61] [cursor=pointer]:
+          - /url: /admin/patients
+          - generic [ref=e62]: P
+          - generic [ref=e63]: Patients
+          - img [ref=e64]
+        - link "Doc Documents" [ref=e67] [cursor=pointer]:
+          - /url: /admin/documents
+          - generic [ref=e68]: Doc
+          - generic [ref=e69]: Documents
+        - link "A Audit Log" [ref=e71] [cursor=pointer]:
+          - /url: /admin/audit
+          - generic [ref=e72]: A
+          - generic [ref=e73]: Audit Log
+        - link "J Jobs" [ref=e75] [cursor=pointer]:
+          - /url: /admin/jobs
+          - generic [ref=e76]: J
+          - generic [ref=e77]: Jobs
+        - link "H System Health" [ref=e79] [cursor=pointer]:
+          - /url: /admin/system/health
+          - generic [ref=e80]: H
+          - generic [ref=e81]: System Health
+      - button "Sign Out" [ref=e84] [cursor=pointer]
+    - main [ref=e85]:
+      - generic [ref=e87]:
+        - heading "Dashboard" [level=1] [ref=e88]
+        - generic [ref=e89]:
+          - link "API Status ok" [ref=e90] [cursor=pointer]:
+            - /url: /admin/system/health
+            - generic [ref=e91]:
+              - paragraph [ref=e92]: API Status
+              - paragraph [ref=e93]: ok
+          - link "Failed Jobs 0" [ref=e94] [cursor=pointer]:
+            - /url: /admin/jobs
+            - generic [ref=e95]:
+              - paragraph [ref=e96]: Failed Jobs
+              - paragraph [ref=e97]: "0"
+          - link "Uptime 0h 3m" [ref=e98] [cursor=pointer]:
+            - /url: /admin/system/health
+            - generic [ref=e99]:
+              - paragraph [ref=e100]: Uptime
+              - paragraph [ref=e101]: 0h 3m
+          - link "Patients —" [ref=e102] [cursor=pointer]:
+            - /url: /admin/patients
+            - generic [ref=e103]:
+              - paragraph [ref=e104]: Patients
+              - paragraph [ref=e105]: —
+          - link "Encounters —" [ref=e106] [cursor=pointer]:
+            - /url: /admin/encounters
+            - generic [ref=e107]:
+              - paragraph [ref=e108]: Encounters
+              - paragraph [ref=e109]: —
+          - link "Documents —" [ref=e110] [cursor=pointer]:
+            - /url: /admin/documents
+            - generic [ref=e111]:
+              - paragraph [ref=e112]: Documents
+              - paragraph [ref=e113]: —
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - heading "Recent Audit Events" [level=2] [ref=e116]
+            - link "View all →" [ref=e117] [cursor=pointer]:
+              - /url: /admin/audit
+          - table [ref=e118]:
+            - rowgroup [ref=e119]:
+              - row "Action Entity Actor Time" [ref=e120]:
+                - columnheader "Action" [ref=e121]
+                - columnheader "Entity" [ref=e122]
+                - columnheader "Actor" [ref=e123]
+                - columnheader "Time" [ref=e124]
+            - rowgroup [ref=e125]:
+              - row "auth.login — 8838c14a 2/26/2026, 10:02:40 AM" [ref=e126]:
+                - cell "auth.login" [ref=e127]:
+                  - code [ref=e128]: auth.login
+                - cell "—" [ref=e129]
+                - cell "8838c14a" [ref=e130]
+                - cell "2/26/2026, 10:02:40 AM" [ref=e131]
+              - row "auth.login — 8838c14a 2/26/2026, 10:01:49 AM" [ref=e132]:
+                - cell "auth.login" [ref=e133]:
+                  - code [ref=e134]: auth.login
+                - cell "—" [ref=e135]
+                - cell "8838c14a" [ref=e136]
+                - cell "2/26/2026, 10:01:49 AM" [ref=e137]
+              - row "auth.login — f9aee683 2/26/2026, 10:00:11 AM" [ref=e138]:
+                - cell "auth.login" [ref=e139]:
+                  - code [ref=e140]: auth.login
+                - cell "—" [ref=e141]
+                - cell "f9aee683" [ref=e142]
+                - cell "2/26/2026, 10:00:11 AM" [ref=e143]
+              - row "auth.login — 4918025d 2/26/2026, 9:59:12 AM" [ref=e144]:
+                - cell "auth.login" [ref=e145]:
+                  - code [ref=e146]: auth.login
+                - cell "—" [ref=e147]
+                - cell "4918025d" [ref=e148]
+                - cell "2/26/2026, 9:59:12 AM" [ref=e149]
+              - row "auth.login — d4e5991f 2/26/2026, 9:59:12 AM" [ref=e150]:
+                - cell "auth.login" [ref=e151]:
+                  - code [ref=e152]: auth.login
+                - cell "—" [ref=e153]
+                - cell "d4e5991f" [ref=e154]
+                - cell "2/26/2026, 9:59:12 AM" [ref=e155]
+              - row "auth.login — f9aee683 2/26/2026, 9:59:11 AM" [ref=e156]:
+                - cell "auth.login" [ref=e157]:
+                  - code [ref=e158]: auth.login
+                - cell "—" [ref=e159]
+                - cell "f9aee683" [ref=e160]
+                - cell "2/26/2026, 9:59:11 AM" [ref=e161]
+              - row "auth.login — 8838c14a 2/26/2026, 9:59:11 AM" [ref=e162]:
+                - cell "auth.login" [ref=e163]:
+                  - code [ref=e164]: auth.login
+                - cell "—" [ref=e165]
+                - cell "8838c14a" [ref=e166]
+                - cell "2/26/2026, 9:59:11 AM" [ref=e167]
+              - 'row "TEST_RESULTS_SAVE LabOrder #605847cf 8838c14a 2/26/2026, 9:24:34 AM" [ref=e168]':
+                - cell "TEST_RESULTS_SAVE" [ref=e169]:
+                  - code [ref=e170]: TEST_RESULTS_SAVE
+                - 'cell "LabOrder #605847cf" [ref=e171]'
+                - cell "8838c14a" [ref=e172]
+                - cell "2/26/2026, 9:24:34 AM" [ref=e173]
+              - 'row "TEST_RESULTS_SAVE LabOrder #22f6583d 8838c14a 2/26/2026, 9:24:33 AM" [ref=e174]':
+                - cell "TEST_RESULTS_SAVE" [ref=e175]:
+                  - code [ref=e176]: TEST_RESULTS_SAVE
+                - 'cell "LabOrder #22f6583d" [ref=e177]'
+                - cell "8838c14a" [ref=e178]
+                - cell "2/26/2026, 9:24:33 AM" [ref=e179]
+              - 'row "TEST_RESULTS_SUBMIT LabOrder #605847cf 8838c14a 2/26/2026, 9:24:25 AM" [ref=e180]':
+                - cell "TEST_RESULTS_SUBMIT" [ref=e181]:
+                  - code [ref=e182]: TEST_RESULTS_SUBMIT
+                - 'cell "LabOrder #605847cf" [ref=e183]'
+                - cell "8838c14a" [ref=e184]
+                - cell "2/26/2026, 9:24:25 AM" [ref=e185]
+  - region "Notifications alt+T"
+  - alert [ref=e14]

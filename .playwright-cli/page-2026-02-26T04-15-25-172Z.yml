@@ -1,0 +1,23 @@
+- generic [ref=e1]:
+  - generic [ref=e21]:
+    - banner [ref=e22]:
+      - generic [ref=e23]:
+        - img [ref=e24]
+        - generic [ref=e26]: Vexel Health
+    - main [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - heading "Operator Login" [level=3] [ref=e30]
+          - paragraph [ref=e31]: Sign in to your operator account
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - text: Email
+            - textbox "Email" [active] [ref=e35]:
+              - /placeholder: you@example.com
+          - generic [ref=e36]:
+            - text: Password
+            - textbox "Password" [ref=e37]:
+              - /placeholder: ••••••••
+          - button "Sign In" [ref=e38] [cursor=pointer]
+  - region "Notifications alt+T"
+  - alert [ref=e20]
