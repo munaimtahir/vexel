@@ -46,6 +46,9 @@ function buildPrisma(encounterStatus = 'registered', tenantId = 'tenant-a') {
       update: jest.fn().mockResolvedValue({}),
       updateMany: jest.fn().mockResolvedValue({}),
     },
+    document: {
+      findFirst: jest.fn().mockResolvedValue(null),
+    },
     specimen: { create: jest.fn().mockResolvedValue({ id: 'spec-1' }) },
     labResult: {
       create: jest.fn().mockResolvedValue({ id: 'res-1' }),
@@ -80,13 +83,15 @@ describe('Encounter State Machine', () => {
   let service: EncountersService;
   let prisma: ReturnType<typeof buildPrisma>;
   let audit: ReturnType<typeof buildAudit>;
+  let docsMock: any;
 
   beforeEach(() => {
     prisma = buildPrisma();
     audit = buildAudit();
-    const docsMock = {
+    docsMock = {
       generateFromEncounter: jest.fn().mockResolvedValue({ document: {}, created: false }),
       generateDocument: jest.fn().mockResolvedValue({ document: {}, created: true }),
+      publishDocument: jest.fn().mockResolvedValue({ id: 'doc-1', status: 'PUBLISHED' }),
     };
     service = new EncountersService(prisma as any, audit as any, docsMock as any);
   });
@@ -185,5 +190,44 @@ describe('Encounter State Machine', () => {
       },
     };
     expect(() => guard.canActivate()).toThrow(ForbiddenException);
+  });
+
+  it('Test 6: publish-report returns 409 when report is not rendered', async () => {
+    prisma.encounter.findFirst.mockResolvedValue(makeEncounter('verified'));
+    prisma.document.findFirst.mockResolvedValue({
+      id: 'doc-1',
+      tenantId: 'tenant-a',
+      status: 'RENDERING',
+    });
+
+    await expect(
+      service.publishReport('tenant-a', 'enc-1', 'user-1', 'corr-1'),
+    ).rejects.toThrow(ConflictException);
+  });
+
+  it('Test 7: publish-report publishes rendered report and is idempotent', async () => {
+    prisma.encounter.findFirst
+      .mockResolvedValueOnce(makeEncounter('verified'))
+      .mockResolvedValueOnce(makeEncounter('published'));
+    prisma.document.findFirst
+      .mockResolvedValueOnce({
+        id: 'doc-1',
+        tenantId: 'tenant-a',
+        status: 'RENDERED',
+      })
+      .mockResolvedValueOnce({
+        id: 'doc-1',
+        tenantId: 'tenant-a',
+        status: 'PUBLISHED',
+      });
+
+    const first = await service.publishReport('tenant-a', 'enc-1', 'user-1', 'corr-1');
+    const second = await service.publishReport('tenant-a', 'enc-1', 'user-1', 'corr-2');
+
+    expect(first.encounter.status).toBe('published');
+    expect(first.document.status).toBe('PUBLISHED');
+    expect(second.encounter.status).toBe('published');
+    expect(second.document.status).toBe('PUBLISHED');
+    expect(docsMock.publishDocument).toHaveBeenCalledTimes(1);
   });
 });

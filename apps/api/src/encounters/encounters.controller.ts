@@ -80,6 +80,14 @@ export class EncountersController {
     return this.svc.verify(this.resolveTenantId(req), id, user.userId, correlationId);
   }
 
+  @Post(':id\\:publish-report')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.DOCUMENT_PUBLISH)
+  publishReport(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.publishReport(this.resolveTenantId(req), id, user.userId, correlationId);
+  }
+
   @Post(':id\\:cancel')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
