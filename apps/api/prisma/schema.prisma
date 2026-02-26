@@ -890,7 +890,7 @@ model Document {
   tenant   Tenant           @relation(fields: [tenantId], references: [id])
   template DocumentTemplate @relation(fields: [templateId], references: [id])
 
-  @@unique([tenantId, type, payloadHash])
+  @@unique([tenantId, type, templateId, payloadHash])
   @@index([tenantId, status])
   @@index([tenantId, sourceRef, sourceType])
   @@index([tenantId, createdAt])

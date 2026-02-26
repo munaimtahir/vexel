@@ -62,7 +62,6 @@ export interface LabReportPayload {
   encounterCode?: string;  // display lab order ID
   orderedBy?: string;      // referring physician
   sampleReceivedAt?: string; // ISO 8601 — when specimen was collected
-  printedAt?: string;      // ISO 8601 — when document was generated
   reportStatus?: string;   // Provisional | Verified
   reportHeaderLayout?: string; // default | classic | minimal
   tests: {
