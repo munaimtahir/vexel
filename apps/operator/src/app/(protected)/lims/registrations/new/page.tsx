@@ -383,6 +383,9 @@ export default function NewRegistrationPage() {
           {receiptDocId && (
             <a
               href={`/lims/print/${receiptDocId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setTimeout(handleReset, 100)}
               className="inline-block px-6 py-2.5 bg-primary text-white rounded-md font-semibold text-sm no-underline hover:bg-primary/90"
             >
               🖨 Print / Download Receipt
