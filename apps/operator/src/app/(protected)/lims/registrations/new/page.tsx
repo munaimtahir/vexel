@@ -70,7 +70,7 @@ export default function NewRegistrationPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [savedEncounterId, setSavedEncounterId] = useState<string | null>(null);
-  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+  const [receiptDocId, setReceiptDocId] = useState<string | null>(null);
   const [pollingReceipt, setPollingReceipt] = useState(false);
 
   // ── Field refs for keyboard nav ──────────────────────────────────
@@ -340,9 +340,7 @@ export default function NewRegistrationPage() {
             // API returns a plain array
             const items: any[] = Array.isArray(docs) ? docs : ((docs as any)?.items ?? (docs as any)?.data ?? []);
             if (items.length > 0) {
-              const { data: dl } = await api.GET('/documents/{id}/download' as any, { params: { path: { id: items[0].id } } });
-              const url = (dl as any)?.url;
-              if (url) { setReceiptUrl(url); break; }
+              setReceiptDocId(items[0].id); break;
             }
           } catch { /* keep trying */ }
         }
@@ -361,7 +359,7 @@ export default function NewRegistrationPage() {
     setFieldErrors({}); setSelectedTests([]);
     setTestSearch(''); setTestResults([]); setTestDropOpen(false);
     setDiscountPKR('0'); setDiscountPct('0'); setPaid('0');
-    setSaveError(''); setSavedEncounterId(null); setReceiptUrl(null); setPollingReceipt(false);
+    setSaveError(''); setSavedEncounterId(null); setReceiptDocId(null); setPollingReceipt(false);
     setTimeout(() => mob1Ref.current?.focus(), 50);
   };
 
@@ -377,20 +375,18 @@ export default function NewRegistrationPage() {
           </p>
         )}
         <div className="my-4 min-h-[40px]">
-          {pollingReceipt && !receiptUrl && (
+          {pollingReceipt && !receiptDocId && (
             <p className="text-muted-foreground text-sm">⏳ Generating receipt…</p>
           )}
-          {receiptUrl && (
+          {receiptDocId && (
             <a
-              href={receiptUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/lims/print/${receiptDocId}`}
               className="inline-block px-6 py-2.5 bg-primary text-white rounded-md font-semibold text-sm no-underline hover:bg-primary/90"
             >
-              🖨 Download / Print Receipt
+              🖨 Print / Download Receipt
             </a>
           )}
-          {!pollingReceipt && !receiptUrl && (
+          {!pollingReceipt && !receiptDocId && (
             <p className="text-muted-foreground text-xs">Receipt not ready — check reports later.</p>
           )}
         </div>

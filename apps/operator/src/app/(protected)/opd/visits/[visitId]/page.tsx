@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function OpdVisitDetailPage() {
-  const params = useParams<{ encounterId: string }>();
-  const visitId = params?.encounterId ?? '';
+  const params = useParams<{ visitId: string }>();
+  const visitId = params?.visitId ?? '';
 
   const [visit, setVisit] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,15 @@ export default function OpdVisitDetailPage() {
         <Link href="/opd/worklist" className="text-primary">← OPD Worklist</Link>
       </div>
 
-      <PageHeader title="OPD Visit" description={visit.id} />
+      <PageHeader
+        title="OPD Visit"
+        description={visit.id}
+        actions={
+          <Button asChild variant="outline">
+            <Link href={`/opd/billing?visitId=${visit.id}`}>Billing</Link>
+          </Button>
+        }
+      />
 
       <SectionCard title="Summary">
         <div className="grid gap-3 md:grid-cols-2 text-sm">

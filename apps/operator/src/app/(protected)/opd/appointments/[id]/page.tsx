@@ -174,11 +174,16 @@ export default function OpdAppointmentDetailPage() {
         title="OPD Appointment"
         description={appointment.id}
         actions={
-          appointment.visitId ? (
+          <div className="flex gap-2">
+            {appointment.visitId ? (
+              <Button asChild variant="outline">
+                <Link href={`/opd/visits/${appointment.visitId}`}>Open Visit</Link>
+              </Button>
+            ) : null}
             <Button asChild variant="outline">
-              <Link href={`/opd/visits/${appointment.visitId}`}>Open Visit</Link>
+              <Link href={`/opd/billing?appointmentId=${appointment.id}`}>Billing</Link>
             </Button>
-          ) : undefined
+          </div>
         }
       />
 

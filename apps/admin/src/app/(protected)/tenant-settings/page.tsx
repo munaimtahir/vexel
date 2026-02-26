@@ -7,6 +7,7 @@ import { getToken } from '@/lib/auth';
 import { hasAnyPermission } from '@/lib/rbac';
 import { useCurrentUser } from '@/lib/use-auth';
 import { PermissionGuard } from '@/components/permission-guard';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 type TenantSummary = {
   id: string;
@@ -304,6 +305,15 @@ export default function TenantSettingsPage() {
                 ].filter(Boolean).join(' • ') || 'No tenant settings permissions'}
               </div>
             </div>
+          </div>
+          <div className="mt-4">
+            <TenantScopeBanner
+              mode="explicit"
+              pageLabel="Tenant Back Office"
+              tenantId={tenantId}
+              tenantName={selectedTenant?.name}
+              note="Branding & Config and Feature Flags honor the selected tenant on this page."
+            />
           </div>
         </section>
 

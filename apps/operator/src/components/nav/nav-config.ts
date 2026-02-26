@@ -19,6 +19,12 @@ export const LIMS_NAV: NavItem[] = [
   { label: 'Payments',         href: '/lims/payments',          icon: CreditCard },
 ];
 
+export const OPD_NAV: NavItem[] = [
+  { label: 'OPD Worklist',      href: '/opd/worklist',          icon: Stethoscope, featureFlag: 'module.opd' },
+  { label: 'New Appointment',   href: '/opd/appointments/new',  icon: UserPlus,    featureFlag: 'module.opd' },
+  { label: 'OPD Billing',       href: '/opd/billing',           icon: CreditCard,  featureFlag: 'module.opd' },
+];
+
 export const FUTURE_MODULES = [
   { label: 'Radiology',  disabled: true },
   { label: 'OPD',        disabled: true },

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { PageHeader, DocumentStatusBadge, DataTable, EmptyState, SkeletonPage } from '@/components/app';
@@ -58,10 +59,10 @@ function encounterCodeFromDoc(doc: any): string {
 }
 
 export default function ReportsPage() {
+  const router = useRouter();
   const [docs, setDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [downloading, setDownloading] = useState<string | null>(null);
   const [datePreset, setDatePreset] = useState<DatePreset>('today');
   const [search, setSearch] = useState('');
 
@@ -121,39 +122,6 @@ export default function ReportsPage() {
   }, [datePreset, search, patientEncounterIds]);
 
   useEffect(() => { fetchDocs(); }, [fetchDocs]);
-
-  const handleDownload = async (doc: any) => {
-    setDownloading(doc.id);
-    try {
-      const api = getApiClient(getToken() ?? undefined);
-      const res = await api.GET('/documents/{id}/download' as any, {
-        params: { path: { id: doc.id } },
-        parseAs: 'blob',
-      });
-      if (!res.data) throw new Error('Download failed');
-      const blob = res.data as unknown as Blob;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      const { name, mrn } = patientFromDoc(doc);
-      const code = encounterCodeFromDoc(doc);
-      a.download = `lab-report-${mrn !== '—' ? mrn : code}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      // Fallback: try URL-based download
-      try {
-        const api = getApiClient(getToken() ?? undefined);
-        const { data } = await api.GET('/documents/{id}/download' as any, {
-          params: { path: { id: doc.id } },
-        });
-        const url = (data as any)?.url;
-        if (url) window.open(url, '_blank');
-      } catch { /* ignore */ }
-    } finally {
-      setDownloading(null);
-    }
-  };
 
   // Patient search in drawer
   const handlePatientSearch = async () => {
@@ -408,8 +376,8 @@ export default function ReportsPage() {
               header: '',
               cell: (doc: any) => (
                 doc.status === 'PUBLISHED' ? (
-                  <Button size="sm" onClick={() => handleDownload(doc)} disabled={downloading === doc.id}>
-                    {downloading === doc.id ? 'Downloading…' : '⬇ Download'}
+                  <Button size="sm" onClick={() => router.push(`/lims/print/${doc.id}`)}>
+                    🖨 Print
                   </Button>
                 ) : (
                   <span className="text-muted-foreground text-xs">Not available</span>

@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { PageHeader, SectionCard } from '@/components/app';
@@ -20,6 +20,7 @@ function toIsoLocal(value: string): string | null {
 
 export default function NewOpdAppointmentPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState({
     patientId: '',
     providerId: '',
@@ -30,6 +31,83 @@ export default function NewOpdAppointmentPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [providers, setProviders] = useState<any[]>([]);
+  const [providersLoading, setProvidersLoading] = useState(false);
+  const [availabilityDate, setAvailabilityDate] = useState(new Date().toISOString().slice(0, 10));
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState('');
+  const [availabilitySlots, setAvailabilitySlots] = useState<any[]>([]);
+
+  useEffect(() => {
+    const patientId = searchParams.get('patientId') ?? '';
+    const providerId = searchParams.get('providerId') ?? '';
+    setForm((f) => ({
+      ...f,
+      patientId: f.patientId || patientId,
+      providerId: f.providerId || providerId,
+    }));
+  }, [searchParams]);
+
+  useEffect(() => {
+    let active = true;
+    const loadProviders = async () => {
+      setProvidersLoading(true);
+      try {
+        const api = getApiClient(getToken() ?? undefined);
+        const { data } = await api.GET('/opd/providers' as any, {
+          params: { query: { page: 1, limit: 100, isActive: true } },
+        });
+        if (!active) return;
+        const list = ((data as any)?.data ?? []) as any[];
+        setProviders(list);
+      } finally {
+        if (active) setProvidersLoading(false);
+      }
+    };
+    void loadProviders();
+    return () => { active = false; };
+  }, []);
+
+  const availableOnly = useMemo(
+    () => availabilitySlots.filter((slot: any) => slot.status === 'AVAILABLE'),
+    [availabilitySlots],
+  );
+
+  const loadAvailability = async () => {
+    if (!form.providerId.trim() || !availabilityDate) return;
+    setAvailabilityLoading(true);
+    setAvailabilityError('');
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const { data, error: apiError, response } = await api.GET('/opd/providers/{providerId}/availability' as any, {
+        params: {
+          path: { providerId: form.providerId.trim() },
+          query: { fromDate: availabilityDate, toDate: availabilityDate, includeBooked: true },
+        },
+      });
+      if (apiError || !data) {
+        setAvailabilityError(response?.status === 409 ? 'Invalid availability date range.' : 'Failed to load availability');
+        return;
+      }
+      setAvailabilitySlots((data as any)?.slots ?? []);
+    } catch {
+      setAvailabilityError('Failed to load availability');
+    } finally {
+      setAvailabilityLoading(false);
+    }
+  };
+
+  const applySlot = (slot: any) => {
+    const dt = new Date(slot.startAt);
+    if (Number.isNaN(dt.getTime())) return;
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const local = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+    setForm((f) => ({
+      ...f,
+      providerId: slot.providerId ?? f.providerId,
+      scheduledAtLocal: local,
+    }));
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -98,6 +176,21 @@ export default function NewOpdAppointmentPage() {
                 onChange={(e) => setForm((f) => ({ ...f, providerId: e.target.value }))}
                 placeholder="UUID"
               />
+              <div className="flex items-center gap-2">
+                <select
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={form.providerId}
+                  onChange={(e) => setForm((f) => ({ ...f, providerId: e.target.value }))}
+                  disabled={providersLoading}
+                >
+                  <option value="">Select active provider (optional helper)</option>
+                  {providers.map((p: any) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}{p.code ? ` (${p.code})` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="scheduledAtLocal">Scheduled At</Label>
@@ -119,6 +212,52 @@ export default function NewOpdAppointmentPage() {
               />
             </div>
           </div>
+
+          {form.providerId.trim() ? (
+            <div className="rounded-lg border p-4 space-y-3">
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="availabilityDate">Availability Date</Label>
+                  <Input id="availabilityDate" type="date" value={availabilityDate} onChange={(e) => setAvailabilityDate(e.target.value)} />
+                </div>
+                <Button type="button" variant="outline" onClick={() => void loadAvailability()} disabled={availabilityLoading}>
+                  {availabilityLoading ? 'Loading slots...' : 'Load Slots'}
+                </Button>
+                <Button type="button" variant="outline" asChild>
+                  <Link href={`/opd/providers/${form.providerId.trim()}/availability`}>
+                    Open Full Availability Page
+                  </Link>
+                </Button>
+              </div>
+              {availabilityError ? <p className="text-sm text-destructive">{availabilityError}</p> : null}
+              {availabilitySlots.length > 0 ? (
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    {availableOnly.length} available of {availabilitySlots.length} slots. Click a slot to fill appointment time.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {availabilitySlots.slice(0, 24).map((slot: any) => {
+                      const isBooked = slot.status === 'BOOKED';
+                      return (
+                        <button
+                          key={`${slot.scheduleId}-${slot.startAt}`}
+                          type="button"
+                          disabled={isBooked}
+                          onClick={() => applySlot(slot)}
+                          className={`rounded-md border px-2 py-1 text-xs ${isBooked ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-background hover:bg-muted'}`}
+                          title={isBooked ? `Booked (${slot.appointmentId ?? 'n/a'})` : 'Use this slot'}
+                        >
+                          {new Date(slot.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {' '}
+                          · {slot.status}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
 
           <div className="space-y-2">
             <Label htmlFor="reason">Reason</Label>

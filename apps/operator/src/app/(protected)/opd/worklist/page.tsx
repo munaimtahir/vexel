@@ -125,9 +125,14 @@ export default function OpdWorklistPage() {
         title="OPD Worklist"
         description="Appointments and visits (tenant-scoped via backend APIs)"
         actions={
-          <Button asChild>
-            <Link href="/opd/appointments/new">New Appointment</Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <Link href="/opd/billing">OPD Billing</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/opd/appointments/new">New Appointment</Link>
+            </Button>
+          </div>
         }
       />
 

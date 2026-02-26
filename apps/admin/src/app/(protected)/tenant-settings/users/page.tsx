@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PermissionGuard } from '@/components/permission-guard';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 export default function TenantUsersHubPage() {
   const searchParams = useSearchParams();
@@ -16,6 +17,14 @@ export default function TenantUsersHubPage() {
           <p className="mt-1 text-sm text-slate-600">
             Tenant-scoped user management entry point. {tenantId ? `Tenant ID: ${tenantId}` : 'No tenant selected from hub; current auth tenant will apply.'}
           </p>
+          <div className="mt-4">
+            <TenantScopeBanner
+              mode="current-auth"
+              pageLabel="Tenant Users Hub"
+              tenantId={tenantId}
+              note="Open Users List runs in current authenticated tenant scope. Tenant query is retained only for navigation within the tenant hub."
+            />
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">

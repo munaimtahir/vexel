@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
@@ -326,13 +327,21 @@ export default function OpdProvidersPage() {
                     </td>
                     <td className="px-3 py-2 text-xs text-slate-500">{new Date(provider.updatedAt).toLocaleString()}</td>
                     <td className="px-3 py-2">
-                      <button
-                        type="button"
-                        onClick={() => startEdit(provider)}
-                        className="rounded-md border border-slate-300 px-2 py-1 text-xs text-foreground"
-                      >
-                        Edit
-                      </button>
+                      <div className="flex gap-2">
+                        <Link
+                          href={`/opd/providers/${provider.id}`}
+                          className="rounded-md border border-slate-300 px-2 py-1 text-xs text-foreground"
+                        >
+                          Open
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => startEdit(provider)}
+                          className="rounded-md border border-slate-300 px-2 py-1 text-xs text-foreground"
+                        >
+                          Edit
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

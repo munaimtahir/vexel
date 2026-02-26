@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PermissionGuard } from '@/components/permission-guard';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 export default function TenantRolesHubPage() {
   const searchParams = useSearchParams();
@@ -16,6 +17,14 @@ export default function TenantRolesHubPage() {
           <p className="mt-1 text-sm text-slate-600">
             RBAC role definitions for the selected tenant. {tenantId ? `Tenant ID: ${tenantId}` : 'Current auth tenant scope is used.'}
           </p>
+          <div className="mt-4">
+            <TenantScopeBanner
+              mode="current-auth"
+              pageLabel="Tenant Roles Hub"
+              tenantId={tenantId}
+              note="Open Roles runs in current authenticated tenant scope. Tenant query is retained only for navigation within the tenant hub."
+            />
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">

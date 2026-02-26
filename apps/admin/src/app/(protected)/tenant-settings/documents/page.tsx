@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PermissionGuard } from '@/components/permission-guard';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 export default function TenantDocumentsHubPage() {
   const searchParams = useSearchParams();
@@ -16,6 +17,14 @@ export default function TenantDocumentsHubPage() {
           <p className="mt-1 text-sm text-slate-600">
             Document pipeline and publishing operations for the selected tenant. {tenantId ? `Tenant ID: ${tenantId}` : 'Current auth tenant scope is used.'}
           </p>
+          <div className="mt-4">
+            <TenantScopeBanner
+              mode="current-auth"
+              pageLabel="Tenant Documents Hub"
+              tenantId={tenantId}
+              note="Documents page remains scoped to current authenticated tenant/host. Explicit tenant switching is not yet implemented there."
+            />
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">

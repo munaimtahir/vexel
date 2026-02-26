@@ -12,6 +12,13 @@
 - Run: `cd apps/operator && npx tsc --noEmit`
 - Must exit 0 before any merge
 
+### 3. Tenant-Admin Scope/Contract Audit (manual but mandatory for tenant-admin changes)
+- Applies when touching Admin tenant pages (`/tenant-settings*`, `/branding`, `/feature-flags`, tenant-scoped admin workflows)
+- Must review `docs/specs/ADMIN_TENANT_SCOPE_GOVERNANCE.md`
+- Confirm each changed page declares correct scope mode (`explicit` vs `current-auth`)
+- Confirm scope banner is present and accurate
+- Confirm every SDK endpoint used by changed pages exists in OpenAPI
+
 ## Manual Checklist (run after each deploy)
 - [ ] `/login` renders with branded header, no sidebar
 - [ ] `/lims/worklist` renders with sidebar + topbar
@@ -19,6 +26,8 @@
 - [ ] Dark mode toggle works
 - [ ] DUE badge appears in red for encounters with outstanding balance
 - [ ] No `fetch(` in operator or admin source files
+- [ ] Tenant-admin pages show correct tenant scope banner / scope messaging
+- [ ] No tenant selector UX implies switching on pages that do not support explicit tenant switching
 
 ## How to Run All Gates
 ```bash

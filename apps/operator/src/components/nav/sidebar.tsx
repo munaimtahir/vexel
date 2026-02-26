@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, FlaskConical, LogOut } from 'lucide-react';
 import { clearTokens, decodeJwt, getToken } from '@/lib/auth';
-import { LIMS_NAV, FUTURE_MODULES, type NavItem } from './nav-config';
+import { LIMS_NAV, OPD_NAV, FUTURE_MODULES, type NavItem } from './nav-config';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
 const STORAGE_KEY = 'vexel-sidebar-collapsed';
@@ -73,6 +73,15 @@ export function Sidebar() {
 
   const visibleNav: NavItem[] = LIMS_NAV.filter(item =>
     !item.featureFlag || flags?.[item.featureFlag]
+  );
+  const visibleOpdNav: NavItem[] = OPD_NAV.filter(item =>
+    !item.featureFlag || flags?.[item.featureFlag]
+  );
+
+  const isNavItemActive = (item: NavItem) => (
+    item.href === '/lims/registrations/new'
+      ? pathname === item.href
+      : pathname === item.href || pathname.startsWith(item.href + '/')
   );
 
   const initials = userName
@@ -211,9 +220,50 @@ export function Sidebar() {
         )}
         {visibleNav.map(item => {
           const Icon = item.icon;
-          const isActive = item.href === '/lims/registrations/new'
-            ? pathname === item.href
-            : pathname === item.href || pathname.startsWith(item.href + '/');
+          const isActive = isNavItemActive(item);
+          return (
+            <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined}
+              style={{
+                position: 'relative',
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: collapsed ? '10px 0' : '9px 11px 9px 13px',
+                justifyContent: collapsed ? 'center' : 'flex-start',
+                borderRadius: '8px', textDecoration: 'none',
+                fontSize: '13.5px', fontWeight: isActive ? 600 : 400,
+                color: isActive ? S.activeText : S.inactiveText,
+                background: isActive ? S.activeBg : 'transparent',
+                transition: 'all 0.15s ease',
+                overflow: 'hidden', whiteSpace: 'nowrap',
+              }}
+              onMouseOver={e => { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'hsl(var(--sidebar-foreground) / 0.09)'; el.style.color = S.hoverText; } }}
+              onMouseOut={e =>  { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = S.inactiveText; } }}
+            >
+              {isActive && (
+                <div style={{
+                  position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
+                  width: '3px', height: '60%', minHeight: '18px',
+                  borderRadius: '0 4px 4px 0',
+                  background: S.activeBar,
+                  boxShadow: S.activeBarGlow,
+                }} />
+              )}
+              <Icon size={15} className="shrink-0 transition-colors" color={isActive ? S.iconActive : S.iconInactive} />
+              {!collapsed && <span style={{ flex: 1 }}>{item.label}</span>}
+              {!collapsed && isActive && (
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0, background: 'hsl(var(--primary))', boxShadow: '0 0 6px hsl(var(--primary) / 0.55)' }} />
+              )}
+            </Link>
+          );
+        })}
+
+        {visibleOpdNav.length > 0 && !collapsed && (
+          <div style={{ padding: '10px 8px 8px', fontSize: '9px', fontWeight: 700, color: S.sectionLabel, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+            OPD
+          </div>
+        )}
+        {visibleOpdNav.map(item => {
+          const Icon = item.icon;
+          const isActive = isNavItemActive(item);
           return (
             <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined}
               style={{

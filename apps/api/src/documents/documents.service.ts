@@ -183,6 +183,44 @@ export class DocumentsService {
     return { url };
   }
 
+  /**
+   * Re-renders a document on-the-fly with an optional format override
+   * (e.g. format='thermal' overrides the tenant's default receiptLayout).
+   * Returns raw PDF bytes.
+   */
+  async renderWithFormatOverride(tenantId: string, id: string, format?: string): Promise<Buffer> {
+    const doc = await this.getDocument(tenantId, id);
+    if (!(doc as any).payloadJson) throw new NotFoundException('Document has no stored payload');
+
+    const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+    const branding: Record<string, unknown> = { ...(tenantConfig ?? {}) };
+    if (format && doc.type === 'RECEIPT') {
+      branding['receiptLayout'] = format;
+    }
+
+    const template = await this.prisma.documentTemplate.findUnique({
+      where: { id: (doc as any).templateId },
+    });
+
+    const renderBody = JSON.stringify({
+      templateKey: template?.templateKey ?? 'receipt_v1',
+      payloadJson: (doc as any).payloadJson,
+      brandingConfig: branding,
+    });
+
+    const pdfServiceUrl = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
+    const response = await fetch(`${pdfServiceUrl}/render`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: renderBody,
+    });
+    if (!response.ok) {
+      throw new Error(`PDF service error: ${response.status}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  }
+
   async listDocuments(tenantId: string, filters: { status?: string; limit?: number; sourceRef?: string; sourceType?: string; encounterId?: string; docType?: string; fromDate?: string; toDate?: string }) {
     const { status, sourceType, encounterId, docType, fromDate, toDate } = filters;
     const limit = filters.limit !== undefined ? Number(filters.limit) : 50;

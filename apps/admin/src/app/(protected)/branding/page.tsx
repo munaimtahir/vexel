@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 const HEADER_LAYOUTS = [
   { value: 'default', label: 'Default — Logo left, name centered, address right' },
@@ -152,6 +153,15 @@ export default function BrandingPage() {
           Configuring: <strong>{selectedTenant.name}</strong>
         </p>
       )}
+      <div style={{ marginBottom: '16px' }}>
+        <TenantScopeBanner
+          mode="explicit"
+          pageLabel="Branding & Config"
+          tenantId={tenantId}
+          tenantName={selectedTenant?.name}
+          note="This page reads and saves /tenants/{tenantId}/config for the selected tenant."
+        />
+      </div>
 
       {loading ? <p>Loading...</p> : (
         <form onSubmit={handleSave}>

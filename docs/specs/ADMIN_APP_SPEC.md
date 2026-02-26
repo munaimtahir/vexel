@@ -12,6 +12,7 @@ Stop “building in a vacuum”. Admin app is your **Back Office** for:
 2) Admin app must not directly edit workflow state fields.
 3) Any state change must call a **Command endpoint** (audited).
 4) All actions are tenant-scoped unless super-admin.
+5) Tenant-admin pages must follow `docs/specs/ADMIN_TENANT_SCOPE_GOVERNANCE.md` (scope mode declaration, visible scope banner, endpoint/OpenAPI parity audit).
 
 ## MVP pages (Admin App)
 1) Dashboard

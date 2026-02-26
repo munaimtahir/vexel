@@ -111,4 +111,19 @@ export class DocumentsController {
     const tenantId = (req as any).user.tenantId;
     return this.svc.downloadDocument(tenantId, id);
   }
+
+  @Get(':id/render')
+  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  async renderOverride(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: string,
+    @Query('format') format?: string,
+  ) {
+    const tenantId = (req as any).user.tenantId;
+    const pdfBytes = await this.svc.renderWithFormatOverride(tenantId, id, format);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="document.pdf"');
+    res.send(pdfBytes);
+  }
 }

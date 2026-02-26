@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 const FLAG_DESCRIPTIONS: Record<string, string> = {
   'module.lims': 'LIMS core module — enables laboratory workflow',
@@ -120,6 +121,16 @@ export default function FeatureFlagsPage() {
           {selectedTenant && <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', background: 'hsl(var(--muted))', padding: '3px 8px', borderRadius: '4px' }}>{selectedTenant.status}</span>}
         </div>
       )}
+
+      <div style={{ marginBottom: '16px' }}>
+        <TenantScopeBanner
+          mode="explicit"
+          pageLabel="Feature Flags"
+          tenantId={tenantId}
+          tenantName={selectedTenant?.name}
+          note="This page reads and writes /tenants/{tenantId}/feature-flags for the selected tenant."
+        />
+      </div>
 
       <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '32px' }}>Control which modules and features are active for this tenant.</p>
 

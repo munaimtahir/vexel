@@ -24,7 +24,7 @@ export default function EncounterDetailPage() {
   const receiveSeparate = isReceiveSeparate(flags);
   const [receiptDoc, setReceiptDoc] = useState<any>(null);
   const [reportDoc, setReportDoc] = useState<any>(null);
-  const [downloadError, setDownloadError] = useState('');
+
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchEncounter = async () => {
@@ -79,22 +79,9 @@ export default function EncounterDetailPage() {
     }
   }, [encounter?.status, reportDoc?.status]);
 
-  const handleDownload = async (doc: any) => {
-    if (!doc) return;
-    setDownloadError('');
-    try {
-      const client = getApiClient(getToken() ?? undefined);
-      // @ts-ignore
-      const { data: dl, error: dlError } = await client.GET('/documents/{id}/download', {
-        params: { path: { id: doc.id } },
-      });
-      if (dlError || !dl) { setDownloadError('Download failed'); return; }
-      const url = (dl as any)?.url;
-      if (url) window.open(url, '_blank');
-      else setDownloadError('Download URL not available');
-    } catch {
-      setDownloadError('Download failed');
-    }
+  const handlePrint = (doc: any) => {
+    if (!doc?.id) return;
+    router.push(`/lims/print/${doc.id}`);
   };
 
   const handleCancel = async () => {
@@ -198,8 +185,8 @@ export default function EncounterDetailPage() {
               <span className="px-3 py-1 rounded-full bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] font-semibold text-sm">
                 {receiptDoc.status}
               </span>
-              <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handleDownload(receiptDoc)}>
-                ⬇ Print Receipt Again
+              <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handlePrint(receiptDoc)}>
+                🖨 Print Receipt
               </Button>
             </div>
           )}
@@ -215,11 +202,8 @@ export default function EncounterDetailPage() {
               )}
               {docStatus === 'PUBLISHED' && (
                 <>
-                  <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handleDownload(reportDoc)}>
-                    ⬇ Download Report
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => { handleDownload(reportDoc).then(() => window.print()); }}>
-                    🖨 Print
+                  <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handlePrint(reportDoc)}>
+                    🖨 Print Report
                   </Button>
                   <Link href={`/lims/encounters/${id}/publish`} className="text-primary text-sm">
                     View Report Details →
@@ -233,7 +217,7 @@ export default function EncounterDetailPage() {
               )}
             </div>
           )}
-          {downloadError && <p className="text-destructive text-sm mt-2">{downloadError}</p>}
+
         </SectionCard>
       )}
 

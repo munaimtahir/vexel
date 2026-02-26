@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { PermissionGuard } from '@/components/permission-guard';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 export default function TenantCatalogHubPage() {
   const searchParams = useSearchParams();
@@ -16,6 +17,14 @@ export default function TenantCatalogHubPage() {
           <p className="mt-1 text-sm text-slate-600">
             Tenant-owned catalog configuration entry point. {tenantId ? `Tenant ID: ${tenantId}` : 'Current auth tenant scope is used.'}
           </p>
+          <div className="mt-4">
+            <TenantScopeBanner
+              mode="current-auth"
+              pageLabel="Tenant Catalog Hub"
+              tenantId={tenantId}
+              note="Catalog pages are tenant-scoped by current authenticated tenant/host. Explicit tenant switching is not yet implemented there."
+            />
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
