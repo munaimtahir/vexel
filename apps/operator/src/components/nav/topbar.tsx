@@ -8,6 +8,15 @@ import { decodeJwt, getToken } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
 const ROUTE_TITLES: [string, string][] = [
+  ['/opd/billing/invoices', 'OPD Invoice'],
+  ['/opd/billing/new', 'New OPD Invoice'],
+  ['/opd/billing', 'OPD Billing'],
+  ['/opd/providers', 'Provider Availability'],
+  ['/opd/appointments/new', 'New OPD Appointment'],
+  ['/opd/appointments', 'OPD Appointment'],
+  ['/opd/visits', 'OPD Visit'],
+  ['/opd/worklist', 'OPD Worklist'],
+  ['/opd', 'OPD'],
   ['/lims/worklist', 'Worklist'],
   ['/lims/registrations/new', 'New Registration'],
   ['/lims/payments', 'Payments'],

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 const DOC_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   QUEUED: { bg: 'hsl(var(--status-warning-bg))', text: 'hsl(var(--status-warning-fg))' },
@@ -63,6 +64,9 @@ export default function DocumentsPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Documents</h1>
         <span style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>Read-only — re-publish failed docs from here</span>
+      </div>
+      <div style={{ marginBottom: '16px' }}>
+        <TenantScopeBanner mode="current-auth" pageLabel="Documents" note="Document list/actions are scoped to the current authenticated tenant/host." />
       </div>
 
       {msg && (

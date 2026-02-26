@@ -220,6 +220,42 @@ components:
           type: boolean
           description: True for built-in system roles that cannot be deleted
 
+    FeatureFlagDefinition:
+      type: object
+      required: [key, app, group, label, description, valueType, status, buildStatus, defaultValue]
+      properties:
+        key:
+          type: string
+        app:
+          type: string
+          enum: [core, lims, opd, rad, ipd, printing]
+        group:
+          type: string
+          enum: [main-apps, app-features]
+        label:
+          type: string
+        description:
+          type: string
+        valueType:
+          type: string
+          enum: [boolean, enum]
+        status:
+          type: string
+          enum: [implemented, planned, scaffold, deprecated]
+        buildStatus:
+          type: string
+          enum: [built, scaffold, planned]
+        defaultValue:
+          type: boolean
+        dependsOn:
+          type: array
+          items:
+            type: string
+        enumOptions:
+          type: array
+          items:
+            type: string
+
     FeatureFlag:
       type: object
       required: [key, enabled]
@@ -715,15 +751,25 @@ components:
           type: array
           items:
             type: object
-            required: [code, name]
+            required: [externalId, name]
             properties:
-              code:
+              externalId:
                 type: string
               name:
                 type: string
               description:
                 type: string
+              userCode:
+                type: string
+              department:
+                type: string
               sampleType:
+                type: string
+              specimenType:
+                type: string
+              method:
+                type: string
+              loincCode:
                 type: string
               turnaroundHours:
                 type: integer
@@ -731,47 +777,90 @@ components:
                 type: number
                 minimum: 0
                 nullable: true
+              isActive:
+                type: boolean
         parameters:
           type: array
           items:
             type: object
-            required: [code, name]
+            required: [externalId, name]
             properties:
-              code:
+              externalId:
                 type: string
               name:
                 type: string
               unit:
                 type: string
+              userCode:
+                type: string
+              loincCode:
+                type: string
               dataType:
                 type: string
                 enum: [numeric, text, boolean, coded]
+              resultType:
+                type: string
+              defaultUnit:
+                type: string
+              decimals:
+                type: integer
+              allowedValues:
+                type: string
+              defaultValue:
+                type: string
+              isActive:
+                type: boolean
         panels:
           type: array
           items:
             type: object
-            required: [code, name]
+            required: [externalId, name]
             properties:
-              code:
+              externalId:
                 type: string
               name:
                 type: string
               description:
                 type: string
+              userCode:
+                type: string
+              loincCode:
+                type: string
               price:
                 type: number
                 minimum: 0
                 nullable: true
+              isActive:
+                type: boolean
         mappings:
           type: array
           items:
             type: object
             properties:
-              testCode:
+              testExternalId:
                 type: string
-              parameterCode:
+              parameterExternalId:
                 type: string
               ordering:
+                type: integer
+              displayOrder:
+                type: integer
+              isRequired:
+                type: boolean
+              unitOverride:
+                type: string
+        panelMappings:
+          type: array
+          items:
+            type: object
+            properties:
+              panelExternalId:
+                type: string
+              testExternalId:
+                type: string
+              ordering:
+                type: integer
+              displayOrder:
                 type: integer
 
     AuditEvent:
@@ -2757,6 +2846,24 @@ paths:
                   type: string
 
   # ─── Feature Flags (global / system) ──────────────────────────────────────
+  /feature-flags/definitions:
+    get:
+      operationId: getFeatureFlagDefinitions
+      summary: Get canonical feature flag definitions (registry)
+      description: Returns all non-deprecated flag definitions with metadata for Admin UI rendering.
+      tags: [FeatureFlags]
+      responses:
+        "200":
+          description: Feature flag definitions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeatureFlagDefinition'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+
   /feature-flags/resolved:
     get:
       operationId: getResolvedFeatureFlags

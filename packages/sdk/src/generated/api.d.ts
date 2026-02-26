@@ -301,6 +301,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/feature-flags/definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get canonical feature flag definitions (registry)
+         * @description Returns all non-deprecated flag definitions with metadata for Admin UI rendering.
+         */
+        get: operations["getFeatureFlagDefinitions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/feature-flags/resolved": {
         parameters: {
             query?: never;
@@ -2130,6 +2150,24 @@ export interface components {
             /** @description True for built-in system roles that cannot be deleted */
             isSystem?: boolean;
         };
+        FeatureFlagDefinition: {
+            key: string;
+            /** @enum {string} */
+            app: "core" | "lims" | "opd" | "rad" | "ipd" | "printing";
+            /** @enum {string} */
+            group: "main-apps" | "app-features";
+            label: string;
+            description: string;
+            /** @enum {string} */
+            valueType: "boolean" | "enum";
+            /** @enum {string} */
+            status: "implemented" | "planned" | "scaffold" | "deprecated";
+            /** @enum {string} */
+            buildStatus: "built" | "scaffold" | "planned";
+            defaultValue: boolean;
+            dependsOn?: string[];
+            enumOptions?: string[];
+        };
         FeatureFlag: {
             key: string;
             enabled: boolean;
@@ -2357,30 +2395,56 @@ export interface components {
         };
         CatalogImportPayload: {
             tests?: {
-                code: string;
+                externalId: string;
                 name: string;
                 description?: string;
+                userCode?: string;
+                department?: string;
                 sampleType?: string;
+                specimenType?: string;
+                method?: string;
+                loincCode?: string;
                 turnaroundHours?: number;
                 price?: number | null;
+                isActive?: boolean;
             }[];
             parameters?: {
-                code: string;
+                externalId: string;
                 name: string;
                 unit?: string;
+                userCode?: string;
+                loincCode?: string;
                 /** @enum {string} */
                 dataType?: "numeric" | "text" | "boolean" | "coded";
+                resultType?: string;
+                defaultUnit?: string;
+                decimals?: number;
+                allowedValues?: string;
+                defaultValue?: string;
+                isActive?: boolean;
             }[];
             panels?: {
-                code: string;
+                externalId: string;
                 name: string;
                 description?: string;
+                userCode?: string;
+                loincCode?: string;
                 price?: number | null;
+                isActive?: boolean;
             }[];
             mappings?: {
-                testCode?: string;
-                parameterCode?: string;
+                testExternalId?: string;
+                parameterExternalId?: string;
                 ordering?: number;
+                displayOrder?: number;
+                isRequired?: boolean;
+                unitOverride?: string;
+            }[];
+            panelMappings?: {
+                panelExternalId?: string;
+                testExternalId?: string;
+                ordering?: number;
+                displayOrder?: number;
             }[];
         };
         AuditEvent: {
@@ -3747,6 +3811,27 @@ export interface operations {
                     "application/json": string[];
                 };
             };
+        };
+    };
+    getFeatureFlagDefinitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Feature flag definitions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureFlagDefinition"][];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
         };
     };
     getResolvedFeatureFlags: {

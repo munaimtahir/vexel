@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 export default function CatalogPage() {
   const [stats, setStats] = useState<{ params: number; tests: number; panels: number } | null>(null);
@@ -30,6 +31,9 @@ export default function CatalogPage() {
     <div>
       <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>Catalog</h1>
       <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '24px', fontSize: '14px' }}>Manage lab tests, parameters, panels, and bulk import/export.</p>
+      <div style={{ marginBottom: '16px' }}>
+        <TenantScopeBanner mode="current-auth" pageLabel="Catalog" note="Catalog pages are scoped to the current authenticated tenant/host." />
+      </div>
 
       {/* Quick stats */}
       {stats && (

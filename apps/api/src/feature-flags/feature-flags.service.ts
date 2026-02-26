@@ -1,33 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { FEATURE_FLAG_REGISTRY, buildFlagDefaults, getFlagDefinition } from './registry';
 
-export const MODULE_KILL_SWITCHES = [
-  { key: 'module.lims', description: 'LIMS core module' },
-  { key: 'module.printing', description: 'Printing module' },
-  { key: 'module.rad', description: 'Radiology (RAD) scaffold' },
-  { key: 'module.opd', description: 'OPD scaffold' },
-  { key: 'module.ipd', description: 'IPD scaffold' },
-  { key: 'lims.auto_verify', description: 'Auto-verify LIMS results' },
-  { key: 'lims.print_results', description: 'Allow printing from LIMS' },
-  // Verification workflow flags
-  { key: 'lims.verification.enabled', description: 'Enable verification step for LIMS results' },
-  { key: 'lims.operator.verificationPages.enabled', description: 'Show verification pages in Operator UI' },
-  { key: 'lims.operator.sample.receiveSeparate.enabled', description: 'Separate specimen receive step in sample collection' },
-];
+export { FEATURE_FLAG_REGISTRY };
 
 // Variant flags have a JSON payload instead of a simple boolean
 export const VARIANT_FLAG_DEFAULTS: Record<string, unknown> = {
-  'lims.verification.mode': { mode: 'separate' }, // 'separate' | 'inline' | 'disabled'
+  'lims.verification.mode': { mode: 'separate' }, // 'separate' | 'inline'
 };
 
-// Boolean flag defaults (true = enabled by default)
-export const FLAG_DEFAULTS: Record<string, boolean> = {
-  'lims.verification.enabled': true,
-  'lims.operator.verificationPages.enabled': true,
-  'lims.operator.sample.receiveSeparate.enabled': false,
-  'lims.operator.barcode.enabled': false,
-};
+// Boolean flag defaults derived from registry
+export const FLAG_DEFAULTS: Record<string, boolean> = buildFlagDefaults();
+
+/** @deprecated Use FEATURE_FLAG_REGISTRY instead */
+export const MODULE_KILL_SWITCHES = FEATURE_FLAG_REGISTRY
+  .filter((d) => d.group === 'main-apps')
+  .map((d) => ({ key: d.key, description: d.description }));
 
 @Injectable()
 export class FeatureFlagsService {
@@ -48,7 +37,15 @@ export class FeatureFlagsService {
     return flags;
   }
 
-  /** Returns merged flags: DB overrides + defaults. Includes variant flags. */
+  /** Returns the canonical feature flag definitions (from registry) */
+  getDefinitions() {
+    return FEATURE_FLAG_REGISTRY.filter((d) => d.status !== 'deprecated');
+  }
+
+  /** Returns merged flags: DB overrides + defaults. Includes variant flags.
+   *  Also applies module kill-switch cascading: if module.X is OFF, all flags
+   *  with dependsOn:[module.X] are forced OFF in the resolved result.
+   */
   async getResolvedFlags(tenantId: string): Promise<Record<string, unknown>> {
     const rows = await this.prisma.tenantFeature.findMany({ where: { tenantId } });
     const result: Record<string, unknown> = {};
@@ -69,6 +66,17 @@ export class FeatureFlagsService {
         result[row.key] = row.enabled;
       }
     }
+
+    // Apply module kill-switch cascading
+    for (const def of FEATURE_FLAG_REGISTRY) {
+      if (def.dependsOn && def.dependsOn.length > 0) {
+        const anyDepOff = def.dependsOn.some((dep) => result[dep] === false);
+        if (anyDepOff && def.valueType === 'boolean') {
+          result[def.key] = false;
+        }
+      }
+    }
+
     return result;
   }
 
@@ -78,7 +86,7 @@ export class FeatureFlagsService {
       where: { tenantId_key: { tenantId, key } },
     });
     if (row) return row.enabled;
-    return FLAG_DEFAULTS[key] ?? false;
+    return FLAG_DEFAULTS[key] ?? getFlagDefinition(key)?.defaultValue ?? false;
   }
 
   /** Get single variant flag with default fallback */
@@ -107,7 +115,7 @@ export class FeatureFlagsService {
       where: { tenantId_key: { tenantId, key } },
       update: { variantJson, updatedBy: actorUserId },
       create: { tenantId, key, enabled: true, variantJson, updatedBy: actorUserId,
-        description: MODULE_KILL_SWITCHES.find((k) => k.key === key)?.description },
+        description: getFlagDefinition(key)?.description },
     });
     await this.audit.log({
       tenantId, actorUserId, action: 'feature_flag.set_variant',
@@ -137,7 +145,7 @@ export class FeatureFlagsService {
         create: {
           tenantId, key: update.key, enabled: update.enabled,
           updatedBy: actorUserId,
-          description: MODULE_KILL_SWITCHES.find((k) => k.key === update.key)?.description,
+          description: getFlagDefinition(update.key)?.description,
         },
       });
 
@@ -160,6 +168,6 @@ export class FeatureFlagsService {
       entityType: 'FeatureFlag', entityId: key,
       before: { key }, after: { key, enabled }, correlationId,
     });
-    return { key, enabled, description: MODULE_KILL_SWITCHES.find((k) => k.key === key)?.description };
+    return { key, enabled, description: getFlagDefinition(key)?.description };
   }
 }

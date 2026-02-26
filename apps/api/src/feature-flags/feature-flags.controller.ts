@@ -14,6 +14,14 @@ import { Request } from 'express';
 export class FeatureFlagsController {
   constructor(private readonly svc: FeatureFlagsService) {}
 
+  /** Feature flag definitions (typed registry) — all non-deprecated flags with metadata.
+   *  Used by Admin UI to render structured sections with status badges. */
+  @Get('definitions')
+  @UseGuards(JwtAuthGuard)
+  getDefinitions() {
+    return this.svc.getDefinitions();
+  }
+
   /** Resolved flags for current tenant — JWT auth only, no special permission required.
    *  Used by Operator/Admin UI for feature gating (sidebar, button visibility). */
   @Get('resolved')

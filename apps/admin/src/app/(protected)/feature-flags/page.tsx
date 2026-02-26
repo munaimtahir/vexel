@@ -1,22 +1,47 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
-const FLAG_DESCRIPTIONS: Record<string, string> = {
-  'module.lims': 'LIMS core module — enables laboratory workflow',
-  'module.printing': 'Printing module — allows report printing',
-  'module.rad': 'Radiology (RAD) scaffold',
-  'module.opd': 'OPD (Outpatient) scaffold',
-  'module.ipd': 'IPD (Inpatient) scaffold',
-  'lims.auto_verify': 'Auto-verify LIMS results without manual review',
-  'lims.print_results': 'Allow printing results directly from LIMS',
-  'lims.verification.enabled': 'Enable verification step for LIMS results',
-  'lims.verification.mode': 'Verification mode: separate worklist or inline with results',
-  'lims.operator.verificationPages.enabled': 'Show verification pages in Operator UI navigation',
-  'lims.operator.sample.receiveSeparate.enabled': 'Enable separate specimen receive step in sample collection',
+type BuildStatus = 'built' | 'scaffold' | 'planned';
+type FeatureStatus = 'implemented' | 'scaffold' | 'planned' | 'deprecated';
+type ValueType = 'boolean' | 'enum';
+
+interface FlagDef {
+  key: string;
+  app: string;
+  group: 'main-apps' | 'app-features';
+  label: string;
+  description: string;
+  valueType: ValueType;
+  status: FeatureStatus;
+  buildStatus: BuildStatus;
+  defaultValue: boolean;
+  dependsOn?: string[];
+  enumOptions?: string[];
+}
+
+interface FlagValue {
+  key: string;
+  enabled: boolean;
+  variantJson?: string | null;
+  description?: string;
+}
+
+const BUILD_BADGE: Record<BuildStatus, { label: string; color: string }> = {
+  built:    { label: 'Built',    color: 'hsl(142 70% 45%)' },
+  scaffold: { label: 'Scaffold', color: 'hsl(38 90% 50%)' },
+  planned:  { label: 'Planned',  color: 'hsl(var(--muted-foreground))' },
+};
+
+const APP_LABELS: Record<string, string> = {
+  lims: 'LIMS',
+  opd: 'OPD',
+  rad: 'Radiology',
+  ipd: 'IPD',
+  printing: 'Printing',
 };
 
 export default function FeatureFlagsPage() {
@@ -25,22 +50,34 @@ export default function FeatureFlagsPage() {
 
   const [tenants, setTenants] = useState<any[]>([]);
   const [tenantId, setTenantId] = useState<string>('');
-  const [flags, setFlags] = useState<any[]>([]);
+  const [defs, setDefs] = useState<FlagDef[]>([]);
+  const [flags, setFlags] = useState<FlagValue[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
-  // Load tenants list first
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  }
+
   useEffect(() => {
     async function init() {
       const api = getApiClient(getToken() ?? undefined);
       const meRes = await api.GET('/me');
-      const myTenantId = meRes.data?.tenantId ?? '';
+      const myTenantId = (meRes.data as any)?.tenantId ?? '';
       const tenantsRes = await api.GET('/tenants');
-      const all: any[] = tenantsRes.data?.data ?? [];
+      const all: any[] = (tenantsRes.data as any)?.data ?? [];
       setTenants(all);
-      // Use query param if provided, else current user's tenant
       const target = qTenantId ?? myTenantId;
       setTenantId(target || (all[0]?.id ?? ''));
+
+      // Load definitions (registry)
+      // @ts-ignore
+      const defsRes = await api.GET('/feature-flags/definitions');
+      setDefs((defsRes.data as FlagDef[]) ?? []);
     }
     init();
   }, [qTenantId]);
@@ -50,184 +87,241 @@ export default function FeatureFlagsPage() {
     setLoading(true);
     const api = getApiClient(getToken() ?? undefined);
     const { data } = await api.GET('/tenants/{tenantId}/feature-flags' as any, { params: { path: { tenantId: tid } } });
-    setFlags((data as any) ?? []);
+    setFlags((data as FlagValue[]) ?? []);
     setLoading(false);
   }
 
   useEffect(() => { if (tenantId) loadFlags(tenantId); }, [tenantId]);
 
   async function handleToggle(key: string, enabled: boolean) {
+    if (saving) return;
     setSaving(key);
     const api = getApiClient(getToken() ?? undefined);
-    // Find current flag to preserve variantJson
     const current = flags.find((f) => f.key === key);
     const body: any = { enabled };
     if (current?.variantJson) body.variantJson = current.variantJson;
     await api.PUT('/tenants/{tenantId}/feature-flags' as any, { params: { path: { tenantId } }, body: [{ key, ...body }] });
     await loadFlags(tenantId);
     setSaving(null);
+    showToast(`${key} ${enabled ? 'enabled' : 'disabled'}`);
   }
 
   async function handleVariantSave(key: string, variantJson: string) {
+    if (saving) return;
     setSaving(key);
     const api = getApiClient(getToken() ?? undefined);
-    // Preserve existing enabled state — do NOT force enable
     const current = flags.find((f) => f.key === key);
     const currentEnabled = current?.enabled ?? true;
     await api.PUT('/tenants/{tenantId}/feature-flags' as any, { params: { path: { tenantId } }, body: [{ key, enabled: currentEnabled, variantJson }] });
     await loadFlags(tenantId);
     setSaving(null);
+    showToast(`${key} updated`);
   }
 
-  if (!tenantId && !loading) return <p style={{ padding: '32px', color: 'hsl(var(--muted-foreground))' }}>No tenant found.</p>;
-
-  const VERIFICATION_KEYS = new Set([
-    'lims.verification.enabled',
-    'lims.verification.mode',
-    'lims.operator.verificationPages.enabled',
-    'lims.operator.sample.receiveSeparate.enabled',
-  ]);
-
-  const modules = flags.filter((f) => f.key.startsWith('module.'));
-  const subFeatures = flags.filter((f) => !f.key.startsWith('module.') && !VERIFICATION_KEYS.has(f.key));
-
-  function getFlag(key: string, defaultEnabled: boolean): any {
-    return flags.find((f) => f.key === key) ?? { key, enabled: defaultEnabled };
+  function getFlagValue(key: string, defaultValue: boolean): boolean {
+    const f = flags.find((x) => x.key === key);
+    return f !== undefined ? f.enabled : defaultValue;
   }
 
-  const verificationEnabledFlag = getFlag('lims.verification.enabled', true);
-  const verificationPagesFlag = getFlag('lims.operator.verificationPages.enabled', true);
-  const receiveSeparateFlag = getFlag('lims.operator.sample.receiveSeparate.enabled', false);
-  const modeFlagRaw = flags.find((f) => f.key === 'lims.verification.mode');
-  let currentMode = 'separate';
-  if (modeFlagRaw?.variantJson) {
-    try { currentMode = JSON.parse(modeFlagRaw.variantJson).mode ?? 'separate'; } catch { /* keep default */ }
+  function getVariantValue(key: string): any {
+    const f = flags.find((x) => x.key === key);
+    if (f?.variantJson) { try { return JSON.parse(f.variantJson); } catch { /**/ } }
+    return null;
   }
+
+  // Filter defs by search
+  const filtered = useMemo(() => {
+    if (!search.trim()) return defs;
+    const q = search.toLowerCase();
+    return defs.filter((d) => d.key.toLowerCase().includes(q) || d.label.toLowerCase().includes(q));
+  }, [defs, search]);
+
+  const mainApps = filtered.filter((d) => d.group === 'main-apps');
+  const appFeaturesByApp = useMemo(() => {
+    const map: Record<string, FlagDef[]> = {};
+    for (const d of filtered.filter((x) => x.group === 'app-features')) {
+      if (!map[d.app]) map[d.app] = [];
+      map[d.app].push(d);
+    }
+    return map;
+  }, [filtered]);
 
   const selectedTenant = tenants.find((t) => t.id === tenantId);
 
   return (
-    <div>
-      <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', color: 'hsl(var(--foreground))' }}>Feature Flags</h1>
+    <div style={{ maxWidth: '960px' }}>
+      <h1 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>Feature Flags</h1>
+      <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '20px', fontSize: '14px' }}>
+        Control which modules and features are active. Planned flags are listed for visibility but have no runtime effect yet.
+      </p>
 
       {/* Tenant selector */}
       {tenants.length > 1 && (
-        <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <label style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>Tenant:</label>
           <select value={tenantId} onChange={(e) => setTenantId(e.target.value)}
             style={{ padding: '6px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', background: 'hsl(var(--card))' }}>
             {tenants.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
-          {selectedTenant && <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', background: 'hsl(var(--muted))', padding: '3px 8px', borderRadius: '4px' }}>{selectedTenant.status}</span>}
+          {selectedTenant && <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', background: 'hsl(var(--muted))', padding: '2px 8px', borderRadius: '4px' }}>{selectedTenant.status}</span>}
         </div>
       )}
 
       <div style={{ marginBottom: '16px' }}>
-        <TenantScopeBanner
-          mode="explicit"
-          pageLabel="Feature Flags"
-          tenantId={tenantId}
-          tenantName={selectedTenant?.name}
-          note="This page reads and writes /tenants/{tenantId}/feature-flags for the selected tenant."
-        />
+        <TenantScopeBanner mode="explicit" pageLabel="Feature Flags" tenantId={tenantId} tenantName={selectedTenant?.name}
+          note="This page reads and writes /tenants/{tenantId}/feature-flags for the selected tenant." />
       </div>
 
-      <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '32px' }}>Control which modules and features are active for this tenant.</p>
+      {/* Search */}
+      <div style={{ marginBottom: '24px' }}>
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by key or label…"
+          style={{ width: '100%', maxWidth: '360px', padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '13px', background: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }} />
+      </div>
 
-      {loading ? <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading flags...</p> : (
+      {/* Toast */}
+      {toast && (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', background: 'hsl(var(--foreground))', color: 'hsl(var(--background))', padding: '10px 18px', borderRadius: '8px', fontSize: '13px', zIndex: 9999, boxShadow: '0 4px 16px hsl(0 0% 0% / 0.2)' }}>
+          ✓ {toast}
+        </div>
+      )}
+
+      {loading ? (
+        <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading flags…</p>
+      ) : (
         <>
-          <section style={{ marginBottom: '32px' }}>
-            <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: 'hsl(var(--foreground))' }}>Module Toggles</h2>
-            <div style={{ display: 'grid', gap: '8px' }}>
-              {modules.map((f) => <FlagRow key={f.key} flag={f} saving={saving} onToggle={handleToggle} />)}
-              {modules.length === 0 && <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px' }}>No module flags configured for this tenant.</p>}
-            </div>
-          </section>
+          {/* ─── Section 1: Main Apps ─────────────────────────────────────────── */}
+          <Section title="Main Apps" subtitle="Enable or disable entire modules. Disabling a module forces all its sub-features OFF.">
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+              <thead>
+                <tr style={{ color: 'hsl(var(--muted-foreground))', borderBottom: '1px solid hsl(var(--border))' }}>
+                  <Th>App</Th><Th>Key</Th><Th>Description</Th><Th style={{ textAlign: 'center' }}>Build</Th><Th style={{ textAlign: 'center' }}>On/Off</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {mainApps.map((def) => {
+                  const val = getFlagValue(def.key, def.defaultValue);
+                  return (
+                    <tr key={def.key} style={{ borderBottom: '1px solid hsl(var(--border) / 0.5)' }}>
+                      <Td><strong>{def.label}</strong></Td>
+                      <Td><code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>{def.key}</code></Td>
+                      <Td style={{ color: 'hsl(var(--muted-foreground))' }}>{def.description}</Td>
+                      <Td style={{ textAlign: 'center' }}><BuildBadge status={def.buildStatus} /></Td>
+                      <Td style={{ textAlign: 'center' }}>
+                        <Toggle enabled={val} isSaving={saving === def.key}
+                          disabled={def.buildStatus === 'planned'}
+                          onToggle={() => handleToggle(def.key, !val)} />
+                      </Td>
+                    </tr>
+                  );
+                })}
+                {mainApps.length === 0 && <tr><td colSpan={5} style={{ padding: '12px', color: 'hsl(var(--muted-foreground))' }}>No results.</td></tr>}
+              </tbody>
+            </table>
+          </Section>
 
-          {subFeatures.length > 0 && (
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: 'hsl(var(--foreground))' }}>Sub-Features</h2>
-              <div style={{ display: 'grid', gap: '8px' }}>
-                {subFeatures.map((f) => <FlagRow key={f.key} flag={f} saving={saving} onToggle={handleToggle} />)}
-              </div>
-            </section>
-          )}
+          {/* ─── Section 2: App Features ──────────────────────────────────────── */}
+          <Section title="App Features" subtitle="Per-module feature toggles. Planned features are visible but disabled — toggling has no runtime effect.">
+            {Object.entries(appFeaturesByApp).map(([app, appDefs]) => {
+              const isOpen = collapsed[app] !== true;
+              return (
+                <div key={app} style={{ marginBottom: '16px', border: '1px solid hsl(var(--border))', borderRadius: '8px', overflow: 'hidden' }}>
+                  <button onClick={() => setCollapsed((c) => ({ ...c, [app]: !isOpen }))}
+                    style={{ width: '100%', padding: '12px 16px', background: 'hsl(var(--muted) / 0.5)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '14px', fontWeight: 600, color: 'hsl(var(--foreground))' }}>
+                    <span>{APP_LABELS[app] ?? app}</span>
+                    <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>{isOpen ? '▲' : '▼'} {appDefs.length} feature{appDefs.length !== 1 ? 's' : ''}</span>
+                  </button>
+                  {isOpen && (
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                      <thead>
+                        <tr style={{ color: 'hsl(var(--muted-foreground))', borderBottom: '1px solid hsl(var(--border))' }}>
+                          <Th>Feature</Th><Th>Key</Th><Th>Description</Th><Th style={{ textAlign: 'center' }}>Build</Th><Th style={{ textAlign: 'center' }}>On/Off</Th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {appDefs.map((def) => {
+                          const isPlanned = def.buildStatus === 'planned' || def.status === 'planned';
+                          const val = getFlagValue(def.key, def.defaultValue);
+                          const isEnum = def.valueType === 'enum';
+                          const variantVal = isEnum ? getVariantValue(def.key) : null;
+                          const currentMode = (variantVal as any)?.mode ?? 'separate';
 
-          <section>
-            <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: 'hsl(var(--foreground))' }}>Verification Workflow</h2>
-            <div style={{ display: 'grid', gap: '8px' }}>
-              <FlagRow flag={verificationEnabledFlag} saving={saving} onToggle={handleToggle}
-                labelOverride="Verification Enabled"
-                descriptionOverride="Enable the verification step before publishing reports." />
-              <VariantFlagRow flagKey="lims.verification.mode" label="Verification Mode" currentMode={currentMode} saving={saving}
-                onSave={(mode: string) => handleVariantSave('lims.verification.mode', JSON.stringify({ mode }))} />
-              <FlagRow flag={verificationPagesFlag} saving={saving} onToggle={handleToggle}
-                labelOverride="Show Verification Pages in Operator UI"
-                descriptionOverride="Controls whether the Verification worklist is visible in the Operator navigation." />
-              <FlagRow flag={receiveSeparateFlag} saving={saving} onToggle={handleToggle}
-                labelOverride="Separate Specimen Receive Step"
-                descriptionOverride="Adds a separate 'Receive' tab in Sample Collection." />
-            </div>
-          </section>
+                          return (
+                            <tr key={def.key} style={{ borderBottom: '1px solid hsl(var(--border) / 0.5)', opacity: isPlanned ? 0.65 : 1 }}>
+                              <Td>
+                                <span style={{ fontWeight: 500 }}>{def.label}</span>
+                                {isPlanned && <span style={{ marginLeft: '6px', fontSize: '11px', background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))', padding: '1px 6px', borderRadius: '4px' }}>TODO</span>}
+                              </Td>
+                              <Td><code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>{def.key}</code></Td>
+                              <Td style={{ color: 'hsl(var(--muted-foreground))' }}>
+                                {def.description}
+                                {isPlanned && <span style={{ display: 'block', fontSize: '11px', marginTop: '2px', color: 'hsl(var(--muted-foreground))' }}>⚠ No runtime effect yet</span>}
+                              </Td>
+                              <Td style={{ textAlign: 'center' }}><BuildBadge status={def.buildStatus} /></Td>
+                              <Td style={{ textAlign: 'center' }}>
+                                {isEnum ? (
+                                  <select value={currentMode} disabled={saving === def.key || isPlanned}
+                                    onChange={(e) => handleVariantSave(def.key, JSON.stringify({ mode: e.target.value }))}
+                                    style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid hsl(var(--border))', fontSize: '12px', background: 'hsl(var(--card))', color: 'hsl(var(--foreground))', cursor: isPlanned ? 'not-allowed' : 'pointer' }}>
+                                    {(def.enumOptions ?? []).map((o) => <option key={o} value={o}>{o}</option>)}
+                                  </select>
+                                ) : (
+                                  <Toggle enabled={val} isSaving={saving === def.key}
+                                    disabled={isPlanned}
+                                    onToggle={() => !isPlanned && handleToggle(def.key, !val)} />
+                                )}
+                              </Td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              );
+            })}
+            {Object.keys(appFeaturesByApp).length === 0 && <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px' }}>No results.</p>}
+          </Section>
         </>
       )}
     </div>
   );
 }
 
-function FlagRow({ flag, saving, onToggle, labelOverride, descriptionOverride }: {
-  flag: any; saving: string | null; onToggle: (key: string, enabled: boolean) => void;
-  labelOverride?: string; descriptionOverride?: string;
-}) {
+function Section({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return (
-    <div style={{ background: 'hsl(var(--card))', padding: '16px 20px', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {labelOverride && <span style={{ fontSize: '14px', fontWeight: 500, color: 'hsl(var(--foreground))' }}>{labelOverride}</span>}
-          <code style={{ background: 'hsl(var(--muted))', padding: '3px 8px', borderRadius: '4px', fontSize: '13px' }}>{flag.key}</code>
-        </div>
-        <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', margin: '4px 0 0' }}>
-          {descriptionOverride ?? FLAG_DESCRIPTIONS[flag.key] ?? flag.description ?? ''}
-        </p>
+    <section style={{ marginBottom: '40px' }}>
+      <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>{title}</h2>
+      <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '14px' }}>{subtitle}</p>
+      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', border: '1px solid hsl(var(--border))', overflow: 'hidden' }}>
+        {children}
       </div>
-      <button onClick={() => onToggle(flag.key, !flag.enabled)} disabled={saving === flag.key}
-        style={{ width: '48px', height: '26px', borderRadius: '13px', background: flag.enabled ? 'hsl(var(--status-success-fg))' : 'hsl(var(--border))', border: 'none', cursor: saving === flag.key ? 'wait' : 'pointer', transition: 'background 0.2s', position: 'relative', flexShrink: 0 }}
-        aria-label={`Toggle ${flag.key}`}
-        aria-pressed={flag.enabled}>
-        <span style={{ position: 'absolute', top: '3px', left: flag.enabled ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'hsl(var(--card))', transition: 'left 0.2s', boxShadow: '0 1px 3px hsl(var(--foreground) / 0.2)' }} />
-      </button>
-    </div>
+    </section>
   );
 }
 
-const MODE_OPTIONS = [
-  { value: 'separate', label: 'Separate — Operators submit, verifiers verify in dedicated worklist' },
-  { value: 'inline', label: 'Inline — Operators can Submit & Verify from results entry screen' },
-  { value: 'disabled', label: 'Disabled — No verification step; Submit & Verify shown on results entry' },
-];
+function Th({ children, style }: { children?: React.ReactNode; style?: React.CSSProperties }) {
+  return <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 500, fontSize: '12px', ...style }}>{children}</th>;
+}
 
-function VariantFlagRow({ flagKey, label, currentMode, saving, onSave }: {
-  flagKey: string; label: string; currentMode: string; saving: string | null; onSave: (mode: string) => void;
-}) {
-  const modeDescriptions: Record<string, string> = {
-    separate: 'Operators submit results; a dedicated verifier reviews in a separate worklist.',
-    inline: 'Operators can submit and verify results in one step.',
-    disabled: 'No verification step. Results are published immediately.',
-  };
+function Td({ children, style }: { children?: React.ReactNode; style?: React.CSSProperties }) {
+  return <td style={{ padding: '10px 14px', verticalAlign: 'middle', ...style }}>{children}</td>;
+}
+
+function BuildBadge({ status }: { status: BuildStatus }) {
+  const { label, color } = BUILD_BADGE[status];
   return (
-    <div style={{ background: 'hsl(var(--card))', padding: '16px 20px', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '14px', fontWeight: 500, color: 'hsl(var(--foreground))' }}>{label}</span>
-          <code style={{ background: 'hsl(var(--muted))', padding: '3px 8px', borderRadius: '4px', fontSize: '13px' }}>{flagKey}</code>
-        </div>
-        <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', margin: '4px 0 0' }}>{modeDescriptions[currentMode] ?? ''}</p>
-      </div>
-      <select value={currentMode} disabled={saving === flagKey} onChange={(e) => onSave(e.target.value)}
-        style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid hsl(var(--border))', fontSize: '13px', color: 'hsl(var(--foreground))', background: 'hsl(var(--card))', cursor: saving === flagKey ? 'wait' : 'pointer', minWidth: '220px' }}
-        aria-label={`Select ${flagKey}`}>
-        {MODE_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-      </select>
-    </div>
+    <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 500, background: `${color}22`, color }}>{label}</span>
+  );
+}
+
+function Toggle({ enabled, isSaving, disabled, onToggle }: { enabled: boolean; isSaving: boolean; disabled?: boolean; onToggle: () => void }) {
+  const bg = disabled ? 'hsl(var(--border))' : enabled ? 'hsl(142 70% 45%)' : 'hsl(var(--border))';
+  return (
+    <button onClick={onToggle} disabled={isSaving || disabled}
+      title={disabled ? 'No runtime effect — planned feature' : undefined}
+      style={{ width: '44px', height: '24px', borderRadius: '12px', background: bg, border: 'none', cursor: (isSaving || disabled) ? (disabled ? 'not-allowed' : 'wait') : 'pointer', transition: 'background 0.2s', position: 'relative', opacity: disabled ? 0.5 : 1 }}
+      aria-label={`Toggle`} aria-pressed={enabled}>
+      <span style={{ position: 'absolute', top: '2px', left: enabled && !disabled ? '22px' : '2px', width: '20px', height: '20px', borderRadius: '50%', background: 'hsl(var(--card))', transition: 'left 0.2s', boxShadow: '0 1px 3px hsl(var(--foreground) / 0.2)' }} />
+    </button>
   );
 }

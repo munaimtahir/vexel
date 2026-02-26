@@ -21,24 +21,29 @@ const DEFAULTS: ResolvedFlags = {
 };
 
 let _cache: ResolvedFlags | null = null;
-let _fetchPromise: Promise<ResolvedFlags> | null = null;
+let _cacheTime = 0;
+const CACHE_TTL_MS = 30_000; // 30 seconds — ensures admin flag changes are reflected quickly
 
 async function fetchFlags(): Promise<ResolvedFlags> {
-  if (_cache) return _cache;
-  if (_fetchPromise) return _fetchPromise;
-  _fetchPromise = (async () => {
-    try {
-      const api = getApiClient(getToken() ?? undefined);
-      // @ts-ignore — path exists after SDK regen
-      const { data, error } = await api.GET('/feature-flags/resolved');
-      if (!error && data) {
-        _cache = { ...DEFAULTS, ...(data as ResolvedFlags) };
-        return _cache;
-      }
-    } catch { /* network error — use defaults */ }
-    return DEFAULTS;
-  })();
-  return _fetchPromise;
+  const now = Date.now();
+  if (_cache && now - _cacheTime < CACHE_TTL_MS) return _cache;
+  try {
+    const api = getApiClient(getToken() ?? undefined);
+    // @ts-ignore — path exists after SDK regen
+    const { data, error } = await api.GET('/feature-flags/resolved');
+    if (!error && data) {
+      _cache = { ...DEFAULTS, ...(data as ResolvedFlags) };
+      _cacheTime = Date.now();
+      return _cache;
+    }
+  } catch { /* network error — use defaults */ }
+  return DEFAULTS;
+}
+
+/** Force-clear the flags cache on next fetch (call after updating flags in admin) */
+export function invalidateFlagsCache() {
+  _cache = null;
+  _cacheTime = 0;
 }
 
 export function useFeatureFlags(): { flags: ResolvedFlags; loading: boolean } {

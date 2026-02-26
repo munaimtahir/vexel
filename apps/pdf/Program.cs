@@ -579,15 +579,16 @@ class ReceiptDocument : IDocument
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(1f, Unit.Centimetre);
+                page.MarginVertical(0.6f, Unit.Centimetre);
+                page.MarginHorizontal(0.8f, Unit.Centimetre);
                 page.DefaultTextStyle(x => x.FontSize(8).FontFamily(Fonts.Arial));
 
                 page.Content().Column(col =>
                 {
                     col.Spacing(0);
-                    col.Item().Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode));
-                    col.Item().PaddingVertical(4).Element(ComposeCutLine);
-                    col.Item().Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode));
+                    col.Item().Height(139, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode));
+                    col.Item().Height(7, Unit.Millimetre).Element(ComposeCutLine);
+                    col.Item().Height(139, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode));
                 });
             });
         }
@@ -754,7 +755,12 @@ class ReceiptDocument : IDocument
         var headerLayout  = _branding.ReceiptHeaderLayout ?? _branding.ReportHeaderLayout ?? "default";
         var footerLayout  = _branding.ReceiptFooterLayout ?? "text";
 
-        container.Column(col =>
+        container
+            .ShowEntire()
+            .Border(0.7f)
+            .BorderColor(Colors.Grey.Lighten1)
+            .Padding(3f, Unit.Millimetre)
+            .Column(col =>
         {
             // 1. Copy label
             col.Item().PaddingBottom(3).AlignCenter()
@@ -812,16 +818,14 @@ class ReceiptDocument : IDocument
             });
 
             // 6. Items table + totals
-            col.Item().PaddingBottom(4).Element(ComposeReceiptItems);
-
-            // 7. Payment section
-            col.Item().PaddingBottom(4).Element(ComposePaymentSection);
+            col.Item().ExtendVertical().Element(ComposeReceiptBodyA4);
 
             // 8. Barcode
             if (barcodeBytes != null)
             {
-                col.Item().PaddingBottom(2).Column(bc =>
+                col.Item().PaddingTop(2).Column(bc =>
                 {
+                    bc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
                     bc.Item().Height(30).AlignCenter().Image(barcodeBytes).FitHeight();
                     bc.Item().AlignCenter().Text(encounterCode).FontSize(7).FontColor(Colors.Grey.Darken1);
                 });
@@ -830,15 +834,16 @@ class ReceiptDocument : IDocument
             // 9. Footer — respects footerLayout
             col.Item().PaddingTop(2).Element(footer =>
             {
+                footer.LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
                 if (footerLayout == "both" && _logoBytes != null)
                 {
-                    footer.Column(fc => {
+                    footer.PaddingTop(2).Column(fc => {
                         fc.Item().AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
                     });
                 }
                 else
                 {
-                    footer.AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    footer.PaddingTop(2).AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
                 }
             });
         });
@@ -850,20 +855,28 @@ class ReceiptDocument : IDocument
         table.Cell().Padding(2).Text(right).FontSize(8);
     }
 
-    void ComposeReceiptItems(IContainer container)
+    void ComposeReceiptBodyA4(IContainer container)
+    {
+        container.Column(col =>
+        {
+            col.Item().Element(c => ComposeReceiptItems(c, minRows: 11));
+            col.Item().PaddingTop(4).Element(ComposePaymentSection);
+        });
+    }
+
+    void ComposeReceiptItems(IContainer container, int minRows = 0)
     {
         if (!_payload.TryGetProperty("items", out var lines) || lines.ValueKind != JsonValueKind.Array)
         {
-            container.Text("No items.").FontSize(8).FontColor(Colors.Grey.Darken1);
+            container.Column(col =>
+            {
+                col.Item().Table(table => ComposeReceiptItemsTable(table, new List<JsonElement>(), minRows));
+                col.Item().PaddingTop(4).Text("No items.").FontSize(8).FontColor(Colors.Grey.Darken1);
+            });
             return;
         }
 
         var linesList = lines.EnumerateArray().ToList();
-        if (linesList.Count == 0)
-        {
-            container.Text("No items.").FontSize(8).FontColor(Colors.Grey.Darken1);
-            return;
-        }
 
         var subtotal   = Get("subtotalAmount",  Get("subtotal",    "0"));
         var discount   = Get("discountAmount",  Get("discount",    "0"));
@@ -876,29 +889,7 @@ class ReceiptDocument : IDocument
             // Items table
             col.Item().Table(table =>
             {
-                table.ColumnsDefinition(c =>
-                {
-                    c.RelativeColumn(4);
-                    c.ConstantColumn(60);
-                });
-
-                table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
-                     .BorderColor(Colors.Grey.Lighten2).Padding(3)
-                     .Text("Test Name").Bold().FontSize(8);
-                table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
-                     .BorderColor(Colors.Grey.Lighten2).Padding(3).AlignRight()
-                     .Text("Price").Bold().FontSize(8);
-
-                foreach (var line in linesList)
-                {
-                    var desc  = GetFrom(line, "description",
-                                GetFrom(line, "testName", GetFrom(line, "name", "\u2014")));
-                    var price = GetFrom(line, "unitPrice", GetFrom(line, "price", "0"));
-                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                         .Padding(3).Text(desc).FontSize(8);
-                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                         .Padding(3).AlignRight().Text(DocHelpers.Pkr(price)).FontSize(8);
-                }
+                ComposeReceiptItemsTable(table, linesList, minRows);
             });
 
             // Totals — right-aligned table (no width constraint)
@@ -917,6 +908,42 @@ class ReceiptDocument : IDocument
                 TotalRow(totals, "Due:",               DocHelpers.Pkr(due),        false);
             });
         });
+    }
+
+    void ComposeReceiptItemsTable(TableDescriptor table, List<JsonElement> linesList, int minRows)
+    {
+        table.ColumnsDefinition(c =>
+        {
+            c.RelativeColumn(4);
+            c.ConstantColumn(60);
+        });
+
+        table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+             .BorderColor(Colors.Grey.Lighten2).Padding(3)
+             .Text("Test Name").Bold().FontSize(8);
+        table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+             .BorderColor(Colors.Grey.Lighten2).Padding(3).AlignRight()
+             .Text("Price").Bold().FontSize(8);
+
+        foreach (var line in linesList)
+        {
+            var desc  = GetFrom(line, "description",
+                        GetFrom(line, "testName", GetFrom(line, "name", "\u2014")));
+            var price = GetFrom(line, "unitPrice", GetFrom(line, "price", "0"));
+            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                 .Padding(3).Text(desc).FontSize(8);
+            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                 .Padding(3).AlignRight().Text(DocHelpers.Pkr(price)).FontSize(8);
+        }
+
+        var blanksNeeded = Math.Max(0, minRows - linesList.Count);
+        for (var i = 0; i < blanksNeeded; i++)
+        {
+            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
+                 .MinHeight(15).Padding(3).Text(" ").FontSize(8);
+            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
+                 .MinHeight(15).Padding(3).AlignRight().Text(" ").FontSize(8);
+        }
     }
 
     void TotalRow(TableDescriptor totals, string label, string value, bool bold)

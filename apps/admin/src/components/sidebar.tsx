@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { logout } from '@/lib/auth';
 import { ChevronDown } from 'lucide-react';
-import { getVisibleAdminNav } from '@/lib/admin-nav';
+import { getVisibleAdminNav, getVisibleAdminOpdNav } from '@/lib/admin-nav';
 import { useCurrentUser } from '@/lib/use-auth';
 
 const S = {
@@ -29,7 +29,11 @@ export function Sidebar() {
   const pathname = usePathname();
   const router   = useRouter();
   const { user } = useCurrentUser();
-  const navItems = getVisibleAdminNav(user);
+  const normalizedPath = pathname.startsWith('/admin/') ? pathname.slice('/admin'.length) : pathname;
+  const currentModule: 'core' | 'opd' = normalizedPath.startsWith('/opd') ? 'opd' : 'core';
+  const coreNavItems = getVisibleAdminNav(user);
+  const opdNavItems = getVisibleAdminOpdNav(user);
+  const navItems = currentModule === 'opd' ? opdNavItems : coreNavItems;
   const handleLogout = () => { logout(); router.push('/login'); };
 
   return (
@@ -64,6 +68,40 @@ export function Sidebar() {
             </div>
           </div>
         </div>
+        <div style={{ display: 'flex', gap: '7px', position: 'relative', zIndex: 1, marginTop: '14px' }}>
+          <Link
+            href="/dashboard"
+            style={{
+              display: 'flex', alignItems: 'center', gap: '5px',
+              padding: '5px 12px', borderRadius: '99px',
+              background: currentModule === 'core' ? 'hsl(var(--sidebar-accent))' : 'hsl(var(--sidebar-foreground) / 0.04)',
+              border: currentModule === 'core' ? '1px solid hsl(var(--sidebar-border))' : '1px solid hsl(var(--sidebar-foreground) / 0.08)',
+              textDecoration: 'none',
+              boxShadow: currentModule === 'core' ? '0 0 12px hsl(var(--primary) / 0.12)' : 'none',
+            }}
+          >
+            <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: currentModule === 'core' ? 'hsl(var(--primary))' : 'hsl(var(--sidebar-muted))' }} />
+            <span style={{ fontSize: '10px', fontWeight: 700, color: currentModule === 'core' ? 'hsl(var(--sidebar-foreground))' : 'hsl(var(--sidebar-muted))', letterSpacing: '0.07em' }}>
+              ADMIN
+            </span>
+          </Link>
+          <Link
+            href="/opd"
+            style={{
+              display: 'flex', alignItems: 'center', gap: '5px',
+              padding: '5px 12px', borderRadius: '99px',
+              background: currentModule === 'opd' ? 'hsl(var(--sidebar-accent))' : 'hsl(var(--sidebar-foreground) / 0.04)',
+              border: currentModule === 'opd' ? '1px solid hsl(var(--sidebar-border))' : '1px solid hsl(var(--sidebar-foreground) / 0.08)',
+              textDecoration: 'none',
+              boxShadow: currentModule === 'opd' ? '0 0 12px hsl(var(--primary) / 0.12)' : 'none',
+            }}
+          >
+            <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: currentModule === 'opd' ? 'hsl(var(--primary))' : 'hsl(var(--sidebar-muted))' }} />
+            <span style={{ fontSize: '10px', fontWeight: 700, color: currentModule === 'opd' ? 'hsl(var(--sidebar-foreground))' : 'hsl(var(--sidebar-muted))', letterSpacing: '0.07em' }}>
+              OPD
+            </span>
+          </Link>
+        </div>
       </div>
 
       <GlowLine />
@@ -71,11 +109,11 @@ export function Sidebar() {
       {/* NAV */}
       <nav style={{ flex: 1, padding: '10px 8px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2px' }}>
         <div style={{ padding: '2px 8px 8px', fontSize: '9px', fontWeight: 700, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
-          Administration
+          {currentModule === 'opd' ? 'OPD Administration' : 'Administration'}
         </div>
         {navItems.map((item) => {
-          const isParentActive = pathname === item.href || pathname.startsWith(item.href + '/')
-            || (item.children?.some(c => pathname === c.href || pathname.startsWith(c.href + '/')) ?? false);
+          const isParentActive = normalizedPath === item.href || normalizedPath.startsWith(item.href + '/')
+            || (item.children?.some(c => normalizedPath === c.href || normalizedPath.startsWith(c.href + '/')) ?? false);
           return (
             <div key={item.href}>
               <Link href={item.href} style={{
@@ -112,7 +150,7 @@ export function Sidebar() {
               {item.children && isParentActive && (
                 <div style={{ marginBottom: '2px' }}>
                   {item.children.map(child => {
-                    const childActive = pathname === child.href || pathname.startsWith(child.href + '/');
+                    const childActive = normalizedPath === child.href || normalizedPath.startsWith(child.href + '/');
                     return (
                       <Link key={child.href} href={child.href} style={{
                         position: 'relative',

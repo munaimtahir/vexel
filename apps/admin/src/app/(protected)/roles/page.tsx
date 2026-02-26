@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 const inputStyle: React.CSSProperties = { width: '100%', padding: '8px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px' };
@@ -74,6 +75,9 @@ export default function RolesPage() {
 
   return (
     <div>
+      <div style={{ marginBottom: '16px' }}>
+        <TenantScopeBanner mode="current-auth" pageLabel="Roles" note="Role definitions are scoped to the current authenticated tenant/host." />
+      </div>
       {/* Edit drawer */}
       {editRole && (
         <>

@@ -1,19 +1,24 @@
-import { Controller, Get, Post, Param, Body, Query, UseGuards, HttpCode, HttpStatus, Req, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Query, UseGuards, HttpCode, HttpStatus, Req, Headers, Res } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { PermissionsGuard } from '../rbac/permissions.guard';
 import { RequirePermissions } from '../rbac/require-permissions.decorator';
 import { Permission } from '../rbac/permissions';
 import { CatalogJobsService } from './catalog-jobs.service';
+import { CatalogImportExportService } from './catalog-import-export.service';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request } from 'express';
+import { Response } from 'express';
 
 @ApiTags('Catalog')
 @Controller('catalog')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class CatalogJobsController {
-  constructor(private readonly svc: CatalogJobsService) {}
+  constructor(
+    private readonly svc: CatalogJobsService,
+    private readonly importExportSvc: CatalogImportExportService,
+  ) {}
 
   @Post('import-jobs')
   @HttpCode(HttpStatus.CREATED)
@@ -81,5 +86,20 @@ export class CatalogJobsController {
   @RequirePermissions(Permission.CATALOG_READ)
   getExportJob(@Req() req: Request, @Param('id') id: string) {
     return this.svc.getExportJob((req as any).user.tenantId, id);
+  }
+
+  @Get('export-jobs/:id/download')
+  @RequirePermissions(Permission.CATALOG_READ)
+  async downloadExportJob(@Req() req: Request, @Param('id') id: string, @Res() res: Response) {
+    const tenantId = (req as any).user.tenantId;
+    const job = await this.svc.getExportJob(tenantId, id);
+    if (job.status !== 'completed') {
+      res.status(HttpStatus.CONFLICT).json({ message: `Export job is not completed (current: ${job.status})` });
+      return;
+    }
+    const buf = await this.importExportSvc.generateExportWorkbook(tenantId);
+    res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.set('Content-Disposition', `attachment; filename="catalog-export-${new Date().toISOString().slice(0, 10)}.xlsx"`);
+    res.send(buf);
   }
 }

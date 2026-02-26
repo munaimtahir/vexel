@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' };
@@ -169,6 +170,9 @@ export default function UsersPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Users</h1>
         <button onClick={() => setCreateOpen(true)} style={{ ...btnPrimary, fontSize: '14px' }}>+ New User</button>
+      </div>
+      <div style={{ marginBottom: '16px' }}>
+        <TenantScopeBanner mode="current-auth" pageLabel="Users" note="User management is scoped to the current authenticated tenant/host." />
       </div>
 
       {createOpen && (

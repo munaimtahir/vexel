@@ -69,8 +69,30 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { href: '/system/health', label: 'System Health', icon: 'H' },
 ];
 
-export function getVisibleAdminNav(user: CurrentAdminUser): AdminNavItem[] {
-  return ADMIN_NAV_ITEMS.flatMap((item) => {
+export const ADMIN_OPD_NAV_ITEMS: AdminNavItem[] = [
+  { href: '/opd', label: 'OPD Admin', icon: 'OPD', requiredPermissions: ['tenant.read'] },
+  {
+    href: '/opd/providers',
+    label: 'Providers',
+    icon: 'PR',
+    requiredPermissions: ['module.admin'],
+  },
+  {
+    href: '/opd/schedules',
+    label: 'Schedules',
+    icon: 'SC',
+    requiredPermissions: ['module.admin'],
+  },
+  {
+    href: '/opd/feature-flags',
+    label: 'Feature Flags',
+    icon: 'FF',
+    requiredPermissions: ['feature_flag.read', 'tenant.read'],
+  },
+];
+
+function filterVisible(items: AdminNavItem[], user: CurrentAdminUser): AdminNavItem[] {
+  return items.flatMap((item) => {
     const visibleChildren = (item.children ?? []).filter((child) => hasAnyPermission(user, child.requiredPermissions));
     const parentVisible = hasAnyPermission(user, item.requiredPermissions);
 
@@ -78,4 +100,12 @@ export function getVisibleAdminNav(user: CurrentAdminUser): AdminNavItem[] {
 
     return [{ ...item, children: visibleChildren.length ? visibleChildren : undefined }];
   });
+}
+
+export function getVisibleAdminNav(user: CurrentAdminUser): AdminNavItem[] {
+  return filterVisible(ADMIN_NAV_ITEMS, user);
+}
+
+export function getVisibleAdminOpdNav(user: CurrentAdminUser): AdminNavItem[] {
+  return filterVisible(ADMIN_OPD_NAV_ITEMS, user);
 }

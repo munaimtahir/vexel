@@ -77,6 +77,9 @@ export function Sidebar() {
   const visibleOpdNav: NavItem[] = OPD_NAV.filter(item =>
     !item.featureFlag || flags?.[item.featureFlag]
   );
+  const currentModule: 'lims' | 'opd' | 'other' =
+    pathname.startsWith('/lims') ? 'lims' : pathname.startsWith('/opd') ? 'opd' : 'other';
+  const currentNav = currentModule === 'opd' ? visibleOpdNav : visibleNav;
 
   const isNavItemActive = (item: NavItem) => (
     item.href === '/lims/registrations/new'
@@ -171,17 +174,50 @@ export function Sidebar() {
         {/* Module pills */}
         {!collapsed && (
           <div style={{ display: 'flex', gap: '7px', position: 'relative', zIndex: 1 }}>
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '5px',
-              padding: '5px 12px', borderRadius: '99px',
-              background: 'hsl(var(--sidebar-accent))',
-              border: '1px solid hsl(var(--sidebar-border))',
-              boxShadow: '0 0 12px hsl(var(--primary) / 0.12)',
-            }}>
-              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'hsl(var(--primary))', boxShadow: '0 0 5px hsl(var(--primary) / 0.55)' }} />
-              <span style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(var(--sidebar-foreground))', letterSpacing: '0.07em' }}>LIMS</span>
-            </div>
-            {FUTURE_MODULES.map(m => (
+            <Link
+              href="/lims/worklist"
+              style={{
+                display: 'flex', alignItems: 'center', gap: '5px',
+                padding: '5px 12px', borderRadius: '99px',
+                background: currentModule === 'lims' ? 'hsl(var(--sidebar-accent))' : 'hsl(var(--sidebar-foreground) / 0.04)',
+                border: currentModule === 'lims' ? '1px solid hsl(var(--sidebar-border))' : '1px solid hsl(var(--sidebar-foreground) / 0.08)',
+                boxShadow: currentModule === 'lims' ? '0 0 12px hsl(var(--primary) / 0.12)' : 'none',
+                textDecoration: 'none',
+                cursor: 'pointer',
+              }}
+              title="LIMS module"
+            >
+              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: currentModule === 'lims' ? 'hsl(var(--primary))' : 'hsl(var(--sidebar-muted))', boxShadow: currentModule === 'lims' ? '0 0 5px hsl(var(--primary) / 0.55)' : 'none' }} />
+              <span style={{ fontSize: '10px', fontWeight: 700, color: currentModule === 'lims' ? 'hsl(var(--sidebar-foreground))' : 'hsl(var(--sidebar-muted))', letterSpacing: '0.07em' }}>LIMS</span>
+            </Link>
+            {visibleOpdNav.length > 0 ? (
+              <Link
+                href="/opd/worklist"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '5px',
+                  padding: '5px 12px', borderRadius: '99px',
+                  background: currentModule === 'opd' ? 'hsl(var(--sidebar-accent))' : 'hsl(var(--sidebar-foreground) / 0.04)',
+                  border: currentModule === 'opd' ? '1px solid hsl(var(--sidebar-border))' : '1px solid hsl(var(--sidebar-foreground) / 0.08)',
+                  boxShadow: currentModule === 'opd' ? '0 0 12px hsl(var(--primary) / 0.12)' : 'none',
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                }}
+                title="OPD module"
+              >
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: currentModule === 'opd' ? 'hsl(var(--primary))' : 'hsl(var(--sidebar-muted))', boxShadow: currentModule === 'opd' ? '0 0 5px hsl(var(--primary) / 0.55)' : 'none' }} />
+                <span style={{ fontSize: '10px', fontWeight: 700, color: currentModule === 'opd' ? 'hsl(var(--sidebar-foreground))' : 'hsl(var(--sidebar-muted))', letterSpacing: '0.07em' }}>OPD</span>
+              </Link>
+            ) : (
+              <div style={{
+                padding: '5px 11px', borderRadius: '99px',
+                background: 'hsl(var(--sidebar-foreground) / 0.04)',
+                border: '1px solid hsl(var(--sidebar-foreground) / 0.08)',
+                cursor: 'not-allowed',
+              }}>
+                <span style={{ fontSize: '10px', fontWeight: 500, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.04em' }}>OPD</span>
+              </div>
+            )}
+            {FUTURE_MODULES.filter(m => m.label !== 'OPD').map(m => (
               <div key={m.label} style={{
                 padding: '5px 11px', borderRadius: '99px',
                 background: 'hsl(var(--sidebar-foreground) / 0.04)',
@@ -215,53 +251,10 @@ export function Sidebar() {
       }}>
         {!collapsed && (
           <div style={{ padding: '2px 8px 8px', fontSize: '9px', fontWeight: 700, color: S.sectionLabel, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
-            Workspace
+            {currentModule === 'opd' ? 'OPD Workspace' : 'LIMS Workspace'}
           </div>
         )}
-        {visibleNav.map(item => {
-          const Icon = item.icon;
-          const isActive = isNavItemActive(item);
-          return (
-            <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined}
-              style={{
-                position: 'relative',
-                display: 'flex', alignItems: 'center', gap: '10px',
-                padding: collapsed ? '10px 0' : '9px 11px 9px 13px',
-                justifyContent: collapsed ? 'center' : 'flex-start',
-                borderRadius: '8px', textDecoration: 'none',
-                fontSize: '13.5px', fontWeight: isActive ? 600 : 400,
-                color: isActive ? S.activeText : S.inactiveText,
-                background: isActive ? S.activeBg : 'transparent',
-                transition: 'all 0.15s ease',
-                overflow: 'hidden', whiteSpace: 'nowrap',
-              }}
-              onMouseOver={e => { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'hsl(var(--sidebar-foreground) / 0.09)'; el.style.color = S.hoverText; } }}
-              onMouseOut={e =>  { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = S.inactiveText; } }}
-            >
-              {isActive && (
-                <div style={{
-                  position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
-                  width: '3px', height: '60%', minHeight: '18px',
-                  borderRadius: '0 4px 4px 0',
-                  background: S.activeBar,
-                  boxShadow: S.activeBarGlow,
-                }} />
-              )}
-              <Icon size={15} className="shrink-0 transition-colors" color={isActive ? S.iconActive : S.iconInactive} />
-              {!collapsed && <span style={{ flex: 1 }}>{item.label}</span>}
-              {!collapsed && isActive && (
-                <div style={{ width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0, background: 'hsl(var(--primary))', boxShadow: '0 0 6px hsl(var(--primary) / 0.55)' }} />
-              )}
-            </Link>
-          );
-        })}
-
-        {visibleOpdNav.length > 0 && !collapsed && (
-          <div style={{ padding: '10px 8px 8px', fontSize: '9px', fontWeight: 700, color: S.sectionLabel, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
-            OPD
-          </div>
-        )}
-        {visibleOpdNav.map(item => {
+        {currentNav.map(item => {
           const Icon = item.icon;
           const isActive = isNavItemActive(item);
           return (

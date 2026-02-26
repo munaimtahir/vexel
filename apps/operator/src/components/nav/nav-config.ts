@@ -14,7 +14,7 @@ export const LIMS_NAV: NavItem[] = [
   { label: 'New Registration', href: '/lims/registrations/new', icon: UserPlus },
   { label: 'Sample Collection',href: '/lims/sample-collection', icon: FlaskConical },
   { label: 'Result Entry',     href: '/lims/results',           icon: BarChart2 },
-  { label: 'Verification',     href: '/lims/verification',      icon: CheckSquare, featureFlag: 'lims.verification' },
+  { label: 'Verification',     href: '/lims/verification',      icon: CheckSquare, featureFlag: 'lims.verification.enabled' },
   { label: 'Published Reports',href: '/lims/reports',           icon: FileText },
   { label: 'Payments',         href: '/lims/payments',          icon: CreditCard },
 ];
