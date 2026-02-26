@@ -173,7 +173,7 @@ export default function BrandingPage() {
             <Field label="Logo URL" value={get('logoUrl')} onChange={set('logoUrl')}
               placeholder="https://..." hint="Used in both lab report and receipt headers when logo layout is selected." />
             <Field label="Primary Color" value={get('primaryColor')} onChange={set('primaryColor')}
-              placeholder="#1a56db" hint="Used in the web app UI (not in PDFs)." />
+              placeholder="e.g. brand-primary-blue" hint="Used in the web app UI (not in PDFs)." />
             {get('primaryColor') && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '12px' }}>
                 <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: get('primaryColor'), border: '1px solid hsl(var(--border))' }} />

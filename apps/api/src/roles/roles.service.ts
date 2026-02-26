@@ -90,6 +90,39 @@ export class RolesService {
     return { ...updated, permissions: updated?.rolePermissions.map((rp) => rp.permission) };
   }
 
+  async delete(
+    tenantId: string,
+    roleId: string,
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    const role = await this.prisma.role.findFirst({
+      where: { id: roleId, tenantId },
+      include: { rolePermissions: true },
+    });
+    if (!role) throw new NotFoundException('Role not found');
+    if (role.isSystem) throw new ConflictException('System roles cannot be deleted');
+
+    const userRoleCount = await this.prisma.userRole.count({ where: { roleId } });
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.userRole.deleteMany({ where: { roleId } });
+      await tx.rolePermission.deleteMany({ where: { roleId } });
+      await tx.role.delete({ where: { id: roleId } });
+    });
+
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'role.delete',
+      entityType: 'Role',
+      entityId: roleId,
+      before: { name: role.name, permissions: role.rolePermissions.map((rp) => rp.permission) },
+      after: { deleted: true, removedUserAssignments: userRoleCount },
+      correlationId,
+    });
+  }
+
   listPermissions() {
     return ALL_PERMISSIONS;
   }

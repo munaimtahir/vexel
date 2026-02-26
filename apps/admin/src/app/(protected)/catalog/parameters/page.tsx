@@ -76,7 +76,7 @@ export default function ParametersPage() {
 
     let res: any;
     if (editingId) {
-      res = await api.PATCH('/catalog/parameters/{id}' as any, { params: { path: { id: editingId } }, body });
+      res = await api.PUT('/catalog/parameters/{parameterId}' as any, { params: { path: { parameterId: editingId } }, body });
     } else {
       res = await api.POST('/catalog/parameters' as any, { body });
     }

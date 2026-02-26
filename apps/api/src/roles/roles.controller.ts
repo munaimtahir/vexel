@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Patch, Param, Body, UseGuards,
+  Controller, Get, Post, Patch, Delete, Param, Body, UseGuards,
   HttpCode, HttpStatus, Req, Headers,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -45,5 +45,16 @@ export class RolesController {
   ) {
     const user = (req as any).user;
     return this.svc.update(user.tenantId, id, body, user.userId, cid);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions(Permission.ROLE_DELETE)
+  deleteRole(
+    @Req() req: Request, @Param('id') id: string,
+    @Headers(CORRELATION_ID_HEADER) cid?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.delete(user.tenantId, id, user.userId, cid);
   }
 }

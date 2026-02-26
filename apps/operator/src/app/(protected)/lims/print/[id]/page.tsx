@@ -133,11 +133,11 @@ export default function PrintPage() {
       </div>
 
       {/* ── PDF area ── */}
-      <div style={{ flex: 1, background: '#525659', position: 'relative' }}>
+      <div style={{ flex: 1, background: 'hsl(var(--muted))', position: 'relative' }}>
         {loading && (
           <div style={{
             position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
-            justifyContent: 'center', color: '#fff', fontSize: '14px',
+            justifyContent: 'center', color: 'hsl(var(--foreground))', fontSize: '14px',
           }}>
             Loading PDF…
           </div>
@@ -145,7 +145,7 @@ export default function PrintPage() {
         {error && !loading && (
           <div style={{
             position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
-            justifyContent: 'center', color: '#fca5a5', fontSize: '14px',
+            justifyContent: 'center', color: 'hsl(var(--destructive))', fontSize: '14px',
           }}>
             ⚠ {error}
           </div>

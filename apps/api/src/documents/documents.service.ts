@@ -319,7 +319,7 @@ export class DocumentsService {
       sampleReceivedAt: (firstSpecimen as any)?.collectedAt?.toISOString() ?? firstSpecimen?.createdAt?.toISOString(),
       printedAt: new Date().toISOString(),
       reportStatus: encounter.status === 'verified' ? 'Verified' : encounter.status === 'published' ? 'Verified' : 'Provisional',
-      reportHeaderLayout: tenantConfig?.reportHeaderLayout ?? 'default',
+      reportHeaderLayout: (tenantConfig as any)?.reportHeaderLayout ?? 'default',
       tests: encounter.labOrders.map((order) => {
         const testMeta = (order as any).test;
         // Build parameters from all LabResult rows for this order

@@ -2829,6 +2829,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Role'
+    delete:
+      operationId: deleteRole
+      summary: Delete a role
+      tags: [Roles]
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Role deleted
 
   /roles/permissions:
     get:
@@ -4693,6 +4706,42 @@ paths:
       responses:
         "200":
           description: Specimen collected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:receive-specimen:
+    post:
+      operationId: receiveSpecimenLegacy
+      summary: Mark specimen as received (legacy single-specimen endpoint)
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                labOrderId:
+                  type: string
+                receivedAt:
+                  type: string
+      responses:
+        "200":
+          description: Specimen received
           content:
             application/json:
               schema:

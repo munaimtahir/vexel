@@ -92,7 +92,7 @@ export default function ReferenceRangesPage() {
 
     let res: any;
     if (editingId) {
-      res = await api.PATCH('/catalog/reference-ranges/{id}' as any, { params: { path: { id: editingId } }, body });
+      res = await api.PUT('/catalog/reference-ranges/{id}' as any, { params: { path: { id: editingId } }, body });
     } else {
       res = await api.POST('/catalog/reference-ranges' as any, { body });
     }

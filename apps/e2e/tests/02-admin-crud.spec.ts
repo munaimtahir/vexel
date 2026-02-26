@@ -80,11 +80,11 @@ test.describe('Admin CRUD', () => {
     await expect(page.getByRole('heading', { name: 'Feature Flags' })).toBeVisible();
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
 
-    // Module toggles section exists
-    await expect(page.getByRole('heading', { name: 'Module Toggles' })).toBeVisible();
+    // Main app toggles section exists
+    await expect(page.getByRole('heading', { name: 'Main Apps' })).toBeVisible();
 
-    // Each toggle is a <button aria-label="Toggle <key>">
-    const firstToggle = page.getByRole('button', { name: /Toggle module\./i }).first();
+    // Toggle controls are rendered
+    const firstToggle = page.getByRole('button', { name: 'Toggle' }).first();
     await expect(firstToggle).toBeVisible({ timeout: 15_000 });
   });
 
@@ -113,7 +113,8 @@ test.describe('Admin CRUD', () => {
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
 
     // Use a non-LIMS module flag to avoid interfering with operator LIMS E2E tests running in parallel.
-    const toggle = page.getByRole('button', { name: `Toggle ${targetFlagKey}` });
+    const toggleRow = page.locator('tr').filter({ hasText: targetFlagKey }).first();
+    const toggle = toggleRow.getByRole('button', { name: 'Toggle' });
     await expect(toggle).toBeVisible({ timeout: 15_000 });
 
     await toggle.click();

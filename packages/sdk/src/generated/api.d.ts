@@ -277,7 +277,8 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete?: never;
+        /** Delete a role */
+        delete: operations["deleteRole"];
         options?: never;
         head?: never;
         /** Update a role */
@@ -1207,6 +1208,23 @@ export interface paths {
         put?: never;
         /** Mark specimen as collected */
         post: operations["collectSpecimen"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounterId}:receive-specimen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark specimen as received (legacy single-specimen endpoint) */
+        post: operations["receiveSpecimenLegacy"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3763,6 +3781,26 @@ export interface operations {
             };
         };
     };
+    deleteRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Role deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     updateRole: {
         parameters: {
             query?: never;
@@ -5671,6 +5709,44 @@ export interface operations {
         };
         responses: {
             /** @description Specimen collected */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Encounter"];
+                };
+            };
+            /** @description Invalid transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    receiveSpecimenLegacy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    labOrderId?: string;
+                    receivedAt?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Specimen received */
             200: {
                 headers: {
                     [name: string]: unknown;
