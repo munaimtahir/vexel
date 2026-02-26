@@ -8,8 +8,8 @@ const ALLOWLIST = new Set([
 const IGNORE_DIRS = new Set(['node_modules', '.next', 'dist', 'build', 'coverage', '.turbo']);
 
 const forbidden = [
-  /#[0-9a-fA-F]{3,8}/g,
-  /\b(?:bg|text)-\[#/g,
+  /#[0-9a-fA-F]{3,8}/,
+  /\b(?:bg|text)-\[#/,
 ];
 
 const textExtensions = new Set([

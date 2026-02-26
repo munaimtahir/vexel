@@ -12,7 +12,8 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
   specimen_collected: ['specimen_received', 'resulted', 'cancelled'],
   specimen_received: ['resulted', 'cancelled'],
   resulted: ['verified', 'cancelled'],
-  verified: [],
+  verified: ['published'],
+  published: [],
   cancelled: [],
 };
 
@@ -434,7 +435,7 @@ export class EncountersService {
 
     await this.audit.log({ tenantId, actorUserId, action: 'encounter.verify', entityType: 'Encounter', entityId: encounterId, before: { status: 'resulted' }, after: { status: 'verified' }, correlationId });
 
-    // Auto-generate and publish lab report PDF
+    // Auto-generate lab report PDF
     try {
       await this.documentsService.generateFromEncounter(
         tenantId,
@@ -448,6 +449,61 @@ export class EncountersService {
     }
 
     return updatedEncounter;
+  }
+
+  async publishReport(tenantId: string, encounterId: string, actorUserId: string, correlationId?: string) {
+    await this.assertLimsEnabled(tenantId);
+    const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
+
+    if (!['verified', 'published'].includes(encounter.status)) {
+      throw new ConflictException(`Cannot publish report for encounter in status '${encounter.status}'`);
+    }
+
+    const latestReport = await this.prisma.document.findFirst({
+      where: {
+        tenantId,
+        sourceRef: encounterId,
+        sourceType: 'ENCOUNTER',
+        type: 'LAB_REPORT',
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!latestReport || !['RENDERED', 'PUBLISHED'].includes(latestReport.status)) {
+      throw new ConflictException('Report not rendered yet');
+    }
+
+    const publishedDocument =
+      latestReport.status === 'PUBLISHED'
+        ? latestReport
+        : await this.documentsService.publishDocument(
+            tenantId,
+            latestReport.id,
+            actorUserId,
+            correlationId ?? crypto.randomUUID(),
+          );
+
+    const updatedEncounter =
+      encounter.status === 'published'
+        ? encounter
+        : await this.prisma.encounter.update({
+            where: { id: encounterId },
+            data: { status: 'published' },
+            include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
+          });
+
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'encounter.publish_report',
+      entityType: 'Encounter',
+      entityId: encounterId,
+      before: { status: encounter.status, documentStatus: latestReport.status },
+      after: { status: 'published', documentId: publishedDocument.id, documentStatus: publishedDocument.status },
+      correlationId,
+    });
+
+    return { encounter: updatedEncounter, document: publishedDocument };
   }
 
   async cancel(tenantId: string, encounterId: string, actorUserId: string, correlationId?: string, reason?: string) {

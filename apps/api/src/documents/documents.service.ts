@@ -7,6 +7,7 @@ import {
 import { LabReportPayload } from './canonical';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { StorageService } from '../storage/storage.service';
@@ -31,6 +32,71 @@ export class DocumentsService {
     this.renderQueue = new Queue(DOCUMENT_RENDER_QUEUE, {
       connection: getRedisConnection() as any,
     });
+  }
+
+  private computeAgeAt(dateOfBirth: Date | null | undefined, anchor: Date): string | undefined {
+    if (!dateOfBirth) return undefined;
+    let years = anchor.getUTCFullYear() - dateOfBirth.getUTCFullYear();
+    const beforeBirthday =
+      anchor.getUTCMonth() < dateOfBirth.getUTCMonth() ||
+      (anchor.getUTCMonth() === dateOfBirth.getUTCMonth() &&
+        anchor.getUTCDate() < dateOfBirth.getUTCDate());
+    if (beforeBirthday) years -= 1;
+    return `${Math.max(0, years)}Y`;
+  }
+
+  private async normalizeDeterministicFields(
+    type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT',
+    payload: Record<string, unknown>,
+    tenantId: string,
+    sourceType?: string,
+    sourceRef?: string,
+  ): Promise<Record<string, unknown>> {
+    const normalized: Record<string, unknown> = { ...payload };
+
+    if (type === 'LAB_REPORT') {
+      delete normalized.printedAt;
+    }
+
+    if (sourceType !== 'ENCOUNTER' || !sourceRef) {
+      return normalized;
+    }
+
+    const encounter = await this.prisma.encounter.findFirst({
+      where: { id: sourceRef, tenantId },
+      include: { patient: true },
+    });
+    if (!encounter) {
+      return normalized;
+    }
+
+    if (type === 'RECEIPT') {
+      normalized.issuedAt = encounter.createdAt.toISOString();
+      const patientAge = this.computeAgeAt(encounter.patient.dateOfBirth, encounter.createdAt);
+      if (patientAge) {
+        normalized.patientAge = patientAge;
+      }
+      return normalized;
+    }
+
+    if (type === 'LAB_REPORT') {
+      const verifyAudit = await this.prisma.auditEvent.findFirst({
+        where: {
+          tenantId,
+          entityId: sourceRef,
+          OR: [{ action: 'encounter.verify' }, { action: 'ENCOUNTER_VERIFIED' }],
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      const issuedAtAnchor = verifyAudit?.createdAt ?? encounter.createdAt;
+      normalized.issuedAt = issuedAtAnchor.toISOString();
+      const patientAge = this.computeAgeAt(encounter.patient.dateOfBirth, encounter.createdAt);
+      if (patientAge) {
+        normalized.patientAge = patientAge;
+      }
+    }
+
+    return normalized;
   }
 
   async generateDocument(
@@ -74,32 +140,62 @@ export class DocumentsService {
       reportHeader: tenantConfig?.reportHeader ?? undefined,
       reportFooter: tenantConfig?.reportFooter ?? undefined,
     };
+    const normalizedPayload = await this.normalizeDeterministicFields(
+      type,
+      enrichedPayload,
+      tenantId,
+      sourceType,
+      sourceRef,
+    );
 
     // Compute hash using canonical serialiser
-    const hash = payloadHash(enrichedPayload);
+    const jsonPayload = JSON.parse(JSON.stringify(normalizedPayload)) as Prisma.InputJsonValue;
+    const hash = payloadHash(jsonPayload);
 
     // Check idempotency
     const existing = await this.prisma.document.findUnique({
-      where: { tenantId_type_payloadHash: { tenantId, type, payloadHash: hash } },
+      where: {
+        tenantId_type_templateId_payloadHash: {
+          tenantId,
+          type,
+          templateId: template.id,
+          payloadHash: hash,
+        },
+      },
     });
     if (existing && existing.status !== 'FAILED') {
       return { document: existing, created: false };
     }
 
-    // Create Document (status=DRAFT)
-    const doc = await this.prisma.document.create({
-      data: {
-        tenantId,
-        type,
-        templateId: template.id,
-        payloadJson: enrichedPayload,
-        payloadHash: hash,
-        status: 'DRAFT',
-        sourceRef,
-        sourceType,
-        createdBy: actorUserId,
-      },
-    });
+    const doc =
+      existing && existing.status === 'FAILED'
+        ? await this.prisma.document.update({
+            where: { id: existing.id },
+            data: {
+              templateId: template.id,
+              payloadJson: jsonPayload,
+              status: 'DRAFT',
+              sourceRef,
+              sourceType,
+              errorMessage: null,
+              pdfHash: null,
+              storageKey: null,
+              publishedAt: null,
+            },
+          })
+        : await this.prisma.document.create({
+            data: {
+              tenantId,
+              type,
+              templateId: template.id,
+              payloadJson: jsonPayload,
+              payloadHash: hash,
+              status: 'DRAFT',
+              sourceRef,
+              sourceType,
+              createdBy: actorUserId,
+            },
+          });
 
     // Enqueue BullMQ job
     await this.renderQueue.add('render', {
@@ -122,7 +218,7 @@ export class DocumentsService {
       entityType: 'Document',
       entityId: doc.id,
       correlationId,
-      after: { type, status: 'RENDERING', payloadHash: hash },
+      after: { type, status: 'RENDERING', payloadHash: hash, templateId: template.id },
     });
 
     return { document: updated, created: true };
@@ -176,11 +272,10 @@ export class DocumentsService {
     return doc;
   }
 
-  async downloadDocument(tenantId: string, id: string): Promise<{ url: string }> {
+  async downloadDocument(tenantId: string, id: string): Promise<Buffer> {
     const doc = await this.getDocument(tenantId, id);
     if (!(doc as any).storageKey) throw new NotFoundException('PDF not yet generated for this document');
-    const url = await this.storage.getSignedDownloadUrl((doc as any).storageKey, 3600);
-    return { url };
+    return this.storage.download((doc as any).storageKey);
   }
 
   /**
@@ -268,31 +363,22 @@ export class DocumentsService {
       throw new ConflictException('Encounter must be verified before generating report');
     }
 
-    // Idempotency: return existing non-failed document for this encounter
-    const existingDoc = await this.prisma.document.findFirst({
-      where: { tenantId, sourceRef: encounterId, sourceType: 'ENCOUNTER', type: 'LAB_REPORT', status: { not: 'FAILED' } },
-      orderBy: { createdAt: 'desc' },
-    });
-    if (existingDoc) return { document: existingDoc, created: false };
-
     const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
 
     // Compute patient age
-    let patientAge: string | undefined;
-    if (encounter.patient.dateOfBirth) {
-      const years = Math.floor((Date.now() - encounter.patient.dateOfBirth.getTime()) / (365.25 * 24 * 3600 * 1000));
-      patientAge = `${years}Y`;
-    }
+    const patientAge = this.computeAgeAt(encounter.patient.dateOfBirth, encounter.createdAt);
 
     // Get verifiedBy name — look for most recent verifier from audit
     let verifiedByName: string | undefined;
     let verifiedAt: string | undefined;
     const verifyAudit = await this.prisma.auditEvent.findFirst({
-      where: { tenantId, entityId: encounterId, action: 'encounter.verify' },
-      orderBy: { createdAt: 'desc' },
-    });
+        where: { tenantId, entityId: encounterId, action: 'encounter.verify' },
+        orderBy: { createdAt: 'desc' },
+      });
     if (verifyAudit?.actorUserId) {
-      const verifier = await this.prisma.user.findUnique({ where: { id: verifyAudit.actorUserId } });
+      const verifier = await this.prisma.user.findFirst({
+        where: { id: verifyAudit.actorUserId, tenantId },
+      });
       if (verifier) verifiedByName = `${verifier.firstName} ${verifier.lastName}`;
       verifiedAt = verifyAudit.createdAt.toISOString();
     }
@@ -303,8 +389,7 @@ export class DocumentsService {
       orderBy: { createdAt: 'asc' },
     });
 
-    // Use encounter's updatedAt as deterministic issuedAt
-    const issuedAt = encounter.updatedAt.toISOString();
+    const issuedAt = (verifyAudit?.createdAt ?? encounter.createdAt).toISOString();
     const payload: LabReportPayload = {
       reportNumber: `RPT-${encounterId.slice(0, 8).toUpperCase()}`,
       issuedAt,
@@ -317,7 +402,6 @@ export class DocumentsService {
       encounterCode: (encounter as any).encounterCode ?? undefined,
       orderedBy: undefined,
       sampleReceivedAt: (firstSpecimen as any)?.collectedAt?.toISOString() ?? firstSpecimen?.createdAt?.toISOString(),
-      printedAt: new Date().toISOString(),
       reportStatus: encounter.status === 'verified' ? 'Verified' : encounter.status === 'published' ? 'Verified' : 'Provisional',
       reportHeaderLayout: (tenantConfig as any)?.reportHeaderLayout ?? 'default',
       tests: encounter.labOrders.map((order) => {

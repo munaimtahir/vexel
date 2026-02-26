@@ -316,7 +316,7 @@ export default function EncounterResultsPage() {
         setTests(prev => prev.map(t => t.id === testId ? updated : t));
       }
       setVerifyStatus(prev => ({ ...prev, [testId]: 'verified' }));
-      setToast('✅ Verified. Publishing report…');
+      setToast('✅ Verified. Rendering report…');
       pollForDocument(testId, test.encounterId);
     } catch {
       setActionError('Verify failed');
@@ -348,14 +348,12 @@ export default function EncounterResultsPage() {
   const handleOpenPdf = async (doc: any) => {
     try {
       const api = getApiClient(getToken() ?? undefined);
-      // @ts-ignore
       const res = await api.GET('/documents/{id}/download', {
         params: { path: { id: doc.id } },
         parseAs: 'blob',
       });
       if (!res.data) return;
-      const blob = res.data as unknown as Blob;
-      const url = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(res.data);
       window.open(url, '_blank');
     } catch { /* ignore */ }
   };
@@ -472,7 +470,7 @@ export default function EncounterResultsPage() {
       )}
       {verifyStatus[activeTest?.id] === 'verified' && (
         <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-border))] rounded-lg px-5 py-3.5 mb-4 text-[hsl(var(--status-success-fg))] text-sm font-medium">
-          ✅ Verified. Publishing report…
+          ✅ Verified. Rendering report…
         </div>
       )}
       {verifyStatus[activeTest?.id] === 'published' && publishedDocs[activeTest?.id] && (

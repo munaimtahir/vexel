@@ -4823,6 +4823,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /encounters/{encounterId}:publish-report:
+    post:
+      operationId: publishEncounterReport
+      summary: Publish rendered lab report and mark encounter as published (idempotent)
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Report published and encounter moved to published
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encounter:
+                    $ref: '#/components/schemas/Encounter'
+                  document:
+                    $ref: '#/components/schemas/Document'
+        "409":
+          description: Encounter not verified or report not rendered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /encounters/{encounterId}:cancel:
     post:
       operationId: cancelEncounter
@@ -5044,7 +5074,7 @@ paths:
   /documents/{id}/download:
     get:
       operationId: downloadDocument
-      summary: Download PDF bytes or redirect to signed URL
+      summary: Download PDF bytes
       tags: [Documents]
       security:
         - bearerAuth: []
@@ -5056,23 +5086,46 @@ paths:
             type: string
       responses:
         "200":
-          description: PDF download or placeholder response
+          description: PDF bytes
           content:
             application/pdf:
               schema:
                 type: string
                 format: binary
-            application/json:
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /documents/{id}/render:
+    get:
+      operationId: renderDocument
+      summary: Render PDF bytes with optional receipt format override
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [a4, thermal]
+      responses:
+        "200":
+          description: Rendered PDF bytes
+          content:
+            application/pdf:
               schema:
-                type: object
-                properties:
-                  documentId:
-                    type: string
-                  pdfHash:
-                    type: string
-                    nullable: true
-                  message:
-                    type: string
+                type: string
+                format: binary
         "401":
           $ref: '#/components/responses/Unauthorized'
         "403":
@@ -5550,7 +5603,7 @@ paths:
   /results/tests/{orderedTestId}:submit-and-verify:
     post:
       operationId: submitAndVerifyTest
-      summary: Submit + verify + trigger publish in one command (requires result.verify permission)
+      summary: Submit + verify + trigger report generation in one command (requires result.verify permission)
       tags: [Results]
       parameters:
         - name: orderedTestId
@@ -5662,7 +5715,7 @@ paths:
   /verification/encounters/{encounterId}:verify:
     post:
       operationId: verifyEncounter
-      summary: Verify all submitted tests for an encounter and trigger publish
+      summary: Verify all submitted tests for an encounter and trigger report generation
       tags: [Verification]
       parameters:
         - name: encounterId
@@ -5678,7 +5731,7 @@ paths:
               description: No body required
       responses:
         "200":
-          description: Encounter verified; document pipeline enqueued
+          description: Encounter verified; report generation enqueued
           content:
             application/json:
               schema:

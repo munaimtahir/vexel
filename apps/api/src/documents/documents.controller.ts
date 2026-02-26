@@ -11,6 +11,7 @@ import {
   Req,
   Headers,
   Res,
+  StreamableFile,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Response, Request } from 'express';
@@ -107,9 +108,16 @@ export class DocumentsController {
 
   @Get(':id/download')
   @RequirePermissions(Permission.DOCUMENT_GENERATE)
-  async download(@Req() req: Request, @Param('id') id: string) {
+  async download(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
     const tenantId = (req as any).user.tenantId;
-    return this.svc.downloadDocument(tenantId, id);
+    const bytes = await this.svc.downloadDocument(tenantId, id);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="report-${id}.pdf"`);
+    return new StreamableFile(bytes);
   }
 
   @Get(':id/render')

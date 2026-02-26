@@ -6,9 +6,6 @@ const nextConfig: NextConfig = {
   basePath: '/admin',
   outputFileTracingRoot: path.join(__dirname, '../../'),
   transpilePackages: ['@vexel/sdk', '@vexel/theme'],
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };
 
 export default nextConfig;

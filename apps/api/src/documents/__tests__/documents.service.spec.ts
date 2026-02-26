@@ -42,6 +42,23 @@ const mockTenantConfig = {
 };
 
 const mockTenant = { id: 'tenant-1', name: 'Test Tenant' };
+const mockEncounter = {
+  id: 'enc-1',
+  tenantId: 'tenant-1',
+  status: 'verified',
+  createdAt: new Date('2025-01-11T10:00:00.000Z'),
+  updatedAt: new Date('2025-01-11T10:00:00.000Z'),
+  patient: {
+    id: 'pat-1',
+    tenantId: 'tenant-1',
+    firstName: 'Jane',
+    lastName: 'Doe',
+    mrn: 'MRN-001',
+    dateOfBirth: new Date('2000-01-10T00:00:00.000Z'),
+    gender: 'female',
+  },
+  labOrders: [],
+};
 
 function buildPrisma(docOverrides: Record<string, unknown> = {}) {
   return {
@@ -63,8 +80,24 @@ function buildPrisma(docOverrides: Record<string, unknown> = {}) {
       update: jest.fn().mockImplementation(({ data }) => Promise.resolve(mockDoc({ ...docOverrides, ...data }))),
       findMany: jest.fn().mockResolvedValue([]),
     },
+    encounter: {
+      findFirst: jest.fn().mockResolvedValue(mockEncounter),
+    },
+    specimenItem: {
+      findFirst: jest.fn().mockResolvedValue({
+        createdAt: new Date('2025-01-11T10:05:00.000Z'),
+        collectedAt: new Date('2025-01-11T10:05:00.000Z'),
+      }),
+    },
+    user: {
+      findFirst: jest.fn().mockResolvedValue({ firstName: 'Verifier', lastName: 'User' }),
+    },
     auditEvent: {
       create: jest.fn().mockResolvedValue({}),
+      findFirst: jest.fn().mockResolvedValue({
+        actorUserId: 'user-verify',
+        createdAt: new Date('2025-01-11T10:30:00.000Z'),
+      }),
     },
   };
 }
@@ -135,6 +168,41 @@ describe('DocumentsService', () => {
       await expect(
         service.generateDocument('tenant-1', 'RECEIPT', {}, undefined, undefined, 'user-1', 'corr-1'),
       ).rejects.toThrow(NotFoundException);
+    });
+
+    it('normalizes receipt issuedAt deterministically from encounter source', async () => {
+      prisma.document.findUnique.mockResolvedValue(null);
+      await service.generateDocument(
+        'tenant-1',
+        'RECEIPT',
+        { receiptNumber: 'RCP-001', issuedAt: '2099-01-01T00:00:00.000Z', patientAge: '99Y' },
+        'enc-1',
+        'ENCOUNTER',
+        'user-1',
+        'corr-1',
+      );
+
+      const payload = prisma.document.create.mock.calls[0][0].data.payloadJson;
+      expect(payload.issuedAt).toBe('2025-01-11T10:00:00.000Z');
+      expect(payload.patientAge).toBe('25Y');
+    });
+
+    it('generateFromEncounter keeps deterministic payload and idempotency on retry', async () => {
+      prisma.document.findUnique
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(mockDoc({ type: 'LAB_REPORT', status: 'RENDERED' }));
+
+      const first = await service.generateFromEncounter('tenant-1', 'enc-1', 'user-1', 'corr-1');
+      const second = await service.generateFromEncounter('tenant-1', 'enc-1', 'user-1', 'corr-2');
+
+      expect(first.created).toBe(true);
+      expect(second.created).toBe(false);
+      expect(prisma.document.create).toHaveBeenCalledTimes(1);
+
+      const payload = prisma.document.create.mock.calls[0][0].data.payloadJson;
+      expect(payload.issuedAt).toBe('2025-01-11T10:30:00.000Z');
+      expect(payload.patientAge).toBe('25Y');
+      expect(payload.printedAt).toBeUndefined();
     });
   });
 

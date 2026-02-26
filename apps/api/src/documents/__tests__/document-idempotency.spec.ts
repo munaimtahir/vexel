@@ -54,7 +54,20 @@ function buildPrisma() {
       ),
       findMany: jest.fn().mockResolvedValue([]),
     },
-    auditEvent: { create: jest.fn().mockResolvedValue({}) },
+    encounter: {
+      findFirst: jest.fn().mockResolvedValue({
+        id: 'enc-1',
+        tenantId: 'tenant-1',
+        createdAt: new Date('2025-01-11T10:00:00.000Z'),
+        patient: { dateOfBirth: new Date('2000-01-10T00:00:00.000Z') },
+      }),
+    },
+    auditEvent: {
+      create: jest.fn().mockResolvedValue({}),
+      findFirst: jest.fn().mockResolvedValue({
+        createdAt: new Date('2025-01-11T10:30:00.000Z'),
+      }),
+    },
   };
 }
 

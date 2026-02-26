@@ -152,15 +152,7 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
       },
     });
     await writeAudit(tenantId, 'document.rendered', documentId, correlationId, { pdfHash, storageKey });
-
-    // Auto-publish: transition RENDERED → PUBLISHED
-    await prisma.document.update({
-      where: { id: documentId },
-      data: { status: 'PUBLISHED', publishedAt: new Date() },
-    });
-
-    await writeAudit(tenantId, 'document.published', documentId, correlationId, { pdfHash, storageKey });
-    console.log(`[document-render] Document ${documentId} rendered and published, key=${storageKey}`);
+    console.log(`[document-render] Document ${documentId} rendered, key=${storageKey}`);
   } catch (err) {
     const errorMessage = (err as Error).message;
     await prisma.document.update({
