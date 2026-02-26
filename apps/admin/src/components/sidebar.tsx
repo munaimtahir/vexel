@@ -108,14 +108,18 @@ export function Sidebar() {
 
       {/* NAV */}
       <nav style={{ flex: 1, padding: '10px 8px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <div style={{ padding: '2px 8px 8px', fontSize: '9px', fontWeight: 700, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
-          {currentModule === 'opd' ? 'OPD Administration' : 'Administration'}
-        </div>
-        {navItems.map((item) => {
+        {navItems.map((item, idx) => {
           const isParentActive = normalizedPath === item.href || normalizedPath.startsWith(item.href + '/')
             || (item.children?.some(c => normalizedPath === c.href || normalizedPath.startsWith(c.href + '/')) ?? false);
+          const Icon = item.icon;
+          const showSection = item.section && (idx === 0 || navItems[idx - 1]?.section !== item.section);
           return (
             <div key={item.href}>
+              {showSection && (
+                <div style={{ padding: idx === 0 ? '2px 8px 8px' : '14px 8px 6px', fontSize: '9px', fontWeight: 700, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+                  {item.section}
+                </div>
+              )}
               <Link href={item.href} style={{
                 position: 'relative',
                 display: 'flex', alignItems: 'center', gap: '10px',
@@ -138,7 +142,9 @@ export function Sidebar() {
                     boxShadow: '0 0 10px hsl(var(--primary) / 0.4)',
                   }} />
                 )}
-                <span style={{ fontSize: '11px', minWidth: '18px', textAlign: 'center', flexShrink: 0, opacity: 0.85 }}>{item.icon ?? '•'}</span>
+                <span style={{ display: 'flex', alignItems: 'center', minWidth: '18px', flexShrink: 0, opacity: isParentActive ? 1 : 0.7 }}>
+                  {Icon && <Icon size={15} strokeWidth={isParentActive ? 2 : 1.6} />}
+                </span>
                 <span style={{ flex: 1 }}>{item.label}</span>
                 {item.children && (
                   <ChevronDown style={{

@@ -1,9 +1,15 @@
+import {
+  LayoutDashboard, Users, ShieldCheck, FlaskConical, UserRound, FileText,
+  Palette, ToggleLeft, ClipboardList, Briefcase, ScrollText, Activity,
+  Building2, Stethoscope, CalendarDays, type LucideIcon,
+} from 'lucide-react';
 import { hasAnyPermission, type CurrentAdminUser } from '@/lib/rbac';
 
 export type AdminNavItem = {
   href: string;
   label: string;
-  icon?: string;
+  icon: LucideIcon;
+  section?: string;       // Section header rendered above this item
   requiredPermissions?: string[];
   children?: Array<{
     href: string;
@@ -13,27 +19,63 @@ export type AdminNavItem = {
 };
 
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
-  { href: '/dashboard', label: 'Dashboard', icon: 'D' },
-  { href: '/tenants', label: 'Tenants', icon: 'T', requiredPermissions: ['tenant.read'] },
   {
-    href: '/tenant-settings',
-    label: 'Tenant Back Office',
-    icon: 'TB',
-    requiredPermissions: ['tenant.read', 'branding.read', 'feature_flag.read'],
+    href: '/dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    section: 'Overview',
+  },
+
+  // ─── Operations ─────────────────────────────────────────────────────
+  {
+    href: '/patients',
+    label: 'Patients',
+    icon: UserRound,
+    section: 'Operations',
+    requiredPermissions: ['patient.manage'],
+  },
+  {
+    href: '/encounters',
+    label: 'Encounters',
+    icon: ClipboardList,
+    requiredPermissions: ['encounter.manage'],
+  },
+  {
+    href: '/documents',
+    label: 'Documents',
+    icon: FileText,
+    requiredPermissions: ['document.generate', 'document.publish'],
+  },
+
+  // ─── LIMS ────────────────────────────────────────────────────────────
+  {
+    href: '/catalog',
+    label: 'Catalog',
+    icon: FlaskConical,
+    section: 'LIMS',
+    requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'],
     children: [
-      { href: '/tenant-settings', label: 'Overview', requiredPermissions: ['tenant.read'] },
-      { href: '/tenant-settings/users', label: 'Users', requiredPermissions: ['user.read'] },
-      { href: '/tenant-settings/roles', label: 'Roles', requiredPermissions: ['role.read'] },
-      { href: '/tenant-settings/catalog', label: 'Catalog', requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
-      { href: '/tenant-settings/documents', label: 'Documents', requiredPermissions: ['document.generate', 'document.publish'] },
-      { href: '/branding', label: 'Branding & Config', requiredPermissions: ['branding.read'] },
-      { href: '/feature-flags', label: 'Feature Flags', requiredPermissions: ['feature_flag.read'] },
+      { href: '/catalog',                  label: 'Overview',          requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
+      { href: '/catalog/tests',            label: 'Tests',             requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
+      { href: '/catalog/parameters',       label: 'Parameters',        requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
+      { href: '/catalog/panels',           label: 'Panels',            requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
+      { href: '/catalog/reference-ranges', label: 'Reference Ranges',  requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
+      { href: '/catalog/import-export',    label: 'Import / Export',   requiredPermissions: ['catalog.read', 'catalog.manage'] },
     ],
+  },
+
+  // ─── Settings ────────────────────────────────────────────────────────
+  {
+    href: '/tenants',
+    label: 'Tenants',
+    icon: Building2,
+    section: 'Settings',
+    requiredPermissions: ['tenant.read'],
   },
   {
     href: '/users',
     label: 'Users & Roles',
-    icon: 'U',
+    icon: Users,
     requiredPermissions: ['user.read', 'role.read'],
     children: [
       { href: '/users', label: 'Users', requiredPermissions: ['user.read'] },
@@ -41,63 +83,75 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     ],
   },
   {
-    href: '/catalog',
-    label: 'Catalog',
-    icon: 'C',
-    requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'],
-    children: [
-      { href: '/catalog/tests', label: 'Tests', requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
-      { href: '/catalog/parameters', label: 'Parameters', requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
-      { href: '/catalog/panels', label: 'Panels', requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
-      { href: '/catalog/reference-ranges', label: 'Reference Ranges', requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
-      { href: '/catalog/import-export', label: 'Import / Export', requiredPermissions: ['catalog.read', 'catalog.manage'] },
-    ],
+    href: '/branding',
+    label: 'Branding',
+    icon: Palette,
+    requiredPermissions: ['branding.read'],
   },
   {
-    href: '/patients',
-    label: 'Patients',
-    icon: 'P',
-    requiredPermissions: ['patient.manage', 'encounter.manage'],
-    children: [
-      { href: '/patients', label: 'Patients', requiredPermissions: ['patient.manage'] },
-      { href: '/encounters', label: 'Encounters', requiredPermissions: ['encounter.manage'] },
-    ],
+    href: '/feature-flags',
+    label: 'Feature Flags',
+    icon: ToggleLeft,
+    requiredPermissions: ['feature_flag.read'],
   },
-  { href: '/documents', label: 'Documents', icon: 'Doc', requiredPermissions: ['document.generate', 'document.publish'] },
-  { href: '/audit', label: 'Audit Log', icon: 'A', requiredPermissions: ['audit.read'] },
-  { href: '/jobs', label: 'Jobs', icon: 'J', requiredPermissions: ['job.read'] },
-  { href: '/system/health', label: 'System Health', icon: 'H' },
+
+  // ─── System ──────────────────────────────────────────────────────────
+  {
+    href: '/audit',
+    label: 'Audit Log',
+    icon: ScrollText,
+    section: 'System',
+    requiredPermissions: ['audit.read'],
+  },
+  {
+    href: '/jobs',
+    label: 'Jobs',
+    icon: Briefcase,
+    requiredPermissions: ['job.read'],
+  },
+  {
+    href: '/system/health',
+    label: 'System Health',
+    icon: Activity,
+  },
 ];
 
 export const ADMIN_OPD_NAV_ITEMS: AdminNavItem[] = [
-  { href: '/opd', label: 'OPD Admin', icon: 'OPD', requiredPermissions: ['tenant.read'] },
+  {
+    href: '/opd',
+    label: 'OPD Overview',
+    icon: Stethoscope,
+    section: 'OPD',
+    requiredPermissions: ['tenant.read'],
+  },
   {
     href: '/opd/providers',
     label: 'Providers',
-    icon: 'PR',
+    icon: UserRound,
     requiredPermissions: ['module.admin'],
   },
   {
     href: '/opd/schedules',
     label: 'Schedules',
-    icon: 'SC',
+    icon: CalendarDays,
     requiredPermissions: ['module.admin'],
   },
   {
-    href: '/opd/feature-flags',
+    href: '/feature-flags',
     label: 'Feature Flags',
-    icon: 'FF',
-    requiredPermissions: ['feature_flag.read', 'tenant.read'],
+    icon: ToggleLeft,
+    section: 'Settings',
+    requiredPermissions: ['feature_flag.read'],
   },
 ];
 
 function filterVisible(items: AdminNavItem[], user: CurrentAdminUser): AdminNavItem[] {
   return items.flatMap((item) => {
-    const visibleChildren = (item.children ?? []).filter((child) => hasAnyPermission(user, child.requiredPermissions));
+    const visibleChildren = (item.children ?? []).filter((child) =>
+      hasAnyPermission(user, child.requiredPermissions),
+    );
     const parentVisible = hasAnyPermission(user, item.requiredPermissions);
-
     if (!parentVisible && visibleChildren.length === 0) return [];
-
     return [{ ...item, children: visibleChildren.length ? visibleChildren : undefined }];
   });
 }

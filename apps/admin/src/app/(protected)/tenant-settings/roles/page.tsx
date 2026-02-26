@@ -1,43 +1,6 @@
-'use client';
+import { redirect } from 'next/navigation';
 
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { PermissionGuard } from '@/components/permission-guard';
-import { TenantScopeBanner } from '@/components/tenant-scope-banner';
-
-export default function TenantRolesHubPage() {
-  const searchParams = useSearchParams();
-  const tenantId = searchParams.get('tenantId');
-
-  return (
-    <PermissionGuard anyOf={['role.read']}>
-      <div className="space-y-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Tenant Roles</h1>
-          <p className="mt-1 text-sm text-slate-600">
-            RBAC role definitions for the selected tenant. {tenantId ? `Tenant ID: ${tenantId}` : 'Current auth tenant scope is used.'}
-          </p>
-          <div className="mt-4">
-            <TenantScopeBanner
-              mode="current-auth"
-              pageLabel="Tenant Roles Hub"
-              tenantId={tenantId}
-              note="Open Roles runs in current authenticated tenant scope. Tenant query is retained only for navigation within the tenant hub."
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <Link href="/roles" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
-            <div className="text-lg font-semibold text-slate-900">Open Roles</div>
-            <p className="mt-1 text-sm text-slate-600">Create/edit roles for the current authenticated tenant scope.</p>
-          </Link>
-          <Link href={tenantId ? `/tenant-settings/users?tenantId=${tenantId}` : '/tenant-settings/users'} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
-            <div className="text-lg font-semibold text-slate-900">Back To Tenant Users</div>
-            <p className="mt-1 text-sm text-slate-600">Assign these roles to tenant users.</p>
-          </Link>
-        </div>
-      </div>
-    </PermissionGuard>
-  );
+// This hub page has been removed. Redirect to the canonical page.
+export default function TenantSettingsRolesPage() {
+  redirect('/roles');
 }
