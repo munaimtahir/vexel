@@ -53,11 +53,24 @@ export default function BrandingPage() {
     { key: 'brandName', label: 'Brand Name' },
     { key: 'logoUrl', label: 'Logo URL' },
     { key: 'primaryColor', label: 'Primary Color (hex)', placeholder: 'hsl(var(--primary))' },
-    { key: 'reportHeader', label: 'Report Header' },
-    { key: 'reportFooter', label: 'Report Footer' },
+    { key: 'reportHeader', label: 'Report Header (address / phone line)' },
+    { key: 'reportFooter', label: 'Report Footer Text' },
+    { key: 'reportFooterImageUrl', label: 'Report Footer Image URL (optional)' },
     { key: 'headerText', label: 'App Header Text' },
     { key: 'footerText', label: 'App Footer Text' },
   ];
+
+  const layoutOptions = {
+    reportHeaderLayout: [
+      { value: 'default', label: 'Default — Logo left, name centered, address right' },
+      { value: 'classic', label: 'Classic — Logo left, name + address right' },
+      { value: 'minimal', label: 'Minimal — Text only, name + address centered' },
+    ],
+    receiptLayout: [
+      { value: 'a4', label: 'A4 — Dual copy (patient + office) on one A4 sheet' },
+      { value: 'thermal', label: 'Thermal — 80mm roll (coming soon)' },
+    ],
+  };
 
   const selectedTenant = tenants.find((t) => t.id === tenantId);
 
@@ -97,6 +110,28 @@ export default function BrandingPage() {
                 />
               </div>
             ))}
+
+            {/* PDF Layout Preferences */}
+            <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: '16px', marginTop: '4px' }}>
+              <p style={{ fontSize: '13px', fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: '12px' }}>📄 PDF Layout Preferences</p>
+              {Object.entries(layoutOptions).map(([key, options]) => (
+                <div key={key} style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>
+                    {key === 'reportHeaderLayout' ? 'Lab Report Header Layout' : 'Receipt Layout'}
+                  </label>
+                  <select
+                    value={config[key] ?? options[0].value}
+                    onChange={(e) => setConfig({ ...config, [key]: e.target.value })}
+                    style={{ width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', background: 'hsl(var(--card))' }}
+                  >
+                    {options.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+
             {config.primaryColor && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
                 <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: config.primaryColor, border: '1px solid hsl(var(--border))' }} />

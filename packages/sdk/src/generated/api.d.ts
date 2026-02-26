@@ -2054,6 +2054,7 @@ export interface components {
             lastName?: string;
             tenantId: string;
             roles?: string[];
+            permissions?: string[];
             /** @enum {string} */
             status: "active" | "disabled" | "pending";
             isSuperAdmin?: boolean;

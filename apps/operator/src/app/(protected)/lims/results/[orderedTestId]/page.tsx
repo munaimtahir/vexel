@@ -125,7 +125,7 @@ export default function ResultsEntryPage() {
 
   const isSubmitted = detail?.resultStatus === 'SUBMITTED';
 
-  const handleSave = async () => {
+  const saveCurrentValues = async ({ silent = false }: { silent?: boolean } = {}) => {
     if (!detail || saving) return;
     setSaving(true);
     setActionError('');
@@ -154,9 +154,11 @@ export default function ResultsEntryPage() {
         setLocalValues(newVals);
         setLocalFlags(newFlags);
       }
-      setToast('Saved ✓');
+      if (!silent) setToast('Saved ✓');
+      return true;
     } catch {
       setActionError('Save failed');
+      return false;
     } finally {
       setSaving(false);
     }
@@ -184,6 +186,8 @@ export default function ResultsEntryPage() {
     setSubmitting(true);
     setActionError('');
     try {
+      const saved = await saveCurrentValues({ silent: true });
+      if (!saved) return;
       const api = getApiClient(getToken() ?? undefined);
       // @ts-ignore
       const { data, error: apiErr } = await api.POST('/results/tests/{orderedTestId}:submit', {
@@ -233,6 +237,8 @@ export default function ResultsEntryPage() {
     setVerifyStatus('verifying');
     setActionError('');
     try {
+      const saved = await saveCurrentValues({ silent: true });
+      if (!saved) { setVerifyStatus('idle'); return; }
       const api = getApiClient(getToken() ?? undefined);
       // @ts-ignore
       const { data, error: apiErr } = await api.POST('/results/tests/{orderedTestId}:submit-and-verify', {
@@ -510,28 +516,21 @@ export default function ResultsEntryPage() {
 
       {/* Action buttons footer */}
       <div className="flex gap-3 flex-wrap pt-4 border-t">
-        <Button
-          variant="outline"
-          onClick={handleSave}
-          disabled={!specimenReady || saving}
-        >
-          {saving ? 'Saving…' : 'Save'}
-        </Button>
         {showSubmitOnly(flags) && (
           <Button
             onClick={handleSubmit}
-            disabled={!specimenReady || submitting}
+            disabled={!specimenReady || submitting || saving}
           >
-            {submitting ? 'Submitting…' : 'Submit'}
+            {submitting || saving ? 'Submitting…' : 'Submit'}
           </Button>
         )}
         {showSubmitAndVerify(flags) && (
           <Button
             onClick={handleSubmitAndVerify}
-            disabled={!specimenReady || verifying || verifyStatus !== 'idle'}
+            disabled={!specimenReady || verifying || saving || verifyStatus !== 'idle'}
             className="bg-primary hover:bg-primary/90"
           >
-            {verifying ? 'Verifying…' : 'Submit & Verify'}
+            {verifying || saving ? 'Verifying…' : 'Submit & Verify'}
           </Button>
         )}
       </div>

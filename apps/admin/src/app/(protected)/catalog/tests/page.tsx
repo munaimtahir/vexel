@@ -5,7 +5,7 @@ import { getToken } from '@/lib/auth';
 
 const emptyForm = () => ({
   name: '', externalId: '', userCode: '', loincCode: '',
-  department: '', specimenType: '', method: '', price: '', isActive: true,
+  department: '', specimenType: '', method: '', price: '', isActive: true, printAlone: false,
 });
 
 export default function CatalogTestsPage() {
@@ -67,6 +67,7 @@ export default function CatalogTestsPage() {
       userCode: t.userCode ?? '', loincCode: t.loincCode ?? '',
       department: t.department ?? '', specimenType: t.specimenType ?? '',
       method: t.method ?? '', price: t.price != null ? String(t.price) : '', isActive: t.isActive !== false,
+      printAlone: t.printAlone === true,
     });
     setError(null); setDrawerOpen(true);
   }
@@ -80,7 +81,7 @@ export default function CatalogTestsPage() {
     e.preventDefault();
     setSaving(true); setError(null);
     const api = getApiClient(getToken() ?? undefined);
-    const body: any = { name: form.name, isActive: form.isActive };
+    const body: any = { name: form.name, isActive: form.isActive, printAlone: form.printAlone };
     if (form.externalId) body.externalId = form.externalId;
     if (form.userCode) body.userCode = form.userCode;
     if (form.loincCode) body.loincCode = form.loincCode;
@@ -213,6 +214,12 @@ export default function CatalogTestsPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="test-active" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} style={{ width: '16px', height: '16px' }} />
                 <label htmlFor="test-active" style={{ fontSize: '14px', color: 'hsl(var(--foreground))', cursor: 'pointer' }}>Active</label>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox" id="test-print-alone" checked={form.printAlone} onChange={(e) => setForm({ ...form, printAlone: e.target.checked })} style={{ width: '16px', height: '16px' }} />
+                <label htmlFor="test-print-alone" style={{ fontSize: '14px', color: 'hsl(var(--foreground))', cursor: 'pointer' }}>
+                  Print on separate page in lab report
+                </label>
               </div>
             </div>
             <div style={{ marginTop: '24px', display: 'flex', gap: '10px' }}>

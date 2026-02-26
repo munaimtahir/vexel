@@ -110,7 +110,6 @@ export default function EncounterResultsPage() {
   const [verifying, setVerifying] = useState<Record<string, boolean>>({});
 
   // Global action state
-  const [savingAll, setSavingAll] = useState(false);
   const [submittingAll, setSubmittingAll] = useState(false);
 
   const [toast, setToast] = useState('');
@@ -211,9 +210,9 @@ export default function EncounterResultsPage() {
   };
 
   // Save a single test
-  const handleSave = async (testId: string) => {
+  const saveTest = async (testId: string, { silent = false }: { silent?: boolean } = {}) => {
     const test = tests.find(t => t.id === testId);
-    if (!test) return;
+    if (!test) return false;
     setSaving(prev => ({ ...prev, [testId]: true }));
     setActionError('');
     try {
@@ -229,11 +228,13 @@ export default function EncounterResultsPage() {
         params: { path: { orderedTestId: testId } },
         body: { values },
       });
-      if (apiErr) { setActionError('Save failed'); return; }
+      if (apiErr) { setActionError('Save failed'); return false; }
       await refreshTest(testId);
-      setToast('Saved ✓');
+      if (!silent) setToast('Saved ✓');
+      return true;
     } catch {
       setActionError('Save failed');
+      return false;
     } finally {
       setSaving(prev => ({ ...prev, [testId]: false }));
     }
@@ -244,6 +245,8 @@ export default function EncounterResultsPage() {
     setSubmitting(prev => ({ ...prev, [testId]: true }));
     setActionError('');
     try {
+      const saved = await saveTest(testId, { silent: true });
+      if (!saved) return;
       const api = getApiClient(getToken() ?? undefined);
       // @ts-ignore
       const { error: apiErr } = await api.POST('/results/tests/{orderedTestId}:submit', {
@@ -299,6 +302,8 @@ export default function EncounterResultsPage() {
     setVerifyStatus(prev => ({ ...prev, [testId]: 'verifying' }));
     setActionError('');
     try {
+      const saved = await saveTest(testId, { silent: true });
+      if (!saved) { setVerifyStatus(prev => ({ ...prev, [testId]: 'idle' })); return; }
       const api = getApiClient(getToken() ?? undefined);
       // @ts-ignore
       const { data, error: apiErr } = await api.POST('/results/tests/{orderedTestId}:submit-and-verify', {
@@ -318,20 +323,6 @@ export default function EncounterResultsPage() {
       setVerifyStatus(prev => ({ ...prev, [testId]: 'idle' }));
     } finally {
       setVerifying(prev => ({ ...prev, [testId]: false }));
-    }
-  };
-
-  // Save all tests at once
-  const handleSaveAll = async () => {
-    setSavingAll(true);
-    setActionError('');
-    try {
-      await Promise.all(tests.map(t => handleSave(t.id)));
-      setToast('All tests saved ✓');
-    } catch {
-      setActionError('Save all failed');
-    } finally {
-      setSavingAll(false);
     }
   };
 
@@ -607,31 +598,23 @@ export default function EncounterResultsPage() {
 
       {/* Per-test action buttons */}
       <div className="flex gap-2 flex-wrap mb-6">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleSave(activeTest.id)}
-          disabled={!specimenReady || saving[activeTest.id]}
-        >
-          {saving[activeTest.id] ? 'Saving…' : 'Save'}
-        </Button>
         {showSubmitOnly(flags) && !isTestSubmitted && (
           <Button
             size="sm"
             onClick={() => handleSubmit(activeTest.id)}
-            disabled={!specimenReady || submitting[activeTest.id]}
+            disabled={!specimenReady || submitting[activeTest.id] || saving[activeTest.id]}
           >
-            {submitting[activeTest.id] ? 'Submitting…' : 'Submit'}
+            {submitting[activeTest.id] || saving[activeTest.id] ? 'Submitting…' : 'Submit'}
           </Button>
         )}
         {showSubmitAndVerify(flags) && !isTestSubmitted && (
           <Button
             size="sm"
             onClick={() => handleSubmitAndVerify(activeTest.id)}
-            disabled={!specimenReady || verifying[activeTest.id] || (verifyStatus[activeTest.id] ?? 'idle') !== 'idle'}
+            disabled={!specimenReady || verifying[activeTest.id] || saving[activeTest.id] || (verifyStatus[activeTest.id] ?? 'idle') !== 'idle'}
             className="bg-primary hover:bg-primary/90"
           >
-            {verifying[activeTest.id] ? 'Verifying…' : 'Submit & Verify'}
+            {verifying[activeTest.id] || saving[activeTest.id] ? 'Verifying…' : 'Submit & Verify'}
           </Button>
         )}
       </div>
@@ -640,14 +623,6 @@ export default function EncounterResultsPage() {
       {tests.length > 1 && (
         <div className="border-t pt-4 flex gap-3 flex-wrap">
           <span className="text-xs text-muted-foreground self-center">All tests:</span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSaveAll}
-            disabled={!specimenReady || savingAll}
-          >
-            {savingAll ? 'Saving all…' : 'Save all'}
-          </Button>
           {showSubmitOnly(flags) && !allPendingDone && (
             <Button
               size="sm"

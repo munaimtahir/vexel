@@ -149,6 +149,10 @@ components:
           type: array
           items:
             type: string
+        permissions:
+          type: array
+          items:
+            type: string
         status:
           type: string
           enum: [active, disabled, pending]

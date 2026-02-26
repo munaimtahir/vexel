@@ -219,7 +219,7 @@ export class DocumentsService {
         labOrders: {
           include: {
             test: true,
-            results: true,
+            results: { orderBy: { enteredAt: 'asc' } },
             specimen: true,
           },
         },
@@ -239,6 +239,32 @@ export class DocumentsService {
 
     const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
 
+    // Compute patient age
+    let patientAge: string | undefined;
+    if (encounter.patient.dateOfBirth) {
+      const years = Math.floor((Date.now() - encounter.patient.dateOfBirth.getTime()) / (365.25 * 24 * 3600 * 1000));
+      patientAge = `${years}Y`;
+    }
+
+    // Get verifiedBy name — look for most recent verifier from audit
+    let verifiedByName: string | undefined;
+    let verifiedAt: string | undefined;
+    const verifyAudit = await this.prisma.auditEvent.findFirst({
+      where: { tenantId, entityId: encounterId, action: 'encounter.verify' },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (verifyAudit?.actorUserId) {
+      const verifier = await this.prisma.user.findUnique({ where: { id: verifyAudit.actorUserId } });
+      if (verifier) verifiedByName = `${verifier.firstName} ${verifier.lastName}`;
+      verifiedAt = verifyAudit.createdAt.toISOString();
+    }
+
+    // Get sampleReceivedAt from first specimen collection
+    const firstSpecimen = await this.prisma.specimenItem.findFirst({
+      where: { tenantId, encounterId },
+      orderBy: { createdAt: 'asc' },
+    });
+
     // Use encounter's updatedAt as deterministic issuedAt
     const issuedAt = encounter.updatedAt.toISOString();
     const payload: LabReportPayload = {
@@ -246,25 +272,45 @@ export class DocumentsService {
       issuedAt,
       patientName: `${encounter.patient.firstName} ${encounter.patient.lastName}`,
       patientMrn: encounter.patient.mrn,
+      patientAge,
       patientDob: encounter.patient.dateOfBirth?.toISOString().split('T')[0],
       patientGender: encounter.patient.gender ?? undefined,
       encounterId,
-      tests: encounter.labOrders.map((order) => ({
-        testCode: (order as any).test?.code ?? order.id,
-        testName: (order as any).test?.name ?? 'Unknown',
-        parameters: (order as any).results?.[0] ? [{
-          parameterCode: 'result',
-          parameterName: 'Result',
-          value: (order as any).results[0].value,
-          unit: (order as any).results[0].unit ?? undefined,
-          referenceRange: (order as any).results[0].referenceRange ?? undefined,
-          flag: (order as any).results[0].flag ?? undefined,
-        }] : [],
-      })),
+      encounterCode: (encounter as any).encounterCode ?? undefined,
+      orderedBy: undefined,
+      sampleReceivedAt: (firstSpecimen as any)?.collectedAt?.toISOString() ?? firstSpecimen?.createdAt?.toISOString(),
+      printedAt: new Date().toISOString(),
+      reportStatus: encounter.status === 'verified' ? 'Verified' : encounter.status === 'published' ? 'Verified' : 'Provisional',
+      reportHeaderLayout: tenantConfig?.reportHeaderLayout ?? 'default',
+      tests: encounter.labOrders.map((order) => {
+        const testMeta = (order as any).test;
+        // Build parameters from all LabResult rows for this order
+        const allResults: any[] = (order as any).results ?? [];
+        const parameters = allResults.length > 0
+          ? allResults.map((r: any) => ({
+              parameterCode: r.parameterId ?? 'result',
+              parameterName: r.parameterNameSnapshot ?? 'Result',
+              value: r.value,
+              unit: r.unit ?? undefined,
+              referenceRange: r.referenceRange ?? undefined,
+              flag: r.flag ?? undefined,
+            }))
+          : [];
+        return {
+          testCode: testMeta?.userCode ?? testMeta?.externalId ?? order.id,
+          testName: testMeta?.name ?? 'Unknown',
+          department: testMeta?.department ?? undefined,
+          printAlone: testMeta?.printAlone ?? false,
+          parameters,
+        };
+      }),
+      verifiedBy: verifiedByName,
+      verifiedAt,
       tenantName: tenantConfig?.brandName ?? tenantId,
       tenantLogoUrl: tenantConfig?.logoUrl ?? undefined,
       reportHeader: tenantConfig?.reportHeader ?? undefined,
       reportFooter: tenantConfig?.reportFooter ?? undefined,
+      reportFooterImageUrl: (tenantConfig as any)?.reportFooterImageUrl ?? undefined,
     };
 
     return this.generateDocument(

@@ -3,38 +3,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { logout } from '@/lib/auth';
 import { ChevronDown } from 'lucide-react';
-
-const NAV_ITEMS = [
-  { href: '/dashboard',    label: 'Dashboard',     icon: '��' },
-  { href: '/tenants',      label: 'Tenants',        icon: '🏢' },
-  { href: '/users',        label: 'Users & Roles',  icon: '👥',
-    children: [
-      { href: '/users', label: 'Users' },
-      { href: '/roles', label: 'Roles' },
-    ],
-  },
-  { href: '/feature-flags',label: 'Feature Flags',  icon: '🚩' },
-  { href: '/branding',     label: 'Branding',       icon: '🎨' },
-  { href: '/catalog',      label: 'Catalog',        icon: '🧪',
-    children: [
-      { href: '/catalog/tests',            label: 'Tests' },
-      { href: '/catalog/parameters',       label: 'Parameters' },
-      { href: '/catalog/panels',           label: 'Panels' },
-      { href: '/catalog/reference-ranges', label: 'Reference Ranges' },
-      { href: '/catalog/import-export',    label: 'Import / Export' },
-    ],
-  },
-  { href: '/patients',     label: 'Patients',       icon: '🏥',
-    children: [
-      { href: '/patients',   label: 'Patients' },
-      { href: '/encounters', label: 'Encounters' },
-    ],
-  },
-  { href: '/documents',    label: 'Documents',      icon: '📄' },
-  { href: '/audit',        label: 'Audit Log',      icon: '📋' },
-  { href: '/jobs',         label: 'Jobs',           icon: '⚙️' },
-  { href: '/system/health',label: 'System Health',  icon: '❤️' },
-];
+import { getVisibleAdminNav } from '@/lib/admin-nav';
+import { useCurrentUser } from '@/lib/use-auth';
 
 const S = {
   headerBg: 'hsl(var(--sidebar))',
@@ -58,6 +28,8 @@ function GlowLine() {
 export function Sidebar() {
   const pathname = usePathname();
   const router   = useRouter();
+  const { user } = useCurrentUser();
+  const navItems = getVisibleAdminNav(user);
   const handleLogout = () => { logout(); router.push('/login'); };
 
   return (
@@ -101,7 +73,7 @@ export function Sidebar() {
         <div style={{ padding: '2px 8px 8px', fontSize: '9px', fontWeight: 700, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
           Administration
         </div>
-        {NAV_ITEMS.map((item) => {
+        {navItems.map((item) => {
           const isParentActive = pathname === item.href || pathname.startsWith(item.href + '/')
             || (item.children?.some(c => pathname === c.href || pathname.startsWith(c.href + '/')) ?? false);
           return (
@@ -128,7 +100,7 @@ export function Sidebar() {
                     boxShadow: '0 0 10px hsl(var(--primary) / 0.4)',
                   }} />
                 )}
-                <span style={{ fontSize: '14px', flexShrink: 0 }}>{item.icon}</span>
+                <span style={{ fontSize: '11px', minWidth: '18px', textAlign: 'center', flexShrink: 0, opacity: 0.85 }}>{item.icon ?? '•'}</span>
                 <span style={{ flex: 1 }}>{item.label}</span>
                 {item.children && (
                   <ChevronDown style={{

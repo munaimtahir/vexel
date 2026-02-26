@@ -227,21 +227,50 @@ export class EncountersService {
     try {
       const test = await this.prisma.catalogTest.findUnique({ where: { id: resolvedTestId } });
       const patient = (updatedEncounter as any).patient;
+      const tenantCfg = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+
+      // Compute patient age from DOB
+      let patientAge: string | undefined;
+      if (patient?.dateOfBirth) {
+        const dob = new Date(patient.dateOfBirth);
+        const years = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 3600 * 1000));
+        patientAge = `${years}Y`;
+      }
+
+      // Fetch registeredBy name from encounter creator
+      let registeredBy: string | undefined;
+      if ((updatedEncounter as any).createdById) {
+        const creator = await this.prisma.user.findUnique({ where: { id: (updatedEncounter as any).createdById } });
+        if (creator) registeredBy = `${creator.firstName} ${creator.lastName}`;
+      }
+
+      const unitPrice = test?.price ? Number(test.price) : 0;
       const receiptPayload = {
         receiptNumber: `RCP-${labOrder.id.slice(0, 8).toUpperCase()}`,
         issuedAt: new Date().toISOString(),
         patientName: patient ? `${patient.firstName} ${patient.lastName}` : 'Unknown',
         patientMrn: patient?.mrn ?? '',
+        patientAge,
+        patientGender: patient?.gender ?? undefined,
+        encounterCode: (updatedEncounter as any).encounterCode ?? undefined,
+        registeredBy,
         items: [{
           description: test?.name ?? 'Lab Test',
           quantity: 1,
-          unitPrice: 0,
-          total: 0,
+          unitPrice,
+          total: unitPrice,
         }],
-        subtotal: 0,
+        subtotal: unitPrice,
+        discount: 0,
         tax: 0,
-        grandTotal: 0,
+        grandTotal: unitPrice,
+        paymentMethod: 'Cash',
+        paymentComments: '',
         encounterId,
+        tenantName: tenantCfg?.brandName ?? tenantId,
+        tenantLogoUrl: tenantCfg?.logoUrl ?? undefined,
+        reportHeader: tenantCfg?.reportHeader ?? undefined,
+        reportFooter: tenantCfg?.reportFooter ?? undefined,
       };
       await this.documentsService.generateDocument(
         tenantId,

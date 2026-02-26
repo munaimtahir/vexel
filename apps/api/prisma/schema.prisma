@@ -75,9 +75,12 @@ model TenantConfig {
   reportFooter       String?
   headerText         String?
   footerText         String?
-  registrationPrefix String? // e.g. "VX" — 2-3 letters; server appends -YY-SEQ
-  orderPrefix        String? // e.g. "VX" — server appends module letter + YYMM + SEQ
-  updatedAt          DateTime @updatedAt
+  registrationPrefix  String? // e.g. "VX" — 2-3 letters; server appends -YY-SEQ
+  orderPrefix         String? // e.g. "VX" — server appends module letter + YYMM + SEQ
+  reportHeaderLayout  String? // default | classic | minimal
+  receiptLayout       String? // a4 | thermal
+  reportFooterImageUrl String? // URL to footer image for lab reports
+  updatedAt           DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
@@ -201,6 +204,7 @@ model CatalogTest {
   loincCode       String?
   department      String?
   method          String?
+  printAlone      Boolean  @default(false) // if true, test prints on its own page in lab report
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
