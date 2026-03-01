@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { Request, Response } from 'express';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
+import { PrismaService } from '../prisma/prisma.service';
 
 const REFRESH_COOKIE = 'vexel_refresh';
 
@@ -78,11 +79,26 @@ export class AuthController {
 @ApiTags('Auth')
 @Controller('me')
 export class MeController {
+  constructor(private readonly prisma: PrismaService) {}
+
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current authenticated user' })
-  getMe(@Req() req: Request) {
-    return (req as any).user;
+  async getMe(@Req() req: Request) {
+    const jwtUser = (req as any).user;
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: jwtUser.userId },
+        select: { firstName: true, lastName: true },
+      });
+      return {
+        ...jwtUser,
+        firstName: user?.firstName ?? null,
+        lastName: user?.lastName ?? null,
+      };
+    } catch {
+      return jwtUser;
+    }
   }
 }
