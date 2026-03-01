@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
 import { getApiClient } from '@/lib/api-client';
-import { getToken, logout } from '@/lib/auth';
+import { getToken, logout, decodeJwt } from '@/lib/auth';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -104,8 +104,22 @@ export default function OperatorLandingPage() {
   const [user, setUser] = useState<MeUser | null>(null);
   const [userLoading, setUserLoading] = useState(true);
 
-  // Fetch current user profile
+  // Fetch current user profile — decode JWT immediately for instant RBAC, then enrich with /me
   useEffect(() => {
+    const jwtData = decodeJwt(getToken());
+    if (jwtData) {
+      setUser({
+        userId: jwtData.sub,
+        email: jwtData.email,
+        tenantId: jwtData.tenantId,
+        roles: jwtData.roles ?? [],
+        permissions: jwtData.permissions ?? [],
+        isSuperAdmin: jwtData.isSuperAdmin ?? false,
+        firstName: null,
+        lastName: null,
+      } as MeUser);
+      setUserLoading(false);
+    }
     const api = getApiClient(getToken() ?? undefined);
     (api.GET as any)('/me').then(({ data }: any) => {
       if (data) setUser(data as MeUser);

@@ -82,7 +82,10 @@ export default function ImportExportPage() {
         params: { query: { validate, mode } },
         body: form as any,
       } as any);
-      if (error || !data) throw new Error((error as any)?.message ?? 'Import failed');
+      if (error || !data) {
+        const errMsg = (error as any)?.message ?? (error as any)?.detail ?? JSON.stringify(error) ?? 'Import failed';
+        throw new Error(errMsg);
+      }
       const summary = data as any;
       setImportResult(summary);
       const hasErrors = Array.isArray(summary?.errors) && summary.errors.length > 0;
@@ -156,8 +159,8 @@ export default function ImportExportPage() {
   async function handleTemplateDownload(templatePath: string) {
     try {
       await downloadFile(`/catalog/templates/${templatePath}`, templatePath);
-    } catch {
-      alert('Template download failed');
+    } catch (err: any) {
+      alert(`Template download failed: ${err?.message ?? 'Unknown error'}`);
     }
   }
 
