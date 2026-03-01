@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Put, Patch, Delete, Param, Body, Query, UseGuards, HttpCode, HttpStatus, Req, Headers, Res, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { PermissionsGuard } from '../rbac/permissions.guard';
@@ -398,6 +398,8 @@ export class CatalogController {
   @Post('import')
   @RequirePermissions(Permission.CATALOG_MANAGE)
   @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: { type: 'object', required: ['file'], properties: { file: { type: 'string', format: 'binary' } } } })
   async importCatalog(@Req() req: Request, @UploadedFile() file: Express.Multer.File, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
     const mode = body.mode ?? 'UPSERT_PATCH';
@@ -408,6 +410,8 @@ export class CatalogController {
   @Post('import/workbook')
   @RequirePermissions(Permission.CATALOG_MANAGE)
   @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: { type: 'object', required: ['file'], properties: { file: { type: 'string', format: 'binary' } } } })
   async importCatalogWorkbook(
     @Req() req: Request,
     @UploadedFile() file: Express.Multer.File,
@@ -416,6 +420,9 @@ export class CatalogController {
     @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
     const user = (req as any).user;
+    if (!file) {
+      return { errors: [{ message: 'No file uploaded. Send multipart/form-data with field "file".' }] };
+    }
     return this.importExportSvc.importFromWorkbook(
       user.tenantId,
       file.buffer,
