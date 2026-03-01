@@ -177,6 +177,20 @@ components:
         status:
           type: string
           enum: [active, suspended, trial]
+        catalogSeedMode:
+          type: string
+          enum: [BASE_ON_ENABLE, EMPTY, CUSTOM_UPLOAD]
+          nullable: true
+        catalogSeededAt:
+          type: string
+          format: date-time
+          nullable: true
+        catalogSeedBaseVersion:
+          type: string
+          nullable: true
+        catalogSeedHash:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -2839,6 +2853,73 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/FeatureFlag'
+
+  # ─── Tenant Commands ──────────────────────────────────────────────────────
+  /tenants/{tenantId}:enable-lims:
+    post:
+      operationId: enableLimsForTenant
+      summary: Enable LIMS module for a tenant and optionally seed catalog
+      description: |
+        Command endpoint that enables the module.lims feature flag for the specified tenant.
+        If seedCatalog is true (or seedMode is BASE_ON_ENABLE), seeds the tenant catalog from
+        the platform base catalog once. Idempotent — second call with an already-seeded tenant
+        returns a no-op summary.
+      tags: [Tenants]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                seedCatalog:
+                  type: boolean
+                  default: true
+                seedMode:
+                  type: string
+                  enum: [BASE_ON_ENABLE, EMPTY, CUSTOM_UPLOAD]
+                  default: BASE_ON_ENABLE
+      responses:
+        "200":
+          description: Enable-LIMS result
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [limsEnabled, catalogSeeded]
+                properties:
+                  limsEnabled:
+                    type: boolean
+                  catalogSeeded:
+                    type: boolean
+                  catalogAlreadySeeded:
+                    type: boolean
+                  seedSummary:
+                    type: object
+                    nullable: true
+                    properties:
+                      inserted: { type: integer }
+                      updated: { type: integer }
+                      skipped: { type: integer }
+                      baseVersion: { type: string }
+                      hash: { type: string }
+                  tenant:
+                    $ref: '#/components/schemas/TenantSummary'
+        "404":
+          description: Tenant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   # ─── Users ────────────────────────────────────────────────────────────────
   /users:

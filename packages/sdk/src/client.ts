@@ -14,11 +14,16 @@ export type ApiClient = ReturnType<typeof createFetchClient<paths>>;
  * Creates a typed API client bound to the given base URL and bearer token.
  * This is the only sanctioned way for frontends to call the Vexel API.
  *
- * Content-Type handling:
- * - FormData bodies: Content-Type is intentionally omitted so the browser
- *   auto-sets `multipart/form-data; boundary=...`. Forcing application/json
- *   would cause NestJS's JSON body-parser to receive multipart bytes → parse error.
- * - All other bodies: Content-Type: application/json is set explicitly.
+ * Content-Type handling is delegated entirely to openapi-fetch (v0.13.8+):
+ * - FormData bodies: openapi-fetch detects FormData and omits Content-Type so
+ *   the browser auto-sets `multipart/form-data; boundary=...`.
+ * - JSON bodies: openapi-fetch sets Content-Type: application/json automatically.
+ *
+ * NOTE: A custom fetch wrapper must NOT be used here. openapi-fetch passes the
+ * full Request object as the first arg to the underlying fetch(), so checking
+ * `init?.body instanceof FormData` in a wrapper would always see `init` as
+ * undefined and incorrectly force Content-Type: application/json on file uploads,
+ * causing NestJS to reject multipart data with a JSON parse error.
  */
 export function createApiClient(options: ApiClientOptions): ApiClient {
   const { baseUrl, token, correlationId, headers: extraHeaders } = options;
@@ -29,26 +34,8 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     ...(extraHeaders ?? {}),
   };
 
-  const client = createFetchClient<paths>({
+  return createFetchClient<paths>({
     baseUrl,
     headers: defaultHeaders,
-    // Custom fetch wrapper: set Content-Type: application/json for non-FormData
-    // requests only. For FormData, let the browser set the multipart boundary.
-    fetch: (url: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-      const isFormData = init?.body instanceof FormData;
-      if (!isFormData) {
-        const headers = new Headers(init?.headers);
-        if (!headers.has('Content-Type')) {
-          headers.set('Content-Type', 'application/json');
-        }
-        return fetch(url, { ...init, headers });
-      }
-      // FormData: remove any Content-Type so browser sets multipart+boundary
-      const headers = new Headers(init?.headers);
-      headers.delete('Content-Type');
-      return fetch(url, { ...init, headers });
-    },
   });
-
-  return client;
 }

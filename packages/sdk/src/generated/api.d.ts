@@ -195,6 +195,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tenants/{tenantId}:enable-lims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Enable LIMS module for a tenant and optionally seed catalog
+         * @description Command endpoint that enables the module.lims feature flag for the specified tenant.
+         *     If seedCatalog is true (or seedMode is BASE_ON_ENABLE), seeds the tenant catalog from
+         *     the platform base catalog once. Idempotent — second call with an already-seeded tenant
+         *     returns a no-op summary.
+         */
+        post: operations["enableLimsForTenant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users": {
         parameters: {
             query?: never;
@@ -2634,6 +2657,12 @@ export interface components {
             domains?: string[];
             /** @enum {string} */
             status: "active" | "suspended" | "trial";
+            /** @enum {string|null} */
+            catalogSeedMode?: "BASE_ON_ENABLE" | "EMPTY" | "CUSTOM_UPLOAD" | null;
+            /** Format: date-time */
+            catalogSeededAt?: string | null;
+            catalogSeedBaseVersion?: string | null;
+            catalogSeedHash?: string | null;
             /** Format: date-time */
             createdAt?: string;
         };
@@ -4154,6 +4183,64 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FeatureFlag"][];
+                };
+            };
+        };
+    };
+    enableLimsForTenant: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                tenantId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @default true */
+                    seedCatalog?: boolean;
+                    /**
+                     * @default BASE_ON_ENABLE
+                     * @enum {string}
+                     */
+                    seedMode?: "BASE_ON_ENABLE" | "EMPTY" | "CUSTOM_UPLOAD";
+                };
+            };
+        };
+        responses: {
+            /** @description Enable-LIMS result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        limsEnabled: boolean;
+                        catalogSeeded: boolean;
+                        catalogAlreadySeeded?: boolean;
+                        seedSummary?: {
+                            inserted?: number;
+                            updated?: number;
+                            skipped?: number;
+                            baseVersion?: string;
+                            hash?: string;
+                        } | null;
+                        tenant?: components["schemas"]["TenantSummary"];
+                    };
+                };
+            };
+            /** @description Tenant not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
         };

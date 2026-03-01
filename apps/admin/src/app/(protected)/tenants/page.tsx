@@ -16,6 +16,11 @@ export default function TenantsPage() {
   const [editForm, setEditForm] = useState({ name: '', domains: '' });
   const [editSaving, setEditSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [limsModal, setLimsModal] = useState<any | null>(null);
+  const [limsOpts, setLimsOpts] = useState<{ seedCatalog: boolean; seedMode: 'BASE_ON_ENABLE' | 'EMPTY' | 'CUSTOM_UPLOAD' }>({ seedCatalog: true, seedMode: 'BASE_ON_ENABLE' });
+  const [limsResult, setLimsResult] = useState<any | null>(null);
+  const [limsLoading, setLimsLoading] = useState(false);
+  const [limsError, setLimsError] = useState<string | null>(null);
 
   async function loadData() {
     const api = getApiClient(getToken() ?? undefined);
@@ -68,6 +73,31 @@ export default function TenantsPage() {
     loadData();
   }
 
+  function openLimsModal(t: any) {
+    setLimsModal(t);
+    setLimsOpts({ seedCatalog: !t.catalogSeededAt, seedMode: 'BASE_ON_ENABLE' });
+    setLimsResult(null); setLimsError(null);
+  }
+
+  async function handleEnableLims() {
+    if (!limsModal) return;
+    setLimsLoading(true); setLimsError(null); setLimsResult(null);
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const { data, error } = await api.POST('/tenants/{tenantId}:enable-lims', {
+        params: { path: { tenantId: limsModal.id } },
+        body: limsOpts,
+      });
+      if (error) throw new Error((error as any)?.message ?? JSON.stringify(error));
+      setLimsResult(data as any);
+      loadData();
+    } catch (err: any) {
+      setLimsError(err.message ?? 'Failed');
+    } finally {
+      setLimsLoading(false);
+    }
+  }
+
   if (loading) return <p style={{ padding: '32px' }}>Loading...</p>;
 
   return (
@@ -95,6 +125,64 @@ export default function TenantsPage() {
                 <button type="button" onClick={() => setEditTenant(null)} style={{ padding: '8px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
               </div>
             </form>
+          </div>
+        </>
+      )}
+
+      {/* Enable LIMS modal */}
+      {limsModal && (
+        <>
+          <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.3)', zIndex: 40 }} onClick={() => setLimsModal(null)} />
+          <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '440px', background: 'hsl(var(--card))', zIndex: 50, borderRadius: '10px', boxShadow: 'var(--shadow-lg)', padding: '28px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '17px', fontWeight: 700 }}>Enable LIMS — {limsModal.name}</h2>
+              <button onClick={() => setLimsModal(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}>×</button>
+            </div>
+
+            {/* Seed status readout */}
+            <div style={{ background: 'hsl(var(--muted))', borderRadius: '6px', padding: '12px 14px', marginBottom: '16px', fontSize: '13px' }}>
+              <p style={{ fontWeight: 600, marginBottom: '8px' }}>Catalog Seed Status</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px' }}>
+                <span style={{ color: 'hsl(var(--muted-foreground))' }}>Seeded:</span>
+                <span style={{ fontWeight: 500 }}>{limsModal.catalogSeededAt ? `✅ ${new Date(limsModal.catalogSeededAt).toLocaleDateString()}` : '❌ Not seeded'}</span>
+                {limsModal.catalogSeedBaseVersion && (<><span style={{ color: 'hsl(var(--muted-foreground))' }}>Base Version:</span><span>{limsModal.catalogSeedBaseVersion}</span></>)}
+                {limsModal.catalogSeedHash && (<><span style={{ color: 'hsl(var(--muted-foreground))' }}>Hash:</span><span style={{ fontFamily: 'monospace', fontSize: '11px' }}>{limsModal.catalogSeedHash.slice(0, 12)}…</span></>)}
+                {limsModal.catalogSeedMode && (<><span style={{ color: 'hsl(var(--muted-foreground))' }}>Mode:</span><span>{limsModal.catalogSeedMode}</span></>)}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gap: '12px', marginBottom: '20px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', cursor: 'pointer' }}>
+                <input type="checkbox" checked={limsOpts.seedCatalog} onChange={(e) => setLimsOpts({ ...limsOpts, seedCatalog: e.target.checked })} disabled={!!limsModal.catalogSeededAt} />
+                Seed catalog from base catalog v1 (idempotent — skipped if already seeded)
+              </label>
+              <div>
+                <label style={labelStyle}>Seed Mode</label>
+                <select value={limsOpts.seedMode} onChange={(e) => setLimsOpts({ ...limsOpts, seedMode: e.target.value as 'BASE_ON_ENABLE' | 'EMPTY' | 'CUSTOM_UPLOAD' })} style={inputStyle} disabled={!!limsModal.catalogSeededAt}>
+                  <option value="BASE_ON_ENABLE">BASE_ON_ENABLE — seed from platform base catalog</option>
+                  <option value="EMPTY">EMPTY — start with empty catalog</option>
+                </select>
+              </div>
+            </div>
+
+            {limsError && <p style={{ color: 'hsl(var(--destructive))', fontSize: '13px', marginBottom: '12px' }}>{limsError}</p>}
+
+            {limsResult && (
+              <div style={{ background: 'hsl(var(--status-success-bg))', border: '1px solid hsl(var(--status-success-border))', borderRadius: '6px', padding: '12px', marginBottom: '12px', fontSize: '13px' }}>
+                <p style={{ fontWeight: 600, marginBottom: '4px', color: 'hsl(var(--status-success-fg))' }}>✅ LIMS enabled successfully</p>
+                {limsResult.catalogSeeded && limsResult.seedSummary && (
+                  <p>Catalog seeded: {limsResult.seedSummary.inserted} inserted, {limsResult.seedSummary.updated} updated, {limsResult.seedSummary.skipped} skipped</p>
+                )}
+                {limsResult.catalogAlreadySeeded && <p style={{ color: 'hsl(var(--muted-foreground))' }}>Catalog was already seeded — no-op.</p>}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setLimsModal(null)} style={{ padding: '8px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Close</button>
+              <button onClick={handleEnableLims} disabled={limsLoading} style={{ padding: '8px 18px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>
+                {limsLoading ? 'Enabling…' : 'Enable LIMS'}
+              </button>
+            </div>
           </div>
         </>
       )}
@@ -131,9 +219,18 @@ export default function TenantsPage() {
               <div>
                 <p style={{ fontWeight: 600, marginBottom: '4px' }}>{t.name}</p>
                 <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '8px' }}>{(t.domains ?? []).map((d: any) => d.domain ?? d).join(', ') || 'No domains'}</p>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                {/* LIMS seed status */}
+                {t.catalogSeededAt && (
+                  <p style={{ fontSize: '11px', color: 'hsl(var(--status-success-fg))', marginBottom: '8px' }}>
+                    🧪 Catalog seeded {t.catalogSeedBaseVersion ? `v${t.catalogSeedBaseVersion}` : ''} on {new Date(t.catalogSeededAt).toLocaleDateString()}
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <Link href={`/branding?tenantId=${t.id}`} style={{ fontSize: '12px', color: 'hsl(var(--primary))', textDecoration: 'none', padding: '3px 8px', background: 'hsl(var(--status-info-bg))', borderRadius: '4px', border: '1px solid hsl(var(--status-info-border))' }}>🎨 Branding</Link>
                   <Link href={`/feature-flags?tenantId=${t.id}`} style={{ fontSize: '12px', color: 'hsl(var(--primary))', textDecoration: 'none', padding: '3px 8px', background: 'hsl(var(--status-info-bg))', borderRadius: '4px', border: '1px solid hsl(var(--status-info-border))' }}>🚩 Feature Flags</Link>
+                  <button onClick={() => openLimsModal(t)} style={{ fontSize: '12px', cursor: 'pointer', padding: '3px 8px', background: t.catalogSeededAt ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-warning-bg))', color: t.catalogSeededAt ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-warning-fg))', border: `1px solid ${t.catalogSeededAt ? 'hsl(var(--status-success-border))' : 'hsl(var(--status-warning-border))'}`, borderRadius: '4px' }}>
+                    🔬 {t.catalogSeededAt ? 'LIMS (seeded)' : 'Enable LIMS'}
+                  </button>
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>

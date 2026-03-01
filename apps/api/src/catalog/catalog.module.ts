@@ -11,5 +11,6 @@ import { FeatureFlagsModule } from '../feature-flags/feature-flags.module';
   imports: [AuditModule, FeatureFlagsModule],
   controllers: [CatalogController, CatalogJobsController],
   providers: [CatalogService, CatalogImportExportService, CatalogJobsService],
+  exports: [CatalogImportExportService],
 })
 export class CatalogModule {}

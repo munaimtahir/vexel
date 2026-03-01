@@ -14,6 +14,11 @@ model Tenant {
   name      String
   status    String   @default("trial") // active | suspended | trial
   isSuperAdmin Boolean @default(false)  // system tenant for super-admins
+  // Catalog seed state (set by enable-lims command)
+  catalogSeedMode        String?   // BASE_ON_ENABLE | EMPTY | CUSTOM_UPLOAD
+  catalogSeededAt        DateTime?
+  catalogSeedBaseVersion String?
+  catalogSeedHash        String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

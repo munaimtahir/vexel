@@ -78,4 +78,16 @@ export class TenantsController {
   ) {
     return this.featureFlags.setForTenant(id, body, (req as any).user.userId, cid);
   }
+
+  @Post(':tenantId\\:enable-lims')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.TENANT_UPDATE)
+  enableLims(
+    @Req() req: Request,
+    @Param('tenantId') tenantId: string,
+    @Body() body: { seedCatalog?: boolean; seedMode?: string } = {},
+    @Headers(CORRELATION_ID_HEADER) cid?: string,
+  ) {
+    return this.svc.enableLims(tenantId, body, (req as any).user.userId, cid);
+  }
 }
