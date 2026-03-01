@@ -27,7 +27,7 @@ export default function LoginPage() {
       const { data, error: apiError } = await api.POST('/auth/login', { body: { email, password } });
       if (apiError || !data) { setError('Invalid email or password'); return; }
       setTokens(data.accessToken, data.refreshToken);
-      router.push('/lims/worklist');
+      router.push('/');
     } catch {
       setError('Login failed. Please try again.');
     } finally {
