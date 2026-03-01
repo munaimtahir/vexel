@@ -139,7 +139,7 @@ export function Sidebar() {
           justifyContent: collapsed ? 'center' : 'space-between',
           width: '100%', position: 'relative', zIndex: 1,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '11px' }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '11px', textDecoration: 'none' }}>
             <div style={{
               width: collapsed ? '38px' : '36px',
               height: collapsed ? '38px' : '36px',
@@ -160,7 +160,7 @@ export function Sidebar() {
                 </div>
               </div>
             )}
-          </div>
+          </Link>
           {!collapsed && (
             <button onClick={toggle} style={{ ...iconBtn, width: '26px', height: '26px' }}
               onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'hsl(var(--primary) / 0.3)'; el.style.background = 'hsl(var(--primary) / 0.1)'; }}
