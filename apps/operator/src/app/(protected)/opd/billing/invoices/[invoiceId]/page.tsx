@@ -113,7 +113,7 @@ export default function OpdInvoiceDetailPage() {
 
   const handleIssue = async (e: FormEvent) => {
     e.preventDefault();
-    await runCommand('issue', async () => postCommand('/opd/billing/invoices/{invoiceId}:issue', issueNote.trim() ? { note: issueNote.trim() } : {}));
+    await runCommand('issue', async () => postCommand('/opd/billing/invoices/{invoiceId}/issue', issueNote.trim() ? { note: issueNote.trim() } : {}));
   };
 
   const handleVoid = async (e: FormEvent) => {
@@ -122,7 +122,7 @@ export default function OpdInvoiceDetailPage() {
       setActionError('Void reason is required.');
       return;
     }
-    await runCommand('void', async () => postCommand('/opd/billing/invoices/{invoiceId}:void', { reason: voidReason.trim() }));
+    await runCommand('void', async () => postCommand('/opd/billing/invoices/{invoiceId}/void', { reason: voidReason.trim() }));
   };
 
   const handleRecordPayment = async (e: FormEvent) => {
@@ -145,7 +145,7 @@ export default function OpdInvoiceDetailPage() {
     }
     await runCommand('record-payment', async () => {
       const api = getApiClient(getToken() ?? undefined);
-      const { data, error: apiError, response } = await api.POST('/opd/billing/invoices/{invoiceId}:record-payment' as any, {
+      const { data, error: apiError, response } = await api.POST('/opd/billing/invoices/{invoiceId}/payments' as any, {
         params: { path: { invoiceId } },
         body,
       });
@@ -164,6 +164,7 @@ export default function OpdInvoiceDetailPage() {
   const canIssue = invoice.status === 'DRAFT';
   const canRecordPayment = invoice.status === 'ISSUED' || invoice.status === 'PARTIALLY_PAID';
   const canVoid = invoice.status !== 'VOID' && Number(invoice.paidTotal ?? 0) <= 0;
+  const canGenerateReceipt = ['ISSUED', 'PARTIALLY_PAID', 'PAID'].includes(invoice.status);
 
   return (
     <div className="space-y-6">
@@ -175,9 +176,22 @@ export default function OpdInvoiceDetailPage() {
         title="OPD Invoice"
         description={invoice.invoiceNumber ?? invoice.id}
         actions={
-          <Button variant="outline" onClick={() => { void loadInvoice(); void loadPayments(); }} disabled={busyAction !== '' || loadingPayments}>
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                void runCommand('generate-receipt', async () =>
+                  postCommand('/opd/billing/invoices/{invoiceId}/receipt', {}),
+                );
+              }}
+              disabled={busyAction !== '' || !canGenerateReceipt}
+            >
+              {busyAction === 'generate-receipt' ? 'Generating…' : 'Generate Receipt PDF'}
+            </Button>
+            <Button variant="outline" onClick={() => { void loadInvoice(); void loadPayments(); }} disabled={busyAction !== '' || loadingPayments}>
+              Refresh
+            </Button>
+          </div>
         }
       />
 
@@ -195,7 +209,17 @@ export default function OpdInvoiceDetailPage() {
           <div><span className="text-muted-foreground">Issued:</span> {invoice.issuedAt ? new Date(invoice.issuedAt).toLocaleString() : '—'}</div>
           <div><span className="text-muted-foreground">Voided:</span> {invoice.voidedAt ? new Date(invoice.voidedAt).toLocaleString() : '—'}</div>
           <div><span className="text-muted-foreground">Void Reason:</span> {invoice.voidReason ?? '—'}</div>
+          <div><span className="text-muted-foreground">Receipt Document:</span> {invoice.receiptDocumentId ?? '—'}</div>
         </div>
+        {invoice.receiptDocumentId ? (
+          <div className="mt-3">
+            <Button asChild size="sm" variant="outline">
+              <Link href={`/documents/${invoice.receiptDocumentId}/download`} target="_blank">
+                Download Receipt PDF
+              </Link>
+            </Button>
+          </div>
+        ) : null}
         <div className="mt-4 grid gap-2 md:grid-cols-3 text-xs">
           <div className={`rounded-md border px-3 py-2 ${canIssue ? 'bg-[hsl(var(--status-success-bg))]' : 'bg-muted/30'}`}>
             Issue command: {canIssue ? 'Available (DRAFT only)' : 'Not available in current status'}

@@ -1,0 +1,4 @@
+externalId,code,name,sampleTypeExternalId,category,description,reportName,method,tatMinutes,isActive
+t101,CBC,Complete Blood Count (CBC),s1,HEMATOLOGY,,Complete Blood Count (CBC),,120,true
+t102,LP,Lipid Profile,s2,BIOCHEMISTRY,,Lipid Profile,,120,true
+t103,LFT,Liver Function Test,s2,BIOCHEMISTRY,,Liver Function Test,,120,true

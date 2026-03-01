@@ -108,12 +108,12 @@ export class DocumentsService {
     actorUserId: string,
     correlationId: string,
   ): Promise<{ document: any; created: boolean }> {
-    // Check feature flag module.lims
-    const limsFlag = await this.prisma.tenantFeature.findUnique({
-      where: { tenantId_key: { tenantId, key: 'module.lims' } },
+    const moduleKey = type === 'OPD_INVOICE_RECEIPT' ? 'module.opd' : 'module.lims';
+    const moduleFlag = await this.prisma.tenantFeature.findUnique({
+      where: { tenantId_key: { tenantId, key: moduleKey } },
     });
-    if (!limsFlag?.enabled) {
-      throw new BadRequestException('module.lims feature flag is not enabled for this tenant');
+    if (!moduleFlag?.enabled) {
+      throw new BadRequestException(`${moduleKey} feature flag is not enabled for this tenant`);
     }
 
     // Fetch active DocumentTemplate for tenant + type

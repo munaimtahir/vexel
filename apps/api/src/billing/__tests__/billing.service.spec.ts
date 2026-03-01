@@ -64,6 +64,9 @@ function buildPrisma() {
     invoice: {
       findFirst: jest.fn(),
     },
+    document: {
+      findFirst: jest.fn().mockResolvedValue(null),
+    },
     $transaction: jest.fn(async (cb: any) => cb(tx)),
     __tx: tx,
   };
@@ -73,15 +76,21 @@ function buildAudit() {
   return { log: jest.fn().mockResolvedValue(undefined) };
 }
 
+function buildDocuments() {
+  return { generateDocument: jest.fn() };
+}
+
 describe('BillingService OPD invoice payments', () => {
   let prisma: ReturnType<typeof buildPrisma>;
   let audit: ReturnType<typeof buildAudit>;
+  let documents: ReturnType<typeof buildDocuments>;
   let service: BillingService;
 
   beforeEach(() => {
     prisma = buildPrisma();
     audit = buildAudit();
-    service = new BillingService(prisma as any, audit as any);
+    documents = buildDocuments();
+    service = new BillingService(prisma as any, audit as any, documents as any);
   });
 
   it('records partial payment and moves invoice to PARTIALLY_PAID with reduced balance', async () => {

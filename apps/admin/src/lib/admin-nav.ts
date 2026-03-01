@@ -56,6 +56,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'],
     children: [
       { href: '/catalog',                  label: 'Overview',          requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
+      { href: '/catalog/sample-types',     label: 'Sample Types',      requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
       { href: '/catalog/tests',            label: 'Tests',             requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
       { href: '/catalog/parameters',       label: 'Parameters',        requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
       { href: '/catalog/panels',           label: 'Panels',            requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
@@ -137,7 +138,7 @@ export const ADMIN_OPD_NAV_ITEMS: AdminNavItem[] = [
     requiredPermissions: ['module.admin'],
   },
   {
-    href: '/feature-flags',
+    href: '/opd/feature-flags',
     label: 'Feature Flags',
     icon: ToggleLeft,
     section: 'Settings',

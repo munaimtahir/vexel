@@ -1,0 +1,3 @@
+externalId,userCode,name,description,isActive
+s1,WB,Whole Blood,Whole Blood specimen,true
+s2,SERUM,Serum,Serum specimen,true

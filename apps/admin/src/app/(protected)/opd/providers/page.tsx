@@ -71,6 +71,7 @@ export default function OpdProvidersPage() {
   const [editForm, setEditForm] = useState<ProviderForm>(emptyForm);
   const [savingEdit, setSavingEdit] = useState(false);
   const [editError, setEditError] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function loadProviders() {
     setLoading(true);
@@ -155,6 +156,21 @@ export default function OpdProvidersPage() {
     }
     setSavingEdit(false);
     setEditingId(null);
+    await loadProviders();
+  }
+
+  async function handleDelete(providerId: string) {
+    if (!window.confirm('Delete this provider? This cannot be undone.')) return;
+    setDeletingId(providerId);
+    const api = getApiClient(getToken() ?? undefined);
+    const { error: deleteErr } = await api.DELETE('/opd/providers/{providerId}' as any, {
+      params: { path: { providerId } },
+    });
+    setDeletingId(null);
+    if (deleteErr) {
+      setError((deleteErr as any)?.message ?? 'Failed to delete provider');
+      return;
+    }
     await loadProviders();
   }
 
@@ -340,6 +356,14 @@ export default function OpdProvidersPage() {
                           className="rounded-md border border-slate-300 px-2 py-1 text-xs text-foreground"
                         >
                           Edit
+                        </button>
+                        <button
+                          type="button"
+                          disabled={deletingId === provider.id}
+                          onClick={() => void handleDelete(provider.id)}
+                          className="rounded-md border border-red-300 px-2 py-1 text-xs text-red-700 disabled:opacity-60"
+                        >
+                          {deletingId === provider.id ? 'Deleting...' : 'Delete'}
                         </button>
                       </div>
                     </td>

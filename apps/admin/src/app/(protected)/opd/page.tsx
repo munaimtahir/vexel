@@ -15,7 +15,7 @@ const cards = [
   },
   {
     title: 'Feature Flags',
-    href: '/feature-flags',
+    href: '/opd/feature-flags',
     description: 'Enable or disable OPD and LIMS module feature flags. Tenant-scoped.',
   },
 ];

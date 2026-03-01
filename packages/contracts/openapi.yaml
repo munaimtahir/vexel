@@ -267,6 +267,34 @@ components:
         description:
           type: string
 
+    SampleType:
+      type: object
+      required: [id, tenantId, name, isActive]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        externalId:
+          type: string
+          nullable: true
+        userCode:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
     CatalogTest:
       type: object
       required: [id, tenantId, name]
@@ -281,6 +309,9 @@ components:
           type: string
         sampleType:
           type: string
+        sampleTypeId:
+          type: string
+          nullable: true
         turnaroundHours:
           type: integer
         price:
@@ -2008,6 +2039,229 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
 
+    OpdVitals:
+      type: object
+      required: [id, tenantId, visitId, recordedAt, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        visitId:
+          type: string
+        recordedAt:
+          type: string
+          format: date-time
+        recordedBy:
+          type: string
+          nullable: true
+        heightCm:
+          type: number
+          nullable: true
+        weightKg:
+          type: number
+          nullable: true
+        bmi:
+          type: number
+          nullable: true
+        temperatureC:
+          type: number
+          nullable: true
+        pulseBpm:
+          type: integer
+          nullable: true
+        systolicBp:
+          type: integer
+          nullable: true
+        diastolicBp:
+          type: integer
+          nullable: true
+        respiratoryRate:
+          type: integer
+          nullable: true
+        spo2Pct:
+          type: integer
+          nullable: true
+        bloodGlucoseMgDl:
+          type: number
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OpdVitalsCreateRequest:
+      type: object
+      properties:
+        recordedAt:
+          type: string
+          format: date-time
+        heightCm:
+          type: number
+        weightKg:
+          type: number
+        bmi:
+          type: number
+        temperatureC:
+          type: number
+        pulseBpm:
+          type: integer
+        systolicBp:
+          type: integer
+        diastolicBp:
+          type: integer
+        respiratoryRate:
+          type: integer
+        spo2Pct:
+          type: integer
+        bloodGlucoseMgDl:
+          type: number
+        notes:
+          type: string
+
+    OpdVitalsListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdVitals'
+
+    OpdClinicalNote:
+      type: object
+      required: [id, tenantId, visitId, providerId, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        visitId:
+          type: string
+        providerId:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, SIGNED]
+        subjectiveJson:
+          nullable: true
+        objectiveJson:
+          nullable: true
+        assessmentJson:
+          nullable: true
+        planJson:
+          nullable: true
+        diagnosisText:
+          type: string
+          nullable: true
+        signedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OpdClinicalNoteUpsertRequest:
+      type: object
+      properties:
+        providerId:
+          type: string
+        subjectiveJson:
+          nullable: true
+        objectiveJson:
+          nullable: true
+        assessmentJson:
+          nullable: true
+        planJson:
+          nullable: true
+        diagnosisText:
+          type: string
+          nullable: true
+
+    OpdPrescriptionItem:
+      type: object
+      required: [medicationText, sortOrder]
+      properties:
+        id:
+          type: string
+          nullable: true
+        sortOrder:
+          type: integer
+          minimum: 1
+        medicationText:
+          type: string
+        dosageText:
+          type: string
+          nullable: true
+        frequencyText:
+          type: string
+          nullable: true
+        durationText:
+          type: string
+          nullable: true
+        instructions:
+          type: string
+          nullable: true
+
+    OpdPrescription:
+      type: object
+      required: [id, tenantId, visitId, providerId, status, items, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        visitId:
+          type: string
+        providerId:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, SIGNED, PRINTED]
+        notes:
+          type: string
+          nullable: true
+        signedAt:
+          type: string
+          format: date-time
+          nullable: true
+        printedAt:
+          type: string
+          format: date-time
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdPrescriptionItem'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OpdPrescriptionUpsertRequest:
+      type: object
+      properties:
+        providerId:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpdPrescriptionItem'
+
     OpdInvoiceLine:
       type: object
       required: [description, quantity, unitPrice]
@@ -2224,6 +2478,15 @@ components:
           $ref: '#/components/schemas/OpdInvoice'
         payment:
           $ref: '#/components/schemas/OpdInvoicePayment'
+
+    OpdInvoiceReceiptCommandResponse:
+      type: object
+      required: [invoice, document]
+      properties:
+        invoice:
+          $ref: '#/components/schemas/OpdInvoice'
+        document:
+          $ref: '#/components/schemas/Document'
 
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
@@ -2943,6 +3206,146 @@ paths:
                 $ref: '#/components/schemas/FeatureFlag'
 
   # ─── Catalog ──────────────────────────────────────────────────────────────
+  /catalog/sample-types:
+    get:
+      operationId: listSampleTypes
+      summary: List sample types (tenant-scoped)
+      tags: [Catalog]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Sample types
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SampleType'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createSampleType
+      summary: Create sample type
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                externalId:
+                  type: string
+                userCode:
+                  type: string
+                isActive:
+                  type: boolean
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleType'
+
+  /catalog/sample-types/{id}:
+    get:
+      operationId: getSampleType
+      summary: Get sample type
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Sample type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleType'
+    patch:
+      operationId: updateSampleType
+      summary: Update sample type
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                externalId:
+                  type: string
+                userCode:
+                  type: string
+                isActive:
+                  type: boolean
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleType'
+    delete:
+      operationId: deleteSampleType
+      summary: Delete (deactivate) sample type
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /catalog/sample-types/next-id:
+    get:
+      operationId: getNextSampleTypeId
+      summary: Get next available sample type external ID
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nextId:
+                    type: string
+
   /catalog/tests:
     get:
       operationId: listCatalogTests
@@ -2991,6 +3394,10 @@ paths:
                 description:
                   type: string
                 sampleType:
+                  type: string
+                sampleTypeId:
+                  type: string
+                sampleTypeExternalId:
                   type: string
                 turnaroundHours:
                   type: integer
@@ -3046,6 +3453,10 @@ paths:
                 description:
                   type: string
                 sampleType:
+                  type: string
+                sampleTypeId:
+                  type: string
+                sampleTypeExternalId:
                   type: string
                 turnaroundHours:
                   type: integer
@@ -3140,6 +3551,23 @@ paths:
                 $ref: '#/components/schemas/CatalogPanel'
 
   /catalog/panels/{panelId}:
+    get:
+      operationId: getCatalogPanel
+      summary: Get catalog panel
+      tags: [Catalog]
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Catalog panel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPanel'
     patch:
       operationId: updateCatalogPanel
       summary: Update catalog panel
@@ -3174,6 +3602,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CatalogPanel'
+    delete:
+      operationId: deleteCatalogPanel
+      summary: Delete (deactivate) catalog panel
+      tags: [Catalog]
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
 
   # ─── Catalog Parameters ───────────────────────────────────────────────────
   /catalog/parameters:
@@ -3316,6 +3757,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Parameter'
+    delete:
+      operationId: deleteParameter
+      summary: Delete (deactivate) parameter
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: parameterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Parameter deleted
 
   /catalog/tests/{testId}/parameters:
     get:
@@ -3747,6 +4203,21 @@ paths:
                 type: string
                 format: binary
 
+  /catalog/templates/sample-types.csv:
+    get:
+      operationId: downloadSampleTypesTemplate
+      summary: Download sample-types CSV template
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: CSV template
+          content:
+            text/csv:
+              schema:
+                type: string
+
   /catalog/templates/parameters.csv:
     get:
       operationId: downloadParametersTemplate
@@ -3822,6 +4293,72 @@ paths:
               schema:
                 type: string
 
+  /catalog/templates/reference-ranges.csv:
+    get:
+      operationId: downloadReferenceRangesTemplate
+      summary: Download reference-ranges CSV template
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: CSV template
+          content:
+            text/csv:
+              schema:
+                type: string
+
+  /catalog/import/workbook:
+    post:
+      operationId: importCatalogWorkbook
+      summary: Import catalog workbook (validate/apply)
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: validate
+          in: query
+          schema:
+            type: boolean
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [UPSERT_PATCH, CREATE_ONLY]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Import summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inserted: { type: integer }
+                  updated: { type: integer }
+                  skipped: { type: integer }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sheet: { type: string }
+                        row: { type: integer }
+                        field: { type: string, nullable: true }
+                        code: { type: string, nullable: true }
+                        message: { type: string }
+                        suggestion: { type: string, nullable: true }
+
   /catalog/import:
     post:
       operationId: importCatalogLegacy
@@ -3872,6 +4409,22 @@ paths:
       operationId: exportCatalogLegacy
       summary: Legacy direct catalog export (sync XLSX) used by current Admin Import/Export UI
       description: Temporary compatibility endpoint. Prefer export-jobs endpoints for new integrations.
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Export workbook download
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+  /catalog/export/workbook.xlsx:
+    get:
+      operationId: exportCatalogWorkbook
+      summary: Export catalog workbook XLSX
       tags: [Catalog]
       security:
         - bearerAuth: []
@@ -4064,6 +4617,478 @@ paths:
       responses:
         "204":
           description: Deleted
+
+  # ─── Admin Catalog (canonical admin-facing aliases) ────────────────────────
+  /admin/catalog/sample-types:
+    get:
+      operationId: adminListSampleTypes
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Sample types
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SampleType'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: adminCreateSampleType
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleType'
+
+  /admin/catalog/sample-types/{id}:
+    get:
+      operationId: adminGetSampleType
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Sample type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleType'
+    patch:
+      operationId: adminUpdateSampleType
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleType'
+    delete:
+      operationId: adminDeleteSampleType
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/catalog/tests:
+    get:
+      operationId: adminListCatalogTests
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Catalog tests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CatalogTest'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: adminCreateCatalogTest
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogTest'
+
+  /admin/catalog/tests/{testId}:
+    get:
+      operationId: adminGetCatalogTest
+      tags: [Catalog]
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Catalog test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogTest'
+    patch:
+      operationId: adminUpdateCatalogTest
+      tags: [Catalog]
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogTest'
+    delete:
+      operationId: adminDeleteCatalogTest
+      tags: [Catalog]
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/catalog/parameters:
+    get:
+      operationId: adminListParameters
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Parameters list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Parameter'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: adminCreateParameter
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parameter'
+
+  /admin/catalog/parameters/{parameterId}:
+    get:
+      operationId: adminGetParameter
+      tags: [Catalog]
+      parameters:
+        - name: parameterId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parameter'
+    patch:
+      operationId: adminUpdateParameter
+      tags: [Catalog]
+      parameters:
+        - name: parameterId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parameter'
+    delete:
+      operationId: adminDeleteParameter
+      tags: [Catalog]
+      parameters:
+        - name: parameterId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/catalog/panels:
+    get:
+      operationId: adminListCatalogPanels
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Catalog panels
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CatalogPanel'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: adminCreateCatalogPanel
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPanel'
+
+  /admin/catalog/panels/{panelId}:
+    get:
+      operationId: adminGetCatalogPanel
+      tags: [Catalog]
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Catalog panel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPanel'
+    patch:
+      operationId: adminUpdateCatalogPanel
+      tags: [Catalog]
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPanel'
+    delete:
+      operationId: adminDeleteCatalogPanel
+      tags: [Catalog]
+      parameters:
+        - name: panelId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/catalog/reference-ranges:
+    get:
+      operationId: adminListReferenceRanges
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Reference ranges
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReferenceRange'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: adminCreateReferenceRange
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferenceRange'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceRange'
+
+  /admin/catalog/reference-ranges/{id}:
+    patch:
+      operationId: adminUpdateReferenceRange
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferenceRange'
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceRange'
+    delete:
+      operationId: adminDeleteReferenceRange
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/catalog/import/workbook:
+    post:
+      operationId: adminImportCatalogWorkbook
+      tags: [Catalog]
+      parameters:
+        - name: validate
+          in: query
+          schema: { type: boolean }
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [UPSERT_PATCH, CREATE_ONLY]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Import summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inserted: { type: integer }
+                  updated: { type: integer }
+                  skipped: { type: integer }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+
+  /admin/catalog/templates/workbook.xlsx:
+    get:
+      operationId: adminDownloadCatalogWorkbookTemplate
+      tags: [Catalog]
+      responses:
+        "200":
+          description: XLSX workbook template
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+  /admin/catalog/export/workbook.xlsx:
+    get:
+      operationId: adminExportCatalogWorkbook
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Export workbook
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
 
   # ─── Catalog Import/Export Jobs ────────────────────────────────────────────
   /catalog/import-jobs:
@@ -6690,6 +7715,285 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /opd/visits/{visitId}/vitals:
+    get:
+      operationId: listOpdVisitVitals
+      summary: List vitals records for an OPD visit
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Vitals records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVitalsListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: createOpdVisitVitals
+      summary: Record OPD visit vitals
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdVitalsCreateRequest'
+      responses:
+        "201":
+          description: Vitals recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdVitals'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/visits/{visitId}/clinical-note:
+    get:
+      operationId: getOpdVisitClinicalNote
+      summary: Get OPD visit clinical note
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Clinical note
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdClinicalNote'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      operationId: upsertOpdVisitClinicalNote
+      summary: Create or update OPD visit clinical note draft
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdClinicalNoteUpsertRequest'
+      responses:
+        "200":
+          description: Clinical note saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdClinicalNote'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Clinical note cannot be edited in current state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/visits/{visitId}/clinical-note:sign:
+    post:
+      operationId: signOpdVisitClinicalNote
+      summary: Sign OPD visit clinical note
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: No body required
+      responses:
+        "200":
+          description: Clinical note signed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdClinicalNote'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/visits/{visitId}/prescription:
+    get:
+      operationId: getOpdVisitPrescription
+      summary: Get OPD visit prescription
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Visit prescription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdPrescription'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    put:
+      operationId: upsertOpdVisitPrescription
+      summary: Create or update OPD visit prescription draft
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdPrescriptionUpsertRequest'
+      responses:
+        "200":
+          description: Prescription saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdPrescription'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Prescription cannot be edited in current state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/visits/{visitId}/prescription:sign:
+    post:
+      operationId: signOpdVisitPrescription
+      summary: Sign OPD visit prescription
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: No body required
+      responses:
+        "200":
+          description: Prescription signed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdPrescription'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Prescription must be in draft state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/visits/{visitId}/prescription:mark-printed:
+    post:
+      operationId: markOpdVisitPrescriptionPrinted
+      summary: Mark signed OPD prescription as printed
+      tags: [OPD Visits]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: No body required
+      responses:
+        "200":
+          description: Prescription marked printed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdPrescription'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Prescription must be signed first
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   # ─── OPD Billing (reads + audited command endpoints) ─────────────────────
 
   /opd/billing/invoices:
@@ -6936,6 +8240,43 @@ paths:
           $ref: '#/components/responses/NotFound'
         "409":
           description: Invalid invoice transition or payment invariant violation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/billing/invoices/{invoiceId}:generate-receipt:
+    post:
+      operationId: generateOpdInvoiceReceipt
+      summary: Generate deterministic OPD invoice receipt document
+      tags: [OPD Billing]
+      parameters:
+        - name: invoiceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: No body required
+      responses:
+        "200":
+          description: Receipt generated (idempotent on same payload)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoiceReceiptCommandResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Invoice must be issued/paid before receipt generation
           content:
             application/json:
               schema:

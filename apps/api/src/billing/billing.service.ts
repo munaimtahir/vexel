@@ -7,6 +7,7 @@ import {
 import { Decimal } from '@prisma/client/runtime/library';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { DocumentsService } from '../documents/documents.service';
 
 function n(v: any): number {
   if (v == null) return 0;
@@ -18,6 +19,7 @@ export class BillingService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly documents: DocumentsService,
   ) {}
 
   private async assertOpdEnabled(tenantId: string) {
@@ -27,11 +29,21 @@ export class BillingService {
     if (!flag?.enabled) throw new ForbiddenException('module.opd feature is disabled for this tenant');
   }
 
+  private async assertReceiptPdfEnabled(tenantId: string) {
+    const flag = await (this.prisma as any).tenantFeature.findUnique({
+      where: { tenantId_key: { tenantId, key: 'opd.invoice_receipt_pdf' } },
+    });
+    if (!flag?.enabled) {
+      throw new ForbiddenException('opd.invoice_receipt_pdf feature is disabled for this tenant');
+    }
+  }
+
   private async getInvoiceRawOrThrow(tenantId: string, invoiceId: string) {
     const row = await (this.prisma as any).invoice.findFirst({
       where: { id: invoiceId, tenantId },
       include: {
-        opdVisit: { include: { appointment: true } },
+        patient: true,
+        opdVisit: { include: { appointment: true, provider: true } },
         lines: { orderBy: { sortOrder: 'asc' } },
         payments: { where: { status: 'POSTED' }, orderBy: { receivedAt: 'asc' } },
       },
@@ -92,10 +104,70 @@ export class BillingService {
       lines,
       payments,
       invoiceDocumentId: null,
-      receiptDocumentId: null,
+      receiptDocumentId: row.receiptDocumentId ?? null,
       createdBy: row.createdById ?? null,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
+    };
+  }
+
+  private async findReceiptDocumentId(tenantId: string, invoiceId: string) {
+    const document = await (this.prisma as any).document.findFirst({
+      where: {
+        tenantId,
+        type: 'OPD_INVOICE_RECEIPT',
+        sourceType: 'OPD_INVOICE',
+        sourceRef: invoiceId,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    return document?.id ?? null;
+  }
+
+  private buildReceiptPayload(invoice: any) {
+    const patientName = invoice.patient
+      ? `${invoice.patient.firstName ?? ''} ${invoice.patient.lastName ?? ''}`.trim() || invoice.patient.mrn
+      : invoice.patientId;
+    const provider = invoice.opdVisit?.provider;
+    const providerName = provider
+      ? `${provider.firstName ?? ''} ${provider.lastName ?? ''}`.trim() || provider.providerCode
+      : undefined;
+    const latestPayment = [...(invoice.payments ?? [])]
+      .filter((payment: any) => payment.status === 'POSTED')
+      .sort((a: any, b: any) => +new Date(b.receivedAt) - +new Date(a.receivedAt))[0];
+    const receiptCode = `OPDR-${String(invoice.id).slice(0, 8).toUpperCase()}`;
+
+    return {
+      invoiceCode: invoice.invoiceCode ?? invoice.id,
+      invoiceNumber: invoice.invoiceCode ?? invoice.id,
+      receiptCode,
+      receiptNumber: receiptCode,
+      issuedAt: (invoice.issuedAt ?? invoice.createdAt).toISOString(),
+      patientName,
+      patientMrn: invoice.patient?.mrn ?? null,
+      patientPhone: invoice.patient?.mobile ?? null,
+      status: invoice.status,
+      opdVisitId: invoice.opdVisitId ?? null,
+      appointmentId: invoice.opdVisit?.appointmentId ?? null,
+      providerName: providerName ?? null,
+      paymentMethod: latestPayment?.method ?? null,
+      referenceNo: latestPayment?.referenceNo ?? null,
+      receivedBy: latestPayment?.receivedById ?? null,
+      sourceRef: invoice.id,
+      lines: (invoice.lines ?? []).map((line: any) => ({
+        description: line.description,
+        quantity: n(line.quantity),
+        unitPrice: n(line.unitPrice).toFixed(2),
+        discountAmount: n(line.discountAmount).toFixed(2),
+        lineTotal: n(line.lineTotal).toFixed(2),
+      })),
+      subtotalAmount: n(invoice.subtotalAmount).toFixed(2),
+      discountAmount: n(invoice.discountAmount).toFixed(2),
+      taxAmount: '0.00',
+      totalAmount: n(invoice.totalAmount).toFixed(2),
+      paidAmount: n(invoice.amountPaid).toFixed(2),
+      balanceAmount: n(invoice.amountDue).toFixed(2),
+      currency: invoice.currency ?? 'PKR',
     };
   }
 
@@ -126,7 +198,8 @@ export class BillingService {
       (this.prisma as any).invoice.findMany({
         where,
         include: {
-          opdVisit: { include: { appointment: true } },
+          patient: true,
+          opdVisit: { include: { appointment: true, provider: true } },
           lines: { orderBy: { sortOrder: 'asc' } },
           payments: { where: { status: 'POSTED' }, orderBy: { receivedAt: 'asc' } },
         },
@@ -211,7 +284,8 @@ export class BillingService {
         },
       },
       include: {
-        opdVisit: { include: { appointment: true } },
+        patient: true,
+        opdVisit: { include: { appointment: true, provider: true } },
         lines: { orderBy: { sortOrder: 'asc' } },
         payments: { where: { status: 'POSTED' }, orderBy: { receivedAt: 'asc' } },
       },
@@ -230,7 +304,11 @@ export class BillingService {
 
   async getInvoice(tenantId: string, invoiceId: string) {
     await this.assertOpdEnabled(tenantId);
-    return this.mapInvoice(await this.getInvoiceRawOrThrow(tenantId, invoiceId));
+    const [invoice, receiptDocumentId] = await Promise.all([
+      this.getInvoiceRawOrThrow(tenantId, invoiceId),
+      this.findReceiptDocumentId(tenantId, invoiceId),
+    ]);
+    return this.mapInvoice({ ...invoice, receiptDocumentId });
   }
 
   async listInvoicePayments(tenantId: string, invoiceId: string) {
@@ -249,7 +327,8 @@ export class BillingService {
       where: { id: invoiceId },
       data: { status: 'ISSUED', issuedAt: new Date() },
       include: {
-        opdVisit: { include: { appointment: true } },
+        patient: true,
+        opdVisit: { include: { appointment: true, provider: true } },
         lines: { orderBy: { sortOrder: 'asc' } },
         payments: { where: { status: 'POSTED' }, orderBy: { receivedAt: 'asc' } },
       },
@@ -278,7 +357,8 @@ export class BillingService {
       where: { id: invoiceId },
       data: { status: 'VOID', voidedAt: new Date(), voidReason: body?.reason ?? null },
       include: {
-        opdVisit: { include: { appointment: true } },
+        patient: true,
+        opdVisit: { include: { appointment: true, provider: true } },
         lines: { orderBy: { sortOrder: 'asc' } },
         payments: { where: { status: 'POSTED' }, orderBy: { receivedAt: 'asc' } },
       },
@@ -347,7 +427,8 @@ export class BillingService {
       const invoiceFresh = await tx.invoice.findFirst({
         where: { id: invoiceId, tenantId },
         include: {
-          opdVisit: { include: { appointment: true } },
+          patient: true,
+          opdVisit: { include: { appointment: true, provider: true } },
           lines: { orderBy: { sortOrder: 'asc' } },
           payments: { where: { status: 'POSTED' }, orderBy: { receivedAt: 'asc' } },
         },
@@ -369,6 +450,42 @@ export class BillingService {
     return {
       invoice: this.mapInvoice(result.invoice),
       payment: this.mapPayment(result.payment),
+    };
+  }
+
+  async generateInvoiceReceipt(
+    tenantId: string,
+    invoiceId: string,
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertReceiptPdfEnabled(tenantId);
+    const invoice = await this.getInvoiceRawOrThrow(tenantId, invoiceId);
+    if (!['ISSUED', 'PARTIALLY_PAID', 'PAID'].includes(invoice.status)) {
+      throw new ConflictException('Invoice must be issued before generating receipt');
+    }
+    const result = await this.documents.generateDocument(
+      tenantId,
+      'OPD_INVOICE_RECEIPT',
+      this.buildReceiptPayload(invoice),
+      invoiceId,
+      'OPD_INVOICE',
+      actorUserId,
+      correlationId ?? '',
+    );
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'opd.invoice.generate_receipt',
+      entityType: 'Invoice',
+      entityId: invoiceId,
+      after: { documentId: result.document.id, created: result.created },
+      correlationId,
+    });
+    return {
+      invoice: this.mapInvoice({ ...invoice, receiptDocumentId: result.document.id }),
+      document: result.document,
     };
   }
 }

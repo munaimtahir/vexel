@@ -111,7 +111,7 @@ export default function OpdAppointmentDetailPage() {
     const body: Record<string, unknown> = { scheduledAt };
     if (Number.isFinite(durationParsed) && durationParsed > 0) body.durationMinutes = durationParsed;
     if (rescheduleReason.trim()) body.reason = rescheduleReason.trim();
-    await runAction('reschedule', async () => postCommand('/opd/appointments/{appointmentId}:reschedule', body));
+    await runAction('reschedule', async () => postCommand('/opd/appointments/{appointmentId}/reschedule', body));
   };
 
   const handleCancel = async (e: FormEvent) => {
@@ -120,7 +120,7 @@ export default function OpdAppointmentDetailPage() {
       setActionError('Cancel reason is required.');
       return;
     }
-    await runAction('cancel', async () => postCommand('/opd/appointments/{appointmentId}:cancel', { reason: cancelReason.trim() }));
+    await runAction('cancel', async () => postCommand('/opd/appointments/{appointmentId}/cancel', { reason: cancelReason.trim() }));
   };
 
   const handleCreateVisit = async (e: FormEvent) => {
@@ -206,7 +206,7 @@ export default function OpdAppointmentDetailPage() {
             type="button"
             variant="outline"
             disabled={busyAction !== ''}
-            onClick={() => runAction('check-in', async () => postCommand('/opd/appointments/{appointmentId}:check-in', {}))}
+            onClick={() => runAction('check-in', async () => postCommand('/opd/appointments/{appointmentId}/check-in', {}))}
           >
             {busyAction === 'check-in' ? 'Checking in...' : 'Check In'}
           </Button>
@@ -214,7 +214,7 @@ export default function OpdAppointmentDetailPage() {
             type="button"
             variant="outline"
             disabled={busyAction !== ''}
-            onClick={() => runAction('start-consultation', async () => postCommand('/opd/appointments/{appointmentId}:start-consultation', {}))}
+            onClick={() => runAction('start-consultation', async () => postCommand('/opd/appointments/{appointmentId}/start-consultation', {}))}
           >
             {busyAction === 'start-consultation' ? 'Starting...' : 'Start Consultation'}
           </Button>
@@ -222,7 +222,7 @@ export default function OpdAppointmentDetailPage() {
             type="button"
             variant="outline"
             disabled={busyAction !== ''}
-            onClick={() => runAction('complete', async () => postCommand('/opd/appointments/{appointmentId}:complete', appointment.visitId ? { visitId: appointment.visitId } : {}))}
+            onClick={() => runAction('complete', async () => postCommand('/opd/appointments/{appointmentId}/complete', appointment.visitId ? { visitId: appointment.visitId } : {}))}
           >
             {busyAction === 'complete' ? 'Completing...' : 'Complete'}
           </Button>
@@ -230,7 +230,7 @@ export default function OpdAppointmentDetailPage() {
             type="button"
             variant="outline"
             disabled={busyAction !== ''}
-            onClick={() => runAction('mark-no-show', async () => postCommand('/opd/appointments/{appointmentId}:mark-no-show', {}))}
+            onClick={() => runAction('mark-no-show', async () => postCommand('/opd/appointments/{appointmentId}/no-show', {}))}
           >
             {busyAction === 'mark-no-show' ? 'Marking...' : 'Mark No-show'}
           </Button>

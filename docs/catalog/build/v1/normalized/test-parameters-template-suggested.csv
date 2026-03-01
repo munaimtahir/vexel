@@ -1,0 +1,13 @@
+testExternalId,parameterExternalId,displayOrder,isRequired,unitOverride
+cbc,hb,1,true,
+cbc,wbc,2,true,
+cbc,rbc,3,true,
+cbc,plt,4,true,
+lipid,chol,1,true,
+lipid,tg,2,true,
+lipid,hdl,3,true,
+lipid,ldl,4,true,
+lft,alt,1,true,
+lft,ast,2,true,
+lft,alp,3,true,
+lft,bili,4,true,

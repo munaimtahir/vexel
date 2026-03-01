@@ -1,0 +1,4 @@
+id,name,category,price,sampleTypeId
+"cbc","Complete Blood Count (CBC)","Hematology",750,"edta"
+"lipid","Lipid Profile","Biochemistry",1500,"serum"
+"lft","Liver Function Test","Biochemistry",1200,"serum"

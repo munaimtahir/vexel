@@ -1,16 +1,17 @@
 'use client';
 import { useRef, useState } from 'react';
-import * as XLSX from 'xlsx';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 const TEMPLATES = [
   { label: 'Full Workbook Template (XLSX) — all sheets', path: 'workbook.xlsx', icon: '📊' },
+  { label: 'Sample Types CSV', path: 'sample-types.csv', icon: '🧪' },
   { label: 'Parameters CSV', path: 'parameters.csv', icon: '📄' },
   { label: 'Tests CSV', path: 'tests.csv', icon: '📄' },
   { label: 'Test-Parameters Mapping CSV', path: 'test-parameters.csv', icon: '🔗' },
   { label: 'Panels CSV', path: 'panels.csv', icon: '📄' },
   { label: 'Panel-Tests Mapping CSV', path: 'panel-tests.csv', icon: '🔗' },
+  { label: 'Reference Ranges CSV', path: 'reference-ranges.csv', icon: '📏' },
 ];
 
 type JobRun = {
@@ -37,161 +38,6 @@ async function downloadFile(url: string, filename: string) {
   URL.revokeObjectURL(objectUrl);
 }
 
-function normalizeHeader(h: string) {
-  return String(h ?? '').trim();
-}
-
-function asText(v: any) {
-  if (v === undefined || v === null) return '';
-  return String(v).trim();
-}
-
-function asNum(v: any): number | undefined {
-  const s = asText(v);
-  if (!s) return undefined;
-  const n = Number(s);
-  return Number.isFinite(n) ? n : undefined;
-}
-
-function asBool(v: any): boolean | undefined {
-  const s = asText(v).toLowerCase();
-  if (!s) return undefined;
-  if (['true', '1', 'yes', 'y'].includes(s)) return true;
-  if (['false', '0', 'no', 'n'].includes(s)) return false;
-  return undefined;
-}
-
-function rowsFromSheet(sheet: XLSX.WorkSheet): Record<string, any>[] {
-  return XLSX.utils.sheet_to_json<Record<string, any>>(sheet, { defval: '' }).map((row) => {
-    const normalized: Record<string, any> = {};
-    for (const [k, v] of Object.entries(row)) normalized[normalizeHeader(k)] = v;
-    return normalized;
-  });
-}
-
-function nonEmpty(s: any) {
-  return asText(s) !== '';
-}
-
-function mapParameters(rows: Record<string, any>[]) {
-  return rows
-    .filter((r) => nonEmpty(r.externalId) || nonEmpty(r.name))
-    .map((r) => ({
-      externalId: asText(r.externalId),
-      name: asText(r.name),
-      unit: asText(r.unit) || undefined,
-      userCode: asText(r.userCode) || undefined,
-      loincCode: asText(r.loincCode) || undefined,
-      dataType: asText(r.dataType) || undefined,
-      resultType: asText(r.resultType) || undefined,
-      defaultUnit: asText(r.defaultUnit) || undefined,
-      decimals: asNum(r.decimals),
-      allowedValues: asText(r.allowedValues) || undefined,
-      defaultValue: asText(r.defaultValue) || undefined,
-      isActive: asBool(r.isActive),
-    }))
-    .filter((r) => r.externalId && r.name);
-}
-
-function mapTests(rows: Record<string, any>[]) {
-  return rows
-    .filter((r) => nonEmpty(r.externalId) || nonEmpty(r.name))
-    .map((r) => ({
-      externalId: asText(r.externalId),
-      name: asText(r.name),
-      description: undefined as string | undefined,
-      sampleType: asText(r.sampleType || r.specimenType) || undefined,
-      specimenType: asText(r.specimenType) || asText(r.sampleType) || undefined,
-      turnaroundHours: asNum(r.turnaroundHours),
-      price: asNum(r.price),
-      userCode: asText(r.userCode) || undefined,
-      loincCode: asText(r.loincCode) || undefined,
-      department: asText(r.department) || undefined,
-      method: asText(r.method) || undefined,
-      isActive: asBool(r.isActive),
-    }))
-    .filter((r) => r.externalId && r.name);
-}
-
-function mapPanels(rows: Record<string, any>[]) {
-  return rows
-    .filter((r) => nonEmpty(r.externalId) || nonEmpty(r.name))
-    .map((r) => ({
-      externalId: asText(r.externalId),
-      name: asText(r.name),
-      description: undefined as string | undefined,
-      userCode: asText(r.userCode) || undefined,
-      loincCode: asText(r.loincCode) || undefined,
-      price: asNum(r.price),
-      isActive: asBool(r.isActive),
-    }))
-    .filter((r) => r.externalId && r.name);
-}
-
-function mapTestParameters(rows: Record<string, any>[]) {
-  return rows
-    .filter((r) => nonEmpty(r.testExternalId) && nonEmpty(r.parameterExternalId))
-    .map((r) => ({
-      testExternalId: asText(r.testExternalId),
-      parameterExternalId: asText(r.parameterExternalId),
-      ordering: asNum(r.ordering ?? r.displayOrder),
-      displayOrder: asNum(r.displayOrder ?? r.ordering),
-      isRequired: asBool(r.isRequired),
-      unitOverride: asText(r.unitOverride) || undefined,
-    }));
-}
-
-function mapPanelTests(rows: Record<string, any>[]) {
-  return rows
-    .filter((r) => nonEmpty(r.panelExternalId) && nonEmpty(r.testExternalId))
-    .map((r) => ({
-      panelExternalId: asText(r.panelExternalId),
-      testExternalId: asText(r.testExternalId),
-      ordering: asNum(r.ordering ?? r.displayOrder),
-      displayOrder: asNum(r.displayOrder ?? r.ordering),
-    }));
-}
-
-async function parseCatalogImportPayload(file: File) {
-  const ext = file.name.toLowerCase().split('.').pop();
-  const buf = await file.arrayBuffer();
-
-  const payload: any = {
-    tests: [],
-    parameters: [],
-    panels: [],
-    mappings: [],
-    panelMappings: [],
-  };
-
-  if (ext === 'xlsx') {
-    const wb = XLSX.read(buf, { type: 'array' });
-    const byName = (name: string) => wb.Sheets[name] ? rowsFromSheet(wb.Sheets[name]) : [];
-    payload.parameters = mapParameters(byName('Parameters'));
-    payload.tests = mapTests(byName('Tests'));
-    payload.panels = mapPanels(byName('Panels'));
-    payload.mappings = mapTestParameters(byName('TestParameters'));
-    payload.panelMappings = mapPanelTests(byName('PanelTests'));
-    return payload;
-  }
-
-  if (ext === 'csv') {
-    const wb = XLSX.read(buf, { type: 'array' });
-    const firstSheet = wb.SheetNames[0];
-    const rows = firstSheet ? rowsFromSheet(wb.Sheets[firstSheet]) : [];
-    const name = file.name.toLowerCase();
-    if (name.includes('parameters') && !name.includes('test-parameters')) payload.parameters = mapParameters(rows);
-    else if (name.includes('tests') && !name.includes('panel-tests')) payload.tests = mapTests(rows);
-    else if (name.includes('test-parameters')) payload.mappings = mapTestParameters(rows);
-    else if (name.includes('panels') && !name.includes('panel-tests')) payload.panels = mapPanels(rows);
-    else if (name.includes('panel-tests')) payload.panelMappings = mapPanelTests(rows);
-    else throw new Error('Unable to infer CSV type from filename. Use a template filename (parameters/tests/test-parameters/panels/panel-tests).');
-    return payload;
-  }
-
-  throw new Error('Unsupported file type. Use .xlsx or .csv');
-}
-
 async function pollJob(path: string, id: string, attempts = 40, delayMs = 1000): Promise<JobRun> {
   const api = getApiClient(getToken() ?? undefined);
   let last: JobRun | null = null;
@@ -213,7 +59,7 @@ export default function ImportExportPage() {
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<any | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
-  const [importJob, setImportJob] = useState<JobRun | null>(null);
+  const [validatePassed, setValidatePassed] = useState(false);
 
   const mappingFileRef = useRef<HTMLInputElement>(null);
   const [mappingFile, setMappingFile] = useState<File | null>(null);
@@ -225,38 +71,44 @@ export default function ImportExportPage() {
   const [exportError, setExportError] = useState<string | null>(null);
   const [exportJob, setExportJob] = useState<JobRun | null>(null);
 
-  async function handleImport() {
+  async function runWorkbookImport(validate: boolean) {
     if (!file) return;
-    setImporting(true); setImportResult(null); setImportError(null); setImportJob(null);
+    setImporting(true); setImportResult(null); setImportError(null);
     try {
-      if (mode === 'CREATE_ONLY') {
-        throw new Error('CREATE_ONLY is not yet supported in job-based import. Use UPSERT_PATCH or keep legacy endpoint for emergency use.');
-      }
-      const payload = await parseCatalogImportPayload(file);
       const api = getApiClient(getToken() ?? undefined);
-      const { data, error } = await api.POST('/catalog/import-jobs' as any, { body: payload });
-      if (error || !data) throw new Error((error as any)?.message ?? 'Failed to create import job');
-      const job = data as any as JobRun;
-      setImportJob(job);
-
-      const finalJob = await pollJob('/catalog/import-jobs/{id}', job.id);
-      setImportJob(finalJob);
-      if (finalJob.status === 'failed') {
-        throw new Error(finalJob.errorSummary ?? 'Import job failed');
+      const form = new FormData();
+      form.append('file', file);
+      const { data, error } = await api.POST('/catalog/import/workbook' as any, {
+        params: { query: { validate, mode } },
+        body: form as any,
+      } as any);
+      if (error || !data) throw new Error((error as any)?.message ?? 'Import failed');
+      const summary = data as any;
+      setImportResult(summary);
+      const hasErrors = Array.isArray(summary?.errors) && summary.errors.length > 0;
+      if (validate && !hasErrors) {
+        setValidatePassed(true);
+      } else if (validate) {
+        setValidatePassed(false);
       }
-      const summary = finalJob.resultSummary ?? {};
-      setImportResult({
-        inserted: summary.created ?? 0,
-        updated: summary.updated ?? 0,
-        skipped: summary.skipped ?? 0,
-        total: summary.total ?? 0,
-        errors: [],
-      });
     } catch (err: any) {
       setImportError(err.message ?? 'Import failed');
+      if (validate) setValidatePassed(false);
     } finally {
       setImporting(false);
     }
+  }
+
+  async function handleValidate() {
+    await runWorkbookImport(true);
+  }
+
+  async function handleImport() {
+    if (!validatePassed) {
+      setImportError('Run validate with zero errors before apply.');
+      return;
+    }
+    await runWorkbookImport(false);
   }
 
   async function handleMappingImport() {
@@ -323,44 +175,42 @@ export default function ImportExportPage() {
     <div>
       <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>Import / Export</h1>
       <p style={{ color: 'hsl(var(--muted-foreground))', marginBottom: '24px', fontSize: '14px' }}>
-        Job-based catalog import/export with polling. Templates remain direct downloads.
+        Workbook validate/apply import plus job-based export and template downloads.
       </p>
 
       <section style={sectionStyle}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>📥 Import Catalog (Job-Based)</h2>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>📥 Import Catalog Workbook</h2>
         <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
-          Upload a workbook or template CSV. The file is parsed in-browser and submitted to `/catalog/import-jobs`.
+          Upload workbook/CSV, run validate first, then apply when validation passes.
         </p>
-        <div style={{ marginBottom: '10px', background: 'hsl(var(--status-info-bg))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '6px', padding: '10px 12px', fontSize: '12px', color: 'hsl(var(--status-info-fg))' }}>
-          Current job-based import supports UPSERT semantics. `CREATE_ONLY` is blocked until the worker supports strict create-only mode.
-        </div>
 
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '16px' }}>
           <div style={{ flex: 1, minWidth: '220px' }}>
             <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>File (.xlsx or .csv)</label>
             <input ref={fileRef} type="file" accept=".xlsx,.csv"
-              onChange={e => { setFile(e.target.files?.[0] ?? null); setImportResult(null); setImportError(null); setImportJob(null); }}
+              onChange={e => { setFile(e.target.files?.[0] ?? null); setImportResult(null); setImportError(null); setValidatePassed(false); }}
               style={{ display: 'block', padding: '7px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', width: '100%' }} />
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Mode</label>
-            <select value={mode} onChange={e => setMode(e.target.value as any)}
+            <select value={mode} onChange={e => { setMode(e.target.value as any); setValidatePassed(false); }}
               style={{ padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}>
               <option value="UPSERT_PATCH">UPSERT_PATCH — update existing, insert new</option>
-              <option value="CREATE_ONLY">CREATE_ONLY — blocked in job mode (not yet supported)</option>
+              <option value="CREATE_ONLY">CREATE_ONLY — inserts only</option>
             </select>
           </div>
         </div>
 
-        <button onClick={handleImport} disabled={importing || !file} style={btn('hsl(var(--primary))', importing || !file)}>
-          {importing ? '⏳ Submitting Job…' : '▶ Upload & Create Import Job'}
-        </button>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button onClick={handleValidate} disabled={importing || !file} style={btn('hsl(var(--status-info-fg))', importing || !file)}>
+            {importing ? '⏳ Running…' : '✓ Validate'}
+          </button>
+          <button onClick={handleImport} disabled={importing || !file || !validatePassed} style={btn('hsl(var(--primary))', importing || !file || !validatePassed)}>
+            {importing ? '⏳ Running…' : '▶ Apply'}
+          </button>
+        </div>
 
-        {importJob && (
-          <div style={{ marginTop: '12px', fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
-            Job: <code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px' }}>{importJob.id}</code> • Status: <strong>{importJob.status}</strong>
-          </div>
-        )}
+        {validatePassed && <div style={{ marginTop: '12px', fontSize: '12px', color: 'hsl(var(--status-success-fg))' }}>Validation passed. You can apply this file now.</div>}
 
         {importError && (
           <div style={{ marginTop: '14px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '12px 16px', borderRadius: '6px', fontSize: '13px' }}>
@@ -370,13 +220,13 @@ export default function ImportExportPage() {
 
         {importResult && (
           <div style={{ marginTop: '14px', background: 'hsl(var(--status-success-bg))', border: '1px solid hsl(var(--status-success-border))', borderRadius: '6px', padding: '14px 16px' }}>
-            <div style={{ fontWeight: 700, color: 'hsl(var(--status-success-fg))', marginBottom: '10px', fontSize: '14px' }}>✓ Import job completed</div>
+            <div style={{ fontWeight: 700, color: 'hsl(var(--status-success-fg))', marginBottom: '10px', fontSize: '14px' }}>✓ Import response</div>
             <div style={{ display: 'flex', gap: '24px', fontSize: '13px', flexWrap: 'wrap' }}>
               {[
                 ['Created', importResult.inserted ?? 0, 'hsl(var(--status-success-fg))'],
                 ['Updated', importResult.updated ?? 0, 'hsl(var(--status-info-fg))'],
                 ['Skipped', importResult.skipped ?? 0, 'hsl(var(--muted-foreground))'],
-                ['Total', importResult.total ?? 0, 'hsl(var(--foreground))'],
+                ['Total', (importResult.inserted ?? 0) + (importResult.updated ?? 0) + (importResult.skipped ?? 0), 'hsl(var(--foreground))'],
               ].map(([label, val, color]) => (
                 <div key={label as string}>
                   <span style={{ color: 'hsl(var(--muted-foreground))' }}>{label}: </span>
@@ -384,6 +234,15 @@ export default function ImportExportPage() {
                 </div>
               ))}
             </div>
+            {(importResult.errors?.length ?? 0) > 0 && (
+              <ul style={{ marginTop: '10px', marginBottom: 0, paddingLeft: '18px' }}>
+                {(importResult.errors as any[]).map((e, i) => (
+                  <li key={i} style={{ fontSize: '12px', color: 'hsl(var(--status-warning-fg))' }}>
+                    {e.sheet ? `${e.sheet} ` : ''}Row {e.row}: {e.field ? `${e.field} ` : ''}{e.message}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </section>
@@ -469,4 +328,3 @@ export default function ImportExportPage() {
     </div>
   );
 }
-

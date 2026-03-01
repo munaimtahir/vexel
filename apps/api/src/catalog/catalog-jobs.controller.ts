@@ -11,7 +11,7 @@ import { Request } from 'express';
 import { Response } from 'express';
 
 @ApiTags('Catalog')
-@Controller('catalog')
+@Controller(['catalog', 'admin/catalog'])
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class CatalogJobsController {

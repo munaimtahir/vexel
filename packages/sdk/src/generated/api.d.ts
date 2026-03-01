@@ -376,6 +376,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/sample-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List sample types (tenant-scoped) */
+        get: operations["listSampleTypes"];
+        put?: never;
+        /** Create sample type */
+        post: operations["createSampleType"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/sample-types/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get sample type */
+        get: operations["getSampleType"];
+        put?: never;
+        post?: never;
+        /** Delete (deactivate) sample type */
+        delete: operations["deleteSampleType"];
+        options?: never;
+        head?: never;
+        /** Update sample type */
+        patch: operations["updateSampleType"];
+        trace?: never;
+    };
+    "/catalog/sample-types/next-id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get next available sample type external ID */
+        get: operations["getNextSampleTypeId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog/tests": {
         parameters: {
             query?: never;
@@ -438,10 +492,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get catalog panel */
+        get: operations["getCatalogPanel"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** Delete (deactivate) catalog panel */
+        delete: operations["deleteCatalogPanel"];
         options?: never;
         head?: never;
         /** Update catalog panel */
@@ -478,7 +534,8 @@ export interface paths {
         /** Update parameter */
         put: operations["updateParameter"];
         post?: never;
-        delete?: never;
+        /** Delete (deactivate) parameter */
+        delete: operations["deleteParameter"];
         options?: never;
         head?: never;
         patch?: never;
@@ -708,6 +765,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/templates/sample-types.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download sample-types CSV template */
+        get: operations["downloadSampleTypesTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog/templates/parameters.csv": {
         parameters: {
             query?: never;
@@ -793,6 +867,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/templates/reference-ranges.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download reference-ranges CSV template */
+        get: operations["downloadReferenceRangesTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/import/workbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import catalog workbook (validate/apply) */
+        post: operations["importCatalogWorkbook"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog/import": {
         parameters: {
             query?: never;
@@ -825,6 +933,23 @@ export interface paths {
          * @description Temporary compatibility endpoint. Prefer export-jobs endpoints for new integrations.
          */
         get: operations["exportCatalogLegacy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/export/workbook.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export catalog workbook XLSX */
+        get: operations["exportCatalogWorkbook"];
         put?: never;
         post?: never;
         delete?: never;
@@ -932,6 +1057,214 @@ export interface paths {
         post?: never;
         /** Delete reference range */
         delete: operations["deleteReferenceRange"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/sample-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminListSampleTypes"];
+        put?: never;
+        post: operations["adminCreateSampleType"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/sample-types/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminGetSampleType"];
+        put?: never;
+        post?: never;
+        delete: operations["adminDeleteSampleType"];
+        options?: never;
+        head?: never;
+        patch: operations["adminUpdateSampleType"];
+        trace?: never;
+    };
+    "/admin/catalog/tests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminListCatalogTests"];
+        put?: never;
+        post: operations["adminCreateCatalogTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/tests/{testId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminGetCatalogTest"];
+        put?: never;
+        post?: never;
+        delete: operations["adminDeleteCatalogTest"];
+        options?: never;
+        head?: never;
+        patch: operations["adminUpdateCatalogTest"];
+        trace?: never;
+    };
+    "/admin/catalog/parameters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminListParameters"];
+        put?: never;
+        post: operations["adminCreateParameter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/parameters/{parameterId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminGetParameter"];
+        put?: never;
+        post?: never;
+        delete: operations["adminDeleteParameter"];
+        options?: never;
+        head?: never;
+        patch: operations["adminUpdateParameter"];
+        trace?: never;
+    };
+    "/admin/catalog/panels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminListCatalogPanels"];
+        put?: never;
+        post: operations["adminCreateCatalogPanel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/panels/{panelId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminGetCatalogPanel"];
+        put?: never;
+        post?: never;
+        delete: operations["adminDeleteCatalogPanel"];
+        options?: never;
+        head?: never;
+        patch: operations["adminUpdateCatalogPanel"];
+        trace?: never;
+    };
+    "/admin/catalog/reference-ranges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminListReferenceRanges"];
+        put?: never;
+        post: operations["adminCreateReferenceRange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/reference-ranges/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["adminDeleteReferenceRange"];
+        options?: never;
+        head?: never;
+        patch: operations["adminUpdateReferenceRange"];
+        trace?: never;
+    };
+    "/admin/catalog/import/workbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["adminImportCatalogWorkbook"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/templates/workbook.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminDownloadCatalogWorkbookTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/export/workbook.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adminExportCatalogWorkbook"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2019,6 +2352,111 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/opd/visits/{visitId}/vitals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List vitals records for an OPD visit */
+        get: operations["listOpdVisitVitals"];
+        put?: never;
+        /** Record OPD visit vitals */
+        post: operations["createOpdVisitVitals"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/visits/{visitId}/clinical-note": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get OPD visit clinical note */
+        get: operations["getOpdVisitClinicalNote"];
+        /** Create or update OPD visit clinical note draft */
+        put: operations["upsertOpdVisitClinicalNote"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/visits/{visitId}/clinical-note:sign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign OPD visit clinical note */
+        post: operations["signOpdVisitClinicalNote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/visits/{visitId}/prescription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get OPD visit prescription */
+        get: operations["getOpdVisitPrescription"];
+        /** Create or update OPD visit prescription draft */
+        put: operations["upsertOpdVisitPrescription"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/visits/{visitId}/prescription:sign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign OPD visit prescription */
+        post: operations["signOpdVisitPrescription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/visits/{visitId}/prescription:mark-printed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark signed OPD prescription as printed */
+        post: operations["markOpdVisitPrescriptionPrinted"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/opd/billing/invoices": {
         parameters: {
             query?: never;
@@ -2127,6 +2565,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/opd/billing/invoices/{invoiceId}:generate-receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate deterministic OPD invoice receipt document */
+        post: operations["generateOpdInvoiceReceipt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2225,12 +2680,26 @@ export interface components {
             enabled: boolean;
             description?: string;
         };
+        SampleType: {
+            id: string;
+            tenantId: string;
+            name: string;
+            description?: string | null;
+            externalId?: string | null;
+            userCode?: string | null;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
         CatalogTest: {
             id: string;
             tenantId: string;
             name: string;
             description?: string;
             sampleType?: string;
+            sampleTypeId?: string | null;
             turnaroundHours?: number;
             price?: number | null;
             isActive?: boolean;
@@ -3032,6 +3501,106 @@ export interface components {
             data: components["schemas"]["OpdVisit"][];
             pagination: components["schemas"]["Pagination"];
         };
+        OpdVitals: {
+            id: string;
+            tenantId: string;
+            visitId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            recordedBy?: string | null;
+            heightCm?: number | null;
+            weightKg?: number | null;
+            bmi?: number | null;
+            temperatureC?: number | null;
+            pulseBpm?: number | null;
+            systolicBp?: number | null;
+            diastolicBp?: number | null;
+            respiratoryRate?: number | null;
+            spo2Pct?: number | null;
+            bloodGlucoseMgDl?: number | null;
+            notes?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OpdVitalsCreateRequest: {
+            /** Format: date-time */
+            recordedAt?: string;
+            heightCm?: number;
+            weightKg?: number;
+            bmi?: number;
+            temperatureC?: number;
+            pulseBpm?: number;
+            systolicBp?: number;
+            diastolicBp?: number;
+            respiratoryRate?: number;
+            spo2Pct?: number;
+            bloodGlucoseMgDl?: number;
+            notes?: string;
+        };
+        OpdVitalsListResponse: {
+            data: components["schemas"]["OpdVitals"][];
+        };
+        OpdClinicalNote: {
+            id: string;
+            tenantId: string;
+            visitId: string;
+            providerId: string;
+            /** @enum {string} */
+            status: "DRAFT" | "SIGNED";
+            subjectiveJson?: unknown;
+            objectiveJson?: unknown;
+            assessmentJson?: unknown;
+            planJson?: unknown;
+            diagnosisText?: string | null;
+            /** Format: date-time */
+            signedAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OpdClinicalNoteUpsertRequest: {
+            providerId?: string;
+            subjectiveJson?: unknown;
+            objectiveJson?: unknown;
+            assessmentJson?: unknown;
+            planJson?: unknown;
+            diagnosisText?: string | null;
+        };
+        OpdPrescriptionItem: {
+            id?: string | null;
+            sortOrder: number;
+            medicationText: string;
+            dosageText?: string | null;
+            frequencyText?: string | null;
+            durationText?: string | null;
+            instructions?: string | null;
+        };
+        OpdPrescription: {
+            id: string;
+            tenantId: string;
+            visitId: string;
+            providerId: string;
+            /** @enum {string} */
+            status: "DRAFT" | "SIGNED" | "PRINTED";
+            notes?: string | null;
+            /** Format: date-time */
+            signedAt?: string | null;
+            /** Format: date-time */
+            printedAt?: string | null;
+            items: components["schemas"]["OpdPrescriptionItem"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OpdPrescriptionUpsertRequest: {
+            providerId?: string;
+            notes?: string | null;
+            items?: components["schemas"]["OpdPrescriptionItem"][];
+        };
         OpdInvoiceLine: {
             id?: string | null;
             description: string;
@@ -3125,6 +3694,10 @@ export interface components {
         OpdInvoicePaymentCommandResponse: {
             invoice: components["schemas"]["OpdInvoice"];
             payment: components["schemas"]["OpdInvoicePayment"];
+        };
+        OpdInvoiceReceiptCommandResponse: {
+            invoice: components["schemas"]["OpdInvoice"];
+            document: components["schemas"]["Document"];
         };
     };
     responses: {
@@ -3977,6 +4550,159 @@ export interface operations {
             };
         };
     };
+    listSampleTypes: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sample types */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["SampleType"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    createSampleType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    description?: string;
+                    externalId?: string;
+                    userCode?: string;
+                    isActive?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleType"];
+                };
+            };
+        };
+    };
+    getSampleType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sample type */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleType"];
+                };
+            };
+        };
+    };
+    deleteSampleType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    updateSampleType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    description?: string;
+                    externalId?: string;
+                    userCode?: string;
+                    isActive?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleType"];
+                };
+            };
+        };
+    };
+    getNextSampleTypeId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        nextId?: string;
+                    };
+                };
+            };
+        };
+    };
     listCatalogTests: {
         parameters: {
             query?: {
@@ -4019,6 +4745,8 @@ export interface operations {
                     name: string;
                     description?: string;
                     sampleType?: string;
+                    sampleTypeId?: string;
+                    sampleTypeExternalId?: string;
                     turnaroundHours?: number;
                     price?: number | null;
                 };
@@ -4093,6 +4821,8 @@ export interface operations {
                     name?: string;
                     description?: string;
                     sampleType?: string;
+                    sampleTypeId?: string;
+                    sampleTypeExternalId?: string;
                     turnaroundHours?: number;
                     price?: number | null;
                     isActive?: boolean;
@@ -4166,6 +4896,48 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["CatalogPanel"];
                 };
+            };
+        };
+    };
+    getCatalogPanel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Catalog panel */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogPanel"];
+                };
+            };
+        };
+    };
+    deleteCatalogPanel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -4337,6 +5109,26 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["Parameter"];
                 };
+            };
+        };
+    };
+    deleteParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parameterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Parameter deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -4738,6 +5530,26 @@ export interface operations {
             };
         };
     };
+    downloadSampleTypesTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
     downloadParametersTemplate: {
         parameters: {
             query?: never;
@@ -4838,6 +5650,68 @@ export interface operations {
             };
         };
     };
+    downloadReferenceRangesTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
+    importCatalogWorkbook: {
+        parameters: {
+            query?: {
+                validate?: boolean;
+                mode?: "UPSERT_PATCH" | "CREATE_ONLY";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Import summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        inserted?: number;
+                        updated?: number;
+                        skipped?: number;
+                        errors?: {
+                            sheet?: string;
+                            row?: number;
+                            field?: string | null;
+                            code?: string | null;
+                            message?: string;
+                            suggestion?: string | null;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
     importCatalogLegacy: {
         parameters: {
             query?: never;
@@ -4879,6 +5753,26 @@ export interface operations {
         };
     };
     exportCatalogLegacy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export workbook download */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    exportCatalogWorkbook: {
         parameters: {
             query?: never;
             header?: never;
@@ -5092,6 +5986,634 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    adminListSampleTypes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sample types */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["SampleType"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    adminCreateSampleType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleType"];
+                };
+            };
+        };
+    };
+    adminGetSampleType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sample type */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleType"];
+                };
+            };
+        };
+    };
+    adminDeleteSampleType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    adminUpdateSampleType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SampleType"];
+                };
+            };
+        };
+    };
+    adminListCatalogTests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Catalog tests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["CatalogTest"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    adminCreateCatalogTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogTest"];
+                };
+            };
+        };
+    };
+    adminGetCatalogTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Catalog test */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogTest"];
+                };
+            };
+        };
+    };
+    adminDeleteCatalogTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    adminUpdateCatalogTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogTest"];
+                };
+            };
+        };
+    };
+    adminListParameters: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Parameters list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["Parameter"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    adminCreateParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Parameter"];
+                };
+            };
+        };
+    };
+    adminGetParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parameterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Parameter */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Parameter"];
+                };
+            };
+        };
+    };
+    adminDeleteParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parameterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    adminUpdateParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parameterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Parameter"];
+                };
+            };
+        };
+    };
+    adminListCatalogPanels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Catalog panels */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["CatalogPanel"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    adminCreateCatalogPanel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogPanel"];
+                };
+            };
+        };
+    };
+    adminGetCatalogPanel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Catalog panel */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogPanel"];
+                };
+            };
+        };
+    };
+    adminDeleteCatalogPanel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    adminUpdateCatalogPanel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                panelId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogPanel"];
+                };
+            };
+        };
+    };
+    adminListReferenceRanges: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reference ranges */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ReferenceRange"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    adminCreateReferenceRange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReferenceRange"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferenceRange"];
+                };
+            };
+        };
+    };
+    adminDeleteReferenceRange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    adminUpdateReferenceRange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReferenceRange"];
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferenceRange"];
+                };
+            };
+        };
+    };
+    adminImportCatalogWorkbook: {
+        parameters: {
+            query?: {
+                validate?: boolean;
+                mode?: "UPSERT_PATCH" | "CREATE_ONLY";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Import summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        inserted?: number;
+                        updated?: number;
+                        skipped?: number;
+                        errors?: Record<string, never>[];
+                    };
+                };
+            };
+        };
+    };
+    adminDownloadCatalogWorkbookTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description XLSX workbook template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    adminExportCatalogWorkbook: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export workbook */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
             };
         };
     };
@@ -7676,6 +9198,291 @@ export interface operations {
             };
         };
     };
+    listOpdVisitVitals: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Vitals records */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdVitalsListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    createOpdVisitVitals: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpdVitalsCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Vitals recorded */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdVitals"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getOpdVisitClinicalNote: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Clinical note */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdClinicalNote"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    upsertOpdVisitClinicalNote: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpdClinicalNoteUpsertRequest"];
+            };
+        };
+        responses: {
+            /** @description Clinical note saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdClinicalNote"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Clinical note cannot be edited in current state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    signOpdVisitClinicalNote: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Clinical note signed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdClinicalNote"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getOpdVisitPrescription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Visit prescription */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdPrescription"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    upsertOpdVisitPrescription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpdPrescriptionUpsertRequest"];
+            };
+        };
+        responses: {
+            /** @description Prescription saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdPrescription"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Prescription cannot be edited in current state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    signOpdVisitPrescription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Prescription signed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdPrescription"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Prescription must be in draft state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    markOpdVisitPrescriptionPrinted: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visitId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Prescription marked printed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdPrescription"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Prescription must be signed first */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     listOpdInvoices: {
         parameters: {
             query?: {
@@ -7907,6 +9714,44 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description Invalid invoice transition or payment invariant violation */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    generateOpdInvoiceReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoiceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Receipt generated (idempotent on same payload) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdInvoiceReceiptCommandResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Invoice must be issued/paid before receipt generation */
             409: {
                 headers: {
                     [name: string]: unknown;

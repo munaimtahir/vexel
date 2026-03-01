@@ -1,0 +1,156 @@
+## Verification run
+$ pnpm sdk:generate
+
+> vexel@0.1.0 sdk:generate /home/munaim/srv/apps/vexel
+> pnpm --filter @vexel/contracts sdk:generate
+
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+> @vexel/contracts@0.1.0 sdk:generate /home/munaim/srv/apps/vexel/packages/contracts
+> openapi-typescript openapi.yaml -o ../sdk/src/generated/api.d.ts && node scripts/generate-client.js
+
+✨ openapi-typescript 7.13.0
+🚀 openapi.yaml → ../sdk/src/generated/api.d.ts [506.5ms]
+✅ SDK types generated at packages/sdk/src/generated/api.d.ts
+$ pnpm --filter @vexel/api test -- --runInBand
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+> @vexel/api@0.1.0 test /home/munaim/srv/apps/vexel/apps/api
+> jest "--runInBand"
+
+$ pnpm --filter @vexel/api build
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+> @vexel/api@0.1.0 build /home/munaim/srv/apps/vexel/apps/api
+> nest build
+
+$ pnpm --filter @vexel/admin lint
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+> @vexel/admin@0.1.0 lint /home/munaim/srv/apps/vexel/apps/admin
+> next lint
+
+
+./src/app/(protected)/audit/page.tsx
+32:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/panels/page.tsx
+39:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/parameters/page.tsx
+35:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/reference-ranges/page.tsx
+55:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/sample-types/page.tsx
+32:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/tests/page.tsx
+40:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/opd/providers/page.tsx
+99:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/opd/schedules/page.tsx
+135:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+143:6  Warning: React Hook useEffect has a missing dependency: 'loadSchedules'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+$ pnpm --filter @vexel/admin build
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+> @vexel/admin@0.1.0 build /home/munaim/srv/apps/vexel/apps/admin
+> next build
+
+   ▲ Next.js 15.5.12
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 3.6s
+   Linting and checking validity of types ...
+
+./src/app/(protected)/audit/page.tsx
+32:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/panels/page.tsx
+39:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/parameters/page.tsx
+35:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/reference-ranges/page.tsx
+55:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/sample-types/page.tsx
+32:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/tests/page.tsx
+40:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/opd/providers/page.tsx
+99:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/opd/schedules/page.tsx
+135:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+143:6  Warning: React Hook useEffect has a missing dependency: 'loadSchedules'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/33) ...
+   Generating static pages (8/33) 
+   Generating static pages (16/33) 
+   Generating static pages (24/33) 
+ ✓ Generating static pages (33/33)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                      138 B         102 kB
+├ ○ /_not-found                            992 B         103 kB
+├ ○ /audit                                5.8 kB         108 kB
+├ ○ /branding                            3.02 kB         109 kB
+├ ○ /catalog                             1.51 kB         110 kB
+├ ○ /catalog/import-export               6.46 kB         109 kB
+├ ○ /catalog/panels                      6.72 kB         109 kB
+├ ○ /catalog/parameters                  6.21 kB         108 kB
+├ ○ /catalog/reference-ranges            6.67 kB         109 kB
+├ ○ /catalog/sample-types                5.64 kB         108 kB
+├ ○ /catalog/tests                       7.37 kB         109 kB
+├ ○ /dashboard                           4.74 kB         110 kB
+├ ○ /documents                            2.2 kB         108 kB
+├ ○ /encounters                          4.86 kB         107 kB
+├ ○ /feature-flags                       3.42 kB         109 kB
+├ ○ /jobs                                5.41 kB         107 kB
+├ ○ /login                               4.19 kB         106 kB
+├ ○ /opd                                   791 B         106 kB
+├ ○ /opd/feature-flags                      5 kB         107 kB
+├ ○ /opd/providers                       5.96 kB         111 kB
+├ ƒ /opd/providers/[providerId]          4.14 kB         110 kB
+├ ○ /opd/schedules                       6.33 kB         108 kB
+├ ○ /patients                            4.76 kB         107 kB
+├ ○ /roles                               2.41 kB         108 kB
+├ ○ /system/health                       4.56 kB         107 kB
+├ ○ /tenant-settings                       138 B         102 kB
+├ ○ /tenant-settings/catalog               138 B         102 kB
+├ ○ /tenant-settings/documents             138 B         102 kB
+├ ○ /tenant-settings/roles                 138 B         102 kB
+├ ○ /tenant-settings/users                 138 B         102 kB
+├ ○ /tenants                             5.02 kB         110 kB
+└ ○ /users                               2.99 kB         109 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/144-0b275b5ca88820a6.js       45.9 kB
+  ├ chunks/6d25620b-d9f90746a7f2178c.js  54.2 kB
+  └ other shared chunks (total)          1.93 kB
+
+
+ƒ Middleware                             34.3 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+$ pnpm check:admin-openapi-parity
+
+> vexel@0.1.0 check:admin-openapi-parity /home/munaim/srv/apps/vexel
+> node scripts/check-admin-openapi-parity.js
+
+Admin/OpenAPI parity check PASS. Checked 101 endpoint references across 44 files.

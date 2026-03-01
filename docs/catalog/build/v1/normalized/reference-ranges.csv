@@ -1,0 +1,13 @@
+parameterExternalId,testExternalId,sampleTypeExternalId,gender,ageMinDays,ageMaxDays,rangeExpression,low,high,text,unit,notes,isActive
+p101,t101,,,,,13.5-17.5,13.5,17.5,,g/dL,,true
+p102,t101,,,,,4.5-11.0,4.5,11.0,,x10^9/L,,true
+p103,t101,,,,,4.5-5.9,4.5,5.9,,x10^12/L,,true
+p104,t101,,,,,150.0-450.0,150.0,450.0,,x10^9/L,,true
+p105,t102,,,,,<200.0,,200.0,,mg/dL,,true
+p106,t102,,,,,<150.0,,150.0,,mg/dL,,true
+p107,t102,,,,,>=40.0,40.0,,,mg/dL,,true
+p108,t102,,,,,<100.0,,100.0,,mg/dL,,true
+p109,t103,,,,,7.0-56.0,7.0,56.0,,U/L,,true
+p110,t103,,,,,10.0-40.0,10.0,40.0,,U/L,,true
+p111,t103,,,,,44.0-147.0,44.0,147.0,,U/L,,true
+p112,t103,,,,,0.1-1.2,0.1,1.2,,mg/dL,,true

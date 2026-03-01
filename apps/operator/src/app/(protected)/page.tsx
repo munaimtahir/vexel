@@ -1,9 +1,19 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
-const MODULES = [
+type ModuleCard = {
+  id: string;
+  label: string;
+  description: string;
+  icon: string;
+  enabled: boolean;
+  href: string | null;
+};
+
+const MODULES_BASE: ModuleCard[] = [
   {
     id: 'lims',
     label: 'Laboratory (LIMS)',
@@ -26,23 +36,35 @@ const MODULES = [
     description: 'Outpatient consultations, prescriptions, follow-up',
     icon: '🏥',
     enabled: false,
-    href: null,
+    href: '/opd/worklist',
   },
 ];
 
 export default function OperatorLandingPage() {
   const router = useRouter();
+  const { flags, loading } = useFeatureFlags();
+  const modules = useMemo(
+    () =>
+      MODULES_BASE.map((m) =>
+        m.id === 'opd' ? { ...m, enabled: Boolean(flags?.['module.opd']) } : m,
+      ),
+    [flags],
+  );
 
   // Auto-redirect to LIMS if it's the only enabled module
   useEffect(() => {
-    const enabledModules = MODULES.filter((m) => m.enabled);
+    if (loading) return;
+    const enabledModules = modules.filter((m) => m.enabled);
     if (enabledModules.length === 1 && enabledModules[0].href) {
       const timer = setTimeout(() => {
         router.replace(enabledModules[0].href!);
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [router]);
+  }, [router, modules, loading]);
+
+  const enabledModules = modules.filter((m) => m.enabled);
+  const willRedirect = !loading && enabledModules.length === 1 && Boolean(enabledModules[0]?.href);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex flex-col items-center justify-center p-8">
@@ -54,7 +76,7 @@ export default function OperatorLandingPage() {
 
       {/* Module switcher cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 justify-center" style={{ gridTemplateColumns: 'repeat(3, 280px)' }}>
-        {MODULES.map((mod) => (
+        {modules.map((mod) => (
           <div
             key={mod.id}
             onClick={() => mod.enabled && mod.href && router.push(mod.href)}
@@ -82,7 +104,9 @@ export default function OperatorLandingPage() {
       </div>
 
       {/* Redirect notice */}
-      <p className="text-slate-500 text-sm mt-10">Redirecting to LIMS…</p>
+      <p className="text-slate-500 text-sm mt-10">
+        {loading ? 'Loading modules…' : willRedirect ? `Redirecting to ${enabledModules[0].label}…` : 'Select a module to continue.'}
+      </p>
     </div>
   );
 }

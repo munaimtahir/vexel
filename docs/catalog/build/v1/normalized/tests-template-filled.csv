@@ -1,0 +1,4 @@
+externalId,userCode,name,department,specimenType,method,loincCode,price,isActive
+cbc,CBC,Complete Blood Count (CBC),Hematology,Whole Blood (EDTA),,,750,true
+lipid,LP,Lipid Profile,Biochemistry,Serum,,,1500,true
+lft,LFT,Liver Function Test,Biochemistry,Serum,,,1200,true

@@ -1,0 +1,36 @@
+## Deploy smoke run
+$ docker compose up -d
+$ docker compose exec -T api npx prisma migrate deploy
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "vexel", schema "public" at "postgres:5432"
+
+18 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+$ curl -fsS http://127.0.0.1:9021/api/health
+{"status":"ok","version":"0.1.0","uptime":51.829979469,"services":{"api":"ok"}}
+$ POST /api/auth/login (system admin)
+login_ok=true
+$ GET /api/admin/catalog/sample-types
+sample_types_count=1
+$ GET /api/admin/catalog/templates/workbook.xlsx
+template_bytes=12188
+$ GET /api/admin/catalog/export/workbook.xlsx
+export_before_bytes=10726
+$ POST import workbook validate=true
+validate_error_count 7
+validate_keys ['errors', 'inserted', 'skipped', 'updated']
+$ POST import workbook validate=false (apply #1)
+$ POST import workbook validate=false (apply #2 idempotency)
+import-apply-1.json {'inserted': 10, 'updated': 3, 'skipped': 0, 'errors': []}
+import-apply-2.json {'inserted': 0, 'updated': 13, 'skipped': 0, 'errors': []}
+$ GET /api/admin/catalog/export/workbook.xlsx after apply
+export_after_sample_types=2
+contains_s1=True
+contains_s2=True
+$ curl -fsS http://127.0.0.1:9021/api/health (post-import)
+{"status":"ok","version":"0.1.0","uptime":54.591825356,"services":{"api":"ok"}}
+$ POST import workbook validate=true (post-apply idempotency check)
+post_apply_validate_errors 0
+{'inserted': 0, 'updated': 13, 'skipped': 0, 'errors': []}

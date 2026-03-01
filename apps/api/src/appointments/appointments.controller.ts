@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -202,5 +203,123 @@ export class AppointmentsController {
   ) {
     const user = (req as any).user;
     return this.svc.cancelVisit(this.resolveTenantId(req), visitId, body, user.userId, correlationId);
+  }
+
+  @Get('visits/:visitId/vitals')
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  listVisitVitals(@Req() req: Request, @Param('visitId') visitId: string) {
+    return this.svc.listVisitVitals(this.resolveTenantId(req), visitId);
+  }
+
+  @Post('visits/:visitId/vitals')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  recordVisitVitals(
+    @Req() req: Request,
+    @Param('visitId') visitId: string,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.recordVisitVitals(this.resolveTenantId(req), visitId, body, user.userId, correlationId);
+  }
+
+  @Get('visits/:visitId/clinical-note')
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  getVisitClinicalNote(@Req() req: Request, @Param('visitId') visitId: string) {
+    return this.svc.getVisitClinicalNote(this.resolveTenantId(req), visitId);
+  }
+
+  @Put('visits/:visitId/clinical-note')
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  upsertVisitClinicalNote(
+    @Req() req: Request,
+    @Param('visitId') visitId: string,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.upsertVisitClinicalNote(
+      this.resolveTenantId(req),
+      visitId,
+      body,
+      user.userId,
+      correlationId,
+    );
+  }
+
+  @Post('visits/:visitId/clinical-note\\:sign')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  signVisitClinicalNote(
+    @Req() req: Request,
+    @Param('visitId') visitId: string,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.signVisitClinicalNote(
+      this.resolveTenantId(req),
+      visitId,
+      user.userId,
+      correlationId,
+    );
+  }
+
+  @Get('visits/:visitId/prescription')
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  getVisitPrescription(@Req() req: Request, @Param('visitId') visitId: string) {
+    return this.svc.getVisitPrescription(this.resolveTenantId(req), visitId);
+  }
+
+  @Put('visits/:visitId/prescription')
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  upsertVisitPrescription(
+    @Req() req: Request,
+    @Param('visitId') visitId: string,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.upsertVisitPrescription(
+      this.resolveTenantId(req),
+      visitId,
+      body,
+      user.userId,
+      correlationId,
+    );
+  }
+
+  @Post('visits/:visitId/prescription\\:sign')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  signVisitPrescription(
+    @Req() req: Request,
+    @Param('visitId') visitId: string,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.signVisitPrescription(
+      this.resolveTenantId(req),
+      visitId,
+      user.userId,
+      correlationId,
+    );
+  }
+
+  @Post('visits/:visitId/prescription\\:mark-printed')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  markVisitPrescriptionPrinted(
+    @Req() req: Request,
+    @Param('visitId') visitId: string,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.markVisitPrescriptionPrinted(
+      this.resolveTenantId(req),
+      visitId,
+      user.userId,
+      correlationId,
+    );
   }
 }

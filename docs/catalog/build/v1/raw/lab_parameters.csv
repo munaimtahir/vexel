@@ -1,0 +1,13 @@
+id,name,unit,referenceRange
+"hb","Hemoglobin","g/dL","13.5 - 17.5"
+"wbc","WBC Count","x10^9/L","4.5 - 11.0"
+"rbc","RBC Count","x10^12/L","4.5 - 5.9"
+"plt","Platelets","x10^9/L","150 - 450"
+"chol","Total Cholesterol","mg/dL","< 200"
+"tg","Triglycerides","mg/dL","< 150"
+"hdl","HDL Cholesterol","mg/dL","> 40"
+"ldl","LDL Cholesterol","mg/dL","< 100"
+"alt","ALT (SGPT)","U/L","7 - 56"
+"ast","AST (SGOT)","U/L","10 - 40"
+"alp","Alkaline Phosphatase","U/L","44 - 147"
+"bili","Total Bilirubin","mg/dL","0.1 - 1.2"

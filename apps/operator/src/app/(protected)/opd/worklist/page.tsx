@@ -129,6 +129,9 @@ export default function OpdWorklistPage() {
             <Button variant="outline" asChild>
               <Link href="/opd/billing">OPD Billing</Link>
             </Button>
+            <Button variant="outline" asChild>
+              <Link href="/opd/visits/new">New Walk-in Visit</Link>
+            </Button>
             <Button asChild>
               <Link href="/opd/appointments/new">New Appointment</Link>
             </Button>

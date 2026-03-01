@@ -1,0 +1,13 @@
+parameterExternalId,testExternalId,gender,ageMinYears,ageMaxYears,lowValue,highValue,criticalLow,criticalHigh,unit,notes
+hb,,,,,13.5,17.5,,,g/dL,
+wbc,,,,,4.5,11.0,,,x10^9/L,
+rbc,,,,,4.5,5.9,,,x10^12/L,
+plt,,,,,150.0,450.0,,,x10^9/L,
+chol,,,,,,200.0,,,mg/dL,
+tg,,,,,,150.0,,,mg/dL,
+hdl,,,,,40.0,,,,mg/dL,
+ldl,,,,,,100.0,,,mg/dL,
+alt,,,,,7.0,56.0,,,U/L,
+ast,,,,,10.0,40.0,,,U/L,
+alp,,,,,44.0,147.0,,,U/L,
+bili,,,,,0.1,1.2,,,mg/dL,

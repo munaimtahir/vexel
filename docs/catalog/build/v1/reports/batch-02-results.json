@@ -1,0 +1,133 @@
+{
+  "validate": {
+    "inserted": 10,
+    "updated": 1,
+    "skipped": 0,
+    "errors": [
+      {
+        "sheet": "TestParameters",
+        "row": 2,
+        "field": "testExternalId",
+        "code": "NOT_FOUND",
+        "message": "Test externalId 't102' not found"
+      },
+      {
+        "sheet": "TestParameters",
+        "row": 3,
+        "field": "testExternalId",
+        "code": "NOT_FOUND",
+        "message": "Test externalId 't102' not found"
+      },
+      {
+        "sheet": "TestParameters",
+        "row": 4,
+        "field": "testExternalId",
+        "code": "NOT_FOUND",
+        "message": "Test externalId 't102' not found"
+      },
+      {
+        "sheet": "TestParameters",
+        "row": 5,
+        "field": "testExternalId",
+        "code": "NOT_FOUND",
+        "message": "Test externalId 't102' not found"
+      },
+      {
+        "sheet": "TestParameters",
+        "row": 6,
+        "field": "testExternalId",
+        "code": "NOT_FOUND",
+        "message": "Test externalId 't103' not found"
+      },
+      {
+        "sheet": "TestParameters",
+        "row": 7,
+        "field": "testExternalId",
+        "code": "NOT_FOUND",
+        "message": "Test externalId 't103' not found"
+      },
+      {
+        "sheet": "TestParameters",
+        "row": 8,
+        "field": "testExternalId",
+        "code": "NOT_FOUND",
+        "message": "Test externalId 't103' not found"
+      },
+      {
+        "sheet": "TestParameters",
+        "row": 9,
+        "field": "testExternalId",
+        "code": "NOT_FOUND",
+        "message": "Test externalId 't103' not found"
+      },
+      {
+        "sheet": "ReferenceRanges",
+        "row": 2,
+        "field": "parameterExternalId",
+        "code": "NOT_FOUND",
+        "message": "Parameter externalId 'p105' not found"
+      },
+      {
+        "sheet": "ReferenceRanges",
+        "row": 3,
+        "field": "parameterExternalId",
+        "code": "NOT_FOUND",
+        "message": "Parameter externalId 'p106' not found"
+      },
+      {
+        "sheet": "ReferenceRanges",
+        "row": 4,
+        "field": "parameterExternalId",
+        "code": "NOT_FOUND",
+        "message": "Parameter externalId 'p107' not found"
+      },
+      {
+        "sheet": "ReferenceRanges",
+        "row": 5,
+        "field": "parameterExternalId",
+        "code": "NOT_FOUND",
+        "message": "Parameter externalId 'p108' not found"
+      },
+      {
+        "sheet": "ReferenceRanges",
+        "row": 6,
+        "field": "parameterExternalId",
+        "code": "NOT_FOUND",
+        "message": "Parameter externalId 'p109' not found"
+      },
+      {
+        "sheet": "ReferenceRanges",
+        "row": 7,
+        "field": "parameterExternalId",
+        "code": "NOT_FOUND",
+        "message": "Parameter externalId 'p110' not found"
+      },
+      {
+        "sheet": "ReferenceRanges",
+        "row": 8,
+        "field": "parameterExternalId",
+        "code": "NOT_FOUND",
+        "message": "Parameter externalId 'p111' not found"
+      },
+      {
+        "sheet": "ReferenceRanges",
+        "row": 9,
+        "field": "parameterExternalId",
+        "code": "NOT_FOUND",
+        "message": "Parameter externalId 'p112' not found"
+      }
+    ]
+  },
+  "apply_first": {
+    "inserted": 26,
+    "updated": 1,
+    "skipped": 0,
+    "errors": []
+  },
+  "apply_second": {
+    "inserted": 0,
+    "updated": 27,
+    "skipped": 0,
+    "errors": []
+  }
+}

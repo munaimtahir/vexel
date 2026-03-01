@@ -6,21 +6,23 @@ import { getToken } from '@/lib/auth';
 import { TenantScopeBanner } from '@/components/tenant-scope-banner';
 
 export default function CatalogPage() {
-  const [stats, setStats] = useState<{ params: number; tests: number; panels: number } | null>(null);
+  const [stats, setStats] = useState<{ sampleTypes: number; params: number; tests: number; panels: number } | null>(null);
 
   useEffect(() => {
     async function loadStats() {
       try {
         const api = getApiClient(getToken() ?? undefined);
-        const [pRes, tRes, panRes] = await Promise.allSettled([
+        const [sRes, pRes, tRes, panRes] = await Promise.allSettled([
+          api.GET('/catalog/sample-types' as any, { params: { query: { limit: 1 } } }),
           api.GET('/catalog/parameters' as any, { params: { query: { limit: 1 } } }),
           api.GET('/catalog/tests' as any, { params: { query: { limit: 1 } } }),
           api.GET('/catalog/panels' as any, { params: { query: { limit: 1 } } }),
         ]);
         setStats({
-          params: pRes.status === 'fulfilled' ? ((pRes.value.data as any)?.total ?? 0) : 0,
-          tests: tRes.status === 'fulfilled' ? ((tRes.value.data as any)?.total ?? 0) : 0,
-          panels: panRes.status === 'fulfilled' ? ((panRes.value.data as any)?.total ?? 0) : 0,
+          sampleTypes: sRes.status === 'fulfilled' ? ((sRes.value.data as any)?.pagination?.total ?? (sRes.value.data as any)?.total ?? 0) : 0,
+          params: pRes.status === 'fulfilled' ? ((pRes.value.data as any)?.pagination?.total ?? (pRes.value.data as any)?.total ?? 0) : 0,
+          tests: tRes.status === 'fulfilled' ? ((tRes.value.data as any)?.pagination?.total ?? (tRes.value.data as any)?.total ?? 0) : 0,
+          panels: panRes.status === 'fulfilled' ? ((panRes.value.data as any)?.pagination?.total ?? (panRes.value.data as any)?.total ?? 0) : 0,
         });
       } catch { /* stats optional */ }
     }
@@ -39,6 +41,7 @@ export default function CatalogPage() {
       {stats && (
         <div style={{ display: 'flex', gap: '12px', marginBottom: '28px' }}>
           {[
+            { label: 'Sample Types', value: stats.sampleTypes, color: 'hsl(var(--primary))', bg: 'hsl(var(--status-info-bg))' },
             { label: 'Parameters', value: stats.params, color: 'hsl(var(--primary))', bg: 'hsl(var(--status-info-bg))' },
             { label: 'Tests', value: stats.tests, color: 'hsl(var(--primary))', bg: 'hsl(var(--status-info-bg))' },
             { label: 'Panels', value: stats.panels, color: 'hsl(var(--status-success-fg))', bg: 'hsl(var(--status-success-bg))' },
@@ -53,6 +56,7 @@ export default function CatalogPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', maxWidth: '640px' }}>
         {[
+          { href: '/catalog/sample-types', label: 'Sample Types', icon: '🧪', desc: 'Specimen catalog source' },
           { href: '/catalog/tests', label: 'Tests', icon: '🧬', desc: 'Lab test catalog' },
           { href: '/catalog/parameters', label: 'Parameters', icon: '📐', desc: 'Result parameters' },
           { href: '/catalog/panels', label: 'Panels', icon: '📋', desc: 'Test panels / profiles' },

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { normalizeCatalogName, normalizeUnit } from './catalog-validation';
 
 @Injectable()
 export class CatalogService {
@@ -11,8 +12,8 @@ export class CatalogService {
 
   // ─── Auto-ID Generation ───────────────────────────────────────────────────
 
-  async getNextId(tenantId: string, type: 'test' | 'parameter' | 'panel'): Promise<{ nextId: string }> {
-    const prefix = type === 'test' ? 't' : type === 'parameter' ? 'p' : 'g';
+  async getNextId(tenantId: string, type: 'test' | 'parameter' | 'panel' | 'sample-type'): Promise<{ nextId: string }> {
+    const prefix = type === 'test' ? 't' : type === 'parameter' ? 'p' : type === 'panel' ? 'g' : 's';
     let existingIds: string[] = [];
     if (type === 'test') {
       const rows = await this.prisma.catalogTest.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
@@ -20,8 +21,11 @@ export class CatalogService {
     } else if (type === 'parameter') {
       const rows = await this.prisma.parameter.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
       existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
-    } else {
+    } else if (type === 'panel') {
       const rows = await this.prisma.catalogPanel.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
+      existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
+    } else {
+      const rows = await this.prisma.sampleType.findMany({ where: { tenantId, externalId: { startsWith: prefix } }, select: { externalId: true } });
       existingIds = rows.map(r => r.externalId).filter(Boolean) as string[];
     }
     const pattern = new RegExp(`^${prefix}(\\d+)$`);
@@ -34,6 +38,96 @@ export class CatalogService {
       }
     }
     return { nextId: `${prefix}${max + 1}` };
+  }
+
+  // ─── Sample Types ──────────────────────────────────────────────────────────
+
+  async listSampleTypes(tenantId: string, opts: { page?: number; limit?: number; search?: string } = {}) {
+    const page = Number(opts.page ?? 1);
+    const limit = Number(opts.limit ?? 20);
+    const where: any = { tenantId };
+    if (opts.search) {
+      where.OR = [
+        { name: { contains: opts.search, mode: 'insensitive' } },
+        { userCode: { contains: opts.search, mode: 'insensitive' } },
+        { externalId: { contains: opts.search, mode: 'insensitive' } },
+      ];
+    }
+    const [data, total] = await Promise.all([
+      this.prisma.sampleType.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { createdAt: 'desc' } }),
+      this.prisma.sampleType.count({ where }),
+    ]);
+    return { data, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async createSampleType(
+    tenantId: string,
+    body: { name: string; description?: string; externalId?: string; userCode?: string; isActive?: boolean },
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    const name = normalizeCatalogName(body.name);
+    if (!name) throw new BadRequestException('name is required');
+    if (body.externalId && !/^s\d+$/.test(body.externalId)) {
+      throw new BadRequestException(`SampleType externalId must match pattern s<number>, got '${body.externalId}'`);
+    }
+    if (body.externalId) {
+      const dup = await this.prisma.sampleType.findFirst({ where: { tenantId, externalId: body.externalId } });
+      if (dup) throw new ConflictException(`SampleType externalId '${body.externalId}' already exists in tenant`);
+    }
+    const created = await this.prisma.sampleType.create({
+      data: {
+        tenantId,
+        name,
+        description: body.description,
+        externalId: body.externalId,
+        userCode: body.userCode,
+        isActive: body.isActive ?? true,
+      },
+    });
+    await this.audit.log({ tenantId, actorUserId, action: 'catalog.sample_type.create', entityType: 'SampleType', entityId: created.id, after: body, correlationId });
+    return created;
+  }
+
+  async getSampleType(tenantId: string, id: string) {
+    const row = await this.prisma.sampleType.findFirst({ where: { id, tenantId } });
+    if (!row) throw new NotFoundException('Sample type not found');
+    return row;
+  }
+
+  async updateSampleType(
+    tenantId: string,
+    id: string,
+    body: { name?: string; description?: string; externalId?: string; userCode?: string; isActive?: boolean },
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    const existing = await this.getSampleType(tenantId, id);
+    if (body.externalId && body.externalId !== existing.externalId) {
+      if (!/^s\d+$/.test(body.externalId)) {
+        throw new BadRequestException(`SampleType externalId must match pattern s<number>, got '${body.externalId}'`);
+      }
+      const dup = await this.prisma.sampleType.findFirst({ where: { tenantId, externalId: body.externalId, NOT: { id } } });
+      if (dup) throw new ConflictException(`SampleType externalId '${body.externalId}' already exists in tenant`);
+    }
+    const updated = await this.prisma.sampleType.update({
+      where: { id },
+      data: {
+        ...(body.name !== undefined ? { name: normalizeCatalogName(body.name) } : {}),
+        ...(body.description !== undefined ? { description: body.description } : {}),
+        ...(body.externalId !== undefined ? { externalId: body.externalId } : {}),
+        ...(body.userCode !== undefined ? { userCode: body.userCode } : {}),
+        ...(body.isActive !== undefined ? { isActive: body.isActive } : {}),
+      },
+    });
+    await this.audit.log({ tenantId, actorUserId, action: 'catalog.sample_type.update', entityType: 'SampleType', entityId: id, before: existing, after: body, correlationId });
+    return updated;
+  }
+
+  async deleteSampleType(tenantId: string, id: string, actorUserId: string, correlationId?: string) {
+    const row = await this.getSampleType(tenantId, id);
+    await this.prisma.sampleType.update({ where: { id }, data: { isActive: false } });
+    await this.audit.log({ tenantId, actorUserId, action: 'catalog.sample_type.delete', entityType: 'SampleType', entityId: id, before: row, after: { isActive: false }, correlationId });
   }
 
   // ─── Tests ────────────────────────────────────────────────────────────────
@@ -64,7 +158,7 @@ export class CatalogService {
       name: string; description?: string; sampleType?: string;
       turnaroundHours?: number; externalId?: string; userCode?: string;
       loincCode?: string; department?: string; method?: string; specimenType?: string;
-      price?: number;
+      price?: number; sampleTypeId?: string; sampleTypeExternalId?: string;
     },
     actorUserId: string,
     correlationId?: string,
@@ -78,9 +172,28 @@ export class CatalogService {
       const dup = await this.prisma.catalogTest.findFirst({ where: { tenantId, userCode: body.userCode } });
       if (dup) throw new ConflictException(`Test userCode '${body.userCode}' already exists in tenant`);
     }
-    const { specimenType, ...rest } = body;
-    const createData: any = { tenantId, ...rest };
-    if (specimenType !== undefined) createData.sampleType = specimenType;
+    const createData: any = {
+      tenantId,
+      ...body,
+      name: normalizeCatalogName(body.name),
+    };
+    const providedSampleTypeId = body.sampleTypeId ?? (body.sampleTypeExternalId
+      ? (await this.prisma.sampleType.findFirst({ where: { tenantId, externalId: body.sampleTypeExternalId } }))?.id
+      : undefined);
+    if (body.sampleTypeExternalId && !providedSampleTypeId) {
+      throw new BadRequestException(`Unknown sampleTypeExternalId '${body.sampleTypeExternalId}'`);
+    }
+    if (providedSampleTypeId) {
+      const sampleType = await this.prisma.sampleType.findFirst({ where: { id: providedSampleTypeId, tenantId, isActive: true } });
+      if (!sampleType) throw new BadRequestException('Invalid sampleTypeId for test');
+      createData.sampleTypeId = sampleType.id;
+      createData.sampleType = sampleType.name;
+      createData.specimenType = sampleType.name;
+    } else if (body.specimenType !== undefined) {
+      createData.specimenType = normalizeCatalogName(body.specimenType);
+      createData.sampleType = normalizeCatalogName(body.specimenType);
+    }
+    delete createData.sampleTypeExternalId;
     const test = await this.prisma.catalogTest.create({ data: createData });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.test.create', entityType: 'CatalogTest', entityId: test.id, after: body, correlationId });
     return test;
@@ -99,6 +212,7 @@ export class CatalogService {
       name?: string; description?: string; sampleType?: string; turnaroundHours?: number;
       isActive?: boolean; externalId?: string; userCode?: string; loincCode?: string;
       department?: string; method?: string; specimenType?: string; price?: number;
+      sampleTypeId?: string; sampleTypeExternalId?: string;
     },
     actorUserId: string,
     correlationId?: string,
@@ -114,9 +228,26 @@ export class CatalogService {
       const dup = await this.prisma.catalogTest.findFirst({ where: { tenantId, userCode: body.userCode, NOT: { id } } });
       if (dup) throw new ConflictException(`Test userCode '${body.userCode}' already exists in tenant`);
     }
-    const { specimenType, ...rest } = body;
-    const updateData: any = { ...rest };
-    if (specimenType !== undefined) updateData.sampleType = specimenType;
+    const updateData: any = { ...body };
+    if (body.name !== undefined) updateData.name = normalizeCatalogName(body.name);
+    const providedSampleTypeId = body.sampleTypeId ?? (body.sampleTypeExternalId
+      ? (await this.prisma.sampleType.findFirst({ where: { tenantId, externalId: body.sampleTypeExternalId } }))?.id
+      : undefined);
+    if (body.sampleTypeExternalId && !providedSampleTypeId) {
+      throw new BadRequestException(`Unknown sampleTypeExternalId '${body.sampleTypeExternalId}'`);
+    }
+    if (providedSampleTypeId) {
+      const sampleType = await this.prisma.sampleType.findFirst({ where: { id: providedSampleTypeId, tenantId, isActive: true } });
+      if (!sampleType) throw new BadRequestException('Invalid sampleTypeId for test');
+      updateData.sampleTypeId = sampleType.id;
+      updateData.sampleType = sampleType.name;
+      updateData.specimenType = sampleType.name;
+    } else if (body.specimenType !== undefined) {
+      updateData.specimenType = normalizeCatalogName(body.specimenType);
+      updateData.sampleType = normalizeCatalogName(body.specimenType);
+      updateData.sampleTypeId = null;
+    }
+    delete updateData.sampleTypeExternalId;
     const updated = await this.prisma.catalogTest.update({ where: { id }, data: updateData });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.test.update', entityType: 'CatalogTest', entityId: id, before: test, after: body, correlationId });
     return updated;
@@ -196,6 +327,18 @@ export class CatalogService {
     return updated;
   }
 
+  async getPanel(tenantId: string, id: string) {
+    const panel = await this.prisma.catalogPanel.findFirst({ where: { id, tenantId } });
+    if (!panel) throw new NotFoundException('Panel not found');
+    return panel;
+  }
+
+  async deletePanel(tenantId: string, id: string, actorUserId: string, correlationId?: string) {
+    const panel = await this.getPanel(tenantId, id);
+    await this.prisma.catalogPanel.update({ where: { id }, data: { isActive: false } });
+    await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel.delete', entityType: 'CatalogPanel', entityId: id, before: panel, after: { isActive: false }, correlationId });
+  }
+
   // ─── Parameters ───────────────────────────────────────────────────────────
 
   async listParameters(tenantId: string, opts: { page?: number; limit?: number; search?: string } = {}) {
@@ -238,7 +381,15 @@ export class CatalogService {
       const dup = await this.prisma.parameter.findFirst({ where: { tenantId, userCode: body.userCode } });
       if (dup) throw new ConflictException(`Parameter userCode '${body.userCode}' already exists in tenant`);
     }
-    const param = await this.prisma.parameter.create({ data: { tenantId, ...body } });
+    const param = await this.prisma.parameter.create({
+      data: {
+        tenantId,
+        ...body,
+        name: normalizeCatalogName(body.name),
+        ...(body.defaultUnit !== undefined ? { defaultUnit: normalizeUnit(body.defaultUnit) } : {}),
+        ...(body.unit !== undefined ? { unit: normalizeUnit(body.unit) } : {}),
+      },
+    });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.parameter.create', entityType: 'Parameter', entityId: param.id, after: body, correlationId });
     return param;
   }
@@ -272,9 +423,23 @@ export class CatalogService {
       const dup = await this.prisma.parameter.findFirst({ where: { tenantId, userCode: body.userCode, NOT: { id } } });
       if (dup) throw new ConflictException(`Parameter userCode '${body.userCode}' already exists in tenant`);
     }
-    const updated = await this.prisma.parameter.update({ where: { id }, data: body });
+    const updated = await this.prisma.parameter.update({
+      where: { id },
+      data: {
+        ...body,
+        ...(body.name !== undefined ? { name: normalizeCatalogName(body.name) } : {}),
+        ...(body.defaultUnit !== undefined ? { defaultUnit: normalizeUnit(body.defaultUnit) } : {}),
+        ...(body.unit !== undefined ? { unit: normalizeUnit(body.unit) } : {}),
+      },
+    });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.parameter.update', entityType: 'Parameter', entityId: id, before: param, after: body, correlationId });
     return updated;
+  }
+
+  async deleteParameter(tenantId: string, id: string, actorUserId: string, correlationId?: string) {
+    const param = await this.getParameter(tenantId, id);
+    await this.prisma.parameter.update({ where: { id }, data: { isActive: false } });
+    await this.audit.log({ tenantId, actorUserId, action: 'catalog.parameter.delete', entityType: 'Parameter', entityId: id, before: param, after: { isActive: false }, correlationId });
   }
 
   // ─── Test-Parameter Mappings ──────────────────────────────────────────────
@@ -677,6 +842,9 @@ export class CatalogService {
 
   async createReferenceRange(tenantId: string, body: { parameterId: string; testId?: string; gender?: string; ageMinYears?: number; ageMaxYears?: number; lowValue?: number; highValue?: number; criticalLow?: number; criticalHigh?: number; unit?: string }, actorUserId: string, correlationId?: string) {
     await this.getParameter(tenantId, body.parameterId);
+    if (body.testId) {
+      await this.getTest(tenantId, body.testId);
+    }
     const range = await this.prisma.referenceRange.create({ data: { tenantId, ...body } });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.reference_range.create', entityType: 'ReferenceRange', entityId: range.id, after: body, correlationId });
     return range;
@@ -685,6 +853,12 @@ export class CatalogService {
   async updateReferenceRange(tenantId: string, id: string, body: any, actorUserId: string, correlationId?: string) {
     const range = await this.prisma.referenceRange.findFirst({ where: { id, tenantId } });
     if (!range) throw new NotFoundException('Reference range not found');
+    if (body.parameterId) {
+      await this.getParameter(tenantId, body.parameterId);
+    }
+    if (body.testId) {
+      await this.getTest(tenantId, body.testId);
+    }
     const updated = await this.prisma.referenceRange.update({ where: { id }, data: body });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.reference_range.update', entityType: 'ReferenceRange', entityId: id, before: range, after: body, correlationId });
     return updated;

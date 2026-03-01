@@ -1,0 +1,13 @@
+externalId,code,name,displayName,unit,dataType,description,isActive
+p101,HB,Hemoglobin,Hemoglobin,g/dL,number,,true
+p102,WBC,WBC Count,WBC Count,x10^9/L,number,,true
+p103,RBC,RBC Count,RBC Count,x10^12/L,number,,true
+p104,PLT,Platelets,Platelets,x10^9/L,number,,true
+p105,CHOL,Total Cholesterol,Total Cholesterol,mg/dL,number,,true
+p106,TG,Triglycerides,Triglycerides,mg/dL,number,,true
+p107,HDL,HDL Cholesterol,HDL Cholesterol,mg/dL,number,,true
+p108,LDL,LDL Cholesterol,LDL Cholesterol,mg/dL,number,,true
+p109,ALT,ALT (SGPT),ALT (SGPT),U/L,number,,true
+p110,AST,AST (SGOT),AST (SGOT),U/L,number,,true
+p111,ALP,Alkaline Phosphatase,Alkaline Phosphatase,U/L,number,,true
+p112,BILI,Total Bilirubin,Total Bilirubin,mg/dL,number,,true

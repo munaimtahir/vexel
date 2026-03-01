@@ -1,0 +1,20 @@
+{
+  "validate": {
+    "inserted": 0,
+    "updated": 0,
+    "skipped": 0,
+    "errors": []
+  },
+  "apply_first": {
+    "inserted": 0,
+    "updated": 0,
+    "skipped": 0,
+    "errors": []
+  },
+  "apply_second": {
+    "inserted": 0,
+    "updated": 0,
+    "skipped": 0,
+    "errors": []
+  }
+}

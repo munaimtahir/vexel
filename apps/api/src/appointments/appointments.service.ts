@@ -34,6 +34,12 @@ function toIsoOrNull(v: any) {
   return v ? new Date(v).toISOString() : null;
 }
 
+function numberOrNull(v: any): number | null {
+  if (v === undefined || v === null || v === '') return null;
+  const parsed = Number(v);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 @Injectable()
 export class AppointmentsService {
   constructor(
@@ -46,6 +52,14 @@ export class AppointmentsService {
       where: { tenantId_key: { tenantId, key: 'module.opd' } },
     });
     if (!flag?.enabled) throw new ForbiddenException('module.opd feature is disabled for this tenant');
+  }
+
+  private async assertOpdSubFeatureEnabled(tenantId: string, key: string) {
+    await this.assertOpdEnabled(tenantId);
+    const flag = await (this.prisma as any).tenantFeature.findUnique({
+      where: { tenantId_key: { tenantId, key } },
+    });
+    if (!flag?.enabled) throw new ForbiddenException(`${key} feature is disabled for this tenant`);
   }
 
   private async getAppointmentOrThrow(tenantId: string, appointmentId: string) {
@@ -160,6 +174,71 @@ export class AppointmentsService {
       consultationStartedAt: toIsoOrNull(row.consultationStartedAt),
       completedAt: toIsoOrNull(row.completedAt),
       cancelledReason: row.cancelledReason ?? null,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
+  private mapVitals(row: any) {
+    return {
+      id: row.id,
+      tenantId: row.tenantId,
+      visitId: row.visitId,
+      recordedAt: row.recordedAt,
+      recordedBy: row.recordedById ?? null,
+      heightCm: numberOrNull(row.heightCm),
+      weightKg: numberOrNull(row.weightKg),
+      bmi: numberOrNull(row.bmi),
+      temperatureC: numberOrNull(row.temperatureC),
+      pulseBpm: row.pulseBpm ?? null,
+      systolicBp: row.systolicBp ?? null,
+      diastolicBp: row.diastolicBp ?? null,
+      respiratoryRate: row.respiratoryRate ?? null,
+      spo2Pct: row.spo2Pct ?? null,
+      bloodGlucoseMgDl: numberOrNull(row.bloodGlucoseMgDl),
+      notes: row.notes ?? null,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
+  private mapClinicalNote(row: any) {
+    return {
+      id: row.id,
+      tenantId: row.tenantId,
+      visitId: row.visitId,
+      providerId: row.providerId,
+      status: row.status,
+      subjectiveJson: row.subjectiveJson ?? null,
+      objectiveJson: row.objectiveJson ?? null,
+      assessmentJson: row.assessmentJson ?? null,
+      planJson: row.planJson ?? null,
+      diagnosisText: row.diagnosisText ?? null,
+      signedAt: toIsoOrNull(row.signedAt),
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
+  private mapPrescription(row: any) {
+    return {
+      id: row.id,
+      tenantId: row.tenantId,
+      visitId: row.visitId,
+      providerId: row.providerId,
+      status: row.status,
+      notes: row.notes ?? null,
+      signedAt: toIsoOrNull(row.signedAt),
+      printedAt: toIsoOrNull(row.printedAt),
+      items: (row.items ?? []).map((item: any) => ({
+        id: item.id,
+        sortOrder: item.sortOrder,
+        medicationText: item.medicationText,
+        dosageText: item.dosageText ?? null,
+        frequencyText: item.frequencyText ?? null,
+        durationText: item.durationText ?? null,
+        instructions: item.instructions ?? null,
+      })),
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     };
@@ -606,5 +685,299 @@ export class AppointmentsService {
       { cancelledAt: new Date(), cancelledReason: body?.reason ?? null },
       correlationId,
     );
+  }
+
+  async listVisitVitals(tenantId: string, visitId: string) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.vitals');
+    await this.getVisitOrThrow(tenantId, visitId);
+    const rows = await (this.prisma as any).oPDVitals.findMany({
+      where: { tenantId, visitId },
+      orderBy: [{ recordedAt: 'desc' }, { createdAt: 'desc' }],
+    });
+    return { data: rows.map((row: any) => this.mapVitals(row)) };
+  }
+
+  async recordVisitVitals(tenantId: string, visitId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.vitals');
+    await this.getVisitOrThrow(tenantId, visitId);
+
+    const heightCm = numberOrNull(body?.heightCm);
+    const weightKg = numberOrNull(body?.weightKg);
+    const computedBmi =
+      heightCm && weightKg && heightCm > 0
+        ? Number((weightKg / ((heightCm / 100) * (heightCm / 100))).toFixed(2))
+        : null;
+    const bmi = numberOrNull(body?.bmi) ?? computedBmi;
+
+    const created = await (this.prisma as any).oPDVitals.create({
+      data: {
+        tenantId,
+        visitId,
+        recordedById: actorUserId,
+        recordedAt: body?.recordedAt ? parseDateOrThrow(body.recordedAt, 'recordedAt') : new Date(),
+        heightCm,
+        weightKg,
+        bmi,
+        temperatureC: numberOrNull(body?.temperatureC),
+        pulseBpm: body?.pulseBpm == null ? null : Number(body.pulseBpm),
+        systolicBp: body?.systolicBp == null ? null : Number(body.systolicBp),
+        diastolicBp: body?.diastolicBp == null ? null : Number(body.diastolicBp),
+        respiratoryRate: body?.respiratoryRate == null ? null : Number(body.respiratoryRate),
+        spo2Pct: body?.spo2Pct == null ? null : Number(body.spo2Pct),
+        bloodGlucoseMgDl: numberOrNull(body?.bloodGlucoseMgDl),
+        notes: body?.notes ?? null,
+      },
+    });
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'opd.vitals.record',
+      entityType: 'OPDVitals',
+      entityId: created.id,
+      after: this.mapVitals(created),
+      correlationId,
+    });
+    return this.mapVitals(created);
+  }
+
+  async getVisitClinicalNote(tenantId: string, visitId: string) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.clinical_note');
+    await this.getVisitOrThrow(tenantId, visitId);
+    const row = await (this.prisma as any).oPDClinicalNote.findFirst({ where: { tenantId, visitId } });
+    if (!row) throw new NotFoundException('Clinical note not found');
+    return this.mapClinicalNote(row);
+  }
+
+  async upsertVisitClinicalNote(
+    tenantId: string,
+    visitId: string,
+    body: any,
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.clinical_note');
+    const visit = await this.getVisitOrThrow(tenantId, visitId);
+
+    const providerId = body?.providerId ?? visit.providerId;
+    if (!providerId) throw new ConflictException('providerId is required for clinical note');
+    const provider = await (this.prisma as any).provider.findFirst({ where: { id: providerId, tenantId } });
+    if (!provider) throw new NotFoundException('OPD provider not found');
+
+    const existing = await (this.prisma as any).oPDClinicalNote.findFirst({ where: { tenantId, visitId } });
+    if (existing?.status === 'SIGNED') {
+      throw new ConflictException('Signed clinical note cannot be edited');
+    }
+
+    const data: Record<string, unknown> = {
+      providerId,
+      ...(body?.subjectiveJson !== undefined ? { subjectiveJson: body.subjectiveJson } : {}),
+      ...(body?.objectiveJson !== undefined ? { objectiveJson: body.objectiveJson } : {}),
+      ...(body?.assessmentJson !== undefined ? { assessmentJson: body.assessmentJson } : {}),
+      ...(body?.planJson !== undefined ? { planJson: body.planJson } : {}),
+      ...(body?.diagnosisText !== undefined ? { diagnosisText: body.diagnosisText } : {}),
+    };
+
+    const row = existing
+      ? await (this.prisma as any).oPDClinicalNote.update({
+          where: { id: existing.id },
+          data,
+        })
+      : await (this.prisma as any).oPDClinicalNote.create({
+          data: { tenantId, visitId, status: 'DRAFT', ...data },
+        });
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: existing ? 'opd.clinical_note.update' : 'opd.clinical_note.create',
+      entityType: 'OPDClinicalNote',
+      entityId: row.id,
+      before: existing ? this.mapClinicalNote(existing) : undefined,
+      after: this.mapClinicalNote(row),
+      correlationId,
+    });
+    return this.mapClinicalNote(row);
+  }
+
+  async signVisitClinicalNote(tenantId: string, visitId: string, actorUserId: string, correlationId?: string) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.clinical_note');
+    await this.getVisitOrThrow(tenantId, visitId);
+    const existing = await (this.prisma as any).oPDClinicalNote.findFirst({ where: { tenantId, visitId } });
+    if (!existing) throw new NotFoundException('Clinical note not found');
+    if (existing.status === 'SIGNED') return this.mapClinicalNote(existing);
+    const row = await (this.prisma as any).oPDClinicalNote.update({
+      where: { id: existing.id },
+      data: { status: 'SIGNED', signedAt: new Date() },
+    });
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'opd.clinical_note.sign',
+      entityType: 'OPDClinicalNote',
+      entityId: row.id,
+      before: { status: existing.status },
+      after: { status: row.status, signedAt: row.signedAt },
+      correlationId,
+    });
+    return this.mapClinicalNote(row);
+  }
+
+  async getVisitPrescription(tenantId: string, visitId: string) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.prescription_free_text');
+    await this.getVisitOrThrow(tenantId, visitId);
+    const row = await (this.prisma as any).oPDPrescription.findFirst({
+      where: { tenantId, visitId },
+      include: { items: { orderBy: { sortOrder: 'asc' } } },
+    });
+    if (!row) throw new NotFoundException('Prescription not found');
+    return this.mapPrescription(row);
+  }
+
+  async upsertVisitPrescription(
+    tenantId: string,
+    visitId: string,
+    body: any,
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.prescription_free_text');
+    const visit = await this.getVisitOrThrow(tenantId, visitId);
+
+    const providerId = body?.providerId ?? visit.providerId;
+    if (!providerId) throw new ConflictException('providerId is required for prescription');
+    const provider = await (this.prisma as any).provider.findFirst({ where: { id: providerId, tenantId } });
+    if (!provider) throw new NotFoundException('OPD provider not found');
+
+    const existing = await (this.prisma as any).oPDPrescription.findFirst({ where: { tenantId, visitId } });
+    if (existing?.status === 'SIGNED' || existing?.status === 'PRINTED') {
+      throw new ConflictException('Signed or printed prescription cannot be edited');
+    }
+
+    const items = body?.items;
+    if (items !== undefined) {
+      if (!Array.isArray(items)) throw new ConflictException('items must be an array');
+      for (const item of items) {
+        if (!item?.medicationText || !String(item.medicationText).trim()) {
+          throw new ConflictException('Prescription item medicationText is required');
+        }
+      }
+    }
+
+    const row = await (this.prisma as any).$transaction(async (tx: any) => {
+      const prescription = existing
+        ? await tx.oPDPrescription.update({
+            where: { id: existing.id },
+            data: {
+              providerId,
+              ...(body?.notes !== undefined ? { notes: body.notes } : {}),
+            },
+          })
+        : await tx.oPDPrescription.create({
+            data: {
+              tenantId,
+              visitId,
+              providerId,
+              status: 'DRAFT',
+              notes: body?.notes ?? null,
+            },
+          });
+
+      if (items !== undefined) {
+        await tx.oPDPrescriptionItem.deleteMany({
+          where: { tenantId, prescriptionId: prescription.id },
+        });
+        if (items.length > 0) {
+          await tx.oPDPrescriptionItem.createMany({
+            data: items.map((item: any, index: number) => ({
+              tenantId,
+              prescriptionId: prescription.id,
+              sortOrder: index + 1,
+              medicationText: String(item.medicationText).trim(),
+              dosageText: item?.dosageText ?? null,
+              frequencyText: item?.frequencyText ?? null,
+              durationText: item?.durationText ?? null,
+              instructions: item?.instructions ?? null,
+            })),
+          });
+        }
+      }
+
+      return tx.oPDPrescription.findFirst({
+        where: { id: prescription.id, tenantId },
+        include: { items: { orderBy: { sortOrder: 'asc' } } },
+      });
+    });
+    if (!row) throw new NotFoundException('Prescription not found');
+
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: existing ? 'opd.prescription.update' : 'opd.prescription.create',
+      entityType: 'OPDPrescription',
+      entityId: row.id,
+      before: existing ? { status: existing.status } : undefined,
+      after: this.mapPrescription(row),
+      correlationId,
+    });
+    return this.mapPrescription(row);
+  }
+
+  async signVisitPrescription(tenantId: string, visitId: string, actorUserId: string, correlationId?: string) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.prescription_free_text');
+    await this.getVisitOrThrow(tenantId, visitId);
+    const existing = await (this.prisma as any).oPDPrescription.findFirst({
+      where: { tenantId, visitId },
+      include: { items: { orderBy: { sortOrder: 'asc' } } },
+    });
+    if (!existing) throw new NotFoundException('Prescription not found');
+    if (existing.status === 'SIGNED' || existing.status === 'PRINTED') return this.mapPrescription(existing);
+    const row = await (this.prisma as any).oPDPrescription.update({
+      where: { id: existing.id },
+      data: { status: 'SIGNED', signedAt: new Date() },
+      include: { items: { orderBy: { sortOrder: 'asc' } } },
+    });
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'opd.prescription.sign',
+      entityType: 'OPDPrescription',
+      entityId: row.id,
+      before: { status: existing.status },
+      after: { status: row.status, signedAt: row.signedAt },
+      correlationId,
+    });
+    return this.mapPrescription(row);
+  }
+
+  async markVisitPrescriptionPrinted(
+    tenantId: string,
+    visitId: string,
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    await this.assertOpdSubFeatureEnabled(tenantId, 'opd.prescription_free_text');
+    await this.getVisitOrThrow(tenantId, visitId);
+    const existing = await (this.prisma as any).oPDPrescription.findFirst({
+      where: { tenantId, visitId },
+      include: { items: { orderBy: { sortOrder: 'asc' } } },
+    });
+    if (!existing) throw new NotFoundException('Prescription not found');
+    if (existing.status === 'PRINTED') return this.mapPrescription(existing);
+    if (existing.status !== 'SIGNED') throw new ConflictException('Prescription must be signed first');
+    const row = await (this.prisma as any).oPDPrescription.update({
+      where: { id: existing.id },
+      data: { status: 'PRINTED', printedAt: new Date() },
+      include: { items: { orderBy: { sortOrder: 'asc' } } },
+    });
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'opd.prescription.mark_printed',
+      entityType: 'OPDPrescription',
+      entityId: row.id,
+      before: { status: existing.status },
+      after: { status: row.status, printedAt: row.printedAt },
+      correlationId,
+    });
+    return this.mapPrescription(row);
   }
 }

@@ -85,6 +85,8 @@ export default function NewRegistrationPage() {
   const testSearchRef = useRef<HTMLInputElement>(null);
   const discountRef = useRef<HTMLInputElement>(null);
   const paidRef = useRef<HTMLInputElement>(null);
+  const registerBtnRef = useRef<HTMLButtonElement>(null);
+  const [patientRegisteredMsg, setPatientRegisteredMsg] = useState('');
 
   const focusAndSelect = (ref: React.RefObject<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null>) => {
     const el = ref.current;
@@ -239,10 +241,9 @@ export default function NewRegistrationPage() {
   // ── Register Patient (patient only, no order) ────────────────────
   const handleRegisterPatient = async () => {
     if (!validate()) return;
-    setSaving(true); setSaveError('');
+    setSaving(true); setSaveError(''); setPatientRegisteredMsg('');
     try {
       const api = getApiClient(getToken() ?? undefined);
-      if (existingPatient) { setRegisteredMRN(existingPatient.mrn); return; }
       const parts = patient.fullName.trim().split(/\s+/);
       const body: Record<string, unknown> = {
         firstName: parts[0] || '',
@@ -253,11 +254,22 @@ export default function NewRegistrationPage() {
       if (patient.dateOfBirth) body.dateOfBirth = patient.dateOfBirth;
       if (patient.cnic.trim()) body.cnic = patient.cnic.trim();
       if (patient.address.trim()) body.address = patient.address.trim();
-      const { data: pt, error: ptErr } = await api.POST('/patients', { body: body as any });
-      if (ptErr || !pt) { setSaveError((ptErr as any)?.message ?? 'Registration failed'); return; }
-      setExistingPatient(pt);
-      setRegisteredMRN((pt as any).mrn);
+
+      if (existingPatient) {
+        // Update existing patient with any changed fields
+        // @ts-ignore
+        await api.PATCH('/patients/{patientId}', { params: { path: { patientId: existingPatient.id } }, body: body as any });
+        setRegisteredMRN(existingPatient.mrn);
+        setPatientRegisteredMsg('✓ Patient record updated');
+      } else {
+        const { data: pt, error: ptErr } = await api.POST('/patients', { body: body as any });
+        if (ptErr || !pt) { setSaveError((ptErr as any)?.message ?? 'Registration failed'); return; }
+        setExistingPatient(pt);
+        setRegisteredMRN((pt as any).mrn);
+        setPatientRegisteredMsg(`✓ Patient registered — MRN: ${(pt as any).mrn}`);
+      }
       setTimeout(() => testSearchRef.current?.focus(), 100);
+      setTimeout(() => setPatientRegisteredMsg(''), 4000);
     } finally { setSaving(false); }
   };
 
@@ -613,21 +625,31 @@ export default function NewRegistrationPage() {
             ref={addressRef}
             value={patient.address}
             onChange={e => setField('address', e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); testSearchRef.current?.focus(); } }}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); registerBtnRef.current?.focus(); } }}
             rows={2}
-            placeholder="Press Enter to move to order, Shift+Enter for new line"
+            placeholder="Press Enter to go to Register Patient, Shift+Enter for new line"
             className="w-full px-2.5 py-2 border border-input rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring resize-y"
           />
         </div>
 
         {/* Register Patient button */}
-        <div className="flex items-center gap-3">
-          <Button onClick={handleRegisterPatient} disabled={saving}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button
+            ref={registerBtnRef}
+            onClick={handleRegisterPatient}
+            disabled={saving}
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleRegisterPatient(); } }}
+          >
             {saving ? 'Registering…' : '👤 Register Patient'}
           </Button>
-          {registeredMRN && (
+          {registeredMRN && !patientRegisteredMsg && (
             <span className="text-sm text-[hsl(var(--status-success-fg))] font-semibold">
               ✓ Registered — MRN: {registeredMRN}
+            </span>
+          )}
+          {patientRegisteredMsg && (
+            <span className="text-sm text-[hsl(var(--status-success-fg))] font-semibold animate-pulse">
+              {patientRegisteredMsg}
             </span>
           )}
         </div>

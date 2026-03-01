@@ -1,0 +1,13 @@
+externalId,userCode,name,resultType,defaultUnit,decimals,allowedValues,loincCode,defaultValue,isActive
+hb,HB,Hemoglobin,numeric,g/dL,,,,,true
+wbc,WBC,WBC Count,numeric,x10^9/L,,,,,true
+rbc,RBC,RBC Count,numeric,x10^12/L,,,,,true
+plt,PLT,Platelets,numeric,x10^9/L,,,,,true
+chol,CHOL,Total Cholesterol,numeric,mg/dL,,,,,true
+tg,TG,Triglycerides,numeric,mg/dL,,,,,true
+hdl,HDL,HDL Cholesterol,numeric,mg/dL,,,,,true
+ldl,LDL,LDL Cholesterol,numeric,mg/dL,,,,,true
+alt,ALT,ALT (SGPT),numeric,U/L,,,,,true
+ast,AST,AST (SGOT),numeric,U/L,,,,,true
+alp,ALP,Alkaline Phosphatase,numeric,U/L,,,,,true
+bili,BILI,Total Bilirubin,numeric,mg/dL,,,,,true

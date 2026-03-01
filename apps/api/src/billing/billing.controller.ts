@@ -100,4 +100,21 @@ export class BillingController {
     const user = (req as any).user;
     return this.svc.recordInvoicePayment(this.resolveTenantId(req), invoiceId, body, user.userId, correlationId);
   }
+
+  @Post('invoices/:invoiceId\\:generate-receipt')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  generateInvoiceReceipt(
+    @Req() req: Request,
+    @Param('invoiceId') invoiceId: string,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.generateInvoiceReceipt(
+      this.resolveTenantId(req),
+      invoiceId,
+      user.userId,
+      correlationId,
+    );
+  }
 }

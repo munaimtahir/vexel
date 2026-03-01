@@ -24,6 +24,7 @@ model Tenant {
   auditEvents   AuditEvent[]
   catalogTests  CatalogTest[]
   catalogPanels CatalogPanel[]
+  sampleTypes   SampleType[]
   roles         Role[]
   encounters    Encounter[]
   patients      Patient[]
@@ -195,6 +196,7 @@ model TenantFeature {
 model CatalogTest {
   id              String   @id @default(uuid())
   tenantId        String
+  sampleTypeId    String?
   name            String
   description     String?
   sampleType      String?  // legacy field kept for compat
@@ -211,14 +213,35 @@ model CatalogTest {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  tenant    Tenant     @relation(fields: [tenantId], references: [id])
-  labOrders LabOrder[]
+  tenant          Tenant      @relation(fields: [tenantId], references: [id])
+  sampleTypeRef   SampleType? @relation(fields: [sampleTypeId], references: [id])
+  labOrders       LabOrder[]
   parameterMappings TestParameterMapping[]
   panelMappings     PanelTestMapping[]
+  referenceRanges   ReferenceRange[]
 
   @@unique([tenantId, externalId], name: "tenant_test_externalId")
   @@index([tenantId, isActive])
   @@map("catalog_tests")
+}
+
+model SampleType {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  description String?
+  externalId  String?
+  userCode    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  catalogTests CatalogTest[]
+
+  @@unique([tenantId, externalId], name: "tenant_sample_type_externalId")
+  @@index([tenantId, isActive])
+  @@map("sample_types")
 }
 
 model CatalogPanel {
@@ -323,6 +346,7 @@ model ReferenceRange {
 
   tenant    Tenant    @relation(fields: [tenantId], references: [id])
   parameter Parameter @relation(fields: [parameterId], references: [id])
+  test      CatalogTest? @relation(fields: [testId], references: [id])
 
   @@index([tenantId, parameterId])
   @@map("reference_ranges")
@@ -547,11 +571,12 @@ model Provider {
   code           String?
   displayName    String
   specialty      String?
-  registrationNo String?
-  qualification  String?
-  phone          String?
-  email          String?
-  isActive       Boolean  @default(true)
+  registrationNo   String?
+  qualification    String?
+  phone            String?
+  email            String?
+  consultationFee  Decimal? @db.Decimal(10,2)
+  isActive         Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

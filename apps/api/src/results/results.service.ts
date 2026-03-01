@@ -38,6 +38,44 @@ export class ResultsService {
     private readonly documents: DocumentsService,
   ) {}
 
+  private formatReferenceRange(row: any): string | null {
+    if (!row) return null;
+    if (row.lowValue != null && row.highValue != null) return `${row.lowValue}-${row.highValue}`;
+    if (row.lowValue != null) return `>${row.lowValue}`;
+    if (row.highValue != null) return `<${row.highValue}`;
+    return null;
+  }
+
+  private async resolveReferenceRange(
+    tenantId: string,
+    testId: string,
+    parameterId: string,
+    patientGender?: string | null,
+    patientDob?: Date | null,
+  ): Promise<{ referenceRange: string | null; unit: string | null }> {
+    const ageYears = patientDob
+      ? Math.floor((Date.now() - new Date(patientDob).getTime()) / (365.25 * 24 * 3600 * 1000))
+      : null;
+    const candidates = await this.prisma.referenceRange.findMany({
+      where: {
+        tenantId,
+        parameterId,
+        OR: [{ testId }, { testId: null }],
+      },
+      orderBy: [{ testId: 'desc' }, { ageMinYears: 'desc' }, { createdAt: 'asc' }],
+    });
+    for (const row of candidates) {
+      if (row.gender && patientGender && row.gender !== patientGender) continue;
+      if (row.gender && !patientGender) continue;
+      if (ageYears != null) {
+        if (row.ageMinYears != null && ageYears < row.ageMinYears) continue;
+        if (row.ageMaxYears != null && ageYears > row.ageMaxYears) continue;
+      }
+      return { referenceRange: this.formatReferenceRange(row), unit: row.unit ?? null };
+    }
+    return { referenceRange: null, unit: null };
+  }
+
   async getPendingTests(
     tenantId: string,
     filters: { search?: string; page?: number; limit?: number },
@@ -165,23 +203,30 @@ export class ResultsService {
 
     const specimenReady = SPECIMEN_READY_STATUSES.includes(order.encounter.status);
 
-    const parameters = (parameterMappings as any[]).map((m) => {
+    const parameters = await Promise.all((parameterMappings as any[]).map(async (m) => {
       const existing = (order.results as any[]).find((r) => r.parameterId === m.parameterId);
       const locked = !!existing?.verifiedAt || !!existing?.locked;
+      const resolvedRange = await this.resolveReferenceRange(
+        tenantId,
+        order.testId,
+        m.parameterId,
+        order.encounter?.patient?.gender ?? null,
+        order.encounter?.patient?.dateOfBirth ?? null,
+      );
       return {
         parameterId: m.parameterId,
         name: m.parameter.name,
-        unit: m.unitOverride ?? m.parameter.defaultUnit,
+        unit: existing?.unit ?? m.unitOverride ?? resolvedRange.unit ?? m.parameter.defaultUnit,
         dataType: m.parameter.resultType ?? m.parameter.dataType,
         allowedValues: m.parameter.allowedValues,
-        referenceRange: existing?.referenceRange ?? null,
+        referenceRange: existing?.referenceRange ?? resolvedRange.referenceRange,
         value: existing?.value ?? null,
         flag: existing?.flag ?? null,
         locked,
         enteredAt: existing?.enteredAt ?? null,
         verifiedAt: existing?.verifiedAt ?? null,
       };
-    });
+    }));
 
     return {
       id: order.id,
@@ -215,7 +260,7 @@ export class ResultsService {
   ) {
     const order = await this.prisma.labOrder.findFirst({
       where: { id: orderedTestId, tenantId },
-      include: { encounter: true },
+      include: { encounter: { include: { patient: true } } },
     });
     if (!order) throw new NotFoundException('Ordered test not found');
     if (!SPECIMEN_READY_STATUSES.includes(order.encounter.status)) {
@@ -246,7 +291,15 @@ export class ResultsService {
 
       const effectiveUnit =
         (mapping as any)?.unitOverride ?? param?.defaultUnit ?? (param as any)?.unit ?? null;
-      const referenceRange = existing?.referenceRange ?? null;
+      const resolvedRange = await this.resolveReferenceRange(
+        tenantId,
+        order.testId,
+        parameterId,
+        order.encounter?.patient?.gender ?? null,
+        order.encounter?.patient?.dateOfBirth ?? null,
+      );
+      const referenceRange = existing?.referenceRange ?? resolvedRange.referenceRange;
+      const unit = effectiveUnit ?? resolvedRange.unit;
       const flag = computeFlag(value, referenceRange);
 
       const data = {
@@ -255,7 +308,7 @@ export class ResultsService {
         parameterId,
         parameterNameSnapshot: param?.name ?? null,
         value,
-        unit: effectiveUnit,
+        unit,
         referenceRange,
         flag,
         enteredAt: now,

@@ -11,7 +11,7 @@ import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request, Response } from 'express';
 
 @ApiTags('Catalog')
-@Controller('catalog')
+@Controller(['catalog', 'admin/catalog'])
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class CatalogController {
@@ -19,6 +19,49 @@ export class CatalogController {
     private readonly svc: CatalogService,
     private readonly importExportSvc: CatalogImportExportService,
   ) {}
+
+  // ─── Sample Types ──────────────────────────────────────────────────────────
+
+  @Get('sample-types')
+  @RequirePermissions(Permission.CATALOG_READ)
+  listSampleTypes(@Req() req: Request, @Query() q: any) {
+    return this.svc.listSampleTypes((req as any).user.tenantId, q);
+  }
+
+  @Post('sample-types')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  createSampleType(@Req() req: Request, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.createSampleType(user.tenantId, b, user.userId, correlationId);
+  }
+
+  @Get('sample-types/next-id')
+  @RequirePermissions(Permission.CATALOG_READ)
+  async getNextSampleTypeId(@Req() req: Request) {
+    return this.svc.getNextId((req as any).user.tenantId, 'sample-type');
+  }
+
+  @Get('sample-types/:id')
+  @RequirePermissions(Permission.CATALOG_READ)
+  getSampleType(@Req() req: Request, @Param('id') id: string) {
+    return this.svc.getSampleType((req as any).user.tenantId, id);
+  }
+
+  @Patch('sample-types/:id')
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  updateSampleType(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.updateSampleType(user.tenantId, id, b, user.userId, correlationId);
+  }
+
+  @Delete('sample-types/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  deleteSampleType(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.deleteSampleType(user.tenantId, id, user.userId, correlationId);
+  }
 
   // ─── Tests ────────────────────────────────────────────────────────────────
 
@@ -139,11 +182,25 @@ export class CatalogController {
     return this.svc.getPanelDefinition((req as any).user.tenantId, panelId);
   }
 
+  @Get('panels/:panelId')
+  @RequirePermissions(Permission.CATALOG_READ)
+  getPanel(@Req() req: Request, @Param('panelId') panelId: string) {
+    return this.svc.getPanel((req as any).user.tenantId, panelId);
+  }
+
   @Patch('panels/:panelId')
   @RequirePermissions(Permission.CATALOG_MANAGE)
   updatePanel(@Req() req: Request, @Param('panelId') panelId: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
     return this.svc.updatePanel(user.tenantId, panelId, b, user.userId, correlationId);
+  }
+
+  @Delete('panels/:panelId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  deletePanel(@Req() req: Request, @Param('panelId') panelId: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.deletePanel(user.tenantId, panelId, user.userId, correlationId);
   }
 
   @Get('panels/:panelId/tests')
@@ -211,6 +268,21 @@ export class CatalogController {
     return this.svc.updateParameter(user.tenantId, id, b, user.userId, correlationId);
   }
 
+  @Patch('parameters/:id')
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  patchParameter(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.updateParameter(user.tenantId, id, b, user.userId, correlationId);
+  }
+
+  @Delete('parameters/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  deleteParameter(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.deleteParameter(user.tenantId, id, user.userId, correlationId);
+  }
+
   // ─── Reference Ranges ─────────────────────────────────────────────────────
 
   @Get('reference-ranges')
@@ -230,6 +302,13 @@ export class CatalogController {
   @Put('reference-ranges/:id')
   @RequirePermissions(Permission.CATALOG_MANAGE)
   updateReferenceRange(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.updateReferenceRange(user.tenantId, id, b, user.userId, correlationId);
+  }
+
+  @Patch('reference-ranges/:id')
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  patchReferenceRange(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
     const user = (req as any).user;
     return this.svc.updateReferenceRange(user.tenantId, id, b, user.userId, correlationId);
   }
@@ -259,6 +338,14 @@ export class CatalogController {
     res.set('Content-Type', 'text/csv');
     res.set('Content-Disposition', 'attachment; filename="parameters-template.csv"');
     res.send(this.importExportSvc.generateParametersCsv());
+  }
+
+  @Get('templates/sample-types.csv')
+  @RequirePermissions(Permission.CATALOG_READ)
+  downloadSampleTypesTemplate(@Res() res: Response) {
+    res.set('Content-Type', 'text/csv');
+    res.set('Content-Disposition', 'attachment; filename="sample-types-template.csv"');
+    res.send(this.importExportSvc.generateSampleTypesCsv());
   }
 
   @Get('templates/tests.csv')
@@ -293,6 +380,14 @@ export class CatalogController {
     res.send(this.importExportSvc.generatePanelTestsCsv());
   }
 
+  @Get('templates/reference-ranges.csv')
+  @RequirePermissions(Permission.CATALOG_READ)
+  downloadReferenceRangesTemplate(@Res() res: Response) {
+    res.set('Content-Type', 'text/csv');
+    res.set('Content-Disposition', 'attachment; filename="reference-ranges-template.csv"');
+    res.send(this.importExportSvc.generateReferenceRangesCsv());
+  }
+
   @Post('test-parameter-mappings/import')
   @RequirePermissions(Permission.CATALOG_MANAGE)
   async importTestParameterMappings(@Req() req: Request, @Body() body: { csv: string }, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
@@ -310,6 +405,26 @@ export class CatalogController {
     return this.importExportSvc.importFromWorkbook(user.tenantId, file.buffer, { mode, validate }, user.userId, correlationId);
   }
 
+  @Post('import/workbook')
+  @RequirePermissions(Permission.CATALOG_MANAGE)
+  @UseInterceptors(FileInterceptor('file'))
+  async importCatalogWorkbook(
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File,
+    @Query('validate') validate?: string,
+    @Query('mode') mode?: 'UPSERT_PATCH' | 'CREATE_ONLY',
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.importExportSvc.importFromWorkbook(
+      user.tenantId,
+      file.buffer,
+      { mode: mode ?? 'UPSERT_PATCH', validate: validate === 'true' },
+      user.userId,
+      correlationId,
+    );
+  }
+
   @Get('export')
   @RequirePermissions(Permission.CATALOG_READ)
   async exportCatalog(@Req() req: Request, @Res() res: Response) {
@@ -318,5 +433,11 @@ export class CatalogController {
     res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.set('Content-Disposition', `attachment; filename="catalog-export-${new Date().toISOString().slice(0, 10)}.xlsx"`);
     res.send(buf);
+  }
+
+  @Get('export/workbook.xlsx')
+  @RequirePermissions(Permission.CATALOG_READ)
+  async exportCatalogWorkbook(@Req() req: Request, @Res() res: Response) {
+    return this.exportCatalog(req, res);
   }
 }

@@ -254,17 +254,49 @@ export async function main() {
   }
 
   // Seed minimal catalog tests for E2E testing
+  const sampleType = await prisma.sampleType.upsert({
+    where: { tenant_sample_type_externalId: { tenantId: 'system', externalId: 's1' } },
+    update: { name: 'Whole Blood', isActive: true },
+    create: { tenantId: 'system', externalId: 's1', userCode: 'WB', name: 'Whole Blood', isActive: true },
+  });
   await prisma.catalogTest.upsert({
     where: { tenant_test_externalId: { tenantId: 'system', externalId: 't1' } },
     update: {},
-    create: { tenantId: 'system', externalId: 't1', name: 'Glucose', isActive: true },
+    create: { tenantId: 'system', externalId: 't1', name: 'Glucose', sampleType: 'Whole Blood', specimenType: 'Whole Blood', sampleTypeId: sampleType.id, isActive: true },
   });
   await prisma.catalogTest.upsert({
     where: { tenant_test_externalId: { tenantId: 'system', externalId: 't2' } },
     update: {},
-    create: { tenantId: 'system', externalId: 't2', name: 'Complete Blood Count', isActive: true },
+    create: { tenantId: 'system', externalId: 't2', name: 'Complete Blood Count', sampleType: 'Whole Blood', specimenType: 'Whole Blood', sampleTypeId: sampleType.id, isActive: true },
   });
-  console.log('✅ Catalog tests seeded (t1=Glucose, t2=CBC)');
+  const glucoseParam = await prisma.parameter.upsert({
+    where: { tenant_param_externalId: { tenantId: 'system', externalId: 'p1' } },
+    update: { name: 'Glucose', resultType: 'numeric', defaultUnit: 'mg/dL', decimals: 1, isActive: true },
+    create: { tenantId: 'system', externalId: 'p1', userCode: 'GLU', name: 'Glucose', resultType: 'numeric', defaultUnit: 'mg/dL', decimals: 1, isActive: true },
+  });
+  const wbcParam = await prisma.parameter.upsert({
+    where: { tenant_param_externalId: { tenantId: 'system', externalId: 'p2' } },
+    update: { name: 'WBC', resultType: 'numeric', defaultUnit: '10^9/L', decimals: 1, isActive: true },
+    create: { tenantId: 'system', externalId: 'p2', userCode: 'WBC', name: 'WBC', resultType: 'numeric', defaultUnit: '10^9/L', decimals: 1, isActive: true },
+  });
+  const t1 = await prisma.catalogTest.findFirstOrThrow({ where: { tenantId: 'system', externalId: 't1' } });
+  const t2 = await prisma.catalogTest.findFirstOrThrow({ where: { tenantId: 'system', externalId: 't2' } });
+  await prisma.testParameterMapping.upsert({
+    where: { tenantId_testId_parameterId: { tenantId: 'system', testId: t1.id, parameterId: glucoseParam.id } },
+    update: { displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null },
+    create: { tenantId: 'system', testId: t1.id, parameterId: glucoseParam.id, displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null },
+  });
+  await prisma.testParameterMapping.upsert({
+    where: { tenantId_testId_parameterId: { tenantId: 'system', testId: t2.id, parameterId: wbcParam.id } },
+    update: { displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null },
+    create: { tenantId: 'system', testId: t2.id, parameterId: wbcParam.id, displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null },
+  });
+  await prisma.referenceRange.upsert({
+    where: { id: 'seed-range-glucose-system' },
+    update: { lowValue: 70, highValue: 110, unit: 'mg/dL', tenantId: 'system', parameterId: glucoseParam.id, testId: t1.id },
+    create: { id: 'seed-range-glucose-system', tenantId: 'system', parameterId: glucoseParam.id, testId: t1.id, lowValue: 70, highValue: 110, unit: 'mg/dL' },
+  });
+  console.log('✅ Catalog seeded (sample types, tests, parameters, mappings, ranges)');
 
   // Seed default DocumentTemplates for system tenant
   await prisma.documentTemplate.upsert({
