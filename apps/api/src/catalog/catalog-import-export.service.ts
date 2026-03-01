@@ -318,6 +318,37 @@ export class CatalogImportExportService {
 
   // ─── Internal Helpers ─────────────────────────────────────────────────────
 
+  // Normalize legacy column names → current canonical names.
+  // Supports workbooks built from old templates (code→userCode, unit→defaultUnit, etc.)
+  private _normalizeRow(row: Record<string, string>): Record<string, string> {
+    const aliases: Record<string, string> = {
+      code: 'userCode',
+      unit: 'defaultUnit',
+      dataType: 'resultType',
+      category: 'department',
+      low: 'lowValue',
+      high: 'highValue',
+    };
+    const out: Record<string, string> = {};
+    for (const [k, v] of Object.entries(row)) {
+      const canonical = aliases[k] ?? k;
+      // Don't overwrite if the canonical key was also present in the row
+      if (!(canonical in out)) out[canonical] = v;
+    }
+    // Convert ageMinDays / ageMaxDays → ageMinYears / ageMaxYears (÷365.25, rounded)
+    if (!('ageMinYears' in out) && 'ageMinDays' in out && out['ageMinDays'] !== '') {
+      const d = Number(out['ageMinDays']);
+      out['ageMinYears'] = Number.isFinite(d) ? String(Math.round(d / 365.25)) : '';
+      delete out['ageMinDays'];
+    }
+    if (!('ageMaxYears' in out) && 'ageMaxDays' in out && out['ageMaxDays'] !== '') {
+      const d = Number(out['ageMaxDays']);
+      out['ageMaxYears'] = Number.isFinite(d) ? String(Math.round(d / 365.25)) : '';
+      delete out['ageMaxDays'];
+    }
+    return out;
+  }
+
   private _extractRows(ws: ExcelJS.Worksheet): Record<string, string>[] {
     const headers: string[] = [];
     ws.getRow(1).eachCell((cell, col) => { headers[col - 1] = String(cell.value ?? ''); });
@@ -329,7 +360,7 @@ export class CatalogImportExportService {
         const h = headers[col - 1];
         if (h) obj[h] = cell.value !== null && cell.value !== undefined ? String(cell.value) : '';
       });
-      if (Object.values(obj).some((v) => v !== '')) rows.push(obj);
+      if (Object.values(obj).some((v) => v !== '')) rows.push(this._normalizeRow(obj));
     });
     return rows;
   }
