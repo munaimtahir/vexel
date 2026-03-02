@@ -1,0 +1,42 @@
+{
+  "reportNumber": "RPT-EV-URN01",
+  "issuedAt": "2026-03-02T15:30:00Z",
+  "patientName": "Zainab Qureshi",
+  "patientMrn": "VXL-MRN-005",
+  "patientAge": "32Y",
+  "patientGender": "Female",
+  "encounterId": "enc-urn-001",
+  "encounterCode": "VXL-2603-105",
+  "orderedBy": "Dr. Hamid Iqbal",
+  "sampleReceivedAt": "2026-03-02T14:00:00Z",
+  "reportStatus": "Verified",
+  "tests": [
+    {
+      "testCode": "URE",
+      "testName": "Urine R/E",
+      "department": "Microbiology",
+      "printAlone": false,
+      "parameters": [
+        { "parameterCode": "col",   "parameterName": "Colour",          "value": "Pale Yellow",  "unit": "", "referenceRange": "Pale Yellow" },
+        { "parameterCode": "app",   "parameterName": "Appearance",      "value": "Clear",        "unit": "", "referenceRange": "Clear" },
+        { "parameterCode": "ph",    "parameterName": "pH",              "value": "6.0",          "unit": "", "referenceRange": "4.5–8.0" },
+        { "parameterCode": "spgr",  "parameterName": "Specific Gravity","value": "1.020",        "unit": "", "referenceRange": "1.003–1.030" },
+        { "parameterCode": "prot",  "parameterName": "Protein",         "value": "Trace",        "unit": "", "referenceRange": "Negative",   "flag": "high" },
+        { "parameterCode": "glu",   "parameterName": "Glucose",         "value": "Negative",     "unit": "", "referenceRange": "Negative" },
+        { "parameterCode": "ket",   "parameterName": "Ketones",         "value": "Negative",     "unit": "", "referenceRange": "Negative" },
+        { "parameterCode": "blood", "parameterName": "Blood",           "value": "Negative",     "unit": "", "referenceRange": "Negative" },
+        { "parameterCode": "nitrite","parameterName": "Nitrite",        "value": "Negative",     "unit": "", "referenceRange": "Negative" },
+        { "parameterCode": "leu",   "parameterName": "Leucocyte Esterase","value": "Negative",   "unit": "", "referenceRange": "Negative" },
+        { "parameterCode": "rbc_u", "parameterName": "RBCs",            "value": "0–2",          "unit": "/HPF", "referenceRange": "0–3" },
+        { "parameterCode": "wbc_u", "parameterName": "WBCs",            "value": "5–8",          "unit": "/HPF", "referenceRange": "0–5",       "flag": "high" },
+        { "parameterCode": "epc",   "parameterName": "Epithelial Cells","value": "Occasional",   "unit": "/HPF", "referenceRange": "Occasional" },
+        { "parameterCode": "cast",  "parameterName": "Casts",           "value": "Nil",          "unit": "", "referenceRange": "Nil" },
+        { "parameterCode": "cryst", "parameterName": "Crystals",        "value": "Nil",          "unit": "", "referenceRange": "Nil" },
+        { "parameterCode": "bact",  "parameterName": "Bacteria",        "value": "Nil",          "unit": "", "referenceRange": "Nil" }
+      ]
+    }
+  ],
+  "verifiedBy": "Dr. Salma Noor",
+  "verifiedAt": "2026-03-02T15:25:00Z",
+  "tenantName": "Al Shifa Laboratory"
+}

@@ -753,7 +753,23 @@ class LabReportDocumentV2 : IDocument
         }
 
         var paramsList = paramsEl.EnumerateArray().ToList();
-        var isSingle   = paramsList.Count == 1;
+
+        // Zero parameters: empty array — show placeholder per spec
+        if (paramsList.Count == 0)
+        {
+            container.Column(col =>
+            {
+                col.Item().Row(row =>
+                {
+                    row.RelativeItem().Text(testName + ":").Bold().FontSize(9).FontColor(Colors.Grey.Darken3);
+                    row.ConstantItem(70).AlignRight().Text("No results").FontSize(8).FontColor(Colors.Grey.Darken1);
+                });
+                col.Item().LineHorizontal(0.3f).LineColor(Colors.Grey.Lighten2);
+            });
+            return;
+        }
+
+        var isSingle = paramsList.Count == 1;
 
         container.Column(col =>
         {

@@ -1,0 +1,27 @@
+{
+  "reportNumber": "RPT-EV-SCR01",
+  "issuedAt": "2026-03-02T09:45:00Z",
+  "patientName": "Muhammad Bilal",
+  "patientMrn": "VXL-MRN-003",
+  "patientAge": "55Y",
+  "patientGender": "Male",
+  "encounterId": "enc-scr-001",
+  "encounterCode": "VXL-2603-103",
+  "orderedBy": "Dr. Nadia Shah",
+  "sampleReceivedAt": "2026-03-02T08:30:00Z",
+  "reportStatus": "Verified",
+  "tests": [
+    {
+      "testCode": "SCREAT",
+      "testName": "Serum Creatinine",
+      "department": "Biochemistry",
+      "printAlone": false,
+      "parameters": [
+        { "parameterCode": "creat", "parameterName": "Creatinine", "value": "1.9", "unit": "mg/dL", "referenceRange": "0.7–1.3", "flag": "high" }
+      ]
+    }
+  ],
+  "verifiedBy": "Dr. Salma Noor",
+  "verifiedAt": "2026-03-02T09:40:00Z",
+  "tenantName": "Al Shifa Laboratory"
+}

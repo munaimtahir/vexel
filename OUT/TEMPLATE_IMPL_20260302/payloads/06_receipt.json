@@ -1,0 +1,24 @@
+{
+  "receiptNumber": "RCP-EV-001",
+  "issuedAt": "2026-03-02T08:45:00Z",
+  "patientName": "Ahmed Hassan",
+  "patientMrn": "VXL-MRN-001",
+  "patientAge": "38Y",
+  "patientGender": "Male",
+  "encounterCode": "VXL-2603-101",
+  "registeredBy": "Operator User",
+  "items": [
+    { "description": "Complete Blood Count (CBC)",  "quantity": 1, "unitPrice": 500,  "total": 500 },
+    { "description": "Liver Function Tests (LFT)",  "quantity": 1, "unitPrice": 1200, "total": 1200 },
+    { "description": "Serum Creatinine",            "quantity": 1, "unitPrice": 350,  "total": 350 },
+    { "description": "Dengue Serology (IgG + IgM)", "quantity": 1, "unitPrice": 1800, "total": 1800 },
+    { "description": "Urine R/E",                   "quantity": 1, "unitPrice": 300,  "total": 300 }
+  ],
+  "subtotal": 4150,
+  "discount": 150,
+  "tax": 0,
+  "grandTotal": 4000,
+  "paymentMethod": "Cash",
+  "paymentComments": "",
+  "tenantName": "Al Shifa Laboratory"
+}

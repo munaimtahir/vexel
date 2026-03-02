@@ -1,0 +1,37 @@
+{
+  "reportNumber": "RPT-EV-LFT01",
+  "issuedAt": "2026-03-02T11:00:00Z",
+  "patientName": "Fatima Riaz",
+  "patientMrn": "VXL-MRN-002",
+  "patientAge": "45Y",
+  "patientGender": "Female",
+  "encounterId": "enc-lft-001",
+  "encounterCode": "VXL-2603-102",
+  "orderedBy": "Dr. Asim Butt",
+  "sampleReceivedAt": "2026-03-02T09:10:00Z",
+  "reportStatus": "Verified",
+  "tests": [
+    {
+      "testCode": "LFT",
+      "testName": "Liver Function Tests",
+      "department": "Biochemistry",
+      "printAlone": false,
+      "parameters": [
+        { "parameterCode": "tbil", "parameterName": "Total Bilirubin",   "value": "1.1",  "unit": "mg/dL", "referenceRange": "0.2–1.2",   "flag": "normal" },
+        { "parameterCode": "dbil", "parameterName": "Direct Bilirubin",  "value": "0.3",  "unit": "mg/dL", "referenceRange": "0.0–0.4",   "flag": "normal" },
+        { "parameterCode": "ibil", "parameterName": "Indirect Bilirubin","value": "0.8",  "unit": "mg/dL", "referenceRange": "0.1–0.8",   "flag": "normal" },
+        { "parameterCode": "alt",  "parameterName": "ALT (SGPT)",        "value": "95",   "unit": "U/L",   "referenceRange": "7–56",       "flag": "high" },
+        { "parameterCode": "ast",  "parameterName": "AST (SGOT)",        "value": "78",   "unit": "U/L",   "referenceRange": "10–40",      "flag": "high" },
+        { "parameterCode": "alp",  "parameterName": "Alkaline Phosphatase","value": "210","unit": "U/L",   "referenceRange": "44–147",     "flag": "high" },
+        { "parameterCode": "ggt",  "parameterName": "GGT",               "value": "62",   "unit": "U/L",   "referenceRange": "9–48",       "flag": "high" },
+        { "parameterCode": "tp",   "parameterName": "Total Protein",     "value": "7.2",  "unit": "g/dL",  "referenceRange": "6.3–8.2",   "flag": "normal" },
+        { "parameterCode": "alb",  "parameterName": "Albumin",           "value": "4.1",  "unit": "g/dL",  "referenceRange": "3.5–5.0",   "flag": "normal" },
+        { "parameterCode": "glob", "parameterName": "Globulin",          "value": "3.1",  "unit": "g/dL",  "referenceRange": "2.3–3.5",   "flag": "normal" },
+        { "parameterCode": "agr",  "parameterName": "A/G Ratio",         "value": "1.32", "unit": "",      "referenceRange": "1.0–2.0",   "flag": "normal" }
+      ]
+    }
+  ],
+  "verifiedBy": "Dr. Salma Noor",
+  "verifiedAt": "2026-03-02T10:55:00Z",
+  "tenantName": "Al Shifa Laboratory"
+}

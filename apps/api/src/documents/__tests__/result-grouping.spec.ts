@@ -61,6 +61,9 @@ function buildGroupedTests(labOrders: MockLabOrder[]) {
           parameterCode: r.parameterId ?? 'result',
           parameterName: r.parameterNameSnapshot ?? 'Result',
           value: r.value,
+          unit: r.unit,
+          referenceRange: r.referenceRange,
+          flag: r.flag,
         })),
       };
     });
@@ -267,5 +270,95 @@ describe('combined grouping — mixed tests', () => {
 
     // Creatinine: 1 parameter
     expect(grouped[2].parameters).toHaveLength(1);
+  });
+});
+
+// ─── Edge cases ───────────────────────────────────────────────────────────────
+
+describe('edge cases', () => {
+  it('zero parameters (empty array) → classifies as zero-param (length 0)', () => {
+    const orders: MockLabOrder[] = [
+      {
+        id: 'zero',
+        test: { name: 'Pending Test', parameterMappings: [] },
+        results: [],
+      },
+    ];
+    const [test] = buildGroupedTests(orders);
+    expect(test.parameters).toHaveLength(0);
+    // In the PDF, ComposeTestSectionV2 will render "{testName}: No results"
+  });
+
+  it('referenceRange empty string → stored as empty, PDF should omit "Ref:" label', () => {
+    const orders: MockLabOrder[] = [
+      {
+        id: 'qualitative',
+        test: { name: 'Blood Group', parameterMappings: [] },
+        results: [
+          {
+            parameterId: null,
+            parameterNameSnapshot: 'Blood Group',
+            value: 'A+',
+            unit: '',
+            referenceRange: '',   // empty string — no range to display
+            flag: undefined,
+            enteredAt: new Date(),
+          },
+        ],
+      },
+    ];
+    const [test] = buildGroupedTests(orders);
+    expect(test.parameters).toHaveLength(1);
+    // Single-parameter: PDF renders inline. referenceRange === "" → no "Ref: " appended.
+    expect(test.parameters[0].referenceRange).toBe('');
+  });
+
+  it('flag=normal → no marker emitted by PDF (value stored, classification returns "normal")', () => {
+    const orders: MockLabOrder[] = [
+      {
+        id: 'lft',
+        test: {
+          name: 'LFT',
+          parameterMappings: [
+            { parameterId: 'a1', displayOrder: 1 },
+            { parameterId: 'a2', displayOrder: 2 },
+          ],
+        },
+        results: [
+          { parameterId: 'a1', parameterNameSnapshot: 'ALT',  value: '35', flag: 'normal', enteredAt: new Date() },
+          { parameterId: 'a2', parameterNameSnapshot: 'AST',  value: '28', flag: 'normal', enteredAt: new Date() },
+        ],
+      },
+    ];
+    const [test] = buildGroupedTests(orders);
+    expect(test.parameters.every((p) => p.flag === 'normal')).toBe(true);
+    // In the PDF, flag=normal → no arrow/badge rendered (empty flag cell)
+  });
+
+  it('flag=CRITICAL → preserved through grouping for PDF CRIT badge', () => {
+    const orders: MockLabOrder[] = [
+      {
+        id: 'electrolytes',
+        test: {
+          name: 'Serum Potassium',
+          parameterMappings: [],
+        },
+        results: [
+          {
+            parameterId: null,
+            parameterNameSnapshot: 'Potassium',
+            value: '6.9',
+            unit: 'mEq/L',
+            referenceRange: '3.5–5.5',
+            flag: 'CRITICAL',
+            enteredAt: new Date(),
+          },
+        ],
+      },
+    ];
+    const [test] = buildGroupedTests(orders);
+    expect(test.parameters).toHaveLength(1);
+    expect(test.parameters[0].flag).toBe('CRITICAL');
+    // In the PDF: single-param with flag=CRITICAL → value shown in dark red + CRITICAL badge
   });
 });

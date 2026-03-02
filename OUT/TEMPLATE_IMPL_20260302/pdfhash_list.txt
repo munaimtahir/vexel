@@ -1,0 +1,20 @@
+# Vexel LIMS — PDF Determinism Evidence Pack
+# Generated: 2026-03-02
+# Template: lab_report_v2 + receipt_v1
+#
+# All files rendered via POST http://127.0.0.1:9022/render
+# Same canonical payload → same pdfHash (verified with CBC render ×2)
+#
+# FILE                             TEMPLATE         HASH (SHA-256)
+lab_report_v2_cbc.pdf              lab_report_v2    e64c69a2295c8a7cbf23f761cf01daf46d58c021848f197e22b36600c8404cfe
+lab_report_v2_lft.pdf              lab_report_v2    c62904393e4a348f720921592cd0edad0e727bce868b71e58c8e8e6e0799529a
+lab_report_v2_creatinine.pdf       lab_report_v2    9d0501ae253319566ee7cefed3c87b34c88a24772b5cdf18f09a311cf4af1da9
+lab_report_v2_dengue.pdf           lab_report_v2    b11619d604115c72f7af879a34467fd32b4efa651e94cdf7398833911c057ab0
+lab_report_v2_urine_re.pdf         lab_report_v2    38079e717d05a822939c57860eb64079946ff49efc7088f882ba37c8d6bae099
+receipt_v1_a4.pdf                  receipt_v1       4dfa7f2bb0f5f1b3db6dbd3fe09fb334abfc81df3ae5d6ebb24687e1f610f6a3
+receipt_v1_thermal.pdf             receipt_v1       c2120add0fadd8c45b79f08b75c93d6496c356e29739a27309cd60f52d78acb0
+#
+# Determinism check — CBC rendered twice with identical payload:
+# Render 1: f683281b1401ecd1ca32bb60d1512859d785b58de0b3976f1f24570b0ca04c34
+# Render 2: f683281b1401ecd1ca32bb60d1512859d785b58de0b3976f1f24570b0ca04c34
+# RESULT: ✅ DETERMINISTIC

@@ -1,0 +1,28 @@
+{
+  "reportNumber": "RPT-EV-DNG01",
+  "issuedAt": "2026-03-02T14:00:00Z",
+  "patientName": "Sara Tariq",
+  "patientMrn": "VXL-MRN-004",
+  "patientAge": "28Y",
+  "patientGender": "Female",
+  "encounterId": "enc-dng-001",
+  "encounterCode": "VXL-2603-104",
+  "orderedBy": "Dr. Imran Ali",
+  "sampleReceivedAt": "2026-03-02T12:00:00Z",
+  "reportStatus": "Verified",
+  "tests": [
+    {
+      "testCode": "DENGUE",
+      "testName": "Dengue Serology",
+      "department": "Serology",
+      "printAlone": false,
+      "parameters": [
+        { "parameterCode": "digg", "parameterName": "Dengue IgG", "value": "Negative", "unit": "", "referenceRange": "Negative", "flag": "normal" },
+        { "parameterCode": "digm", "parameterName": "Dengue IgM", "value": "Positive", "unit": "", "referenceRange": "Negative", "flag": "high" }
+      ]
+    }
+  ],
+  "verifiedBy": "Dr. Salma Noor",
+  "verifiedAt": "2026-03-02T13:55:00Z",
+  "tenantName": "Al Shifa Laboratory"
+}
