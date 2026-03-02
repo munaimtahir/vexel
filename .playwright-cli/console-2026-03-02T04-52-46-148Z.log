@@ -1,0 +1,5 @@
+[     156ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://vexel.alshifalab.pk/favicon.ico:0
+[   18379ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/auth/login' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/login:0
+[   18379ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/auth/login:0
+[   41461ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/auth/login' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/login:0
+[   41461ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/auth/login:0

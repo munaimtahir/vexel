@@ -37,5 +37,6 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
   return createFetchClient<paths>({
     baseUrl,
     headers: defaultHeaders,
+    credentials: 'include',
   });
 }

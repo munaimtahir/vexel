@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { isLookLikeMobile, normalizeMobile } from '../common/mobile.utils';
 
 export interface WorklistFilters {
   status?: string;
@@ -16,7 +17,7 @@ export class SampleCollectionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
-  ) {}
+  ) { }
 
   async getWorklist(tenantId: string, filters: WorklistFilters) {
     const page = Number(filters.page) || 1;
@@ -45,8 +46,12 @@ export class SampleCollectionService {
         { encounterCode: { contains: s, mode: 'insensitive' } },
         { patient: { mrn: { contains: s, mode: 'insensitive' } } },
         { patient: { firstName: { contains: s, mode: 'insensitive' } } },
+        { patient: { firstName: { contains: s, mode: 'insensitive' } } },
         { patient: { lastName: { contains: s, mode: 'insensitive' } } },
       ];
+      if (isLookLikeMobile(s)) {
+        encounterWhere.OR.push({ patient: { mobile: { contains: normalizeMobile(s), mode: 'insensitive' } } });
+      }
     }
 
     const [encounters, total] = await Promise.all([

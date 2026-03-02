@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ImpersonationMode {
+  READ_ONLY
+}
+
 // ─── System / Platform ────────────────────────────────────────────────────
 
 model Tenant {
@@ -45,6 +49,7 @@ model Tenant {
   documentTemplates    DocumentTemplate[]
   documents            Document[]
   cashTransactions     CashTransaction[]
+  topTests             TenantTopTest[]
   providers            Provider[]
   providerSchedules    ProviderSchedule[]
   appointments         Appointment[]
@@ -56,6 +61,7 @@ model Tenant {
   invoices             Invoice[]
   invoiceLines         InvoiceLine[]
   payments             Payment[]
+  impersonationSessions ImpersonationSession[]
 
   @@map("tenants")
 }
@@ -114,6 +120,8 @@ model User {
   refreshTokens    RefreshToken[]
   auditEvents      AuditEvent[]
   cashTransactions CashTransaction[]
+  startedImpersonationSessions ImpersonationSession[] @relation("ImpersonationStartedBy")
+  impersonatedSessions         ImpersonationSession[] @relation("ImpersonationTargetUser")
 
   @@unique([tenantId, email])
   @@index([tenantId, status])
@@ -224,10 +232,29 @@ model CatalogTest {
   parameterMappings TestParameterMapping[]
   panelMappings     PanelTestMapping[]
   referenceRanges   ReferenceRange[]
+  topTests          TenantTopTest[]
 
   @@unique([tenantId, externalId], name: "tenant_test_externalId")
   @@index([tenantId, isActive])
+  @@index([tenantId, userCode])
+  @@index([tenantId, name])
   @@map("catalog_tests")
+}
+
+model TenantTopTest {
+  id        String   @id @default(uuid())
+  tenantId  String
+  testId    String
+  rank      Int
+  createdAt DateTime @default(now())
+
+  tenant Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  test   CatalogTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, rank])
+  @@unique([tenantId, testId])
+  @@index([tenantId, rank])
+  @@map("tenant_top_tests")
 }
 
 model SampleType {
@@ -402,6 +429,35 @@ model AuditEvent {
   @@index([tenantId, entityType, entityId])
   @@index([correlationId])
   @@map("audit_events")
+}
+
+model ImpersonationSession {
+  id                 String            @id @default(uuid())
+  tenantId           String
+  startedById        String
+  impersonatedUserId String
+  mode               ImpersonationMode @default(READ_ONLY)
+  reason             String
+  startedAt          DateTime          @default(now())
+  endedAt            DateTime?
+  isActive           Boolean           @default(true)
+  startedIp          String?
+  endedIp            String?
+  userAgent          String?
+  requestCount       Int               @default(0)
+  blockedWriteCount  Int               @default(0)
+  lastBlockedMethod  String?
+  lastBlockedPath    String?
+  lastBlockedAt      DateTime?
+
+  tenant           Tenant @relation(fields: [tenantId], references: [id])
+  startedBy        User   @relation("ImpersonationStartedBy", fields: [startedById], references: [id])
+  impersonatedUser User   @relation("ImpersonationTargetUser", fields: [impersonatedUserId], references: [id])
+
+  @@index([startedById, startedAt])
+  @@index([impersonatedUserId, startedAt])
+  @@index([isActive])
+  @@map("impersonation_sessions")
 }
 
 // ─── LIMS ──────────────────────────────────────────────────────────────────

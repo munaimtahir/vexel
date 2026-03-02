@@ -8,6 +8,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { DocumentsService } from '../documents/documents.service';
+import { isLookLikeMobile, normalizeMobile } from '../common/mobile.utils';
 
 function n(v: any): number {
   if (v == null) return 0;
@@ -20,7 +21,7 @@ export class BillingService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly documents: DocumentsService,
-  ) {}
+  ) { }
 
   private async assertOpdEnabled(tenantId: string) {
     const flag = await (this.prisma as any).tenantFeature.findUnique({
@@ -191,8 +192,12 @@ export class BillingService {
         { invoiceCode: { contains: s, mode: 'insensitive' } },
         { patient: { mrn: { contains: s, mode: 'insensitive' } } },
         { patient: { firstName: { contains: s, mode: 'insensitive' } } },
+        { patient: { firstName: { contains: s, mode: 'insensitive' } } },
         { patient: { lastName: { contains: s, mode: 'insensitive' } } },
       ];
+      if (isLookLikeMobile(s)) {
+        where.OR.push({ patient: { mobile: { contains: normalizeMobile(s), mode: 'insensitive' } } });
+      }
     }
     const [rows, total] = await Promise.all([
       (this.prisma as any).invoice.findMany({

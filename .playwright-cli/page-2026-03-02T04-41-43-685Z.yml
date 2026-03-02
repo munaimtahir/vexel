@@ -1,0 +1,46 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e21]:
+    - banner [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: Vexel
+        - generic [ref=e25]: Health Platform
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - paragraph [ref=e28]: Admin
+          - paragraph [ref=e29]: super-admin
+        - generic [ref=e30]: A
+        - button "Logout" [ref=e31] [cursor=pointer]
+    - main [ref=e32]:
+      - generic [ref=e33]:
+        - heading "Good morning, Admin!" [level=1] [ref=e34]
+        - generic [ref=e35]:
+          - generic [ref=e36]: 🏢 System Tenant
+          - generic [ref=e37]: 1 module active
+          - generic [ref=e38]: ⭐ Super Admin
+      - heading "Active Modules" [level=2] [ref=e39]
+      - button "⚙️ Admin Panel Tenant configuration, user management, roles, catalog, and feature flags. Open →" [ref=e41] [cursor=pointer]:
+        - generic [ref=e42]: ⚙️
+        - heading "Admin Panel" [level=3] [ref=e43]
+        - paragraph [ref=e44]: Tenant configuration, user management, roles, catalog, and feature flags.
+        - generic [ref=e45]:
+          - text: Open
+          - generic [ref=e46]: →
+      - heading "Coming Soon" [level=2] [ref=e47]
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - generic [ref=e50]: 🧪
+          - heading "Laboratory (LIMS)" [level=3] [ref=e51]
+          - paragraph [ref=e52]: Patient registrations, sample collection, results entry, verification, and reports.
+          - generic [ref=e53]: Coming soon
+        - generic [ref=e54]:
+          - generic [ref=e55]: 🏥
+          - heading "OPD / Clinic" [level=3] [ref=e56]
+          - paragraph [ref=e57]: Outpatient consultations, appointments, prescriptions, and billing.
+          - generic [ref=e58]: Coming soon
+        - generic [ref=e59]:
+          - generic [ref=e60]: 🩻
+          - heading "Radiology (RIMS)" [level=3] [ref=e61]
+          - paragraph [ref=e62]: Radiology orders, imaging workflows, and reports.
+          - generic [ref=e63]: Coming soon
+  - region "Notifications alt+T"
+  - alert [ref=e20]

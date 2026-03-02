@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { DataTable } from '@vexel/ui-system';
@@ -12,6 +12,8 @@ const emptyForm = () => ({
   lowValue: '', highValue: '', criticalLow: '', criticalHigh: '',
   unit: '', normalText: '', interpretation: '',
 });
+
+type ValidationErrors = Partial<Record<'ageMinYears' | 'ageMaxYears' | 'lowValue' | 'highValue' | 'criticalLow' | 'criticalHigh' | 'scope', string>>;
 
 export default function ReferenceRangesPage() {
   const [ranges, setRanges] = useState<any[]>([]);
@@ -45,8 +47,8 @@ export default function ReferenceRangesPage() {
     async function init() {
       const api = getApiClient(getToken() ?? undefined);
       const [pRes, tRes] = await Promise.allSettled([
-        api.GET('/catalog/parameters' as any, { params: { query: { limit: 200 } } }),
-        api.GET('/catalog/tests' as any, { params: { query: { limit: 200 } } }),
+        api.GET('/catalog/parameters' as any, { params: { query: { limit: 500, page: 1 } } }),
+        api.GET('/catalog/tests' as any, { params: { query: { limit: 500, page: 1 } } }),
       ]);
       if (pRes.status === 'fulfilled') setParameters((pRes.value.data as any)?.data ?? []);
       if (tRes.status === 'fulfilled') setTests((tRes.value.data as any)?.data ?? []);
@@ -56,27 +58,42 @@ export default function ReferenceRangesPage() {
   }, []);
 
   function openCreate() {
-    setEditingId(null); setForm(emptyForm()); setError(null); setDrawerOpen(true);
+    setEditingId(null);
+    setForm(emptyForm());
+    setError(null);
+    setDrawerOpen(true);
   }
 
   function openEdit(r: any) {
     setEditingId(r.id);
     setForm({
-      parameterId: r.parameterId ?? '', testId: r.testId ?? '', gender: r.gender ?? '',
+      parameterId: r.parameterId ?? '',
+      testId: r.testId ?? '',
+      gender: r.gender ?? '',
       ageMinYears: r.ageMinYears != null ? String(r.ageMinYears) : '',
       ageMaxYears: r.ageMaxYears != null ? String(r.ageMaxYears) : '',
       lowValue: r.lowValue != null ? String(r.lowValue) : '',
       highValue: r.highValue != null ? String(r.highValue) : '',
       criticalLow: r.criticalLow != null ? String(r.criticalLow) : '',
       criticalHigh: r.criticalHigh != null ? String(r.criticalHigh) : '',
-      unit: r.unit ?? '', normalText: r.normalText ?? '', interpretation: r.interpretation ?? '',
+      unit: r.unit ?? '',
+      normalText: r.normalText ?? '',
+      interpretation: r.interpretation ?? '',
     });
-    setError(null); setDrawerOpen(true);
+    setError(null);
+    setDrawerOpen(true);
   }
+
+  const validation = useMemo(() => validateForm(form, ranges, editingId), [form, ranges, editingId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true); setError(null);
+    if (!validation.ok) {
+      setError('Fix validation errors before saving.');
+      return;
+    }
+    setSaving(true);
+    setError(null);
     const api = getApiClient(getToken() ?? undefined);
     const body: any = { parameterId: form.parameterId };
     if (form.testId) body.testId = form.testId;
@@ -97,8 +114,13 @@ export default function ReferenceRangesPage() {
     } else {
       res = await api.POST('/catalog/reference-ranges' as any, { body });
     }
-    if (res.error) { setError(res.error?.message ?? 'Failed'); setSaving(false); return; }
-    setDrawerOpen(false); setSaving(false);
+    if (res.error) {
+      setError(res.error?.message ?? 'Failed');
+      setSaving(false);
+      return;
+    }
+    setDrawerOpen(false);
+    setSaving(false);
     load(page, filterParamId);
   }
 
@@ -106,12 +128,22 @@ export default function ReferenceRangesPage() {
     setDeleting(true);
     const api = getApiClient(getToken() ?? undefined);
     await api.DELETE('/catalog/reference-ranges/{id}' as any, { params: { path: { id } } });
-    setDeleteId(null); setDeleting(false);
+    setDeleteId(null);
+    setDeleting(false);
     load(page, filterParamId);
   }
 
-  function handlePage(p: number) { setPage(p); load(p, filterParamId); }
-  function handleFilter(paramId: string) { setFilterParamId(paramId); setPage(1); load(1, paramId); }
+  function handlePage(p: number) {
+    setPage(p);
+    load(p, filterParamId);
+  }
+
+  function handleFilter(paramId: string) {
+    setFilterParamId(paramId);
+    setPage(1);
+    load(1, paramId);
+  }
+
   const totalPages = Math.ceil(total / LIMIT);
   const columns = [
     {
@@ -147,11 +179,6 @@ export default function ReferenceRangesPage() {
       cell: (r: any) => <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>{r.criticalLow != null || r.criticalHigh != null ? `${r.criticalLow ?? '?'} / ${r.criticalHigh ?? '?'}` : '—'}</span>,
     },
     {
-      key: 'unit',
-      header: 'Unit',
-      cell: (r: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{r.unit ?? '—'}</span>,
-    },
-    {
       key: 'actions',
       header: '',
       cell: (r: any) => (
@@ -168,7 +195,6 @@ export default function ReferenceRangesPage() {
 
   return (
     <div>
-      {/* Drawer */}
       {drawerOpen && <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.3)', zIndex: 40 }} onClick={() => setDrawerOpen(false)} />}
       {drawerOpen && (
         <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '460px', background: 'hsl(var(--card))', zIndex: 50, boxShadow: 'var(--shadow-lg)', overflowY: 'auto' }}>
@@ -178,6 +204,7 @@ export default function ReferenceRangesPage() {
           </div>
           <form onSubmit={handleSubmit} style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {error && <div style={{ background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px', borderRadius: '6px', fontSize: '13px' }}>{error}</div>}
+            {validation.errors.scope ? <div style={{ background: 'hsl(var(--status-warning-bg))', color: 'hsl(var(--status-warning-fg))', padding: '10px', borderRadius: '6px', fontSize: '13px' }}>{validation.errors.scope}</div> : null}
 
             <div>
               <label style={labelStyle}>Parameter *</label>
@@ -206,33 +233,39 @@ export default function ReferenceRangesPage() {
               </div>
               <div>
                 <label style={labelStyle}>Age Min (yrs)</label>
-                <input type="number" min={0} value={form.ageMinYears} onChange={(e) => setForm({ ...form, ageMinYears: e.target.value })} style={inputStyle} placeholder="0" />
+                <input type="number" min={0} value={form.ageMinYears} onChange={(e) => setForm({ ...form, ageMinYears: e.target.value })} style={{ ...inputStyle, borderColor: validation.errors.ageMinYears ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--border))' }} placeholder="0" />
+                {validation.errors.ageMinYears ? <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>{validation.errors.ageMinYears}</p> : null}
               </div>
               <div>
                 <label style={labelStyle}>Age Max (yrs)</label>
-                <input type="number" min={0} value={form.ageMaxYears} onChange={(e) => setForm({ ...form, ageMaxYears: e.target.value })} style={inputStyle} placeholder="999" />
+                <input type="number" min={0} value={form.ageMaxYears} onChange={(e) => setForm({ ...form, ageMaxYears: e.target.value })} style={{ ...inputStyle, borderColor: validation.errors.ageMaxYears ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--border))' }} placeholder="999" />
+                {validation.errors.ageMaxYears ? <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>{validation.errors.ageMaxYears}</p> : null}
               </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <div>
                 <label style={labelStyle}>Normal Low</label>
-                <input type="number" step="any" value={form.lowValue} onChange={(e) => setForm({ ...form, lowValue: e.target.value })} style={inputStyle} placeholder="e.g. 3.5" />
+                <input type="number" step="any" value={form.lowValue} onChange={(e) => setForm({ ...form, lowValue: e.target.value })} style={{ ...inputStyle, borderColor: validation.errors.lowValue ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--border))' }} placeholder="e.g. 3.5" />
+                {validation.errors.lowValue ? <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>{validation.errors.lowValue}</p> : null}
               </div>
               <div>
                 <label style={labelStyle}>Normal High</label>
-                <input type="number" step="any" value={form.highValue} onChange={(e) => setForm({ ...form, highValue: e.target.value })} style={inputStyle} placeholder="e.g. 5.5" />
+                <input type="number" step="any" value={form.highValue} onChange={(e) => setForm({ ...form, highValue: e.target.value })} style={{ ...inputStyle, borderColor: validation.errors.highValue ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--border))' }} placeholder="e.g. 5.5" />
+                {validation.errors.highValue ? <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>{validation.errors.highValue}</p> : null}
               </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <div>
                 <label style={labelStyle}>Critical Low</label>
-                <input type="number" step="any" value={form.criticalLow} onChange={(e) => setForm({ ...form, criticalLow: e.target.value })} style={inputStyle} placeholder="e.g. 2.0" />
+                <input type="number" step="any" value={form.criticalLow} onChange={(e) => setForm({ ...form, criticalLow: e.target.value })} style={{ ...inputStyle, borderColor: validation.errors.criticalLow ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--border))' }} placeholder="e.g. 2.0" />
+                {validation.errors.criticalLow ? <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>{validation.errors.criticalLow}</p> : null}
               </div>
               <div>
                 <label style={labelStyle}>Critical High</label>
-                <input type="number" step="any" value={form.criticalHigh} onChange={(e) => setForm({ ...form, criticalHigh: e.target.value })} style={inputStyle} placeholder="e.g. 8.0" />
+                <input type="number" step="any" value={form.criticalHigh} onChange={(e) => setForm({ ...form, criticalHigh: e.target.value })} style={{ ...inputStyle, borderColor: validation.errors.criticalHigh ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--border))' }} placeholder="e.g. 8.0" />
+                {validation.errors.criticalHigh ? <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>{validation.errors.criticalHigh}</p> : null}
               </div>
             </div>
 
@@ -253,7 +286,7 @@ export default function ReferenceRangesPage() {
             </div>
 
             <div style={{ marginTop: '8px', display: 'flex', gap: '10px' }}>
-              <button type="submit" disabled={saving} style={{ flex: 1, padding: '10px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
+              <button type="submit" disabled={saving || !validation.ok} style={{ flex: 1, padding: '10px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600, opacity: validation.ok ? 1 : 0.6 }}>
                 {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Create Range'}
               </button>
               <button type="button" onClick={() => setDrawerOpen(false)} style={{ padding: '10px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>Cancel</button>
@@ -262,7 +295,6 @@ export default function ReferenceRangesPage() {
         </div>
       )}
 
-      {/* Delete confirm */}
       {deleteId && (
         <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: 'hsl(var(--card))', padding: '24px', borderRadius: '8px', maxWidth: '380px', width: '90%' }}>
@@ -282,21 +314,13 @@ export default function ReferenceRangesPage() {
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        <select value={filterParamId} onChange={(e) => handleFilter(e.target.value)}
-          style={{ padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', minWidth: '260px' }}>
+        <select value={filterParamId} onChange={(e) => handleFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', minWidth: '260px' }}>
           <option value="">All parameters</option>
           {parameters.map((p) => <option key={p.id} value={p.id}>{p.name} {p.userCode ? `(${p.userCode})` : ''}</option>)}
         </select>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={ranges}
-        keyExtractor={(r: any) => `${r.id}`}
-        loading={loading}
-        emptyMessage="No reference ranges found."
-        className="shadow-sm"
-      />
+      <DataTable columns={columns} data={ranges} keyExtractor={(r: any) => `${r.id}`} loading={loading} emptyMessage="No reference ranges found." className="shadow-sm" />
 
       {totalPages > 1 && (
         <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
@@ -307,4 +331,81 @@ export default function ReferenceRangesPage() {
       )}
     </div>
   );
+}
+
+function toNum(value: string): number | null {
+  if (value === '' || value == null) return null;
+  const n = Number(value);
+  return Number.isNaN(n) ? null : n;
+}
+
+function rangeScopeKey(row: { parameterId: string; testId?: string; gender?: string; ageMinYears?: number | null; ageMaxYears?: number | null }): string {
+  return [
+    row.parameterId || '',
+    row.testId || '',
+    row.gender || '',
+    row.ageMinYears == null ? '' : String(row.ageMinYears),
+    row.ageMaxYears == null ? '' : String(row.ageMaxYears),
+  ].join('|');
+}
+
+function validateForm(form: ReturnType<typeof emptyForm>, ranges: any[], editingId: string | null): { ok: boolean; errors: ValidationErrors } {
+  const errors: ValidationErrors = {};
+
+  const ageMin = toNum(form.ageMinYears);
+  const ageMax = toNum(form.ageMaxYears);
+  const low = toNum(form.lowValue);
+  const high = toNum(form.highValue);
+  const criticalLow = toNum(form.criticalLow);
+  const criticalHigh = toNum(form.criticalHigh);
+
+  if (ageMin != null && ageMax != null && ageMin > ageMax) {
+    errors.ageMinYears = 'Age min must be <= age max.';
+    errors.ageMaxYears = 'Age max must be >= age min.';
+  }
+
+  if (low != null && high != null && low > high) {
+    errors.lowValue = 'Normal low must be <= normal high.';
+    errors.highValue = 'Normal high must be >= normal low.';
+  }
+
+  if (criticalLow != null && low != null && criticalLow > low) {
+    errors.criticalLow = 'Critical low should be <= normal low.';
+  }
+
+  if (criticalHigh != null && high != null && criticalHigh < high) {
+    errors.criticalHigh = 'Critical high should be >= normal high.';
+  }
+
+  if (criticalLow != null && criticalHigh != null && criticalLow > criticalHigh) {
+    errors.criticalLow = 'Critical low must be <= critical high.';
+    errors.criticalHigh = 'Critical high must be >= critical low.';
+  }
+
+  if (form.parameterId) {
+    const scope = rangeScopeKey({
+      parameterId: form.parameterId,
+      testId: form.testId || '',
+      gender: form.gender || '',
+      ageMinYears: ageMin,
+      ageMaxYears: ageMax,
+    });
+
+    const duplicate = ranges.some((row) => {
+      if (editingId && row.id === editingId) return false;
+      return scope === rangeScopeKey({
+        parameterId: row.parameterId,
+        testId: row.testId || '',
+        gender: row.gender || '',
+        ageMinYears: row.ageMinYears,
+        ageMaxYears: row.ageMaxYears,
+      });
+    });
+
+    if (duplicate) {
+      errors.scope = 'Another reference range already exists for the same parameter/test/gender/age scope.';
+    }
+  }
+
+  return { ok: Object.keys(errors).length === 0, errors };
 }

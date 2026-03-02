@@ -1,0 +1,16 @@
+{
+  "active": true,
+  "session_id": "c4a516b8-ed8d-449b-b541-efb99b158d80",
+  "started_by": {
+    "id": "544a0382-0d31-4b42-9e30-e1eb648656d9",
+    "name": "Super Admin"
+  },
+  "impersonated_user": {
+    "id": "92d9d369-65f9-49be-b696-14abd3a95639",
+    "name": "Demo Operator",
+    "role": "operator"
+  },
+  "mode": "READ_ONLY",
+  "started_at": "2026-03-02T03:51:01.809Z",
+  "expires_at": "2026-03-02T05:51:01.000Z"
+}

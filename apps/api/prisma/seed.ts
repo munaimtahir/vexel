@@ -52,6 +52,7 @@ export async function main() {
         create: [
           { domain: 'admin.localhost' },
           { domain: 'localhost' },
+          { domain: 'vexel.alshifalab.pk' },
         ],
       },
     },
@@ -95,13 +96,13 @@ export async function main() {
       isSystem: true,
       rolePermissions: {
         create: [
-          'user.read','user.create','user.update','user.disable',
-          'role.read','role.assign',
-          'feature_flag.read','feature_flag.set',
-          'catalog.read','catalog.write',
+          'user.read', 'user.create', 'user.update', 'user.disable',
+          'role.read', 'role.assign',
+          'feature_flag.read', 'feature_flag.set',
+          'catalog.read', 'catalog.write',
           'audit.read',
-          'job.read','job.retry',
-          'branding.read','branding.write',
+          'job.read', 'job.retry',
+          'branding.read', 'branding.write',
         ].map(p => ({ permission: p })),
       },
     },

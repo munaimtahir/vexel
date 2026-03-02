@@ -15,6 +15,22 @@ type CatalogImportError = {
   suggestion?: string;
 };
 
+type CatalogImportSheetSummary = {
+  totalRows: number;
+  inserted: number;
+  updated: number;
+  skipped: number;
+  errors: number;
+};
+
+type CatalogImportWorkbookSummary = {
+  inserted: number;
+  updated: number;
+  skipped: number;
+  errors: CatalogImportError[];
+  bySheet: Record<string, CatalogImportSheetSummary>;
+};
+
 @Injectable()
 export class CatalogImportExportService {
   constructor(
@@ -256,11 +272,17 @@ export class CatalogImportExportService {
     opts: { mode: 'CREATE_ONLY' | 'UPSERT_PATCH'; validate: boolean },
     actorUserId: string,
     correlationId?: string,
-  ): Promise<{ inserted: number; updated: number; skipped: number; errors: CatalogImportError[] }> {
+  ): Promise<CatalogImportWorkbookSummary> {
     const wb = new ExcelJS.Workbook();
     await wb.xlsx.load(buffer as any);
 
-    const summary = { inserted: 0, updated: 0, skipped: 0, errors: [] as CatalogImportError[] };
+    const summary: CatalogImportWorkbookSummary = {
+      inserted: 0,
+      updated: 0,
+      skipped: 0,
+      errors: [],
+      bySheet: {},
+    };
 
     const sheetOrder: Array<'sample-types' | 'parameters' | 'tests' | 'test-parameters' | 'panels' | 'panel-tests' | 'reference-ranges'> = [
       'sample-types', 'parameters', 'tests', 'test-parameters', 'panels', 'panel-tests', 'reference-ranges',
@@ -277,13 +299,29 @@ export class CatalogImportExportService {
 
     for (const sheet of sheetOrder) {
       const ws = wb.getWorksheet(sheetNameMap[sheet]);
-      if (!ws) continue;
-      const rows = this._extractRows(ws);
+      const rows = ws ? this._extractRows(ws) : [];
+      if (!ws) {
+        summary.bySheet[sheetNameMap[sheet]] = {
+          totalRows: 0,
+          inserted: 0,
+          updated: 0,
+          skipped: 0,
+          errors: 0,
+        };
+        continue;
+      }
       const result = await this._importSheet(tenantId, sheet, rows, opts, actorUserId, correlationId);
       summary.inserted += result.inserted;
       summary.updated += result.updated;
       summary.skipped += result.skipped;
       result.errors.forEach((e) => summary.errors.push({ sheet: sheetNameMap[sheet], ...e }));
+      summary.bySheet[sheetNameMap[sheet]] = {
+        totalRows: rows.length,
+        inserted: result.inserted,
+        updated: result.updated,
+        skipped: result.skipped,
+        errors: result.errors.length,
+      };
     }
 
     if (!opts.validate) {

@@ -388,13 +388,6 @@ export class CatalogController {
     res.send(this.importExportSvc.generateReferenceRangesCsv());
   }
 
-  @Post('test-parameter-mappings/import')
-  @RequirePermissions(Permission.CATALOG_MANAGE)
-  async importTestParameterMappings(@Req() req: Request, @Body() body: { csv: string }, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
-    const user = (req as any).user;
-    return this.svc.importTestParameterMappings(user.tenantId, body.csv, user.userId, correlationId);
-  }
-
   @Post('import')
   @RequirePermissions(Permission.CATALOG_MANAGE)
   @UseInterceptors(FileInterceptor('file'))

@@ -1,0 +1,170 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e432]:
+    - complementary [ref=e433]:
+      - generic [ref=e434]:
+        - generic [ref=e435]:
+          - link "Vexel Health Platform" [ref=e436] [cursor=pointer]:
+            - /url: /
+            - img [ref=e438]
+            - generic [ref=e440]:
+              - generic [ref=e441]: Vexel
+              - generic [ref=e442]: Health Platform
+          - button "Collapse sidebar (Ctrl+B)" [ref=e443] [cursor=pointer]:
+            - img [ref=e444]
+        - generic [ref=e446]:
+          - link "LIMS" [ref=e447] [cursor=pointer]:
+            - /url: /lims/worklist
+            - generic [ref=e449]: LIMS
+          - link "OPD" [ref=e450] [cursor=pointer]:
+            - /url: /opd/worklist
+            - generic [ref=e452]: OPD
+          - generic [ref=e453]: Radiology
+      - navigation [ref=e455]:
+        - generic [ref=e456]: OPD Workspace
+        - link "OPD Worklist" [ref=e457] [cursor=pointer]:
+          - /url: /opd/worklist
+          - img [ref=e459]
+          - generic [ref=e463]: OPD Worklist
+        - link "New Appointment" [ref=e465] [cursor=pointer]:
+          - /url: /opd/appointments/new
+          - img [ref=e466]
+          - generic [ref=e469]: New Appointment
+        - link "OPD Billing" [ref=e470] [cursor=pointer]:
+          - /url: /opd/billing
+          - img [ref=e471]
+          - generic [ref=e473]: OPD Billing
+      - generic [ref=e475]:
+        - generic [ref=e476]:
+          - generic [ref=e477]: SA
+          - generic [ref=e478]:
+            - generic [ref=e479]: Super Admin
+            - generic [ref=e480]: LIMS Operator
+        - button "Sign Out" [ref=e481] [cursor=pointer]:
+          - img [ref=e482]
+    - generic [ref=e485]:
+      - banner [ref=e486]:
+        - generic [ref=e488]:
+          - heading "OPD Worklist" [level=1] [ref=e489]
+          - paragraph [ref=e490]: Mon, Mar 2
+        - generic [ref=e491]:
+          - button "Notifications" [ref=e492] [cursor=pointer]:
+            - img [ref=e493]
+          - button "Toggle theme" [ref=e496] [cursor=pointer]:
+            - img [ref=e497]
+            - generic [ref=e503]: Toggle theme
+          - generic [ref=e504]:
+            - generic [ref=e505]: A
+            - generic [ref=e506]: admin
+      - main [ref=e507]:
+        - generic [ref=e509]:
+          - generic [ref=e510]:
+            - generic [ref=e513]:
+              - heading "OPD Worklist" [level=1] [ref=e514]
+              - paragraph [ref=e515]: Appointments and visits (tenant-scoped via backend APIs)
+            - generic [ref=e517]:
+              - link "OPD Billing" [ref=e518] [cursor=pointer]:
+                - /url: /opd/billing
+              - link "New Walk-in Visit" [ref=e519] [cursor=pointer]:
+                - /url: /opd/visits/new
+              - link "New Appointment" [ref=e520] [cursor=pointer]:
+                - /url: /opd/appointments/new
+          - generic [ref=e521]:
+            - heading "Filters" [level=3] [ref=e523]
+            - generic [ref=e525]:
+              - textbox "Search patient/name/ID" [ref=e526]
+              - combobox [ref=e527] [cursor=pointer]:
+                - generic: All appointments
+                - img [ref=e528]
+              - combobox [ref=e530] [cursor=pointer]:
+                - generic: All visits
+                - img [ref=e531]
+          - generic [ref=e533]:
+            - heading "Appointments" [level=3] [ref=e535]
+            - generic [ref=e536]:
+              - table [ref=e539]:
+                - rowgroup [ref=e540]:
+                  - row "Scheduled Patient Provider Status Action" [ref=e541]:
+                    - columnheader "Scheduled" [ref=e542]
+                    - columnheader "Patient" [ref=e543]
+                    - columnheader "Provider" [ref=e544]
+                    - columnheader "Status" [ref=e545]
+                    - columnheader "Action" [ref=e546]
+                - rowgroup [ref=e547]:
+                  - row "3/21/2026, 2:00:00 PM fab71c1f-5ec0-497d-bd07-91db3b882755 87c09e3b-cc34-4c29-9919-b4848007c927 NO_SHOW Open" [ref=e548]:
+                    - cell "3/21/2026, 2:00:00 PM" [ref=e549]
+                    - cell "fab71c1f-5ec0-497d-bd07-91db3b882755" [ref=e550]
+                    - cell "87c09e3b-cc34-4c29-9919-b4848007c927" [ref=e551]
+                    - cell "NO_SHOW" [ref=e552]
+                    - cell "Open" [ref=e553]:
+                      - link "Open" [ref=e554] [cursor=pointer]:
+                        - /url: /opd/appointments/08fa8aee-5c41-42ff-bd5b-c18895bfa172
+                  - row "3/20/2026, 2:00:00 PM fab71c1f-5ec0-497d-bd07-91db3b882755 87c09e3b-cc34-4c29-9919-b4848007c927 COMPLETED Open" [ref=e555]:
+                    - cell "3/20/2026, 2:00:00 PM" [ref=e556]
+                    - cell "fab71c1f-5ec0-497d-bd07-91db3b882755" [ref=e557]
+                    - cell "87c09e3b-cc34-4c29-9919-b4848007c927" [ref=e558]
+                    - cell "COMPLETED" [ref=e559]
+                    - cell "Open" [ref=e560]:
+                      - link "Open" [ref=e561] [cursor=pointer]:
+                        - /url: /opd/appointments/0d015c96-5848-445f-b534-9402e252a353
+                  - row "3/16/2026, 2:00:00 PM bb1a400b-b84d-4427-ac9e-4092bfd15de3 4c223413-a041-440d-bb9f-29a1434ee690 CANCELLED Open" [ref=e562]:
+                    - cell "3/16/2026, 2:00:00 PM" [ref=e563]
+                    - cell "bb1a400b-b84d-4427-ac9e-4092bfd15de3" [ref=e564]
+                    - cell "4c223413-a041-440d-bb9f-29a1434ee690" [ref=e565]
+                    - cell "CANCELLED" [ref=e566]
+                    - cell "Open" [ref=e567]:
+                      - link "Open" [ref=e568] [cursor=pointer]:
+                        - /url: /opd/appointments/ac2d5267-9562-45b7-983a-8eae89e16513
+                  - row "3/15/2026, 2:00:00 PM bb1a400b-b84d-4427-ac9e-4092bfd15de3 4c223413-a041-440d-bb9f-29a1434ee690 COMPLETED Open" [ref=e569]:
+                    - cell "3/15/2026, 2:00:00 PM" [ref=e570]
+                    - cell "bb1a400b-b84d-4427-ac9e-4092bfd15de3" [ref=e571]
+                    - cell "4c223413-a041-440d-bb9f-29a1434ee690" [ref=e572]
+                    - cell "COMPLETED" [ref=e573]
+                    - cell "Open" [ref=e574]:
+                      - link "Open" [ref=e575] [cursor=pointer]:
+                        - /url: /opd/appointments/105b51b1-98be-4ecb-ad81-40e2091335a4
+                  - row "3/1/2026, 3:00:00 PM fab71c1f-5ec0-497d-bd07-91db3b882755 87c09e3b-cc34-4c29-9919-b4848007c927 CANCELLED Open" [ref=e576]:
+                    - cell "3/1/2026, 3:00:00 PM" [ref=e577]
+                    - cell "fab71c1f-5ec0-497d-bd07-91db3b882755" [ref=e578]
+                    - cell "87c09e3b-cc34-4c29-9919-b4848007c927" [ref=e579]
+                    - cell "CANCELLED" [ref=e580]
+                    - cell "Open" [ref=e581]:
+                      - link "Open" [ref=e582] [cursor=pointer]:
+                        - /url: /opd/appointments/e43ad5c4-6a5e-4836-a7c4-8d2273b8e32a
+              - generic [ref=e583]:
+                - button "Prev" [disabled]
+                - generic [ref=e584]: Page 1
+                - button "Next" [disabled]
+          - generic [ref=e585]:
+            - heading "Visits" [level=3] [ref=e587]
+            - generic [ref=e588]:
+              - table [ref=e591]:
+                - rowgroup [ref=e592]:
+                  - row "Created Visit Patient Status Action" [ref=e593]:
+                    - columnheader "Created" [ref=e594]
+                    - columnheader "Visit" [ref=e595]
+                    - columnheader "Patient" [ref=e596]
+                    - columnheader "Status" [ref=e597]
+                    - columnheader "Action" [ref=e598]
+                - rowgroup [ref=e599]:
+                  - row "3/1/2026, 12:56:01 PM 24189e84 bb1a400b-b84d-4427-ac9e-4092bfd15de3 COMPLETED Open" [ref=e600]:
+                    - cell "3/1/2026, 12:56:01 PM" [ref=e601]
+                    - cell "24189e84" [ref=e602]
+                    - cell "bb1a400b-b84d-4427-ac9e-4092bfd15de3" [ref=e603]
+                    - cell "COMPLETED" [ref=e604]
+                    - cell "Open" [ref=e605]:
+                      - link "Open" [ref=e606] [cursor=pointer]:
+                        - /url: /opd/visits/24189e84-76a5-4a5f-9929-98d61927b6bd
+                  - row "3/1/2026, 9:56:42 AM 22449a21 fab71c1f-5ec0-497d-bd07-91db3b882755 COMPLETED Open" [ref=e607]:
+                    - cell "3/1/2026, 9:56:42 AM" [ref=e608]
+                    - cell "22449a21" [ref=e609]
+                    - cell "fab71c1f-5ec0-497d-bd07-91db3b882755" [ref=e610]
+                    - cell "COMPLETED" [ref=e611]
+                    - cell "Open" [ref=e612]:
+                      - link "Open" [ref=e613] [cursor=pointer]:
+                        - /url: /opd/visits/22449a21-00d5-471b-a3ff-19c8ebe84446
+              - generic [ref=e614]:
+                - button "Prev" [disabled]
+                - generic [ref=e615]: Page 1
+                - button "Next" [disabled]
+  - region "Notifications alt+T"
+  - alert [ref=e14]

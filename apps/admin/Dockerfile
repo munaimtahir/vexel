@@ -7,6 +7,7 @@ FROM base AS deps
 COPY pnpm-workspace.yaml package.json ./
 COPY packages/sdk/package.json ./packages/sdk/
 COPY packages/theme/package.json ./packages/theme/
+COPY packages/ui-system/package.json ./packages/ui-system/
 COPY apps/admin/package.json ./apps/admin/
 RUN pnpm install --ignore-scripts --shamefully-hoist
 
@@ -19,6 +20,7 @@ COPY --from=deps /app/apps/admin/node_modules ./apps/admin/node_modules
 # SDK and theme source needed because they are pnpm workspace symlinks
 COPY packages/sdk/ ./packages/sdk/
 COPY packages/theme/ ./packages/theme/
+COPY packages/ui-system/ ./packages/ui-system/
 COPY apps/admin/ ./apps/admin/
 WORKDIR /app/apps/admin
 RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build

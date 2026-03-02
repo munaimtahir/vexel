@@ -4,12 +4,14 @@ import { CatalogService } from './catalog.service';
 import { CatalogImportExportService } from './catalog-import-export.service';
 import { CatalogJobsController } from './catalog-jobs.controller';
 import { CatalogJobsService } from './catalog-jobs.service';
+import { CatalogOperatorController } from './catalog-operator.controller';
+import { CatalogAdminTopController } from './catalog-admin-top.controller';
 import { AuditModule } from '../audit/audit.module';
 import { FeatureFlagsModule } from '../feature-flags/feature-flags.module';
 
 @Module({
   imports: [AuditModule, FeatureFlagsModule],
-  controllers: [CatalogController, CatalogJobsController],
+  controllers: [CatalogController, CatalogJobsController, CatalogOperatorController, CatalogAdminTopController],
   providers: [CatalogService, CatalogImportExportService, CatalogJobsService],
   exports: [CatalogImportExportService],
 })

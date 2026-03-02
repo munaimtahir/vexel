@@ -38,6 +38,7 @@ export class VerificationController {
       search: q.search,
       page: q.page ? Number(q.page) : undefined,
       limit: q.limit ? Number(q.limit) : undefined,
+      view: q.view === 'verified_today' ? 'verified_today' : 'pending',
     });
   }
 

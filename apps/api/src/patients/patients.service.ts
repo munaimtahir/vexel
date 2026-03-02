@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { normalizeMobile } from '../common/mobile.utils';
 
 @Injectable()
 export class PatientsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
-  ) {}
+  ) { }
 
   async list(
     tenantId: string,
@@ -19,7 +20,7 @@ export class PatientsService {
     const where: any = { tenantId };
     if (lastName) where.lastName = { contains: lastName, mode: 'insensitive' };
     if (mrn) where.mrn = mrn;
-    if (mobile) where.mobile = mobile;
+    if (mobile) where.mobile = normalizeMobile(mobile);
 
     const [data, total] = await Promise.all([
       this.prisma.patient.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { createdAt: 'desc' } }),
@@ -29,7 +30,7 @@ export class PatientsService {
   }
 
   async findByMobile(tenantId: string, mobile: string) {
-    return this.prisma.patient.findFirst({ where: { tenantId, mobile } });
+    return this.prisma.patient.findFirst({ where: { tenantId, mobile: normalizeMobile(mobile) } });
   }
 
   async generateMrn(tenantId: string): Promise<string> {
@@ -74,7 +75,7 @@ export class PatientsService {
         mrn,
         dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
         gender: body.gender,
-        mobile: body.mobile,
+        mobile: normalizeMobile(body.mobile),
         cnic: body.cnic,
         address: body.address,
         ageYears: body.ageYears,

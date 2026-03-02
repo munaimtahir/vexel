@@ -1,0 +1,9 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: Vexel
+        - generic [ref=e6]: Health Platform
+    - main [ref=e7]
+  - region "Notifications alt+T"
+  - alert [ref=e14]

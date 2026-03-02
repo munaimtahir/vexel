@@ -1,0 +1,1418 @@
+# Incident run command log
+# Generated at 2026-03-02T09:32:41+05:00
+# Working directory: /home/munaim/srv/apps/vexel
+
+$ mkdir -p OUT/incident_20260302_0932/06_screenshots
+$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   apps/admin/Dockerfile
+	modified:   apps/admin/next.config.ts
+	modified:   apps/admin/package.json
+	modified:   apps/admin/src/app/(protected)/layout.tsx
+	modified:   apps/admin/src/app/(protected)/users/page.tsx
+	modified:   apps/admin/tailwind.config.ts
+	modified:   apps/api/prisma/schema.prisma
+	modified:   apps/api/prisma/seed.ts
+	modified:   apps/api/src/app.module.ts
+	modified:   apps/api/src/auth/auth.module.ts
+	modified:   apps/api/src/auth/jwt-auth.guard.ts
+	modified:   apps/e2e/tests/02-admin-crud.spec.ts
+	modified:   apps/operator/next.config.ts
+	modified:   apps/operator/package.json
+	modified:   apps/operator/src/app/(protected)/layout.tsx
+	modified:   apps/operator/src/app/(protected)/page.tsx
+	modified:   apps/operator/src/components/app/confirm-dialog.tsx
+	modified:   apps/operator/src/components/app/data-table.tsx
+	modified:   apps/operator/src/components/app/status-badge.tsx
+	new file:   apps/operator/src/components/impersonation-banner.tsx
+	modified:   apps/operator/src/components/nav/nav-config.ts
+	modified:   apps/operator/src/components/nav/sidebar.tsx
+	modified:   apps/operator/src/components/nav/topbar.tsx
+	modified:   apps/operator/src/components/shell/app-shell.tsx
+	modified:   apps/operator/src/components/status-badge.tsx
+	modified:   apps/operator/tailwind.config.ts
+	modified:   packages/contracts/openapi.yaml
+	modified:   packages/sdk/src/client.ts
+	modified:   packages/sdk/src/generated/api.d.ts
+	modified:   pnpm-lock.yaml
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   apps/admin/src/app/(protected)/opd/providers/page.tsx
+	modified:   apps/admin/src/app/(protected)/opd/schedules/page.tsx
+	modified:   apps/admin/tsconfig.tsbuildinfo
+	deleted:    apps/e2e/playwright-report/data/0c524eb4e72649d325c6b515843d80d4f9a298f3.md
+	deleted:    apps/e2e/playwright-report/data/1a313b6f460370a3c6a8ca5aa5057f347102e3fe.png
+	deleted:    apps/e2e/playwright-report/data/1e6421b3ef61359f96e41bb8a2b5c02ffff51862.webm
+	deleted:    apps/e2e/playwright-report/data/3722c3a8f6be2c89068ef59aa6557d84894dd1d9.md
+	deleted:    apps/e2e/playwright-report/data/47aab1b78451e0ee6d06f53a29ef3ac90c81b6a9.webm
+	deleted:    apps/e2e/playwright-report/data/4a32d5bbb495ad4ad2742bbe2b73c082abebfc9a.webm
+	deleted:    apps/e2e/playwright-report/data/679c2a17da222b8c8a4438016c26b17c867181ba.png
+	deleted:    apps/e2e/playwright-report/data/69a591c55298b7aa5defcaa407913709f3f3c392.md
+	deleted:    apps/e2e/playwright-report/data/8c67f9c89cfdd2d72a1aa44f5a620c4db2a1a746.webm
+	deleted:    apps/e2e/playwright-report/data/9323612d05eff25556741e5f55501e2f3d534f78.png
+	deleted:    apps/e2e/playwright-report/data/bcb2862ba788979785942afa7653f4fba1cbddf7.webm
+	deleted:    apps/e2e/playwright-report/data/e5c577d46e2bff3057db1e10f19ce6847622c13a.webm
+	modified:   apps/e2e/playwright-report/index.html
+	modified:   apps/e2e/test-results/.last-run.json
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-a0c14-irm-transitions-to-verified-operator/error-context.md
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-a0c14-irm-transitions-to-verified-operator/test-failed-1.png
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-a0c14-irm-transitions-to-verified-operator/video-1.webm
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-a0c14-irm-transitions-to-verified-operator/video.webm
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-c83f5-sible-after-verified-status-operator/error-context.md
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-c83f5-sible-after-verified-status-operator/test-failed-1.png
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-c83f5-sible-after-verified-status-operator/video-1.webm
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-c83f5-sible-after-verified-status-operator/video.webm
+	deleted:    apps/e2e/test-results/06-document-pipeline-Docum-4ae06-nloadable-from-publish-page-operator/error-context.md
+	deleted:    apps/e2e/test-results/06-document-pipeline-Docum-4ae06-nloadable-from-publish-page-operator/test-failed-1.png
+	deleted:    apps/e2e/test-results/06-document-pipeline-Docum-4ae06-nloadable-from-publish-page-operator/video-1.webm
+	deleted:    apps/e2e/test-results/06-document-pipeline-Docum-4ae06-nloadable-from-publish-page-operator/video.webm
+	modified:   apps/operator/tsconfig.tsbuildinfo
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	OUT/impersonation_backend_tests.txt
+	OUT/impersonation_openapi.json
+	OUT/impersonation_playwright.txt
+	OUT/impersonation_security_notes.md
+	OUT/impersonation_status_sample.json
+	OUT/incident_20260302_0932/
+	apps/admin/src/components/admin-header.tsx
+	apps/admin/src/components/impersonation-banner.tsx
+	apps/api/prisma/migrations/20260302090000_add_impersonation_sessions/
+	apps/api/src/auth/jwt-auth.guard.impersonation.spec.ts
+	apps/api/src/impersonation/
+	docs/_audit/BASELINE_CONTEXT_2026-03-02.md
+	packages/ui-system/
+
+
+$ git rev-parse HEAD
+881e8292d937abb83fc51df4d0dd41d3f626008f
+
+$ docker compose ps
+NAME               IMAGE                COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+vexel-admin-1      vexel-admin          "docker-entrypoint.s…"   admin      42 minutes ago   Up 42 minutes             127.0.0.1:9023->3001/tcp
+vexel-api-1        vexel-api            "./docker-entrypoint…"   api        43 minutes ago   Up 42 minutes (healthy)   127.0.0.1:9021->3000/tcp
+vexel-minio-1      minio/minio:latest   "/usr/bin/docker-ent…"   minio      3 days ago       Up 3 days (healthy)       127.0.0.1:9027->9000/tcp, 127.0.0.1:9025->9001/tcp
+vexel-operator-1   vexel-operator       "docker-entrypoint.s…"   operator   20 hours ago     Up 20 hours               127.0.0.1:9024->3000/tcp
+vexel-pdf-1        vexel-pdf            "dotnet VexelPdf.dll"    pdf        3 days ago       Up 3 days (healthy)       127.0.0.1:9022->8080/tcp
+vexel-postgres-1   postgres:16-alpine   "docker-entrypoint.s…"   postgres   3 days ago       Up 3 days (healthy)       127.0.0.1:5433->5432/tcp
+vexel-redis-1      redis:7-alpine       "docker-entrypoint.s…"   redis      3 days ago       Up 3 days (healthy)       127.0.0.1:6380->6379/tcp
+vexel-worker-1     vexel-worker         "docker-entrypoint.s…"   worker     33 hours ago     Up 33 hours               
+
+$ docker images | head
+IMAGE                       ID             DISK USAGE   CONTENT SIZE   EXTRA
+alpine:latest               25109184c71b       13.1MB         3.95MB        
+docker-backend:latest       067d826910f1        732MB          150MB   U    
+docker-beat:latest          b59931456769        732MB          150MB   U    
+docker-frontend:latest      0bc4eeef29b0        224MB         52.9MB   U    
+docker-web:latest           a44ea19f91fe        719MB          148MB        
+docker-worker:latest        2f5f65a1f32f        732MB          150MB   U    
+minio/minio:latest          14cea493d9a3        241MB         62.2MB   U    
+node:20-alpine              09e2b3d97260        192MB         48.3MB        
+pgsims-beat:latest          2b1443fd7d31        408MB         89.9MB        
+
+$ docker compose exec -T postgres psql -U postgres -d vexel -c "SELECT * FROM tenant_domains ORDER BY domain;"
+
+$ docker compose exec -T postgres psql -U postgres -d vexel -c "SELECT * FROM tenants ORDER BY id;"
+
+$ docker compose exec -T postgres env | rg '^POSTGRES'
+POSTGRES_USER=vexel
+POSTGRES_PASSWORD=vexel
+POSTGRES_DB=vexel
+
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "SELECT * FROM tenant_domains ORDER BY domain;"
+                  id                  |               tenantId               |           domain            
+--------------------------------------+--------------------------------------+-----------------------------
+ d26f0799-50e6-4105-a460-527d54bfc73c | system                               | admin.localhost
+ 92342004-efa6-41ea-a60d-6e53fceb67ec | system                               | localhost
+ 02257247-ca88-4d57-909b-d1b6215400c5 | af7db6ce-0617-450d-94d0-01bbe629d342 | rc-a-1772145775.vexel.local
+ f1de3196-35ec-4375-ab57-77b65b9c14c4 | bd071759-4c03-4b19-9a65-d930e9fc6a6b | rc-b-1772145775.vexel.local
+(4 rows)
+
+
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "SELECT * FROM tenants ORDER BY id;"
+                  id                  |     name     | status | isSuperAdmin |        createdAt        |        updatedAt        | catalogSeedMode | catalogSeededAt | catalogSeedBaseVersion | catalogSeedHash 
+--------------------------------------+--------------+--------+--------------+-------------------------+-------------------------+-----------------+-----------------+------------------------+-----------------
+ af7db6ce-0617-450d-94d0-01bbe629d342 | RC Tenant A  | active | f            | 2026-02-26 22:42:55.507 | 2026-02-26 22:42:55.507 |                 |                 |                        | 
+ bd071759-4c03-4b19-9a65-d930e9fc6a6b | RC Tenant B  | active | f            | 2026-02-26 22:42:55.528 | 2026-02-26 22:42:55.528 |                 |                 |                        | 
+ system                               | Vexel System | active | t            | 2026-02-26 22:22:33.48  | 2026-02-26 22:22:33.48  |                 |                 |                        | 
+(3 rows)
+
+
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "INSERT INTO tenant_domains (\"tenantId\", domain) VALUES ('system', 'vexel.alshifalab.pk') ON CONFLICT DO NOTHING;"
+
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "SELECT * FROM tenant_domains WHERE domain='vexel.alshifalab.pk';"
+ id | tenantId | domain 
+----+----------+--------
+(0 rows)
+
+
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "INSERT INTO tenant_domains (id, \"tenantId\", domain) VALUES (gen_random_uuid(), 'system', 'vexel.alshifalab.pk') ON CONFLICT (domain) DO NOTHING;"
+INSERT 0 1
+
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "SELECT * FROM tenant_domains WHERE domain='vexel.alshifalab.pk';"
+                  id                  | tenantId |       domain        
+--------------------------------------+----------+---------------------
+ ca08a128-76b0-47f8-99a4-80022ce849a8 | system   | vexel.alshifalab.pk
+(1 row)
+
+
+$ curl -H 'Host: vexel.alshifalab.pk' -X POST https://vexel.alshifalab.pk/api/auth/login
+HTTP 200
+{
+  "id": null,
+  "email": null,
+  "tenantId": null,
+  "role": null,
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5..."
+}
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/me
+HTTP 200
+{
+  "id": null,
+  "email": "admin@vexel.system",
+  "tenantId": "system",
+  "role": null,
+  "permissionsCount": 29
+}
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/catalog/tests?page=1&limit=20
+HTTP 200 total=n/a
+{
+  "total": null,
+  "items": 20
+}
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/catalog/parameters?page=1&limit=20
+HTTP 200 total=n/a
+{
+  "total": null,
+  "items": 20
+}
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/catalog/mappings?page=1&limit=20
+HTTP 404 total=n/a
+{"message":"Cannot GET /api/catalog/mappings?page=1&limit=20","error":"Not Found","statusCode":404}
+
+$ curl -sS -o /tmp/tenant_probe_unknown.json -w '%{http_code}' -H 'Host: unknown.vexel.local' https://vexel.alshifalab.pk/api/health
+HTTP 200
+
+
+$ curl -sS -o /tmp/tenant_probe_vexel.json -w '%{http_code}' -H 'Host: vexel.alshifalab.pk' https://vexel.alshifalab.pk/api/health
+HTTP 200
+{"status":"ok","version":"0.1.0","uptime":2976.333848259,"services":{"api":"ok"}}
+$ curl -sS -o /tmp/tmp.IL5JwIYgSJ -w '%{http_code}' -H 'Host: unknown.vexel.local' -H 'Content-Type: application/json' -X POST https://vexel.alshifalab.pk/api/auth/login --data '{"email":"admin@vexel.system","password":"Admin@vexel123!"}'
+HTTP 200
+
+
+$ curl -sS -o /tmp/tmp.uR7HESY6Gg -w '%{http_code}' -H 'Host: vexel.alshifalab.pk' -H 'Content-Type: application/json' -X POST https://vexel.alshifalab.pk/api/auth/login --data '{"email":"admin@vexel.system","password":"Admin@vexel123!"}'
+HTTP 200
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5...",
+  "refreshToken": "present"
+}
+
+$ pnpm --filter @vexel/operator exec tsc --noEmit
+PASS (validated via awaiter agent, exit 0)
+
+$ pnpm --filter @vexel/admin exec tsc --noEmit
+PASS (validated via awaiter agent, exit 0)
+
+$ rg -n 'module\.operator|permissions\?\.includes|permissions\.includes|no_operator_access|coming soon' apps/operator/src
+
+$ rg -n 'FUTURE_MODULES|module\.opd' apps/operator/src/components/nav
+apps/operator/src/components/nav/nav-config.ts:23:  { label: 'OPD Worklist', href: '/opd/worklist', icon: Stethoscope, featureFlag: 'module.opd' },
+apps/operator/src/components/nav/nav-config.ts:24:  { label: 'New Appointment', href: '/opd/appointments/new', icon: UserPlus, featureFlag: 'module.opd' },
+apps/operator/src/components/nav/nav-config.ts:25:  { label: 'OPD Billing', href: '/opd/billing', icon: CreditCard, featureFlag: 'module.opd' },
+apps/operator/src/components/nav/nav-config.ts:28:export const FUTURE_MODULES = [
+apps/operator/src/components/nav/sidebar.tsx:7:import { LIMS_NAV, OPD_NAV, FUTURE_MODULES, type NavItem } from './nav-config';
+apps/operator/src/components/nav/sidebar.tsx:83:  const opdEnabled = isFeatureEnabled('module.opd');
+apps/operator/src/components/nav/sidebar.tsx:232:            {FUTURE_MODULES.filter(m => m.label !== 'OPD').map(m => (
+
+$ command -v npx >/dev/null 2>&1 && echo 'npx:ok'
+npx:ok
+
+$ /home/munaim/.codex/skills/playwright/scripts/playwright_cli.sh --help | head
+playwright-cli - run playwright mcp commands from terminal
+
+Usage: playwright-cli <command> [args] [options]
+Usage: playwright-cli -s=<session> <command> [args] [options]
+
+Core:
+  open [url]                  open the browser
+  close                       close the browser
+  goto <url>                  navigate to a url
+  type <text>                 type text into editable element
+
+$ ls -l .git/index.lock
+
+$ pgrep -af '^git'
+
+$ pnpm --filter @vexel/operator exec tsc --noEmit
+PASS (re-validated after cache/logout changes, exit 0)
+
+$ pnpm --filter @vexel/admin exec tsc --noEmit
+PASS (re-validated after import response parser changes, exit 0)
+
+$ git show --stat --oneline -1
+d23ed48 fix(operator): server-side access gating and resilient catalog import parsing
+ .../app/(protected)/catalog/import-export/page.tsx | 72 +++++++++++++++-----
+ apps/operator/src/app/(protected)/layout.tsx       | 16 ++---
+ apps/operator/src/app/(protected)/page.tsx         | 51 +++-----------
+ apps/operator/src/components/nav/sidebar.tsx       | 54 +++++++++------
+ apps/operator/src/hooks/use-current-user.ts        | 77 ++++++++++++++++++++++
+ 5 files changed, 184 insertions(+), 86 deletions(-)
+
+$ docker compose build operator api --no-cache
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.08kB done
+#1 DONE 0.0s
+
+#2 [operator internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.25kB done
+#2 DONE 0.0s
+
+#3 [api internal] load build definition from Dockerfile
+#3 transferring dockerfile: 787B done
+#3 DONE 0.0s
+
+#4 [api internal] load metadata for docker.io/library/node:20-alpine
+#4 DONE 0.0s
+
+#5 [api internal] load .dockerignore
+#5 transferring context: 152B done
+#5 DONE 0.0s
+
+#6 [operator internal] load .dockerignore
+#6 transferring context: 428B done
+#6 DONE 0.0s
+
+#7 [operator base 1/3] FROM docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+#7 resolve docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8 0.0s done
+#7 DONE 0.0s
+
+#8 [operator base 2/3] WORKDIR /app
+#8 CACHED
+
+#9 [api internal] load build context
+#9 transferring context: 43.66kB 0.0s done
+#9 DONE 0.0s
+
+#10 [operator internal] load build context
+#10 transferring context: 740.73kB 0.1s done
+#10 DONE 0.1s
+
+#11 [operator base 3/3] RUN npm install -g pnpm
+#11 1.872 
+#11 1.872 added 1 package in 2s
+#11 1.872 
+#11 1.872 1 package is looking for funding
+#11 1.872   run `npm fund` for details
+#11 1.875 npm notice
+#11 1.875 npm notice New major version of npm available! 10.8.2 -> 11.11.0
+#11 1.875 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+#11 1.875 npm notice To update run: npm install -g npm@11.11.0
+#11 1.875 npm notice
+#11 DONE 3.7s
+
+#12 [api base 3/3] RUN apk add --no-cache python3 make g++
+#12 0.760 ( 1/29) Installing libstdc++-dev (15.2.0-r2)
+#12 0.975 ( 2/29) Installing jansson (2.14.1-r0)
+#12 0.989 ( 3/29) Installing zstd-libs (1.5.7-r2)
+#12 1.011 ( 4/29) Installing binutils (2.45.1-r0)
+#12 1.131 ( 5/29) Installing libgomp (15.2.0-r2)
+#12 1.150 ( 6/29) Installing libatomic (15.2.0-r2)
+#12 1.164 ( 7/29) Installing gmp (6.3.0-r4)
+#12 1.182 ( 8/29) Installing isl26 (0.26-r1)
+#12 1.212 ( 9/29) Installing mpfr4 (4.2.2-r0)
+#12 1.232 (10/29) Installing mpc1 (1.3.1-r1)
+#12 1.247 (11/29) Installing gcc (15.2.0-r2)
+#12 2.506 (12/29) Installing musl-dev (1.2.5-r21)
+#12 2.586 (13/29) Installing g++ (15.2.0-r2)
+#12 2.952 (14/29) Installing make (4.4.1-r3)
+#12 2.967 (15/29) Installing libbz2 (1.0.8-r6)
+#12 2.980 (16/29) Installing libexpat (2.7.4-r0)
+#12 2.994 (17/29) Installing libffi (3.5.2-r0)
+#12 3.006 (18/29) Installing gdbm (1.26-r0)
+#12 3.020 (19/29) Installing xz-libs (5.8.2-r0)
+#12 3.035 (20/29) Installing mpdecimal (4.0.1-r0)
+#12 3.050 (21/29) Installing ncurses-terminfo-base (6.5_p20251123-r0)
+#12 3.064 (22/29) Installing libncursesw (6.5_p20251123-r0)
+#12 3.081 (23/29) Installing libpanelw (6.5_p20251123-r0)
+#12 3.094 (24/29) Installing readline (8.3.1-r0)
+#12 3.108 (25/29) Installing sqlite-libs (3.51.2-r0)
+#12 3.136 (26/29) Installing python3 (3.12.12-r0)
+#12 3.411 (27/29) Installing python3-pycache-pyc0 (3.12.12-r0)
+#12 3.526 (28/29) Installing pyc (3.12.12-r0)
+#12 3.526 (29/29) Installing python3-pyc (3.12.12-r0)
+#12 3.527 Executing busybox-1.37.0-r30.trigger
+#12 3.723 OK: 301.2 MiB in 47 packages
+#12 DONE 4.1s
+
+#13 [operator build 1/8] WORKDIR /app
+#13 DONE 0.3s
+
+#14 [operator deps 1/5] COPY pnpm-workspace.yaml package.json ./
+#14 DONE 0.4s
+
+#15 [api deps 1/2] COPY package.json ./
+#15 DONE 0.1s
+
+#16 [operator deps 2/5] COPY packages/sdk/package.json ./packages/sdk/
+#16 DONE 0.1s
+
+#17 [operator deps 3/5] COPY packages/theme/package.json ./packages/theme/
+#17 DONE 0.0s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#19 [operator deps 4/5] COPY apps/operator/package.json ./apps/operator/
+#19 DONE 0.0s
+
+#20 [operator deps 5/5] RUN pnpm install --ignore-scripts --shamefully-hoist
+#20 2.509 Scope: all 4 workspace projects
+#20 2.816 Progress: resolved 1, reused 0, downloaded 0, added 0
+#20 3.001  WARN  deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#20 3.246 /app/apps/operator:
+#20 3.246  ERR_PNPM_WORKSPACE_PKG_NOT_FOUND  In apps/operator: "@vexel/ui-system@workspace:*" is in the dependencies but no package named "@vexel/ui-system" is present in the workspace
+#20 3.246 
+#20 3.246 This error happened while installing a direct dependency of /app/apps/operator
+#20 3.246 
+#20 3.246 Packages found in the workspace: 
+#20 ERROR: process "/bin/sh -c pnpm install --ignore-scripts --shamefully-hoist" did not complete successfully: exit code: 1
+
+#18 [api deps 2/2] RUN npm install
+#18 CANCELED
+------
+ > [operator deps 5/5] RUN pnpm install --ignore-scripts --shamefully-hoist:
+2.509 Scope: all 4 workspace projects
+2.816 Progress: resolved 1, reused 0, downloaded 0, added 0
+3.001  WARN  deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+3.246 /app/apps/operator:
+3.246  ERR_PNPM_WORKSPACE_PKG_NOT_FOUND  In apps/operator: "@vexel/ui-system@workspace:*" is in the dependencies but no package named "@vexel/ui-system" is present in the workspace
+3.246 
+3.246 This error happened while installing a direct dependency of /app/apps/operator
+3.246 
+3.246 Packages found in the workspace: 
+------
+
+$ docker compose up -d operator api
+
+$ docker compose ps operator api
+NAME               IMAGE            COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+vexel-api-1        vexel-api        "./docker-entrypoint…"   api        54 minutes ago   Up 54 minutes (healthy)   127.0.0.1:9021->3000/tcp
+vexel-operator-1   vexel-operator   "docker-entrypoint.s…"   operator   20 hours ago     Up 20 hours               127.0.0.1:9024->3000/tcp
+
+$ docker images --no-trunc | rg 'vexel-(operator|api)'
+vexel-api            latest      sha256:8f5212ee2f5f1cf09c634339fcd292ec7af61cab5b8e31f162df04b9b8f28004   57 minutes ago   920MB
+vexel-operator       latest      sha256:69744657d4fdf75549fa230e0f776588795ee1c01e7702c38b07098ce11092cb   20 hours ago     305MB
+
+$ git show --stat --oneline -1
+f6de5dd fix(operator-docker): include ui-system workspace package in build context
+ apps/operator/Dockerfile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+$ docker compose build operator api --no-cache
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.08kB done
+#1 DONE 0.0s
+
+#2 [operator internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.36kB done
+#2 DONE 0.0s
+
+#3 [api internal] load build definition from Dockerfile
+#3 transferring dockerfile: 787B done
+#3 DONE 0.0s
+
+#4 [operator internal] load metadata for docker.io/library/node:20-alpine
+#4 DONE 0.0s
+
+#5 [operator internal] load .dockerignore
+#5 transferring context: 428B done
+#5 DONE 0.0s
+
+#6 [api internal] load .dockerignore
+#6 transferring context: 152B done
+#6 DONE 0.0s
+
+#7 [operator base 1/3] FROM docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+#7 resolve docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8 0.0s done
+#7 DONE 0.0s
+
+#8 [api base 2/3] WORKDIR /app
+#8 CACHED
+
+#9 [api internal] load build context
+#9 transferring context: 29.76kB 0.0s done
+#9 DONE 0.1s
+
+#10 [operator internal] load build context
+#10 transferring context: 55.19kB 0.0s done
+#10 DONE 0.1s
+
+#11 [api base 3/3] RUN apk add --no-cache python3 make g++
+#11 0.744 ( 1/29) Installing libstdc++-dev (15.2.0-r2)
+#11 0.927 ( 2/29) Installing jansson (2.14.1-r0)
+#11 0.944 ( 3/29) Installing zstd-libs (1.5.7-r2)
+#11 0.964 ( 4/29) Installing binutils (2.45.1-r0)
+#11 1.055 ( 5/29) Installing libgomp (15.2.0-r2)
+#11 1.073 ( 6/29) Installing libatomic (15.2.0-r2)
+#11 1.086 ( 7/29) Installing gmp (6.3.0-r4)
+#11 1.104 ( 8/29) Installing isl26 (0.26-r1)
+#11 1.136 ( 9/29) Installing mpfr4 (4.2.2-r0)
+#11 1.159 (10/29) Installing mpc1 (1.3.1-r1)
+#11 1.173 (11/29) Installing gcc (15.2.0-r2)
+#11 2.396 (12/29) Installing musl-dev (1.2.5-r21)
+#11 2.468 (13/29) Installing g++ (15.2.0-r2)
+#11 2.896 (14/29) Installing make (4.4.1-r3)
+#11 2.912 (15/29) Installing libbz2 (1.0.8-r6)
+#11 2.926 (16/29) Installing libexpat (2.7.4-r0)
+#11 2.940 (17/29) Installing libffi (3.5.2-r0)
+#11 2.954 (18/29) Installing gdbm (1.26-r0)
+#11 2.967 (19/29) Installing xz-libs (5.8.2-r0)
+#11 2.983 (20/29) Installing mpdecimal (4.0.1-r0)
+#11 2.999 (21/29) Installing ncurses-terminfo-base (6.5_p20251123-r0)
+#11 3.014 (22/29) Installing libncursesw (6.5_p20251123-r0)
+#11 3.031 (23/29) Installing libpanelw (6.5_p20251123-r0)
+#11 3.044 (24/29) Installing readline (8.3.1-r0)
+#11 3.060 (25/29) Installing sqlite-libs (3.51.2-r0)
+#11 3.087 (26/29) Installing python3 (3.12.12-r0)
+#11 3.268 (27/29) Installing python3-pycache-pyc0 (3.12.12-r0)
+#11 3.382 (28/29) Installing pyc (3.12.12-r0)
+#11 3.382 (29/29) Installing python3-pyc (3.12.12-r0)
+#11 3.382 Executing busybox-1.37.0-r30.trigger
+#11 3.574 OK: 301.2 MiB in 47 packages
+#11 ...
+
+#12 [operator base 3/3] RUN npm install -g pnpm
+#12 1.732 
+#12 1.732 added 1 package in 1s
+#12 1.732 
+#12 1.732 1 package is looking for funding
+#12 1.732   run `npm fund` for details
+#12 1.734 npm notice
+#12 1.734 npm notice New major version of npm available! 10.8.2 -> 11.11.0
+#12 1.734 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+#12 1.734 npm notice To update run: npm install -g npm@11.11.0
+#12 1.734 npm notice
+#12 DONE 3.6s
+
+#13 [operator build 1/9] WORKDIR /app
+#13 DONE 0.3s
+
+#14 [operator deps 1/6] COPY pnpm-workspace.yaml package.json ./
+#14 DONE 0.4s
+
+#11 [api base 3/3] RUN apk add --no-cache python3 make g++
+#11 DONE 3.9s
+
+#15 [operator deps 2/6] COPY packages/sdk/package.json ./packages/sdk/
+#15 DONE 0.1s
+
+#16 [api deps 1/2] COPY package.json ./
+#16 DONE 0.1s
+
+#17 [operator deps 3/6] COPY packages/theme/package.json ./packages/theme/
+#17 DONE 0.0s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#19 [operator deps 4/6] COPY packages/ui-system/package.json ./packages/ui-system/
+#19 DONE 0.1s
+
+#20 [operator deps 5/6] COPY apps/operator/package.json ./apps/operator/
+#20 DONE 0.0s
+
+#21 [operator deps 6/6] RUN pnpm install --ignore-scripts --shamefully-hoist
+#21 2.486 Scope: all 5 workspace projects
+#21 2.833 Progress: resolved 1, reused 0, downloaded 0, added 0
+#21 3.261  WARN  deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#21 3.867 Progress: resolved 29, reused 0, downloaded 25, added 0
+#21 4.869 Progress: resolved 33, reused 0, downloaded 30, added 0
+#21 5.983 Progress: resolved 35, reused 0, downloaded 32, added 0
+#21 6.988 Progress: resolved 58, reused 0, downloaded 48, added 0
+#21 8.000 Progress: resolved 100, reused 0, downloaded 86, added 0
+#21 9.027 Progress: resolved 126, reused 0, downloaded 110, added 0
+#21 10.25 Progress: resolved 157, reused 0, downloaded 118, added 0
+#21 11.27 Progress: resolved 188, reused 0, downloaded 159, added 0
+#21 12.28 Progress: resolved 251, reused 0, downloaded 211, added 0
+#21 13.29 Progress: resolved 281, reused 0, downloaded 240, added 0
+#21 14.30 Progress: resolved 323, reused 0, downloaded 264, added 0
+#21 15.39 Progress: resolved 350, reused 0, downloaded 292, added 0
+#21 16.40 Progress: resolved 435, reused 0, downloaded 361, added 0
+#21 17.40 Progress: resolved 491, reused 0, downloaded 410, added 0
+#21 18.42  WARN  5 deprecated subdependencies found: @humanwhocodes/config-array@0.13.0, @humanwhocodes/object-schema@2.0.3, glob@7.2.3, inflight@1.0.6, rimraf@3.0.2
+#21 18.44 Progress: resolved 537, reused 0, downloaded 473, added 0
+#21 18.46 Packages: +483
+#21 18.46 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#21 19.44 Progress: resolved 537, reused 0, downloaded 487, added 400
+#21 19.69 Progress: resolved 537, reused 0, downloaded 488, added 483, done
+#21 20.53 
+#21 20.53 dependencies:
+#21 20.53 + @prisma/client 6.19.2 (7.4.2 is available)
+#21 20.53 
+#21 20.53 devDependencies:
+#21 20.53 + eslint 8.57.1 (10.0.2 is available) deprecated
+#21 20.53 + eslint-config-next 15.5.12 (16.1.6 is available)
+#21 20.53 + prisma 6.19.2 (7.4.2 is available)
+#21 20.53 + turbo 2.8.12
+#21 20.53 
+#21 20.53 Done in 18.5s
+#21 DONE 26.2s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#22 [operator build 2/9] COPY --from=deps /app/node_modules ./node_modules
+#22 ...
+
+#18 [api deps 2/2] RUN npm install
+#18 40.51 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#18 41.94 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+#18 42.70 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+#18 43.03 npm warn deprecated fstream@1.0.12: This package is no longer supported.
+#18 43.60 npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+#18 44.04 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#18 44.14 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#18 44.47 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+#18 44.50 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#18 45.59 npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 46.45 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 46.48 npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+#18 46.66 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 46.89 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 46.89 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 46.89 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 47.13 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 47.19 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 47.33 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 48.55 npm warn deprecated glob@10.4.5: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 ...
+
+#22 [operator build 2/9] COPY --from=deps /app/node_modules ./node_modules
+#22 DONE 13.9s
+
+#23 [operator build 3/9] COPY --from=deps /app/apps/operator/node_modules ./apps/operator/node_modules
+#23 DONE 2.0s
+
+#18 [api deps 2/2] RUN npm install
+#18 53.14 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#18 ...
+
+#24 [operator build 4/9] COPY packages/sdk/ ./packages/sdk/
+#24 DONE 0.5s
+
+#25 [operator build 5/9] COPY packages/theme/ ./packages/theme/
+#25 DONE 0.1s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#26 [operator build 6/9] COPY packages/ui-system/ ./packages/ui-system/
+#26 DONE 0.1s
+
+#27 [operator build 7/9] COPY apps/operator/ ./apps/operator/
+#27 DONE 0.2s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#28 [operator build 8/9] WORKDIR /app/apps/operator
+#28 DONE 0.0s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 1.141 
+#29 1.141 > @vexel/operator@0.1.0 build /app/apps/operator
+#29 1.141 > next build
+#29 1.141 
+#29 2.796    ▲ Next.js 15.5.12
+#29 2.797 
+#29 2.924    Creating an optimized production build ...
+#29 ...
+
+#18 [api deps 2/2] RUN npm install
+#18 72.42 
+#18 72.42 added 1004 packages, and audited 1005 packages in 1m
+#18 72.42 
+#18 72.42 136 packages are looking for funding
+#18 72.42   run `npm fund` for details
+#18 72.67 npm notice
+#18 72.67 npm notice New major version of npm available! 10.8.2 -> 11.11.0
+#18 72.67 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+#18 72.67 npm notice To update run: npm install -g npm@11.11.0
+#18 72.67 npm notice
+#18 72.67 
+#18 72.67 43 vulnerabilities (23 low, 7 moderate, 13 high)
+#18 72.67 
+#18 72.67 To address issues that do not require attention, run:
+#18 72.67   npm audit fix
+#18 72.67 
+#18 72.67 To address all issues (including breaking changes), run:
+#18 72.67   npm audit fix --force
+#18 72.67 
+#18 72.67 Run `npm audit` for details.
+#18 DONE 74.7s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#30 [api build 1/4] COPY --from=deps /app/node_modules ./node_modules
+#30 ...
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 34.91  ✓ Compiled successfully in 27.6s
+#29 34.92    Linting and checking validity of types ...
+#29 41.82 
+#29 41.82 ./src/app/(protected)/encounters/[id]/reports/page.tsx
+#29 41.82 38:37  Warning: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/encounters/[id]/verify/page.tsx
+#29 41.82 38:6  Warning: React Hook useEffect has a missing dependency: 'startPolling'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/lims/encounters/[id]/page.tsx
+#29 41.82 69:6  Warning: React Hook useEffect has missing dependencies: 'fetchDocuments' and 'fetchEncounter'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 80:6  Warning: React Hook useEffect has missing dependencies: 'reportDoc' and 'startPolling'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/lims/encounters/[id]/publish/page.tsx
+#29 41.82 67:6  Warning: React Hook useEffect has missing dependencies: 'fetchDocument' and 'startPolling'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/lims/encounters/[id]/reports/page.tsx
+#29 41.82 38:37  Warning: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/lims/encounters/[id]/verify/page.tsx
+#29 41.82 40:6  Warning: React Hook useEffect has a missing dependency: 'startPolling'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx
+#29 41.82 191:30  Warning: The ref value 'pollRefs.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'pollRefs.current' to a variable inside the effect, and use that variable in the cleanup function.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx
+#29 41.82 123:6  Warning: React Hook useEffect has a missing dependency: 'loadDetail'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/lims/verification/page.tsx
+#29 41.82 71:38  Warning: React Hook useEffect has a missing dependency: 'search'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 ./src/app/(protected)/page.tsx
+#29 41.82 96:9  Warning: The 'userPerms' logical expression could make the dependencies of useMemo Hook (at line 107) change on every render. To fix this, wrap the initialization of 'userPerms' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+#29 41.82 
+#29 41.82 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+#29 49.65    Collecting page data ...
+#29 ...
+
+#30 [api build 1/4] COPY --from=deps /app/node_modules ./node_modules
+#30 DONE 17.3s
+
+#31 [api build 2/4] COPY . .
+#31 DONE 0.4s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#32 [api build 3/4] RUN npm run prisma:generate
+#32 0.786 
+#32 0.786 > @vexel/api@0.1.0 prisma:generate
+#32 0.786 > prisma generate
+#32 0.786 
+#32 2.150 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#32 2.150 For more information, see: https://pris.ly/prisma-config
+#32 2.150 
+#32 2.307 Prisma schema loaded from prisma/schema.prisma
+#32 5.108 
+#32 5.108 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 809ms
+#32 5.108 
+#32 5.108 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#32 5.108 
+#32 5.108 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+#32 5.108 
+#32 5.140 npm notice
+#32 5.140 npm notice New major version of npm available! 10.8.2 -> 11.11.0
+#32 5.140 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+#32 5.140 npm notice To update run: npm install -g npm@11.11.0
+#32 5.140 npm notice
+#32 DONE 5.2s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 53.22    Generating static pages (0/31) ...
+#29 54.98    Generating static pages (7/31) 
+#29 55.14    Generating static pages (15/31) 
+#29 55.18    Generating static pages (23/31) 
+#29 55.30  ✓ Generating static pages (31/31)
+#29 56.23    Finalizing page optimization ...
+#29 56.23    Collecting build traces ...
+#29 ...
+
+#33 [api build 4/4] RUN npm run build
+#33 0.478 
+#33 0.478 > @vexel/api@0.1.0 build
+#33 0.478 > nest build
+#33 0.478 
+#33 DONE 15.8s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#34 [api runtime 3/8] COPY --from=build /app/dist ./dist
+#34 DONE 0.1s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#35 [api runtime 4/8] COPY --from=build /app/node_modules ./node_modules
+#35 DONE 6.8s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#36 [api runtime 5/8] COPY --from=build /app/prisma ./prisma
+#36 DONE 0.3s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#37 [api runtime 6/8] COPY --from=build /app/resources ./resources
+#37 DONE 0.0s
+
+#38 [api runtime 7/8] COPY docker-entrypoint.sh ./docker-entrypoint.sh
+#38 DONE 0.0s
+
+#39 [api runtime 8/8] RUN chmod +x ./docker-entrypoint.sh
+#39 DONE 0.2s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#40 [api] exporting to image
+#40 exporting layers
+#40 ...
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 87.18 
+#29 87.19 Route (app)                                         Size  First Load JS
+#29 87.19 ┌ ○ /                                            4.15 kB         117 kB
+#29 87.19 ├ ○ /_not-found                                     1 kB         103 kB
+#29 87.19 ├ ○ /encounters                                    378 B         102 kB
+#29 87.19 ├ ƒ /encounters/[id]                               141 B         102 kB
+#29 87.19 ├ ƒ /encounters/[id]/order                        3.1 kB         122 kB
+#29 87.19 ├ ƒ /encounters/[id]/publish                       173 B         123 kB
+#29 87.19 ├ ƒ /encounters/[id]/receive                     2.93 kB         122 kB
+#29 87.19 ├ ƒ /encounters/[id]/reports                     3.88 kB         123 kB
+#29 87.19 ├ ƒ /encounters/[id]/results                     3.23 kB         123 kB
+#29 87.19 ├ ƒ /encounters/[id]/sample                      2.75 kB         122 kB
+#29 87.19 ├ ƒ /encounters/[id]/verify                      2.46 kB         125 kB
+#29 87.19 ├ ○ /encounters/new                                141 B         102 kB
+#29 87.19 ├ ○ /lims/encounters                             1.72 kB         121 kB
+#29 87.19 ├ ƒ /lims/encounters/[id]                        6.22 kB         126 kB
+#29 87.19 ├ ƒ /lims/encounters/[id]/order                  3.09 kB         122 kB
+#29 87.19 ├ ƒ /lims/encounters/[id]/publish                  173 B         123 kB
+#29 87.19 ├ ƒ /lims/encounters/[id]/receive                4.07 kB         123 kB
+#29 87.19 ├ ƒ /lims/encounters/[id]/reports                3.74 kB         123 kB
+#29 87.19 ├ ƒ /lims/encounters/[id]/results                4.39 kB         124 kB
+#29 87.19 ├ ƒ /lims/encounters/[id]/sample                  3.2 kB         123 kB
+#29 87.19 ├ ƒ /lims/encounters/[id]/verify                 2.24 kB         125 kB
+#29 87.19 ├ ○ /lims/encounters/new                         4.58 kB         106 kB
+#29 87.19 ├ ○ /lims/patients                                  4 kB         123 kB
+#29 87.19 ├ ○ /lims/patients/new                           4.72 kB         107 kB
+#29 87.19 ├ ○ /lims/payments                               4.64 kB         123 kB
+#29 87.19 ├ ƒ /lims/print/[id]                             4.83 kB         107 kB
+#29 87.19 ├ ○ /lims/registrations/new                      9.83 kB         126 kB
+#29 87.19 ├ ○ /lims/reports                                 5.7 kB         134 kB
+#29 87.19 ├ ○ /lims/results                                2.25 kB         128 kB
+#29 87.19 ├ ƒ /lims/results/[orderedTestId]                6.95 kB         126 kB
+#29 87.19 ├ ƒ /lims/results/encounters/[encounterId]       4.76 kB         135 kB
+#29 87.19 ├ ○ /lims/sample-collection                      5.69 kB         137 kB
+#29 87.19 ├ ○ /lims/verification                           2.13 kB         128 kB
+#29 87.19 ├ ƒ /lims/verification/encounters/[encounterId]  6.15 kB         119 kB
+#29 87.19 ├ ○ /lims/worklist                               1.83 kB         153 kB
+#29 87.19 ├ ○ /login                                        5.5 kB         118 kB
+#29 87.19 ├ ƒ /opd/appointments/[id]                       3.52 kB         126 kB
+#29 87.19 ├ ○ /opd/appointments/new                        3.56 kB         126 kB
+#29 87.19 ├ ○ /opd/billing                                 2.14 kB         153 kB
+#29 87.19 ├ ƒ /opd/billing/invoices/[invoiceId]            4.18 kB         127 kB
+#29 87.19 ├ ○ /opd/billing/new                              5.4 kB         125 kB
+#29 87.19 ├ ƒ /opd/providers/[providerId]/availability      5.2 kB         125 kB
+#29 87.19 ├ ƒ /opd/visits/[visitId]                        4.87 kB         127 kB
+#29 87.19 ├ ○ /opd/visits/new                              2.27 kB         153 kB
+#29 87.19 ├ ○ /opd/worklist                                2.26 kB         153 kB
+#29 87.19 ├ ○ /patients                                      376 B         102 kB
+#29 87.19 ├ ○ /patients/new                                  141 B         102 kB
+#29 87.19 ├ ○ /registrations/new                             376 B         102 kB
+#29 87.19 ├ ○ /reports                                       374 B         102 kB
+#29 87.19 ├ ○ /results                                       374 B         102 kB
+#29 87.19 ├ ƒ /results/[orderedTestId]                       141 B         102 kB
+#29 87.19 ├ ○ /sample-collection                             372 B         102 kB
+#29 87.19 ├ ○ /verification                                  372 B         102 kB
+#29 87.19 ├ ƒ /verification/encounters/[encounterId]         141 B         102 kB
+#29 87.19 └ ○ /worklist                                      377 B         102 kB
+#29 87.19 + First Load JS shared by all                     102 kB
+#29 87.19   ├ chunks/8e6518bb-c26e82767f1faf66.js          54.2 kB
+#29 87.19   ├ chunks/9743-1cef6f4872433014.js              45.7 kB
+#29 87.19   └ other shared chunks (total)                  1.93 kB
+#29 87.19 
+#29 87.19 
+#29 87.19 ○  (Static)   prerendered as static content
+#29 87.19 ƒ  (Dynamic)  server-rendered on demand
+#29 87.19 
+#29 DONE 87.4s
+
+#40 [api] exporting to image
+#40 ...
+
+#41 [operator runtime 3/4] COPY --from=build /app/apps/operator/.next/standalone ./
+#41 DONE 0.7s
+
+#42 [operator runtime 4/4] COPY --from=build /app/apps/operator/.next/static ./apps/operator/.next/static
+#42 DONE 0.1s
+
+#43 [operator] exporting to image
+#43 exporting layers 5.0s done
+#43 exporting manifest sha256:4c79201d5d586fce08a0f11584cace5afad1d7f26780a248e600856102f8e7af 0.0s done
+#43 exporting config sha256:91ab91750f8fd9b1ad19a56b9de8b0ebe69ae5f8b45e549b39c56644125f8327 0.0s done
+#43 exporting attestation manifest sha256:d1209c2345efd918ad71aa4d57630b8164be3c44d5b9449330c56e7b418c1074 0.1s done
+#43 exporting manifest list sha256:ab86a542b17146b821ce205d130a40f348c543e1d59473dfcb019eb01044e1c3
+#43 exporting manifest list sha256:ab86a542b17146b821ce205d130a40f348c543e1d59473dfcb019eb01044e1c3 0.0s done
+#43 naming to docker.io/library/vexel-operator:latest done
+#43 unpacking to docker.io/library/vexel-operator:latest
+#43 unpacking to docker.io/library/vexel-operator:latest 1.5s done
+#43 DONE 6.6s
+
+#44 [operator] resolving provenance for metadata file
+#44 DONE 0.0s
+
+#40 [api] exporting to image
+#40 exporting layers 26.3s done
+#40 exporting manifest sha256:03b64b2fa3525be51a2ecb79897d260d1be0cc7152b5813171f3f3a62a52e875 done
+#40 exporting config sha256:a9eeb175373341284110f5b62a26ad660cce1e642976472767cc45aa3bd99ea9 done
+#40 exporting attestation manifest sha256:50a88147150e0793ce76166ae6d5afe8406885aeed2fe9536214d45bb355cbf5 0.0s done
+#40 exporting manifest list sha256:5065bf9b5d8b8aae04fba24f0ebc14767bdeb147821c327333b0f7aebcb1497a done
+#40 naming to docker.io/library/vexel-api:latest done
+#40 unpacking to docker.io/library/vexel-api:latest
+#40 unpacking to docker.io/library/vexel-api:latest 6.9s done
+#40 DONE 33.2s
+
+#45 [api] resolving provenance for metadata file
+#45 DONE 0.0s
+
+$ docker compose up -d operator api
+
+$ docker compose ps operator api
+NAME               IMAGE            COMMAND                  SERVICE    CREATED          STATUS                                     PORTS
+vexel-api-1        vexel-api        "./docker-entrypoint…"   api        17 seconds ago   Up Less than a second (health: starting)   127.0.0.1:9021->3000/tcp
+vexel-operator-1   vexel-operator   "docker-entrypoint.s…"   operator   17 seconds ago   Up Less than a second                      127.0.0.1:9024->3000/tcp
+
+$ docker images --no-trunc | rg 'vexel-(operator|api)'
+vexel-operator       latest      sha256:ab86a542b17146b821ce205d130a40f348c543e1d59473dfcb019eb01044e1c3   46 seconds ago   305MB
+vexel-api            latest      sha256:5065bf9b5d8b8aae04fba24f0ebc14767bdeb147821c327333b0f7aebcb1497a   50 seconds ago   920MB
+
+$ docker compose ps operator api
+NAME               IMAGE            COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+vexel-api-1        vexel-api        "./docker-entrypoint…"   api        29 seconds ago   Up 13 seconds (healthy)   127.0.0.1:9021->3000/tcp
+vexel-operator-1   vexel-operator   "docker-entrypoint.s…"   operator   29 seconds ago   Up 13 seconds             127.0.0.1:9024->3000/tcp
+
+$ curl -sS https://vexel.alshifalab.pk/api/health
+{"status":"ok","version":"0.1.0","uptime":9.606046725,"services":{"api":"ok"}}
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "SELECT * FROM tenant_domains WHERE domain='vexel.alshifalab.pk';"
+                  id                  | tenantId |       domain        
+--------------------------------------+----------+---------------------
+ ca08a128-76b0-47f8-99a4-80022ce849a8 | system   | vexel.alshifalab.pk
+(1 row)
+
+
+$ curl -H 'Host: vexel.alshifalab.pk' -X POST https://vexel.alshifalab.pk/api/auth/login
+HTTP 200
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "present"
+}
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/me
+HTTP 200
+{
+  "email": "admin@vexel.system",
+  "tenantId": "system",
+  "isSuperAdmin": true,
+  "permissionsCount": 29
+}
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/feature-flags/resolved
+HTTP 200
+{
+  "module_lims": true,
+  "module_opd": true,
+  "lims_verification": true
+}
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/catalog/tests?page=1&limit=200
+HTTP 200 items=84
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/catalog/parameters?page=1&limit=200
+HTTP 200 items=144
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/catalog/tests/f740443d-f9d8-4bc9-8e0f-57871f3999db/parameters
+HTTP 200 items=
+
+$ docker compose exec -T postgres psql -U vexel -d vexel -At -c '<catalog counts>'
+catalog_tests=84
+parameters=144
+test_parameter_mappings=192
+panel_test_mappings=63
+
+$ curl -H 'Host: vexel.alshifalab.pk' -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/catalog/tests/f740443d-f9d8-4bc9-8e0f-57871f3999db/parameters
+HTTP 200 mappings_for_test=1
+
+$ ls -la OUT/incident_20260302_0932/06_screenshots
+total 648
+drwxrwxr-x+ 2 munaim munaim   4096 Mar  2 09:53 .
+drwxrwxr-x+ 3 munaim munaim   4096 Mar  2 09:32 ..
+-rw-rw-r--+ 1 munaim munaim 190199 Mar  2 09:53 opd_worklist_clickable.png
+-rw-rw-r--+ 1 munaim munaim 306123 Mar  2 09:53 operator_dashboard_modules.png
+-rw-rw-r--+ 1 munaim munaim 154530 Mar  2 09:53 registration_catalog_suggestions.png
+
+$ rg -n 'Laboratory \(LIMS\)|OPD / Clinic|⭐ Super Admin|module active' .playwright-cli/page-2026-03-02T04-49-57-585Z.yml
+19:          - generic [ref=e25]: ⭐ Super Admin
+22:        - button "🧪 Laboratory (LIMS) Patient registrations, sample collection, results entry, verification, and reports. Open →" [ref=e28] [cursor=pointer]:
+24:          - heading "Laboratory (LIMS)" [level=3] [ref=e30]
+29:        - button "🏥 OPD / Clinic Outpatient consultations, appointments, prescriptions, and billing. Open →" [ref=e34] [cursor=pointer]:
+31:          - heading "OPD / Clinic" [level=3] [ref=e36]
+
+$ rg -n 'link "LIMS"|link "OPD"|OPD Workspace|/opd/worklist' .playwright-cli/page-2026-03-02T04-50-45-932Z.yml
+15:          - link "LIMS" [ref=e447] [cursor=pointer]:
+18:          - link "OPD" [ref=e450] [cursor=pointer]:
+19:            - /url: /opd/worklist
+23:        - generic [ref=e456]: OPD Workspace
+25:          - /url: /opd/worklist
+
+$ rg -n 'Type test name or code|Complete Blood Count \(CBC\)|PKR 0' .playwright-cli/page-2026-03-02T04-51-40-351Z.yml
+114:                - textbox "Type test name or code, Enter to add…" [active] [ref=e1042]: cbc
+117:                    - generic [ref=e1067]: Complete Blood Count (CBC)
+118:                    - generic [ref=e1068]: PKR 0
+120:                    - generic [ref=e1071]: Complete Blood Count (CBC)
+
+$ docker compose build admin --no-cache
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.05kB done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.34kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:20-alpine
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 106B
+#4 transferring context: 428B done
+#4 DONE 0.0s
+
+#5 [base 1/3] FROM docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+#5 resolve docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8 0.0s done
+#5 DONE 0.0s
+
+#6 [base 2/3] WORKDIR /app
+#6 CACHED
+
+#7 [internal] load build context
+#7 transferring context: 525.68kB 0.1s done
+#7 DONE 0.1s
+
+#8 [base 3/3] RUN npm install -g pnpm
+#8 1.619 
+#8 1.619 added 1 package in 1s
+#8 1.619 
+#8 1.619 1 package is looking for funding
+#8 1.619   run `npm fund` for details
+#8 1.621 npm notice
+#8 1.621 npm notice New major version of npm available! 10.8.2 -> 11.11.0
+#8 1.621 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+#8 1.621 npm notice To update run: npm install -g npm@11.11.0
+#8 1.621 npm notice
+#8 DONE 1.8s
+
+#9 [build 1/9] WORKDIR /app
+#9 DONE 0.1s
+
+#10 [deps 1/6] COPY pnpm-workspace.yaml package.json ./
+#10 DONE 0.1s
+
+#11 [deps 2/6] COPY packages/sdk/package.json ./packages/sdk/
+#11 DONE 0.0s
+
+#12 [deps 3/6] COPY packages/theme/package.json ./packages/theme/
+#12 DONE 0.0s
+
+#13 [deps 4/6] COPY packages/ui-system/package.json ./packages/ui-system/
+#13 DONE 0.0s
+
+#14 [deps 5/6] COPY apps/admin/package.json ./apps/admin/
+#14 DONE 0.0s
+
+#15 [deps 6/6] RUN pnpm install --ignore-scripts --shamefully-hoist
+#15 2.189 Scope: all 5 workspace projects
+#15 2.475 Progress: resolved 1, reused 0, downloaded 0, added 0
+#15 2.727  WARN  deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#15 3.595 Progress: resolved 21, reused 0, downloaded 17, added 0
+#15 4.596 Progress: resolved 23, reused 0, downloaded 20, added 0
+#15 5.598 Progress: resolved 67, reused 0, downloaded 57, added 0
+#15 6.606 Progress: resolved 86, reused 0, downloaded 69, added 0
+#15 7.599 Progress: resolved 113, reused 0, downloaded 86, added 0
+#15 8.600 Progress: resolved 180, reused 0, downloaded 148, added 0
+#15 9.635 Progress: resolved 244, reused 0, downloaded 183, added 0
+#15 10.64 Progress: resolved 287, reused 0, downloaded 232, added 0
+#15 11.64 Progress: resolved 375, reused 0, downloaded 296, added 0
+#15 12.64 Progress: resolved 424, reused 0, downloaded 342, added 0
+#15 13.16  WARN  5 deprecated subdependencies found: @humanwhocodes/config-array@0.13.0, @humanwhocodes/object-schema@2.0.3, glob@7.2.3, inflight@1.0.6, rimraf@3.0.2
+#15 13.18 Packages: +437
+#15 13.18 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#15 13.64 Progress: resolved 491, reused 0, downloaded 441, added 317
+#15 14.13 Progress: resolved 491, reused 0, downloaded 442, added 437, done
+#15 14.89 
+#15 14.89 dependencies:
+#15 14.89 + @prisma/client 6.19.2 (7.4.2 is available)
+#15 14.89 
+#15 14.89 devDependencies:
+#15 14.89 + eslint 8.57.1 (10.0.2 is available) deprecated
+#15 14.89 + eslint-config-next 15.5.12 (16.1.6 is available)
+#15 14.89 + prisma 6.19.2 (7.4.2 is available)
+#15 14.89 + turbo 2.8.12
+#15 14.89 
+#15 14.89 Done in 13.1s
+#15 DONE 21.9s
+
+#16 [build 2/9] COPY --from=deps /app/node_modules ./node_modules
+#16 DONE 8.1s
+
+#17 [build 3/9] COPY --from=deps /app/apps/admin/node_modules ./apps/admin/node_modules
+#17 DONE 0.2s
+
+#18 [build 4/9] COPY packages/sdk/ ./packages/sdk/
+#18 DONE 0.0s
+
+#19 [build 5/9] COPY packages/theme/ ./packages/theme/
+#19 DONE 0.0s
+
+#20 [build 6/9] COPY packages/ui-system/ ./packages/ui-system/
+#20 DONE 0.0s
+
+#21 [build 7/9] COPY apps/admin/ ./apps/admin/
+#21 DONE 0.0s
+
+#22 [build 8/9] WORKDIR /app/apps/admin
+#22 DONE 0.0s
+
+#23 [build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#23 0.642 
+#23 0.642 > @vexel/admin@0.1.0 build /app/apps/admin
+#23 0.642 > next build
+#23 0.642 
+#23 1.665    ▲ Next.js 15.5.12
+#23 1.665 
+#23 1.705    Creating an optimized production build ...
+#23 18.33  ✓ Compiled successfully in 13.5s
+#23 18.34    Linting and checking validity of types ...
+#23 22.71 
+#23 22.71 ./src/app/(protected)/audit/page.tsx
+#23 22.71 32:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 
+#23 22.71 ./src/app/(protected)/catalog/panels/page.tsx
+#23 22.71 39:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 
+#23 22.71 ./src/app/(protected)/catalog/parameters/page.tsx
+#23 22.71 35:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 
+#23 22.71 ./src/app/(protected)/catalog/reference-ranges/page.tsx
+#23 22.71 55:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 
+#23 22.71 ./src/app/(protected)/catalog/sample-types/page.tsx
+#23 22.71 32:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 
+#23 22.71 ./src/app/(protected)/catalog/tests/page.tsx
+#23 22.71 40:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 
+#23 22.71 ./src/app/(protected)/opd/providers/page.tsx
+#23 22.71 102:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 
+#23 22.71 ./src/app/(protected)/opd/schedules/page.tsx
+#23 22.71 137:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 145:6  Warning: React Hook useEffect has a missing dependency: 'loadSchedules'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#23 22.71 
+#23 22.71 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+#23 28.08    Collecting page data ...
+#23 30.73    Generating static pages (0/33) ...
+#23 31.84    Generating static pages (8/33) 
+#23 31.93    Generating static pages (16/33) 
+#23 32.22    Generating static pages (24/33) 
+#23 32.22  ✓ Generating static pages (33/33)
+#23 33.27    Finalizing page optimization ...
+#23 33.27    Collecting build traces ...
+#23 56.23 
+#23 56.24 Route (app)                                 Size  First Load JS
+#23 56.24 ┌ ○ /                                      139 B         102 kB
+#23 56.24 ├ ○ /_not-found                            998 B         103 kB
+#23 56.24 ├ ○ /audit                               5.93 kB         108 kB
+#23 56.24 ├ ○ /branding                            3.03 kB         109 kB
+#23 56.24 ├ ○ /catalog                             1.51 kB         110 kB
+#23 56.24 ├ ○ /catalog/import-export               6.95 kB         109 kB
+#23 56.24 ├ ○ /catalog/panels                      6.88 kB         109 kB
+#23 56.24 ├ ○ /catalog/parameters                  6.31 kB         108 kB
+#23 56.24 ├ ○ /catalog/reference-ranges            6.78 kB         109 kB
+#23 56.24 ├ ○ /catalog/sample-types                5.76 kB         108 kB
+#23 56.24 ├ ○ /catalog/tests                       7.51 kB         109 kB
+#23 56.24 ├ ○ /dashboard                           4.85 kB         110 kB
+#23 56.24 ├ ○ /documents                            2.2 kB         108 kB
+#23 56.24 ├ ○ /encounters                          4.97 kB         107 kB
+#23 56.24 ├ ○ /feature-flags                       3.43 kB         109 kB
+#23 56.24 ├ ○ /jobs                                5.54 kB         108 kB
+#23 56.24 ├ ○ /login                               4.29 kB         106 kB
+#23 56.24 ├ ○ /opd                                   793 B         106 kB
+#23 56.24 ├ ○ /opd/feature-flags                   5.13 kB         107 kB
+#23 56.24 ├ ○ /opd/providers                       3.19 kB         122 kB
+#23 56.24 ├ ƒ /opd/providers/[providerId]          4.25 kB         110 kB
+#23 56.24 ├ ○ /opd/schedules                       3.46 kB         119 kB
+#23 56.24 ├ ○ /patients                            4.87 kB         107 kB
+#23 56.24 ├ ○ /roles                               2.41 kB         108 kB
+#23 56.24 ├ ○ /system/health                       4.67 kB         107 kB
+#23 56.24 ├ ○ /tenant-settings                       139 B         102 kB
+#23 56.24 ├ ○ /tenant-settings/catalog               139 B         102 kB
+#23 56.24 ├ ○ /tenant-settings/documents             139 B         102 kB
+#23 56.24 ├ ○ /tenant-settings/roles                 139 B         102 kB
+#23 56.24 ├ ○ /tenant-settings/users                 139 B         102 kB
+#23 56.24 ├ ○ /tenants                             6.25 kB         112 kB
+#23 56.24 └ ○ /users                               3.76 kB         109 kB
+#23 56.24 + First Load JS shared by all             102 kB
+#23 56.24   ├ chunks/743-03a7476a31bb938a.js       45.8 kB
+#23 56.24   ├ chunks/8e6518bb-c26e82767f1faf66.js  54.2 kB
+#23 56.24   └ other shared chunks (total)          1.93 kB
+#23 56.24 
+#23 56.24 
+#23 56.24 ƒ Middleware                             33.9 kB
+#23 56.24 
+#23 56.24 ○  (Static)   prerendered as static content
+#23 56.24 ƒ  (Dynamic)  server-rendered on demand
+#23 56.24 
+#23 DONE 57.1s
+
+#24 [runtime 3/4] COPY --from=build /app/apps/admin/.next/standalone ./
+#24 DONE 0.7s
+
+#25 [runtime 4/4] COPY --from=build /app/apps/admin/.next/static ./apps/admin/.next/static
+#25 DONE 0.1s
+
+#26 exporting to image
+#26 exporting layers
+#26 exporting layers 3.2s done
+#26 exporting manifest sha256:1246b3da11d7bd09504e8f13178e56fba565fa011e07457a49ecf8adfd46d615 done
+#26 exporting config sha256:010ca367a4a28fc1771632fdfa8800b307b0c9d65c7b0d532731048772ac1359 done
+#26 exporting attestation manifest sha256:b8baf1f43eeeedfc0088768fb1698df9a4bc989a19e49c34ee91151d22d9dab4 0.0s done
+#26 exporting manifest list sha256:7ef62152594660b4458cee591379af4ca251d8a95f9e5a31f2cae0e5ced119ab done
+#26 naming to docker.io/library/vexel-admin:latest done
+#26 unpacking to docker.io/library/vexel-admin:latest
+#26 unpacking to docker.io/library/vexel-admin:latest 0.8s done
+#26 DONE 4.1s
+
+#27 resolving provenance for metadata file
+#27 DONE 0.0s
+
+$ docker compose up -d admin
+
+$ docker compose ps admin
+NAME            IMAGE         COMMAND                  SERVICE   CREATED         STATUS                  PORTS
+vexel-admin-1   vexel-admin   "docker-entrypoint.s…"   admin     2 seconds ago   Up Less than a second   127.0.0.1:9023->3001/tcp
+
+$ docker images --no-trunc | rg 'vexel-admin'
+vexel-admin          latest      sha256:7ef62152594660b4458cee591379af4ca251d8a95f9e5a31f2cae0e5ced119ab   7 seconds ago   302MB
+
+$ docker compose exec -T admin sh -lc "grep -R -n 'expected JSON response but received' /app 2>/dev/null | head"
+/app/apps/admin/.next/server/app/(protected)/catalog/import-export/page.js:2:see more here https://nextjs.org/docs/messages/app-static-to-dynamic-error`),"__NEXT_ERROR_CODE",{value:"E132",enumerable:!1,configurable:!0});if(null==a?void 0:a.stack){let c=a.stack;b.stack=b.message+c.substring(c.indexOf("\n"))}throw b}return{value:{kind:v.CachedRouteKind.APP_PAGE,html:l,headers:o,rscData:m.flightData,postponed:m.postponed,status:m.statusCode,segmentData:m.segmentData},cacheControl:n}},o=async({hasResolved:c,previousCacheEntry:f,isRevalidating:g,span:i})=>{let j,k=!1===K.isDev,l=c||b.writableEnded;if(ah&&ab&&!f&&!N)return(null==ac?void 0:ac.render404)?await ac.render404(a,b):(b.statusCode=404,b.end("This page could not be found")),null;if(ai&&(j=(0,w.parseFallbackField)(ai.fallback)),j===w.FallbackMode.PRERENDER&&(0,u.isBot)(al)&&(!ar||an)&&(j=w.FallbackMode.BLOCKING_STATIC_RENDER),(null==f?void 0:f.isStale)===-1&&(ah=!0),ah&&(j!==w.FallbackMode.NOT_FOUND||f)&&(j=w.FallbackMode.BLOCKING_STATIC_RENDER),!N&&j!==w.FallbackMode.BLOCKING_STATIC_RENDER&&aB&&!l&&!_&&T&&(k||!aj)){let b;if((k||ai)&&j===w.FallbackMode.NOT_FOUND)throw new B.NoFallbackError;if(ar&&!ap){let c="string"==typeof(null==ai?void 0:ai.fallback)?ai.fallback:k?ag:null;if(b=await K.handleResponse({cacheKey:c,req:a,nextConfig:ad,routeKind:e.RouteKind.APP_PAGE,isFallback:!0,prerenderManifest:$,isRoutePPREnabled:ar,responseGenerator:async()=>m({span:i,postponed:void 0,fallbackRouteParams:k||at?(0,n.u)(ag):null}),waitUntil:d.waitUntil}),null===b)return null;if(b)return delete b.cacheControl,b}}let o=ah||g||!au?void 0:au;if(as&&void 0!==o)return{cacheControl:{revalidate:1,expire:void 0},value:{kind:v.CachedRouteKind.PAGES,html:x.default.EMPTY,pageData:{},headers:void 0,status:void 0}};let p=T&&ar&&((0,h.getRequestMeta)(a,"renderFallbackShell")||at)?(0,n.u)(af):null;return m({span:i,postponed:o,fallbackRouteParams:p})},p=async c=>{var f,g,i,j,k;let l,n=await K.handleResponse({cacheKey:aA,responseGenerator:a=>o({span:c,...a}),routeKind:e.RouteKind.APP_PAGE,isOnDemandRevalidate:ah,isRoutePPREnabled:ar,req:a,nextConfig:ad,prerenderManifest:$,waitUntil:d.waitUntil});if(_&&b.setHeader("Cache-Control","private, no-cache, no-store, max-age=0, must-revalidate"),K.isDev&&b.setHeader("Cache-Control","no-store, must-revalidate"),!n){if(aA)throw Object.defineProperty(Error("invariant: cache entry required but not generated"),"__NEXT_ERROR_CODE",{value:"E62",enumerable:!1,configurable:!0});return null}if((null==(f=n.value)?void 0:f.kind)!==v.CachedRouteKind.APP_PAGE)throw Object.defineProperty(Error(`Invariant app-page handler received invalid cache entry ${null==(i=n.value)?void 0:i.kind}`),"__NEXT_ERROR_CODE",{value:"E707",enumerable:!1,configurable:!0});let p="string"==typeof n.value.postponed;ak&&!av&&(!p||ao)&&(N||b.setHeader("x-nextjs-cache",ah?"REVALIDATED":n.isMiss?"MISS":n.isStale?"STALE":"HIT"),b.setHeader(t.NEXT_IS_PRERENDER_HEADER,"1"));let{value:q}=n;if(au)l={revalidate:0,expire:void 0};else if(N&&ap&&!ao&&ar)l={revalidate:0,expire:void 0};else if(!K.isDev)if(_)l={revalidate:0,expire:void 0};else if(ak){if(n.cacheControl)if("number"==typeof n.cacheControl.revalidate){if(n.cacheControl.revalidate<1)throw Object.defineProperty(Error(`Invalid revalidate configuration provided: ${n.cacheControl.revalidate} < 1`),"__NEXT_ERROR_CODE",{value:"E22",enumerable:!1,configurable:!0});l={revalidate:n.cacheControl.revalidate,expire:(null==(j=n.cacheControl)?void 0:j.expire)??ad.expireTime}}else l={revalidate:y.CACHE_ONE_YEAR,expire:void 0}}else b.getHeader("Cache-Control")||(l={revalidate:0,expire:void 0});if(n.cacheControl=l,"string"==typeof aw&&(null==q?void 0:q.kind)===v.CachedRouteKind.APP_PAGE&&q.segmentData){b.setHeader(t.NEXT_DID_POSTPONE_HEADER,"2");let c=null==(k=q.headers)?void 0:k[y.NEXT_CACHE_TAGS_HEADER];N&&ak&&c&&"string"==typeof c&&b.setHeader(y.NEXT_CACHE_TAGS_HEADER,c);let d=q.segmentData.get(aw);return void 0!==d?(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:x.default.fromStatic(d,t.RSC_CONTENT_TYPE_HEADER),cacheControl:n.cacheControl}):(b.statusCode=204,(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:x.default.EMPTY,cacheControl:n.cacheControl}))}let r=(0,h.getRequestMeta)(a,"onCacheEntry");if(r&&await r({...n,value:{...n.value,kind:"PAGE"}},{url:(0,h.getRequestMeta)(a,"initURL")}))return null;if(p&&au)throw Object.defineProperty(Error("Invariant: postponed state should not be present on a resume request"),"__NEXT_ERROR_CODE",{value:"E396",enumerable:!1,configurable:!0});if(q.headers){let a={...q.headers};for(let[c,d]of(N&&ak||delete a[y.NEXT_CACHE_TAGS_HEADER],Object.entries(a)))if(void 0!==d)if(Array.isArray(d))for(let a of d)b.appendHeader(c,a);else"number"==typeof d&&(d=d.toString()),b.appendHeader(c,d)}let s=null==(g=q.headers)?void 0:g[y.NEXT_CACHE_TAGS_HEADER];if(N&&ak&&s&&"string"==typeof s&&b.setHeader(y.NEXT_CACHE_TAGS_HEADER,s),!q.status||ap&&ar||(b.statusCode=q.status),!N&&q.status&&F.RedirectStatusCode[q.status]&&ap&&(b.statusCode=200),p&&b.setHeader(t.NEXT_DID_POSTPONE_HEADER,"1"),ap&&!_){if(void 0===q.rscData){if(q.postponed)throw Object.defineProperty(Error("Invariant: Expected postponed to be undefined"),"__NEXT_ERROR_CODE",{value:"E372",enumerable:!1,configurable:!0});return(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:q.html,cacheControl:av?{revalidate:0,expire:void 0}:n.cacheControl})}return(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:x.default.fromStatic(q.rscData,t.RSC_CONTENT_TYPE_HEADER),cacheControl:n.cacheControl})}let u=q.html;if(!p||N||ap)return(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:u,cacheControl:n.cacheControl});if(as)return u.push(new ReadableStream({start(a){a.enqueue(z.ENCODED_TAGS.CLOSED.BODY_AND_HTML),a.close()}})),(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:u,cacheControl:{revalidate:0,expire:void 0}});let w=new TransformStream;return u.push(w.readable),m({span:c,postponed:q.postponed,fallbackRouteParams:null}).then(async a=>{var b,c;if(!a)throw Object.defineProperty(Error("Invariant: expected a result to be returned"),"__NEXT_ERROR_CODE",{value:"E463",enumerable:!1,configurable:!0});if((null==(b=a.value)?void 0:b.kind)!==v.CachedRouteKind.APP_PAGE)throw Object.defineProperty(Error(`Invariant: expected a page response, got ${null==(c=a.value)?void 0:c.kind}`),"__NEXT_ERROR_CODE",{value:"E305",enumerable:!1,configurable:!0});await a.value.html.pipeTo(w.writable)}).catch(a=>{w.writable.abort(a).catch(a=>{console.error("couldn't abort transformer",a)})}),(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:u,cacheControl:{revalidate:0,expire:void 0}})};if(!aF)return await aE.withPropagatedContext(a.headers,()=>aE.trace(i.BaseServerSpan.handleRequest,{spanName:`${aD} ${a.url}`,kind:g.SpanKind.SERVER,attributes:{"http.method":aD,"http.target":a.url}},p));await p(aF)}catch(b){throw b instanceof B.NoFallbackError||await K.onRequestError(a,b,{routerKind:"App Router",routePath:G,routeType:"render",revalidateReason:(0,f.c)({isRevalidate:ak,isOnDemandRevalidate:ah})},ac),b}}},85842:(a,b,c)=>{Promise.resolve().then(c.bind(c,51088))},86439:a=>{"use strict";a.exports=require("next/dist/shared/lib/no-fallback-error.external")},97558:(a,b,c)=>{"use strict";c.r(b),c.d(b,{default:()=>m});var d=c(82164),e=c(54509),f=c(58092),g=c(52036);let h=[{label:"Full Workbook Template (XLSX) — all sheets",path:"workbook.xlsx",icon:"\uD83D\uDCCA"},{label:"Sample Types CSV",path:"sample-types.csv",icon:"\uD83E\uDDEA"},{label:"Parameters CSV",path:"parameters.csv",icon:"\uD83D\uDCC4"},{label:"Tests CSV",path:"tests.csv",icon:"\uD83D\uDCC4"},{label:"Test-Parameters Mapping CSV",path:"test-parameters.csv",icon:"\uD83D\uDD17"},{label:"Panels CSV",path:"panels.csv",icon:"\uD83D\uDCC4"},{label:"Panel-Tests Mapping CSV",path:"panel-tests.csv",icon:"\uD83D\uDD17"},{label:"Reference Ranges CSV",path:"reference-ranges.csv",icon:"\uD83D\uDCCF"}];function i(a,b=220){if("string"!=typeof a){if(null==a)return"";try{return JSON.stringify(a).slice(0,b)}catch{return String(a).slice(0,b)}}return a.replace(/\s+/g," ").trim().slice(0,b)}async function j(a,b){let{data:c,error:d,response:e}=await b,f=e?.status??0,g=(e?.headers.get("content-type")??"").toLowerCase(),h="string"==typeof c?c:"";if(!e?.ok){let b=i(h||d?.message||d);throw Error(`${a} failed (HTTP ${f}). ${b||"No response body."}`)}if(!g.includes("application/json")){let b=i(h||d);throw Error(`${a} failed: expected JSON response but received ${g||"unknown content-type"} (HTTP ${f}). ${b||"No response body."}`)}try{return JSON.parse(h)}catch{throw Error(`${a} failed: response JSON is invalid (HTTP ${f}). ${i(h)}`)}}async function k(a,b){let c=(0,f.e)((0,g.PT)()??void 0),{data:d,error:e}=await c.GET(a,{parseAs:"blob"});if(e||!d)throw Error(e?.message??"Download failed");let h=URL.createObjectURL(d),i=document.createElement("a");i.href=h,i.download=b,i.click(),URL.revokeObjectURL(h)}async function l(a,b,c=40,d=1e3){let e=(0,f.e)((0,g.PT)()??void 0),h=null;for(let f=0;f<c;f++){let{data:c,error:f}=await e.GET(a,{params:{path:{id:b}}});if(f)throw Error(f?.message??"Failed to poll job");if("completed"===(h=c).status||"failed"===h.status)return h;await function(a){return new Promise(b=>setTimeout(b,a))}(d)}if(!h)throw Error("Job polling failed");return h}function m(){let a=(0,e.useRef)(null),[b,c]=(0,e.useState)(null),[i,m]=(0,e.useState)("UPSERT_PATCH"),[n,o]=(0,e.useState)(!1),[p,q]=(0,e.useState)(null),[r,s]=(0,e.useState)(null),[t,u]=(0,e.useState)(!1),v=(0,e.useRef)(null),[w,x]=(0,e.useState)(null),[y,z]=(0,e.useState)(!1),[A,B]=(0,e.useState)(null),[C,D]=(0,e.useState)(null),[E,F]=(0,e.useState)(!1),[G,H]=(0,e.useState)(null),[I,J]=(0,e.useState)(null);async function K(a){if(b){o(!0),q(null),s(null);try{let c=(0,f.e)((0,g.PT)()??void 0),d=new FormData;d.append("file",b);let e=await j(a?"Catalog validate":"Catalog apply",c.POST("/catalog/import/workbook",{params:{query:{validate:a,mode:i}},body:d,bodySerializer:a=>a,parseAs:"text"}));q(e);let h=Array.isArray(e?.errors)&&e.errors.length>0;a&&!h?u(!0):a&&u(!1)}catch(b){s(b.message??"Import failed"),a&&u(!1)}finally{o(!1)}}}async function L(){await K(!0)}async function M(){if(!t)return void s("Run validate with zero errors before apply.");await K(!1)}async function N(){if(w){z(!0),D(null),B(null);try{let a=await w.text(),b=(0,f.e)((0,g.PT)()??void 0),c=await j("Mapping import",b.POST("/catalog/test-parameter-mappings/import",{body:{csv:a},parseAs:"text"}));B(c)}catch(a){D(a.message??"Import failed")}finally{z(!1)}}}async function O(){F(!0),H(null),J(null);try{let a=(0,f.e)((0,g.PT)()??void 0),{data:b,error:c}=await a.POST("/catalog/export-jobs",{});if(c||!b)throw Error(c?.message??"Failed to create export job");J(b);let d=await l("/catalog/export-jobs/{id}",b.id);if(J(d),"failed"===d.status)throw Error(d.errorSummary??"Export job failed");await k(`/catalog/export-jobs/${d.id}/download`,`catalog-export-${new Date().toISOString().slice(0,10)}.xlsx`)}catch(a){H(a.message??"Export failed")}finally{F(!1)}}async function P(a){try{await k(`/catalog/templates/${a}`,a)}catch(a){alert(`Template download failed: ${a?.message??"Unknown error"}`)}}let Q={background:"hsl(var(--card))",borderRadius:"8px",padding:"24px",marginBottom:"20px",boxShadow:"var(--shadow-sm)"},R=(a,b)=>({padding:"9px 20px",background:b?"hsl(var(--border))":a,color:b?"hsl(var(--muted-foreground))":"white",border:"none",borderRadius:"6px",cursor:b?"default":"pointer",fontSize:"14px",fontWeight:600});return(0,d.jsxs)("div",{children:[(0,d.jsx)("h1",{style:{fontSize:"24px",fontWeight:700,marginBottom:"6px",color:"hsl(var(--foreground))"},children:"Import / Export"}),(0,d.jsx)("p",{style:{color:"hsl(var(--muted-foreground))",marginBottom:"24px",fontSize:"14px"},children:"Workbook validate/apply import plus job-based export and template downloads."}),(0,d.jsxs)("section",{style:Q,children:[(0,d.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCE5 Import Catalog Workbook"}),(0,d.jsx)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:"Upload workbook/CSV, run validate first, then apply when validation passes."}),(0,d.jsxs)("div",{style:{display:"flex",gap:"16px",flexWrap:"wrap",marginBottom:"16px"},children:[(0,d.jsxs)("div",{style:{flex:1,minWidth:"220px"},children:[(0,d.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"File (.xlsx or .csv)"}),(0,d.jsx)("input",{ref:a,type:"file",accept:".xlsx,.csv",onChange:a=>{c(a.target.files?.[0]??null),q(null),s(null),u(!1)},style:{display:"block",padding:"7px 10px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer",width:"100%"}})]}),(0,d.jsxs)("div",{children:[(0,d.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"Mode"}),(0,d.jsxs)("select",{value:i,onChange:a=>{m(a.target.value),u(!1)},style:{padding:"8px 12px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer"},children:[(0,d.jsx)("option",{value:"UPSERT_PATCH",children:"UPSERT_PATCH — update existing, insert new"}),(0,d.jsx)("option",{value:"CREATE_ONLY",children:"CREATE_ONLY — inserts only"})]})]})]}),(0,d.jsxs)("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap"},children:[(0,d.jsx)("button",{onClick:L,disabled:n||!b,style:R("hsl(var(--status-info-fg))",n||!b),children:n?"⏳ Running…":"✓ Validate"}),(0,d.jsx)("button",{onClick:M,disabled:n||!b||!t,style:R("hsl(var(--primary))",n||!b||!t),children:n?"⏳ Running…":"▶ Apply"})]}),t&&(0,d.jsx)("div",{style:{marginTop:"12px",fontSize:"12px",color:"hsl(var(--status-success-fg))"},children:"Validation passed. You can apply this file now."}),r&&(0,d.jsxs)("div",{style:{marginTop:"14px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"12px 16px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",r]}),p&&(0,d.jsxs)("div",{style:{marginTop:"14px",background:"hsl(var(--status-success-bg))",border:"1px solid hsl(var(--status-success-border))",borderRadius:"6px",padding:"14px 16px"},children:[(0,d.jsx)("div",{style:{fontWeight:700,color:"hsl(var(--status-success-fg))",marginBottom:"10px",fontSize:"14px"},children:"✓ Import response"}),(0,d.jsx)("div",{style:{display:"flex",gap:"24px",fontSize:"13px",flexWrap:"wrap"},children:[["Created",p.inserted??0,"hsl(var(--status-success-fg))"],["Updated",p.updated??0,"hsl(var(--status-info-fg))"],["Skipped",p.skipped??0,"hsl(var(--muted-foreground))"],["Total",(p.inserted??0)+(p.updated??0)+(p.skipped??0),"hsl(var(--foreground))"]].map(([a,b,c])=>(0,d.jsxs)("div",{children:[(0,d.jsxs)("span",{style:{color:"hsl(var(--muted-foreground))"},children:[a,": "]}),(0,d.jsx)("span",{style:{fontWeight:700,color:c},children:b})]},a))}),(p.errors?.length??0)>0&&(0,d.jsx)("ul",{style:{marginTop:"10px",marginBottom:0,paddingLeft:"18px"},children:p.errors.map((a,b)=>(0,d.jsxs)("li",{style:{fontSize:"12px",color:"hsl(var(--status-warning-fg))"},children:[a.sheet?`${a.sheet} `:"","Row ",a.row,": ",a.field?`${a.field} `:"",a.message]},b))})]})]}),(0,d.jsxs)("section",{style:Q,children:[(0,d.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDD17 Import Parameter Mappings (CSV)"}),(0,d.jsx)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"Dedicated CSV import endpoint for test-parameter mappings remains available."}),(0,d.jsx)("p",{style:{fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:"Alternatively, use the TestParameters and PanelTests sheets in the job-based workbook import above."}),(0,d.jsxs)("div",{style:{marginBottom:"14px"},children:[(0,d.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"File (.csv only)"}),(0,d.jsx)("input",{ref:v,type:"file",accept:".csv",onChange:a=>{x(a.target.files?.[0]??null),B(null),D(null)},style:{display:"block",padding:"7px 10px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer"}})]}),(0,d.jsx)("button",{onClick:N,disabled:y||!w,style:R("hsl(var(--primary))",y||!w),children:y?"⏳ Importing…":"▶ Import Mappings"}),C&&(0,d.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"10px 12px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",C]}),A&&(0,d.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-success-bg))",border:"1px solid hsl(var(--status-success-border))",borderRadius:"6px",padding:"12px 16px",fontSize:"13px"},children:[(0,d.jsxs)("div",{style:{fontWeight:600,color:"hsl(var(--status-success-fg))",marginBottom:"6px"},children:["✓ Imported ",A.imported??0," mappings, Skipped ",A.skipped??0," rows"]}),(A.warnings?.length??0)>0&&(0,d.jsx)("ul",{style:{margin:0,paddingLeft:"16px"},children:A.warnings.map((a,b)=>(0,d.jsxs)("li",{style:{fontSize:"12px",color:"hsl(var(--status-warning-fg))"},children:[null!=a.row?`Row ${a.row}: `:"",a.message]},b))})]})]}),(0,d.jsxs)("section",{style:Q,children:[(0,d.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCE4 Export Catalog (Job-Based)"}),(0,d.jsxs)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:["Creates an export job, waits for completion, then downloads the XLSX from `/catalog/export-jobs/","{id}","/download`."]}),(0,d.jsx)("button",{onClick:O,disabled:E,style:R("hsl(var(--primary))",E),children:E?"⏳ Export Job Running…":"⬇ Export All as XLSX"}),I&&(0,d.jsxs)("div",{style:{marginTop:"12px",fontSize:"12px",color:"hsl(var(--muted-foreground))"},children:["Job: ",(0,d.jsx)("code",{style:{background:"hsl(var(--muted))",padding:"2px 6px",borderRadius:"4px"},children:I.id})," • Status: ",(0,d.jsx)("strong",{children:I.status})]}),G&&(0,d.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"10px 12px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",G]})]}),(0,d.jsxs)("section",{style:Q,children:[(0,d.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCCB Download Templates"}),(0,d.jsxs)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:["Fill these templates and upload above. IDs use format: tests = ",(0,d.jsx)("strong",{children:"t1, t2…"}),", parameters = ",(0,d.jsx)("strong",{children:"p1, p2…"}),", panels = ",(0,d.jsx)("strong",{children:"g1, g2…"}),"."]}),(0,d.jsx)("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))",gap:"10px"},children:h.map(a=>(0,d.jsxs)("button",{onClick:()=>P(a.path),style:{padding:"10px 14px",background:"hsl(var(--background))",border:"1px solid hsl(var(--border))",borderRadius:"6px",cursor:"pointer",fontSize:"13px",color:"hsl(var(--foreground))",textAlign:"left",display:"flex",alignItems:"center",gap:"8px"},children:[(0,d.jsx)("span",{style:{fontSize:"16px"},children:a.icon}),a.label]},a.path))})]})]})}}};var b=require("../../../../webpack-runtime.js");b.C(a);var c=b.X(0,[774,389,602],()=>b(b.s=71184));module.exports=c})();
+/app/apps/admin/.next/static/chunks/app/(protected)/catalog/import-export/page-f1d57734dc4a6fde.js:1:(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[429],{2928:(e,t,r)=>{"use strict";r.d(t,{e:()=>l});var o=r(9293);let n="https://vexel.alshifalab.pk";function l(e,t){return(0,o.yS)({baseUrl:"".concat(n,"/api"),token:e,correlationId:null!=t?t:"".concat(Date.now(),"-").concat(Math.random().toString(36).slice(2,9))})}},6368:(e,t,r)=>{"use strict";r.r(t),r.d(t,{default:()=>u});var o=r(8111),n=r(5271),l=r(2928),s=r(8934);let a=[{label:"Full Workbook Template (XLSX) — all sheets",path:"workbook.xlsx",icon:"\uD83D\uDCCA"},{label:"Sample Types CSV",path:"sample-types.csv",icon:"\uD83E\uDDEA"},{label:"Parameters CSV",path:"parameters.csv",icon:"\uD83D\uDCC4"},{label:"Tests CSV",path:"tests.csv",icon:"\uD83D\uDCC4"},{label:"Test-Parameters Mapping CSV",path:"test-parameters.csv",icon:"\uD83D\uDD17"},{label:"Panels CSV",path:"panels.csv",icon:"\uD83D\uDCC4"},{label:"Panel-Tests Mapping CSV",path:"panel-tests.csv",icon:"\uD83D\uDD17"},{label:"Reference Ranges CSV",path:"reference-ranges.csv",icon:"\uD83D\uDCCF"}];function i(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:220;if("string"!=typeof e){if(null==e)return"";try{return JSON.stringify(e).slice(0,t)}catch(r){return String(e).slice(0,t)}}return e.replace(/\s+/g," ").trim().slice(0,t)}async function c(e,t){var r,o;let{data:n,error:l,response:s}=await t,a=null!=(r=null==s?void 0:s.status)?r:0,c=(null!=(o=null==s?void 0:s.headers.get("content-type"))?o:"").toLowerCase(),d="string"==typeof n?n:"";if(!(null==s?void 0:s.ok)){let t=i(d||(null==l?void 0:l.message)||l);throw Error("".concat(e," failed (HTTP ").concat(a,"). ").concat(t||"No response body."))}if(!c.includes("application/json")){let t=i(d||l);throw Error("".concat(e," failed: expected JSON response but received ").concat(c||"unknown content-type"," (HTTP ").concat(a,"). ").concat(t||"No response body."))}try{return JSON.parse(d)}catch(t){throw Error("".concat(e," failed: response JSON is invalid (HTTP ").concat(a,"). ").concat(i(d)))}}async function d(e,t){var r,o;let n=(0,l.e)(null!=(r=(0,s.PT)())?r:void 0),{data:a,error:i}=await n.GET(e,{parseAs:"blob"});if(i||!a)throw Error(null!=(o=null==i?void 0:i.message)?o:"Download failed");let c=URL.createObjectURL(a),d=document.createElement("a");d.href=c,d.download=t,d.click(),URL.revokeObjectURL(c)}async function p(e,t){var r,o;let n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:40,a=arguments.length>3&&void 0!==arguments[3]?arguments[3]:1e3,i=(0,l.e)(null!=(r=(0,s.PT)())?r:void 0),c=null;for(let r=0;r<n;r++){let{data:r,error:n}=await i.GET(e,{params:{path:{id:t}}});if(n)throw Error(null!=(o=null==n?void 0:n.message)?o:"Failed to poll job");if("completed"===(c=r).status||"failed"===c.status)return c;await function(e){return new Promise(t=>setTimeout(t,e))}(a)}if(!c)throw Error("Job polling failed");return c}function u(){var e,t,r,i,u,f,h,x,g,m,y,v;let b=(0,n.useRef)(null),[w,S]=(0,n.useState)(null),[j,R]=(0,n.useState)("UPSERT_PATCH"),[T,k]=(0,n.useState)(!1),[C,E]=(0,n.useState)(null),[P,z]=(0,n.useState)(null),[A,D]=(0,n.useState)(!1),U=(0,n.useRef)(null),[I,O]=(0,n.useState)(null),[B,$]=(0,n.useState)(!1),[W,_]=(0,n.useState)(null),[N,L]=(0,n.useState)(null),[q,H]=(0,n.useState)(!1),[J,V]=(0,n.useState)(null),[M,F]=(0,n.useState)(null);async function X(e){var t,r;if(w){k(!0),E(null),z(null);try{let r=(0,l.e)(null!=(t=(0,s.PT)())?t:void 0),o=new FormData;o.append("file",w);let n=await c(e?"Catalog validate":"Catalog apply",r.POST("/catalog/import/workbook",{params:{query:{validate:e,mode:j}},body:o,bodySerializer:e=>e,parseAs:"text"}));E(n);let a=Array.isArray(null==n?void 0:n.errors)&&n.errors.length>0;e&&!a?D(!0):e&&D(!1)}catch(t){z(null!=(r=t.message)?r:"Import failed"),e&&D(!1)}finally{k(!1)}}}async function G(){await X(!0)}async function Y(){if(!A)return void z("Run validate with zero errors before apply.");await X(!1)}async function K(){var e,t;if(I){$(!0),L(null),_(null);try{let t=await I.text(),r=(0,l.e)(null!=(e=(0,s.PT)())?e:void 0),o=await c("Mapping import",r.POST("/catalog/test-parameter-mappings/import",{body:{csv:t},parseAs:"text"}));_(o)}catch(e){L(null!=(t=e.message)?t:"Import failed")}finally{$(!1)}}}async function Q(){var e,t,r,o;H(!0),V(null),F(null);try{let o=(0,l.e)(null!=(e=(0,s.PT)())?e:void 0),{data:n,error:a}=await o.POST("/catalog/export-jobs",{});if(a||!n)throw Error(null!=(t=null==a?void 0:a.message)?t:"Failed to create export job");F(n);let i=await p("/catalog/export-jobs/{id}",n.id);if(F(i),"failed"===i.status)throw Error(null!=(r=i.errorSummary)?r:"Export job failed");await d("/catalog/export-jobs/".concat(i.id,"/download"),"catalog-export-".concat(new Date().toISOString().slice(0,10),".xlsx"))}catch(e){V(null!=(o=e.message)?o:"Export failed")}finally{H(!1)}}async function Z(e){try{await d("/catalog/templates/".concat(e),e)}catch(e){var t;alert("Template download failed: ".concat(null!=(t=null==e?void 0:e.message)?t:"Unknown error"))}}let ee={background:"hsl(var(--card))",borderRadius:"8px",padding:"24px",marginBottom:"20px",boxShadow:"var(--shadow-sm)"},et=(e,t)=>({padding:"9px 20px",background:t?"hsl(var(--border))":e,color:t?"hsl(var(--muted-foreground))":"white",border:"none",borderRadius:"6px",cursor:t?"default":"pointer",fontSize:"14px",fontWeight:600});return(0,o.jsxs)("div",{children:[(0,o.jsx)("h1",{style:{fontSize:"24px",fontWeight:700,marginBottom:"6px",color:"hsl(var(--foreground))"},children:"Import / Export"}),(0,o.jsx)("p",{style:{color:"hsl(var(--muted-foreground))",marginBottom:"24px",fontSize:"14px"},children:"Workbook validate/apply import plus job-based export and template downloads."}),(0,o.jsxs)("section",{style:ee,children:[(0,o.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCE5 Import Catalog Workbook"}),(0,o.jsx)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:"Upload workbook/CSV, run validate first, then apply when validation passes."}),(0,o.jsxs)("div",{style:{display:"flex",gap:"16px",flexWrap:"wrap",marginBottom:"16px"},children:[(0,o.jsxs)("div",{style:{flex:1,minWidth:"220px"},children:[(0,o.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"File (.xlsx or .csv)"}),(0,o.jsx)("input",{ref:b,type:"file",accept:".xlsx,.csv",onChange:e=>{var t,r;S(null!=(r=null==(t=e.target.files)?void 0:t[0])?r:null),E(null),z(null),D(!1)},style:{display:"block",padding:"7px 10px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer",width:"100%"}})]}),(0,o.jsxs)("div",{children:[(0,o.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"Mode"}),(0,o.jsxs)("select",{value:j,onChange:e=>{R(e.target.value),D(!1)},style:{padding:"8px 12px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer"},children:[(0,o.jsx)("option",{value:"UPSERT_PATCH",children:"UPSERT_PATCH — update existing, insert new"}),(0,o.jsx)("option",{value:"CREATE_ONLY",children:"CREATE_ONLY — inserts only"})]})]})]}),(0,o.jsxs)("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap"},children:[(0,o.jsx)("button",{onClick:G,disabled:T||!w,style:et("hsl(var(--status-info-fg))",T||!w),children:T?"⏳ Running…":"✓ Validate"}),(0,o.jsx)("button",{onClick:Y,disabled:T||!w||!A,style:et("hsl(var(--primary))",T||!w||!A),children:T?"⏳ Running…":"▶ Apply"})]}),A&&(0,o.jsx)("div",{style:{marginTop:"12px",fontSize:"12px",color:"hsl(var(--status-success-fg))"},children:"Validation passed. You can apply this file now."}),P&&(0,o.jsxs)("div",{style:{marginTop:"14px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"12px 16px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",P]}),C&&(0,o.jsxs)("div",{style:{marginTop:"14px",background:"hsl(var(--status-success-bg))",border:"1px solid hsl(var(--status-success-border))",borderRadius:"6px",padding:"14px 16px"},children:[(0,o.jsx)("div",{style:{fontWeight:700,color:"hsl(var(--status-success-fg))",marginBottom:"10px",fontSize:"14px"},children:"✓ Import response"}),(0,o.jsx)("div",{style:{display:"flex",gap:"24px",fontSize:"13px",flexWrap:"wrap"},children:[["Created",null!=(r=C.inserted)?r:0,"hsl(var(--status-success-fg))"],["Updated",null!=(i=C.updated)?i:0,"hsl(var(--status-info-fg))"],["Skipped",null!=(u=C.skipped)?u:0,"hsl(var(--muted-foreground))"],["Total",(null!=(f=C.inserted)?f:0)+(null!=(h=C.updated)?h:0)+(null!=(x=C.skipped)?x:0),"hsl(var(--foreground))"]].map(e=>{let[t,r,n]=e;return(0,o.jsxs)("div",{children:[(0,o.jsxs)("span",{style:{color:"hsl(var(--muted-foreground))"},children:[t,": "]}),(0,o.jsx)("span",{style:{fontWeight:700,color:n},children:r})]},t)})}),(null!=(g=null==(e=C.errors)?void 0:e.length)?g:0)>0&&(0,o.jsx)("ul",{style:{marginTop:"10px",marginBottom:0,paddingLeft:"18px"},children:C.errors.map((e,t)=>(0,o.jsxs)("li",{style:{fontSize:"12px",color:"hsl(var(--status-warning-fg))"},children:[e.sheet?"".concat(e.sheet," "):"","Row ",e.row,": ",e.field?"".concat(e.field," "):"",e.message]},t))})]})]}),(0,o.jsxs)("section",{style:ee,children:[(0,o.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDD17 Import Parameter Mappings (CSV)"}),(0,o.jsx)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"Dedicated CSV import endpoint for test-parameter mappings remains available."}),(0,o.jsx)("p",{style:{fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:"Alternatively, use the TestParameters and PanelTests sheets in the job-based workbook import above."}),(0,o.jsxs)("div",{style:{marginBottom:"14px"},children:[(0,o.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"File (.csv only)"}),(0,o.jsx)("input",{ref:U,type:"file",accept:".csv",onChange:e=>{var t,r;O(null!=(r=null==(t=e.target.files)?void 0:t[0])?r:null),_(null),L(null)},style:{display:"block",padding:"7px 10px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer"}})]}),(0,o.jsx)("button",{onClick:K,disabled:B||!I,style:et("hsl(var(--primary))",B||!I),children:B?"⏳ Importing…":"▶ Import Mappings"}),N&&(0,o.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"10px 12px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",N]}),W&&(0,o.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-success-bg))",border:"1px solid hsl(var(--status-success-border))",borderRadius:"6px",padding:"12px 16px",fontSize:"13px"},children:[(0,o.jsxs)("div",{style:{fontWeight:600,color:"hsl(var(--status-success-fg))",marginBottom:"6px"},children:["✓ Imported ",null!=(m=W.imported)?m:0," mappings, Skipped ",null!=(y=W.skipped)?y:0," rows"]}),(null!=(v=null==(t=W.warnings)?void 0:t.length)?v:0)>0&&(0,o.jsx)("ul",{style:{margin:0,paddingLeft:"16px"},children:W.warnings.map((e,t)=>(0,o.jsxs)("li",{style:{fontSize:"12px",color:"hsl(var(--status-warning-fg))"},children:[null!=e.row?"Row ".concat(e.row,": "):"",e.message]},t))})]})]}),(0,o.jsxs)("section",{style:ee,children:[(0,o.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCE4 Export Catalog (Job-Based)"}),(0,o.jsxs)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:["Creates an export job, waits for completion, then downloads the XLSX from `/catalog/export-jobs/","{id}","/download`."]}),(0,o.jsx)("button",{onClick:Q,disabled:q,style:et("hsl(var(--primary))",q),children:q?"⏳ Export Job Running…":"⬇ Export All as XLSX"}),M&&(0,o.jsxs)("div",{style:{marginTop:"12px",fontSize:"12px",color:"hsl(var(--muted-foreground))"},children:["Job: ",(0,o.jsx)("code",{style:{background:"hsl(var(--muted))",padding:"2px 6px",borderRadius:"4px"},children:M.id})," • Status: ",(0,o.jsx)("strong",{children:M.status})]}),J&&(0,o.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"10px 12px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",J]})]}),(0,o.jsxs)("section",{style:ee,children:[(0,o.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCCB Download Templates"}),(0,o.jsxs)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:["Fill these templates and upload above. IDs use format: tests = ",(0,o.jsx)("strong",{children:"t1, t2…"}),", parameters = ",(0,o.jsx)("strong",{children:"p1, p2…"}),", panels = ",(0,o.jsx)("strong",{children:"g1, g2…"}),"."]}),(0,o.jsx)("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))",gap:"10px"},children:a.map(e=>(0,o.jsxs)("button",{onClick:()=>Z(e.path),style:{padding:"10px 14px",background:"hsl(var(--background))",border:"1px solid hsl(var(--border))",borderRadius:"6px",cursor:"pointer",fontSize:"13px",color:"hsl(var(--foreground))",textAlign:"left",display:"flex",alignItems:"center",gap:"8px"},children:[(0,o.jsx)("span",{style:{fontSize:"16px"},children:e.icon}),e.label]},e.path))})]})]})}},6550:(e,t,r)=>{Promise.resolve().then(r.bind(r,6368))},7647:(e,t,r)=>{"use strict";r.d(t,{Ay:()=>l});var o=r(1756);let n=/\{[^{}]+\}/g;function l(e){let{baseUrl:t="",Request:r=globalThis.Request,fetch:l=globalThis.fetch,querySerializer:f,bodySerializer:h,headers:x,requestInitExt:g,...m}={...e};g="object"==typeof o&&Number.parseInt(o?.versions?.node?.substring(0,2))>=18&&o.versions.undici?g:void 0,t=u(t);let y=[];async function v(e,o){var v,b;let w,S,j,R,T,{baseUrl:k,fetch:C=l,Request:E=r,headers:P,params:z={},parseAs:A="json",querySerializer:D,bodySerializer:U=h??d,body:I,...O}=o||{},B=t;k&&(B=u(k)??t);let $="function"==typeof f?f:c(f);D&&($="function"==typeof D?D:c({..."object"==typeof f?f:{},...D}));let W=void 0===I?void 0:U(I,p(x,P,z.header)),_=p(void 0===W||W instanceof FormData?{}:{"Content-Type":"application/json"},x,P,z.header),N={redirect:"follow",...m,...O,body:W,headers:_},L=new r((v=e,b={baseUrl:B,params:z,querySerializer:$},R=`${b.baseUrl}${v}`,b.params?.path&&(R=function(e,t){let r=e;for(let o of e.match(n)??[]){let e=o.substring(1,o.length-1),n=!1,l="simple";if(e.endsWith("*")&&(n=!0,e=e.substring(0,e.length-1)),e.startsWith(".")?(l="label",e=e.substring(1)):e.startsWith(";")&&(l="matrix",e=e.substring(1)),!t||void 0===t[e]||null===t[e])continue;let c=t[e];if(Array.isArray(c)){r=r.replace(o,i(e,c,{style:l,explode:n}));continue}if("object"==typeof c){r=r.replace(o,a(e,c,{style:l,explode:n}));continue}if("matrix"===l){r=r.replace(o,`;${s(e,c)}`);continue}r=r.replace(o,"label"===l?`.${encodeURIComponent(c)}`:encodeURIComponent(c))}return r}(R,b.params.path)),(T=b.querySerializer(b.params.query??{})).startsWith("?")&&(T=T.substring(1)),T&&(R+=`?${T}`),R),N);for(let e in O)e in L||(L[e]=O[e]);if(y.length){for(let t of(w=Math.random().toString(36).slice(2,11),S=Object.freeze({baseUrl:B,fetch:C,parseAs:A,querySerializer:$,bodySerializer:U}),y))if(t&&"object"==typeof t&&"function"==typeof t.onRequest){let o=await t.onRequest({request:L,schemaPath:e,params:z,options:S,id:w});if(o)if(o instanceof r)L=o;else if(o instanceof Response){j=o;break}else throw Error("onRequest: must return new Request() or Response() when modifying the request")}}if(!j){try{j=await C(L,g)}catch(r){let t=r;if(y.length)for(let r=y.length-1;r>=0;r--){let o=y[r];if(o&&"object"==typeof o&&"function"==typeof o.onError){let r=await o.onError({request:L,error:t,schemaPath:e,params:z,options:S,id:w});if(r){if(r instanceof Response){t=void 0,j=r;break}if(r instanceof Error){t=r;continue}throw Error("onError: must return new Response() or instance of Error")}}}if(t)throw t}if(y.length)for(let t=y.length-1;t>=0;t--){let r=y[t];if(r&&"object"==typeof r&&"function"==typeof r.onResponse){let t=await r.onResponse({request:L,response:j,schemaPath:e,params:z,options:S,id:w});if(t){if(!(t instanceof Response))throw Error("onResponse: must return new Response() when modifying the response");j=t}}}}if(204===j.status||"HEAD"===L.method||"0"===j.headers.get("Content-Length"))return j.ok?{data:void 0,response:j}:{error:void 0,response:j};if(j.ok)return"stream"===A?{data:j.body,response:j}:{data:await j[A](),response:j};let q=await j.text();try{q=JSON.parse(q)}catch{}return{error:q,response:j}}return{request:(e,t,r)=>v(t,{...r,method:e.toUpperCase()}),GET:(e,t)=>v(e,{...t,method:"GET"}),PUT:(e,t)=>v(e,{...t,method:"PUT"}),POST:(e,t)=>v(e,{...t,method:"POST"}),DELETE:(e,t)=>v(e,{...t,method:"DELETE"}),OPTIONS:(e,t)=>v(e,{...t,method:"OPTIONS"}),HEAD:(e,t)=>v(e,{...t,method:"HEAD"}),PATCH:(e,t)=>v(e,{...t,method:"PATCH"}),TRACE:(e,t)=>v(e,{...t,method:"TRACE"}),use(...e){for(let t of e)if(t){if("object"!=typeof t||!("onRequest"in t||"onResponse"in t||"onError"in t))throw Error("Middleware must be an object with one of `onRequest()`, `onResponse() or `onError()`");y.push(t)}},eject(...e){for(let t of e){let e=y.indexOf(t);-1!==e&&y.splice(e,1)}}}}function s(e,t,r){if(null==t)return"";if("object"==typeof t)throw Error("Deeply-nested arrays/objects aren’t supported. Provide your own `querySerializer()` to handle these.");return`${e}=${r?.allowReserved===!0?t:encodeURIComponent(t)}`}function a(e,t,r){if(!t||"object"!=typeof t)return"";let o=[],n={simple:",",label:".",matrix:";"}[r.style]||"&";if("deepObject"!==r.style&&!1===r.explode){for(let e in t)o.push(e,!0===r.allowReserved?t[e]:encodeURIComponent(t[e]));let n=o.join(",");switch(r.style){case"form":return`${e}=${n}`;case"label":return`.${n}`;case"matrix":return`;${e}=${n}`;default:return n}}for(let n in t){let l="deepObject"===r.style?`${e}[${n}]`:n;o.push(s(l,t[n],r))}let l=o.join(n);return"label"===r.style||"matrix"===r.style?`${n}${l}`:l}function i(e,t,r){if(!Array.isArray(t))return"";if(!1===r.explode){let o={form:",",spaceDelimited:"%20",pipeDelimited:"|"}[r.style]||",",n=(!0===r.allowReserved?t:t.map(e=>encodeURIComponent(e))).join(o);switch(r.style){case"simple":return n;case"label":return`.${n}`;case"matrix":return`;${e}=${n}`;default:return`${e}=${n}`}}let o={simple:",",label:".",matrix:";"}[r.style]||"&",n=[];for(let o of t)"simple"===r.style||"label"===r.style?n.push(!0===r.allowReserved?o:encodeURIComponent(o)):n.push(s(e,o,r));return"label"===r.style||"matrix"===r.style?`${o}${n.join(o)}`:n.join(o)}function c(e){return function(t){let r=[];if(t&&"object"==typeof t)for(let o in t){let n=t[o];if(null!=n){if(Array.isArray(n)){if(0===n.length)continue;r.push(i(o,n,{style:"form",explode:!0,...e?.array,allowReserved:e?.allowReserved||!1}));continue}if("object"==typeof n){r.push(a(o,n,{style:"deepObject",explode:!0,...e?.object,allowReserved:e?.allowReserved||!1}));continue}r.push(s(o,n,e))}}return r.join("&")}}function d(e,t){return e instanceof FormData?e:t&&"application/x-www-form-urlencoded"===(t.get instanceof Function?t.get("Content-Type")??t.get("content-type"):t["Content-Type"]??t["content-type"])?new URLSearchParams(e).toString():JSON.stringify(e)}function p(...e){let t=new Headers;for(let r of e)if(r&&"object"==typeof r)for(let[e,o]of r instanceof Headers?r.entries():Object.entries(r))if(null===o)t.delete(e);else if(Array.isArray(o))for(let r of o)t.append(e,r);else void 0!==o&&t.set(e,o);return t}function u(e){return e.endsWith("/")?e.substring(0,e.length-1):e}},8934:(e,t,r)=>{"use strict";r.d(t,{PT:()=>o.PT,h_:()=>o.h_,iU:()=>o.iU,ri:()=>l,wR:()=>o.wR});var o=r(9293);let n=r(1756).env.NEXT_PUBLIC_AUTH_DOMAIN;function l(){(0,o.gf)(n)}},9293:(e,t,r)=>{"use strict";r.d(t,{gf:()=>i,yS:()=>n,iU:()=>p,PT:()=>c,wR:()=>d,h_:()=>a});var o=r(7647);function n(e){let{baseUrl:t,token:r,correlationId:n,headers:l}=e,s={...r?{Authorization:"Bearer ".concat(r)}:{},...n?{"x-correlation-id":n}:{},...null!=l?l:{}};return(0,o.Ay)({baseUrl:t,headers:s,credentials:"include"})}let l="vexel_token",s="vexel_refresh";function a(e,t,r){if("undefined"==typeof document)return;let o=new Date;o.setDate(o.getDate()+7);let n="path=/; ".concat(r?"domain=".concat(r,";"):""," expires=").concat(o.toUTCString(),"; samesite=lax");document.cookie="".concat(l,"=").concat(e,"; ").concat(n),document.cookie="".concat(s,"=").concat(t,"; ").concat(n),localStorage.setItem(l,e),localStorage.setItem(s,t)}function i(e){if("undefined"==typeof document)return;let t="path=/; ".concat(e?"domain=".concat(e,";"):""," expires=Thu, 01 Jan 1970 00:00:00 GMT");document.cookie="".concat(l,"=; ").concat(t),document.cookie="".concat(s,"=; ").concat(t),localStorage.removeItem(l),localStorage.removeItem(s)}function c(){return function(){if("undefined"==typeof document)return{token:null,refresh:null};let e=document.cookie.split(";").reduce((e,t)=>{let r=t.indexOf("=");if(-1===r)return e;let o=t.slice(0,r).trim(),n=t.slice(r+1).trim();return e[o]=n,e},{});return{token:e[l]||localStorage.getItem(l)||null,refresh:e[s]||localStorage.getItem(s)||null}}().token}function d(){return!!c()}function p(e){if(!e)return null;try{let t=e.split(".")[1].replace(/-/g,"+").replace(/_/g,"/"),r=decodeURIComponent(atob(t).split("").map(e=>"%"+("00"+e.charCodeAt(0).toString(16)).slice(-2)).join(""));return JSON.parse(r)}catch(e){return null}}}},e=>{e.O(0,[814,743,358],()=>e(e.s=6550)),_N_E=e.O()}]);
+
+$ docker compose exec -T admin sh -lc "grep -R -n 'Catalog validate' /app 2>/dev/null | head"
+/app/apps/admin/.next/server/app/(protected)/catalog/import-export/page.js:2:see more here https://nextjs.org/docs/messages/app-static-to-dynamic-error`),"__NEXT_ERROR_CODE",{value:"E132",enumerable:!1,configurable:!0});if(null==a?void 0:a.stack){let c=a.stack;b.stack=b.message+c.substring(c.indexOf("\n"))}throw b}return{value:{kind:v.CachedRouteKind.APP_PAGE,html:l,headers:o,rscData:m.flightData,postponed:m.postponed,status:m.statusCode,segmentData:m.segmentData},cacheControl:n}},o=async({hasResolved:c,previousCacheEntry:f,isRevalidating:g,span:i})=>{let j,k=!1===K.isDev,l=c||b.writableEnded;if(ah&&ab&&!f&&!N)return(null==ac?void 0:ac.render404)?await ac.render404(a,b):(b.statusCode=404,b.end("This page could not be found")),null;if(ai&&(j=(0,w.parseFallbackField)(ai.fallback)),j===w.FallbackMode.PRERENDER&&(0,u.isBot)(al)&&(!ar||an)&&(j=w.FallbackMode.BLOCKING_STATIC_RENDER),(null==f?void 0:f.isStale)===-1&&(ah=!0),ah&&(j!==w.FallbackMode.NOT_FOUND||f)&&(j=w.FallbackMode.BLOCKING_STATIC_RENDER),!N&&j!==w.FallbackMode.BLOCKING_STATIC_RENDER&&aB&&!l&&!_&&T&&(k||!aj)){let b;if((k||ai)&&j===w.FallbackMode.NOT_FOUND)throw new B.NoFallbackError;if(ar&&!ap){let c="string"==typeof(null==ai?void 0:ai.fallback)?ai.fallback:k?ag:null;if(b=await K.handleResponse({cacheKey:c,req:a,nextConfig:ad,routeKind:e.RouteKind.APP_PAGE,isFallback:!0,prerenderManifest:$,isRoutePPREnabled:ar,responseGenerator:async()=>m({span:i,postponed:void 0,fallbackRouteParams:k||at?(0,n.u)(ag):null}),waitUntil:d.waitUntil}),null===b)return null;if(b)return delete b.cacheControl,b}}let o=ah||g||!au?void 0:au;if(as&&void 0!==o)return{cacheControl:{revalidate:1,expire:void 0},value:{kind:v.CachedRouteKind.PAGES,html:x.default.EMPTY,pageData:{},headers:void 0,status:void 0}};let p=T&&ar&&((0,h.getRequestMeta)(a,"renderFallbackShell")||at)?(0,n.u)(af):null;return m({span:i,postponed:o,fallbackRouteParams:p})},p=async c=>{var f,g,i,j,k;let l,n=await K.handleResponse({cacheKey:aA,responseGenerator:a=>o({span:c,...a}),routeKind:e.RouteKind.APP_PAGE,isOnDemandRevalidate:ah,isRoutePPREnabled:ar,req:a,nextConfig:ad,prerenderManifest:$,waitUntil:d.waitUntil});if(_&&b.setHeader("Cache-Control","private, no-cache, no-store, max-age=0, must-revalidate"),K.isDev&&b.setHeader("Cache-Control","no-store, must-revalidate"),!n){if(aA)throw Object.defineProperty(Error("invariant: cache entry required but not generated"),"__NEXT_ERROR_CODE",{value:"E62",enumerable:!1,configurable:!0});return null}if((null==(f=n.value)?void 0:f.kind)!==v.CachedRouteKind.APP_PAGE)throw Object.defineProperty(Error(`Invariant app-page handler received invalid cache entry ${null==(i=n.value)?void 0:i.kind}`),"__NEXT_ERROR_CODE",{value:"E707",enumerable:!1,configurable:!0});let p="string"==typeof n.value.postponed;ak&&!av&&(!p||ao)&&(N||b.setHeader("x-nextjs-cache",ah?"REVALIDATED":n.isMiss?"MISS":n.isStale?"STALE":"HIT"),b.setHeader(t.NEXT_IS_PRERENDER_HEADER,"1"));let{value:q}=n;if(au)l={revalidate:0,expire:void 0};else if(N&&ap&&!ao&&ar)l={revalidate:0,expire:void 0};else if(!K.isDev)if(_)l={revalidate:0,expire:void 0};else if(ak){if(n.cacheControl)if("number"==typeof n.cacheControl.revalidate){if(n.cacheControl.revalidate<1)throw Object.defineProperty(Error(`Invalid revalidate configuration provided: ${n.cacheControl.revalidate} < 1`),"__NEXT_ERROR_CODE",{value:"E22",enumerable:!1,configurable:!0});l={revalidate:n.cacheControl.revalidate,expire:(null==(j=n.cacheControl)?void 0:j.expire)??ad.expireTime}}else l={revalidate:y.CACHE_ONE_YEAR,expire:void 0}}else b.getHeader("Cache-Control")||(l={revalidate:0,expire:void 0});if(n.cacheControl=l,"string"==typeof aw&&(null==q?void 0:q.kind)===v.CachedRouteKind.APP_PAGE&&q.segmentData){b.setHeader(t.NEXT_DID_POSTPONE_HEADER,"2");let c=null==(k=q.headers)?void 0:k[y.NEXT_CACHE_TAGS_HEADER];N&&ak&&c&&"string"==typeof c&&b.setHeader(y.NEXT_CACHE_TAGS_HEADER,c);let d=q.segmentData.get(aw);return void 0!==d?(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:x.default.fromStatic(d,t.RSC_CONTENT_TYPE_HEADER),cacheControl:n.cacheControl}):(b.statusCode=204,(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:x.default.EMPTY,cacheControl:n.cacheControl}))}let r=(0,h.getRequestMeta)(a,"onCacheEntry");if(r&&await r({...n,value:{...n.value,kind:"PAGE"}},{url:(0,h.getRequestMeta)(a,"initURL")}))return null;if(p&&au)throw Object.defineProperty(Error("Invariant: postponed state should not be present on a resume request"),"__NEXT_ERROR_CODE",{value:"E396",enumerable:!1,configurable:!0});if(q.headers){let a={...q.headers};for(let[c,d]of(N&&ak||delete a[y.NEXT_CACHE_TAGS_HEADER],Object.entries(a)))if(void 0!==d)if(Array.isArray(d))for(let a of d)b.appendHeader(c,a);else"number"==typeof d&&(d=d.toString()),b.appendHeader(c,d)}let s=null==(g=q.headers)?void 0:g[y.NEXT_CACHE_TAGS_HEADER];if(N&&ak&&s&&"string"==typeof s&&b.setHeader(y.NEXT_CACHE_TAGS_HEADER,s),!q.status||ap&&ar||(b.statusCode=q.status),!N&&q.status&&F.RedirectStatusCode[q.status]&&ap&&(b.statusCode=200),p&&b.setHeader(t.NEXT_DID_POSTPONE_HEADER,"1"),ap&&!_){if(void 0===q.rscData){if(q.postponed)throw Object.defineProperty(Error("Invariant: Expected postponed to be undefined"),"__NEXT_ERROR_CODE",{value:"E372",enumerable:!1,configurable:!0});return(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:q.html,cacheControl:av?{revalidate:0,expire:void 0}:n.cacheControl})}return(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:x.default.fromStatic(q.rscData,t.RSC_CONTENT_TYPE_HEADER),cacheControl:n.cacheControl})}let u=q.html;if(!p||N||ap)return(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:u,cacheControl:n.cacheControl});if(as)return u.push(new ReadableStream({start(a){a.enqueue(z.ENCODED_TAGS.CLOSED.BODY_AND_HTML),a.close()}})),(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:u,cacheControl:{revalidate:0,expire:void 0}});let w=new TransformStream;return u.push(w.readable),m({span:c,postponed:q.postponed,fallbackRouteParams:null}).then(async a=>{var b,c;if(!a)throw Object.defineProperty(Error("Invariant: expected a result to be returned"),"__NEXT_ERROR_CODE",{value:"E463",enumerable:!1,configurable:!0});if((null==(b=a.value)?void 0:b.kind)!==v.CachedRouteKind.APP_PAGE)throw Object.defineProperty(Error(`Invariant: expected a page response, got ${null==(c=a.value)?void 0:c.kind}`),"__NEXT_ERROR_CODE",{value:"E305",enumerable:!1,configurable:!0});await a.value.html.pipeTo(w.writable)}).catch(a=>{w.writable.abort(a).catch(a=>{console.error("couldn't abort transformer",a)})}),(0,A.sendRenderResult)({req:a,res:b,generateEtags:ad.generateEtags,poweredByHeader:ad.poweredByHeader,result:u,cacheControl:{revalidate:0,expire:void 0}})};if(!aF)return await aE.withPropagatedContext(a.headers,()=>aE.trace(i.BaseServerSpan.handleRequest,{spanName:`${aD} ${a.url}`,kind:g.SpanKind.SERVER,attributes:{"http.method":aD,"http.target":a.url}},p));await p(aF)}catch(b){throw b instanceof B.NoFallbackError||await K.onRequestError(a,b,{routerKind:"App Router",routePath:G,routeType:"render",revalidateReason:(0,f.c)({isRevalidate:ak,isOnDemandRevalidate:ah})},ac),b}}},85842:(a,b,c)=>{Promise.resolve().then(c.bind(c,51088))},86439:a=>{"use strict";a.exports=require("next/dist/shared/lib/no-fallback-error.external")},97558:(a,b,c)=>{"use strict";c.r(b),c.d(b,{default:()=>m});var d=c(82164),e=c(54509),f=c(58092),g=c(52036);let h=[{label:"Full Workbook Template (XLSX) — all sheets",path:"workbook.xlsx",icon:"\uD83D\uDCCA"},{label:"Sample Types CSV",path:"sample-types.csv",icon:"\uD83E\uDDEA"},{label:"Parameters CSV",path:"parameters.csv",icon:"\uD83D\uDCC4"},{label:"Tests CSV",path:"tests.csv",icon:"\uD83D\uDCC4"},{label:"Test-Parameters Mapping CSV",path:"test-parameters.csv",icon:"\uD83D\uDD17"},{label:"Panels CSV",path:"panels.csv",icon:"\uD83D\uDCC4"},{label:"Panel-Tests Mapping CSV",path:"panel-tests.csv",icon:"\uD83D\uDD17"},{label:"Reference Ranges CSV",path:"reference-ranges.csv",icon:"\uD83D\uDCCF"}];function i(a,b=220){if("string"!=typeof a){if(null==a)return"";try{return JSON.stringify(a).slice(0,b)}catch{return String(a).slice(0,b)}}return a.replace(/\s+/g," ").trim().slice(0,b)}async function j(a,b){let{data:c,error:d,response:e}=await b,f=e?.status??0,g=(e?.headers.get("content-type")??"").toLowerCase(),h="string"==typeof c?c:"";if(!e?.ok){let b=i(h||d?.message||d);throw Error(`${a} failed (HTTP ${f}). ${b||"No response body."}`)}if(!g.includes("application/json")){let b=i(h||d);throw Error(`${a} failed: expected JSON response but received ${g||"unknown content-type"} (HTTP ${f}). ${b||"No response body."}`)}try{return JSON.parse(h)}catch{throw Error(`${a} failed: response JSON is invalid (HTTP ${f}). ${i(h)}`)}}async function k(a,b){let c=(0,f.e)((0,g.PT)()??void 0),{data:d,error:e}=await c.GET(a,{parseAs:"blob"});if(e||!d)throw Error(e?.message??"Download failed");let h=URL.createObjectURL(d),i=document.createElement("a");i.href=h,i.download=b,i.click(),URL.revokeObjectURL(h)}async function l(a,b,c=40,d=1e3){let e=(0,f.e)((0,g.PT)()??void 0),h=null;for(let f=0;f<c;f++){let{data:c,error:f}=await e.GET(a,{params:{path:{id:b}}});if(f)throw Error(f?.message??"Failed to poll job");if("completed"===(h=c).status||"failed"===h.status)return h;await function(a){return new Promise(b=>setTimeout(b,a))}(d)}if(!h)throw Error("Job polling failed");return h}function m(){let a=(0,e.useRef)(null),[b,c]=(0,e.useState)(null),[i,m]=(0,e.useState)("UPSERT_PATCH"),[n,o]=(0,e.useState)(!1),[p,q]=(0,e.useState)(null),[r,s]=(0,e.useState)(null),[t,u]=(0,e.useState)(!1),v=(0,e.useRef)(null),[w,x]=(0,e.useState)(null),[y,z]=(0,e.useState)(!1),[A,B]=(0,e.useState)(null),[C,D]=(0,e.useState)(null),[E,F]=(0,e.useState)(!1),[G,H]=(0,e.useState)(null),[I,J]=(0,e.useState)(null);async function K(a){if(b){o(!0),q(null),s(null);try{let c=(0,f.e)((0,g.PT)()??void 0),d=new FormData;d.append("file",b);let e=await j(a?"Catalog validate":"Catalog apply",c.POST("/catalog/import/workbook",{params:{query:{validate:a,mode:i}},body:d,bodySerializer:a=>a,parseAs:"text"}));q(e);let h=Array.isArray(e?.errors)&&e.errors.length>0;a&&!h?u(!0):a&&u(!1)}catch(b){s(b.message??"Import failed"),a&&u(!1)}finally{o(!1)}}}async function L(){await K(!0)}async function M(){if(!t)return void s("Run validate with zero errors before apply.");await K(!1)}async function N(){if(w){z(!0),D(null),B(null);try{let a=await w.text(),b=(0,f.e)((0,g.PT)()??void 0),c=await j("Mapping import",b.POST("/catalog/test-parameter-mappings/import",{body:{csv:a},parseAs:"text"}));B(c)}catch(a){D(a.message??"Import failed")}finally{z(!1)}}}async function O(){F(!0),H(null),J(null);try{let a=(0,f.e)((0,g.PT)()??void 0),{data:b,error:c}=await a.POST("/catalog/export-jobs",{});if(c||!b)throw Error(c?.message??"Failed to create export job");J(b);let d=await l("/catalog/export-jobs/{id}",b.id);if(J(d),"failed"===d.status)throw Error(d.errorSummary??"Export job failed");await k(`/catalog/export-jobs/${d.id}/download`,`catalog-export-${new Date().toISOString().slice(0,10)}.xlsx`)}catch(a){H(a.message??"Export failed")}finally{F(!1)}}async function P(a){try{await k(`/catalog/templates/${a}`,a)}catch(a){alert(`Template download failed: ${a?.message??"Unknown error"}`)}}let Q={background:"hsl(var(--card))",borderRadius:"8px",padding:"24px",marginBottom:"20px",boxShadow:"var(--shadow-sm)"},R=(a,b)=>({padding:"9px 20px",background:b?"hsl(var(--border))":a,color:b?"hsl(var(--muted-foreground))":"white",border:"none",borderRadius:"6px",cursor:b?"default":"pointer",fontSize:"14px",fontWeight:600});return(0,d.jsxs)("div",{children:[(0,d.jsx)("h1",{style:{fontSize:"24px",fontWeight:700,marginBottom:"6px",color:"hsl(var(--foreground))"},children:"Import / Export"}),(0,d.jsx)("p",{style:{color:"hsl(var(--muted-foreground))",marginBottom:"24px",fontSize:"14px"},children:"Workbook validate/apply import plus job-based export and template downloads."}),(0,d.jsxs)("section",{style:Q,children:[(0,d.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCE5 Import Catalog Workbook"}),(0,d.jsx)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:"Upload workbook/CSV, run validate first, then apply when validation passes."}),(0,d.jsxs)("div",{style:{display:"flex",gap:"16px",flexWrap:"wrap",marginBottom:"16px"},children:[(0,d.jsxs)("div",{style:{flex:1,minWidth:"220px"},children:[(0,d.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"File (.xlsx or .csv)"}),(0,d.jsx)("input",{ref:a,type:"file",accept:".xlsx,.csv",onChange:a=>{c(a.target.files?.[0]??null),q(null),s(null),u(!1)},style:{display:"block",padding:"7px 10px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer",width:"100%"}})]}),(0,d.jsxs)("div",{children:[(0,d.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"Mode"}),(0,d.jsxs)("select",{value:i,onChange:a=>{m(a.target.value),u(!1)},style:{padding:"8px 12px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer"},children:[(0,d.jsx)("option",{value:"UPSERT_PATCH",children:"UPSERT_PATCH — update existing, insert new"}),(0,d.jsx)("option",{value:"CREATE_ONLY",children:"CREATE_ONLY — inserts only"})]})]})]}),(0,d.jsxs)("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap"},children:[(0,d.jsx)("button",{onClick:L,disabled:n||!b,style:R("hsl(var(--status-info-fg))",n||!b),children:n?"⏳ Running…":"✓ Validate"}),(0,d.jsx)("button",{onClick:M,disabled:n||!b||!t,style:R("hsl(var(--primary))",n||!b||!t),children:n?"⏳ Running…":"▶ Apply"})]}),t&&(0,d.jsx)("div",{style:{marginTop:"12px",fontSize:"12px",color:"hsl(var(--status-success-fg))"},children:"Validation passed. You can apply this file now."}),r&&(0,d.jsxs)("div",{style:{marginTop:"14px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"12px 16px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",r]}),p&&(0,d.jsxs)("div",{style:{marginTop:"14px",background:"hsl(var(--status-success-bg))",border:"1px solid hsl(var(--status-success-border))",borderRadius:"6px",padding:"14px 16px"},children:[(0,d.jsx)("div",{style:{fontWeight:700,color:"hsl(var(--status-success-fg))",marginBottom:"10px",fontSize:"14px"},children:"✓ Import response"}),(0,d.jsx)("div",{style:{display:"flex",gap:"24px",fontSize:"13px",flexWrap:"wrap"},children:[["Created",p.inserted??0,"hsl(var(--status-success-fg))"],["Updated",p.updated??0,"hsl(var(--status-info-fg))"],["Skipped",p.skipped??0,"hsl(var(--muted-foreground))"],["Total",(p.inserted??0)+(p.updated??0)+(p.skipped??0),"hsl(var(--foreground))"]].map(([a,b,c])=>(0,d.jsxs)("div",{children:[(0,d.jsxs)("span",{style:{color:"hsl(var(--muted-foreground))"},children:[a,": "]}),(0,d.jsx)("span",{style:{fontWeight:700,color:c},children:b})]},a))}),(p.errors?.length??0)>0&&(0,d.jsx)("ul",{style:{marginTop:"10px",marginBottom:0,paddingLeft:"18px"},children:p.errors.map((a,b)=>(0,d.jsxs)("li",{style:{fontSize:"12px",color:"hsl(var(--status-warning-fg))"},children:[a.sheet?`${a.sheet} `:"","Row ",a.row,": ",a.field?`${a.field} `:"",a.message]},b))})]})]}),(0,d.jsxs)("section",{style:Q,children:[(0,d.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDD17 Import Parameter Mappings (CSV)"}),(0,d.jsx)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"Dedicated CSV import endpoint for test-parameter mappings remains available."}),(0,d.jsx)("p",{style:{fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:"Alternatively, use the TestParameters and PanelTests sheets in the job-based workbook import above."}),(0,d.jsxs)("div",{style:{marginBottom:"14px"},children:[(0,d.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"File (.csv only)"}),(0,d.jsx)("input",{ref:v,type:"file",accept:".csv",onChange:a=>{x(a.target.files?.[0]??null),B(null),D(null)},style:{display:"block",padding:"7px 10px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer"}})]}),(0,d.jsx)("button",{onClick:N,disabled:y||!w,style:R("hsl(var(--primary))",y||!w),children:y?"⏳ Importing…":"▶ Import Mappings"}),C&&(0,d.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"10px 12px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",C]}),A&&(0,d.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-success-bg))",border:"1px solid hsl(var(--status-success-border))",borderRadius:"6px",padding:"12px 16px",fontSize:"13px"},children:[(0,d.jsxs)("div",{style:{fontWeight:600,color:"hsl(var(--status-success-fg))",marginBottom:"6px"},children:["✓ Imported ",A.imported??0," mappings, Skipped ",A.skipped??0," rows"]}),(A.warnings?.length??0)>0&&(0,d.jsx)("ul",{style:{margin:0,paddingLeft:"16px"},children:A.warnings.map((a,b)=>(0,d.jsxs)("li",{style:{fontSize:"12px",color:"hsl(var(--status-warning-fg))"},children:[null!=a.row?`Row ${a.row}: `:"",a.message]},b))})]})]}),(0,d.jsxs)("section",{style:Q,children:[(0,d.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCE4 Export Catalog (Job-Based)"}),(0,d.jsxs)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:["Creates an export job, waits for completion, then downloads the XLSX from `/catalog/export-jobs/","{id}","/download`."]}),(0,d.jsx)("button",{onClick:O,disabled:E,style:R("hsl(var(--primary))",E),children:E?"⏳ Export Job Running…":"⬇ Export All as XLSX"}),I&&(0,d.jsxs)("div",{style:{marginTop:"12px",fontSize:"12px",color:"hsl(var(--muted-foreground))"},children:["Job: ",(0,d.jsx)("code",{style:{background:"hsl(var(--muted))",padding:"2px 6px",borderRadius:"4px"},children:I.id})," • Status: ",(0,d.jsx)("strong",{children:I.status})]}),G&&(0,d.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"10px 12px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",G]})]}),(0,d.jsxs)("section",{style:Q,children:[(0,d.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCCB Download Templates"}),(0,d.jsxs)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:["Fill these templates and upload above. IDs use format: tests = ",(0,d.jsx)("strong",{children:"t1, t2…"}),", parameters = ",(0,d.jsx)("strong",{children:"p1, p2…"}),", panels = ",(0,d.jsx)("strong",{children:"g1, g2…"}),"."]}),(0,d.jsx)("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))",gap:"10px"},children:h.map(a=>(0,d.jsxs)("button",{onClick:()=>P(a.path),style:{padding:"10px 14px",background:"hsl(var(--background))",border:"1px solid hsl(var(--border))",borderRadius:"6px",cursor:"pointer",fontSize:"13px",color:"hsl(var(--foreground))",textAlign:"left",display:"flex",alignItems:"center",gap:"8px"},children:[(0,d.jsx)("span",{style:{fontSize:"16px"},children:a.icon}),a.label]},a.path))})]})]})}}};var b=require("../../../../webpack-runtime.js");b.C(a);var c=b.X(0,[774,389,602],()=>b(b.s=71184));module.exports=c})();
+/app/apps/admin/.next/static/chunks/app/(protected)/catalog/import-export/page-f1d57734dc4a6fde.js:1:(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[429],{2928:(e,t,r)=>{"use strict";r.d(t,{e:()=>l});var o=r(9293);let n="https://vexel.alshifalab.pk";function l(e,t){return(0,o.yS)({baseUrl:"".concat(n,"/api"),token:e,correlationId:null!=t?t:"".concat(Date.now(),"-").concat(Math.random().toString(36).slice(2,9))})}},6368:(e,t,r)=>{"use strict";r.r(t),r.d(t,{default:()=>u});var o=r(8111),n=r(5271),l=r(2928),s=r(8934);let a=[{label:"Full Workbook Template (XLSX) — all sheets",path:"workbook.xlsx",icon:"\uD83D\uDCCA"},{label:"Sample Types CSV",path:"sample-types.csv",icon:"\uD83E\uDDEA"},{label:"Parameters CSV",path:"parameters.csv",icon:"\uD83D\uDCC4"},{label:"Tests CSV",path:"tests.csv",icon:"\uD83D\uDCC4"},{label:"Test-Parameters Mapping CSV",path:"test-parameters.csv",icon:"\uD83D\uDD17"},{label:"Panels CSV",path:"panels.csv",icon:"\uD83D\uDCC4"},{label:"Panel-Tests Mapping CSV",path:"panel-tests.csv",icon:"\uD83D\uDD17"},{label:"Reference Ranges CSV",path:"reference-ranges.csv",icon:"\uD83D\uDCCF"}];function i(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:220;if("string"!=typeof e){if(null==e)return"";try{return JSON.stringify(e).slice(0,t)}catch(r){return String(e).slice(0,t)}}return e.replace(/\s+/g," ").trim().slice(0,t)}async function c(e,t){var r,o;let{data:n,error:l,response:s}=await t,a=null!=(r=null==s?void 0:s.status)?r:0,c=(null!=(o=null==s?void 0:s.headers.get("content-type"))?o:"").toLowerCase(),d="string"==typeof n?n:"";if(!(null==s?void 0:s.ok)){let t=i(d||(null==l?void 0:l.message)||l);throw Error("".concat(e," failed (HTTP ").concat(a,"). ").concat(t||"No response body."))}if(!c.includes("application/json")){let t=i(d||l);throw Error("".concat(e," failed: expected JSON response but received ").concat(c||"unknown content-type"," (HTTP ").concat(a,"). ").concat(t||"No response body."))}try{return JSON.parse(d)}catch(t){throw Error("".concat(e," failed: response JSON is invalid (HTTP ").concat(a,"). ").concat(i(d)))}}async function d(e,t){var r,o;let n=(0,l.e)(null!=(r=(0,s.PT)())?r:void 0),{data:a,error:i}=await n.GET(e,{parseAs:"blob"});if(i||!a)throw Error(null!=(o=null==i?void 0:i.message)?o:"Download failed");let c=URL.createObjectURL(a),d=document.createElement("a");d.href=c,d.download=t,d.click(),URL.revokeObjectURL(c)}async function p(e,t){var r,o;let n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:40,a=arguments.length>3&&void 0!==arguments[3]?arguments[3]:1e3,i=(0,l.e)(null!=(r=(0,s.PT)())?r:void 0),c=null;for(let r=0;r<n;r++){let{data:r,error:n}=await i.GET(e,{params:{path:{id:t}}});if(n)throw Error(null!=(o=null==n?void 0:n.message)?o:"Failed to poll job");if("completed"===(c=r).status||"failed"===c.status)return c;await function(e){return new Promise(t=>setTimeout(t,e))}(a)}if(!c)throw Error("Job polling failed");return c}function u(){var e,t,r,i,u,f,h,x,g,m,y,v;let b=(0,n.useRef)(null),[w,S]=(0,n.useState)(null),[j,R]=(0,n.useState)("UPSERT_PATCH"),[T,k]=(0,n.useState)(!1),[C,E]=(0,n.useState)(null),[P,z]=(0,n.useState)(null),[A,D]=(0,n.useState)(!1),U=(0,n.useRef)(null),[I,O]=(0,n.useState)(null),[B,$]=(0,n.useState)(!1),[W,_]=(0,n.useState)(null),[N,L]=(0,n.useState)(null),[q,H]=(0,n.useState)(!1),[J,V]=(0,n.useState)(null),[M,F]=(0,n.useState)(null);async function X(e){var t,r;if(w){k(!0),E(null),z(null);try{let r=(0,l.e)(null!=(t=(0,s.PT)())?t:void 0),o=new FormData;o.append("file",w);let n=await c(e?"Catalog validate":"Catalog apply",r.POST("/catalog/import/workbook",{params:{query:{validate:e,mode:j}},body:o,bodySerializer:e=>e,parseAs:"text"}));E(n);let a=Array.isArray(null==n?void 0:n.errors)&&n.errors.length>0;e&&!a?D(!0):e&&D(!1)}catch(t){z(null!=(r=t.message)?r:"Import failed"),e&&D(!1)}finally{k(!1)}}}async function G(){await X(!0)}async function Y(){if(!A)return void z("Run validate with zero errors before apply.");await X(!1)}async function K(){var e,t;if(I){$(!0),L(null),_(null);try{let t=await I.text(),r=(0,l.e)(null!=(e=(0,s.PT)())?e:void 0),o=await c("Mapping import",r.POST("/catalog/test-parameter-mappings/import",{body:{csv:t},parseAs:"text"}));_(o)}catch(e){L(null!=(t=e.message)?t:"Import failed")}finally{$(!1)}}}async function Q(){var e,t,r,o;H(!0),V(null),F(null);try{let o=(0,l.e)(null!=(e=(0,s.PT)())?e:void 0),{data:n,error:a}=await o.POST("/catalog/export-jobs",{});if(a||!n)throw Error(null!=(t=null==a?void 0:a.message)?t:"Failed to create export job");F(n);let i=await p("/catalog/export-jobs/{id}",n.id);if(F(i),"failed"===i.status)throw Error(null!=(r=i.errorSummary)?r:"Export job failed");await d("/catalog/export-jobs/".concat(i.id,"/download"),"catalog-export-".concat(new Date().toISOString().slice(0,10),".xlsx"))}catch(e){V(null!=(o=e.message)?o:"Export failed")}finally{H(!1)}}async function Z(e){try{await d("/catalog/templates/".concat(e),e)}catch(e){var t;alert("Template download failed: ".concat(null!=(t=null==e?void 0:e.message)?t:"Unknown error"))}}let ee={background:"hsl(var(--card))",borderRadius:"8px",padding:"24px",marginBottom:"20px",boxShadow:"var(--shadow-sm)"},et=(e,t)=>({padding:"9px 20px",background:t?"hsl(var(--border))":e,color:t?"hsl(var(--muted-foreground))":"white",border:"none",borderRadius:"6px",cursor:t?"default":"pointer",fontSize:"14px",fontWeight:600});return(0,o.jsxs)("div",{children:[(0,o.jsx)("h1",{style:{fontSize:"24px",fontWeight:700,marginBottom:"6px",color:"hsl(var(--foreground))"},children:"Import / Export"}),(0,o.jsx)("p",{style:{color:"hsl(var(--muted-foreground))",marginBottom:"24px",fontSize:"14px"},children:"Workbook validate/apply import plus job-based export and template downloads."}),(0,o.jsxs)("section",{style:ee,children:[(0,o.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCE5 Import Catalog Workbook"}),(0,o.jsx)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:"Upload workbook/CSV, run validate first, then apply when validation passes."}),(0,o.jsxs)("div",{style:{display:"flex",gap:"16px",flexWrap:"wrap",marginBottom:"16px"},children:[(0,o.jsxs)("div",{style:{flex:1,minWidth:"220px"},children:[(0,o.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"File (.xlsx or .csv)"}),(0,o.jsx)("input",{ref:b,type:"file",accept:".xlsx,.csv",onChange:e=>{var t,r;S(null!=(r=null==(t=e.target.files)?void 0:t[0])?r:null),E(null),z(null),D(!1)},style:{display:"block",padding:"7px 10px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer",width:"100%"}})]}),(0,o.jsxs)("div",{children:[(0,o.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"Mode"}),(0,o.jsxs)("select",{value:j,onChange:e=>{R(e.target.value),D(!1)},style:{padding:"8px 12px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer"},children:[(0,o.jsx)("option",{value:"UPSERT_PATCH",children:"UPSERT_PATCH — update existing, insert new"}),(0,o.jsx)("option",{value:"CREATE_ONLY",children:"CREATE_ONLY — inserts only"})]})]})]}),(0,o.jsxs)("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap"},children:[(0,o.jsx)("button",{onClick:G,disabled:T||!w,style:et("hsl(var(--status-info-fg))",T||!w),children:T?"⏳ Running…":"✓ Validate"}),(0,o.jsx)("button",{onClick:Y,disabled:T||!w||!A,style:et("hsl(var(--primary))",T||!w||!A),children:T?"⏳ Running…":"▶ Apply"})]}),A&&(0,o.jsx)("div",{style:{marginTop:"12px",fontSize:"12px",color:"hsl(var(--status-success-fg))"},children:"Validation passed. You can apply this file now."}),P&&(0,o.jsxs)("div",{style:{marginTop:"14px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"12px 16px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",P]}),C&&(0,o.jsxs)("div",{style:{marginTop:"14px",background:"hsl(var(--status-success-bg))",border:"1px solid hsl(var(--status-success-border))",borderRadius:"6px",padding:"14px 16px"},children:[(0,o.jsx)("div",{style:{fontWeight:700,color:"hsl(var(--status-success-fg))",marginBottom:"10px",fontSize:"14px"},children:"✓ Import response"}),(0,o.jsx)("div",{style:{display:"flex",gap:"24px",fontSize:"13px",flexWrap:"wrap"},children:[["Created",null!=(r=C.inserted)?r:0,"hsl(var(--status-success-fg))"],["Updated",null!=(i=C.updated)?i:0,"hsl(var(--status-info-fg))"],["Skipped",null!=(u=C.skipped)?u:0,"hsl(var(--muted-foreground))"],["Total",(null!=(f=C.inserted)?f:0)+(null!=(h=C.updated)?h:0)+(null!=(x=C.skipped)?x:0),"hsl(var(--foreground))"]].map(e=>{let[t,r,n]=e;return(0,o.jsxs)("div",{children:[(0,o.jsxs)("span",{style:{color:"hsl(var(--muted-foreground))"},children:[t,": "]}),(0,o.jsx)("span",{style:{fontWeight:700,color:n},children:r})]},t)})}),(null!=(g=null==(e=C.errors)?void 0:e.length)?g:0)>0&&(0,o.jsx)("ul",{style:{marginTop:"10px",marginBottom:0,paddingLeft:"18px"},children:C.errors.map((e,t)=>(0,o.jsxs)("li",{style:{fontSize:"12px",color:"hsl(var(--status-warning-fg))"},children:[e.sheet?"".concat(e.sheet," "):"","Row ",e.row,": ",e.field?"".concat(e.field," "):"",e.message]},t))})]})]}),(0,o.jsxs)("section",{style:ee,children:[(0,o.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDD17 Import Parameter Mappings (CSV)"}),(0,o.jsx)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"Dedicated CSV import endpoint for test-parameter mappings remains available."}),(0,o.jsx)("p",{style:{fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:"Alternatively, use the TestParameters and PanelTests sheets in the job-based workbook import above."}),(0,o.jsxs)("div",{style:{marginBottom:"14px"},children:[(0,o.jsx)("label",{style:{display:"block",fontSize:"12px",color:"hsl(var(--muted-foreground))",marginBottom:"4px"},children:"File (.csv only)"}),(0,o.jsx)("input",{ref:U,type:"file",accept:".csv",onChange:e=>{var t,r;O(null!=(r=null==(t=e.target.files)?void 0:t[0])?r:null),_(null),L(null)},style:{display:"block",padding:"7px 10px",border:"1px solid hsl(var(--border))",borderRadius:"6px",fontSize:"13px",cursor:"pointer"}})]}),(0,o.jsx)("button",{onClick:K,disabled:B||!I,style:et("hsl(var(--primary))",B||!I),children:B?"⏳ Importing…":"▶ Import Mappings"}),N&&(0,o.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"10px 12px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",N]}),W&&(0,o.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-success-bg))",border:"1px solid hsl(var(--status-success-border))",borderRadius:"6px",padding:"12px 16px",fontSize:"13px"},children:[(0,o.jsxs)("div",{style:{fontWeight:600,color:"hsl(var(--status-success-fg))",marginBottom:"6px"},children:["✓ Imported ",null!=(m=W.imported)?m:0," mappings, Skipped ",null!=(y=W.skipped)?y:0," rows"]}),(null!=(v=null==(t=W.warnings)?void 0:t.length)?v:0)>0&&(0,o.jsx)("ul",{style:{margin:0,paddingLeft:"16px"},children:W.warnings.map((e,t)=>(0,o.jsxs)("li",{style:{fontSize:"12px",color:"hsl(var(--status-warning-fg))"},children:[null!=e.row?"Row ".concat(e.row,": "):"",e.message]},t))})]})]}),(0,o.jsxs)("section",{style:ee,children:[(0,o.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCE4 Export Catalog (Job-Based)"}),(0,o.jsxs)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:["Creates an export job, waits for completion, then downloads the XLSX from `/catalog/export-jobs/","{id}","/download`."]}),(0,o.jsx)("button",{onClick:Q,disabled:q,style:et("hsl(var(--primary))",q),children:q?"⏳ Export Job Running…":"⬇ Export All as XLSX"}),M&&(0,o.jsxs)("div",{style:{marginTop:"12px",fontSize:"12px",color:"hsl(var(--muted-foreground))"},children:["Job: ",(0,o.jsx)("code",{style:{background:"hsl(var(--muted))",padding:"2px 6px",borderRadius:"4px"},children:M.id})," • Status: ",(0,o.jsx)("strong",{children:M.status})]}),J&&(0,o.jsxs)("div",{style:{marginTop:"12px",background:"hsl(var(--status-destructive-bg))",color:"hsl(var(--status-destructive-fg))",padding:"10px 12px",borderRadius:"6px",fontSize:"13px"},children:["✗ ",J]})]}),(0,o.jsxs)("section",{style:ee,children:[(0,o.jsx)("h2",{style:{fontSize:"16px",fontWeight:700,marginBottom:"4px",color:"hsl(var(--foreground))"},children:"\uD83D\uDCCB Download Templates"}),(0,o.jsxs)("p",{style:{fontSize:"13px",color:"hsl(var(--muted-foreground))",marginBottom:"16px"},children:["Fill these templates and upload above. IDs use format: tests = ",(0,o.jsx)("strong",{children:"t1, t2…"}),", parameters = ",(0,o.jsx)("strong",{children:"p1, p2…"}),", panels = ",(0,o.jsx)("strong",{children:"g1, g2…"}),"."]}),(0,o.jsx)("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))",gap:"10px"},children:a.map(e=>(0,o.jsxs)("button",{onClick:()=>Z(e.path),style:{padding:"10px 14px",background:"hsl(var(--background))",border:"1px solid hsl(var(--border))",borderRadius:"6px",cursor:"pointer",fontSize:"13px",color:"hsl(var(--foreground))",textAlign:"left",display:"flex",alignItems:"center",gap:"8px"},children:[(0,o.jsx)("span",{style:{fontSize:"16px"},children:e.icon}),e.label]},e.path))})]})]})}},6550:(e,t,r)=>{Promise.resolve().then(r.bind(r,6368))},7647:(e,t,r)=>{"use strict";r.d(t,{Ay:()=>l});var o=r(1756);let n=/\{[^{}]+\}/g;function l(e){let{baseUrl:t="",Request:r=globalThis.Request,fetch:l=globalThis.fetch,querySerializer:f,bodySerializer:h,headers:x,requestInitExt:g,...m}={...e};g="object"==typeof o&&Number.parseInt(o?.versions?.node?.substring(0,2))>=18&&o.versions.undici?g:void 0,t=u(t);let y=[];async function v(e,o){var v,b;let w,S,j,R,T,{baseUrl:k,fetch:C=l,Request:E=r,headers:P,params:z={},parseAs:A="json",querySerializer:D,bodySerializer:U=h??d,body:I,...O}=o||{},B=t;k&&(B=u(k)??t);let $="function"==typeof f?f:c(f);D&&($="function"==typeof D?D:c({..."object"==typeof f?f:{},...D}));let W=void 0===I?void 0:U(I,p(x,P,z.header)),_=p(void 0===W||W instanceof FormData?{}:{"Content-Type":"application/json"},x,P,z.header),N={redirect:"follow",...m,...O,body:W,headers:_},L=new r((v=e,b={baseUrl:B,params:z,querySerializer:$},R=`${b.baseUrl}${v}`,b.params?.path&&(R=function(e,t){let r=e;for(let o of e.match(n)??[]){let e=o.substring(1,o.length-1),n=!1,l="simple";if(e.endsWith("*")&&(n=!0,e=e.substring(0,e.length-1)),e.startsWith(".")?(l="label",e=e.substring(1)):e.startsWith(";")&&(l="matrix",e=e.substring(1)),!t||void 0===t[e]||null===t[e])continue;let c=t[e];if(Array.isArray(c)){r=r.replace(o,i(e,c,{style:l,explode:n}));continue}if("object"==typeof c){r=r.replace(o,a(e,c,{style:l,explode:n}));continue}if("matrix"===l){r=r.replace(o,`;${s(e,c)}`);continue}r=r.replace(o,"label"===l?`.${encodeURIComponent(c)}`:encodeURIComponent(c))}return r}(R,b.params.path)),(T=b.querySerializer(b.params.query??{})).startsWith("?")&&(T=T.substring(1)),T&&(R+=`?${T}`),R),N);for(let e in O)e in L||(L[e]=O[e]);if(y.length){for(let t of(w=Math.random().toString(36).slice(2,11),S=Object.freeze({baseUrl:B,fetch:C,parseAs:A,querySerializer:$,bodySerializer:U}),y))if(t&&"object"==typeof t&&"function"==typeof t.onRequest){let o=await t.onRequest({request:L,schemaPath:e,params:z,options:S,id:w});if(o)if(o instanceof r)L=o;else if(o instanceof Response){j=o;break}else throw Error("onRequest: must return new Request() or Response() when modifying the request")}}if(!j){try{j=await C(L,g)}catch(r){let t=r;if(y.length)for(let r=y.length-1;r>=0;r--){let o=y[r];if(o&&"object"==typeof o&&"function"==typeof o.onError){let r=await o.onError({request:L,error:t,schemaPath:e,params:z,options:S,id:w});if(r){if(r instanceof Response){t=void 0,j=r;break}if(r instanceof Error){t=r;continue}throw Error("onError: must return new Response() or instance of Error")}}}if(t)throw t}if(y.length)for(let t=y.length-1;t>=0;t--){let r=y[t];if(r&&"object"==typeof r&&"function"==typeof r.onResponse){let t=await r.onResponse({request:L,response:j,schemaPath:e,params:z,options:S,id:w});if(t){if(!(t instanceof Response))throw Error("onResponse: must return new Response() when modifying the response");j=t}}}}if(204===j.status||"HEAD"===L.method||"0"===j.headers.get("Content-Length"))return j.ok?{data:void 0,response:j}:{error:void 0,response:j};if(j.ok)return"stream"===A?{data:j.body,response:j}:{data:await j[A](),response:j};let q=await j.text();try{q=JSON.parse(q)}catch{}return{error:q,response:j}}return{request:(e,t,r)=>v(t,{...r,method:e.toUpperCase()}),GET:(e,t)=>v(e,{...t,method:"GET"}),PUT:(e,t)=>v(e,{...t,method:"PUT"}),POST:(e,t)=>v(e,{...t,method:"POST"}),DELETE:(e,t)=>v(e,{...t,method:"DELETE"}),OPTIONS:(e,t)=>v(e,{...t,method:"OPTIONS"}),HEAD:(e,t)=>v(e,{...t,method:"HEAD"}),PATCH:(e,t)=>v(e,{...t,method:"PATCH"}),TRACE:(e,t)=>v(e,{...t,method:"TRACE"}),use(...e){for(let t of e)if(t){if("object"!=typeof t||!("onRequest"in t||"onResponse"in t||"onError"in t))throw Error("Middleware must be an object with one of `onRequest()`, `onResponse() or `onError()`");y.push(t)}},eject(...e){for(let t of e){let e=y.indexOf(t);-1!==e&&y.splice(e,1)}}}}function s(e,t,r){if(null==t)return"";if("object"==typeof t)throw Error("Deeply-nested arrays/objects aren’t supported. Provide your own `querySerializer()` to handle these.");return`${e}=${r?.allowReserved===!0?t:encodeURIComponent(t)}`}function a(e,t,r){if(!t||"object"!=typeof t)return"";let o=[],n={simple:",",label:".",matrix:";"}[r.style]||"&";if("deepObject"!==r.style&&!1===r.explode){for(let e in t)o.push(e,!0===r.allowReserved?t[e]:encodeURIComponent(t[e]));let n=o.join(",");switch(r.style){case"form":return`${e}=${n}`;case"label":return`.${n}`;case"matrix":return`;${e}=${n}`;default:return n}}for(let n in t){let l="deepObject"===r.style?`${e}[${n}]`:n;o.push(s(l,t[n],r))}let l=o.join(n);return"label"===r.style||"matrix"===r.style?`${n}${l}`:l}function i(e,t,r){if(!Array.isArray(t))return"";if(!1===r.explode){let o={form:",",spaceDelimited:"%20",pipeDelimited:"|"}[r.style]||",",n=(!0===r.allowReserved?t:t.map(e=>encodeURIComponent(e))).join(o);switch(r.style){case"simple":return n;case"label":return`.${n}`;case"matrix":return`;${e}=${n}`;default:return`${e}=${n}`}}let o={simple:",",label:".",matrix:";"}[r.style]||"&",n=[];for(let o of t)"simple"===r.style||"label"===r.style?n.push(!0===r.allowReserved?o:encodeURIComponent(o)):n.push(s(e,o,r));return"label"===r.style||"matrix"===r.style?`${o}${n.join(o)}`:n.join(o)}function c(e){return function(t){let r=[];if(t&&"object"==typeof t)for(let o in t){let n=t[o];if(null!=n){if(Array.isArray(n)){if(0===n.length)continue;r.push(i(o,n,{style:"form",explode:!0,...e?.array,allowReserved:e?.allowReserved||!1}));continue}if("object"==typeof n){r.push(a(o,n,{style:"deepObject",explode:!0,...e?.object,allowReserved:e?.allowReserved||!1}));continue}r.push(s(o,n,e))}}return r.join("&")}}function d(e,t){return e instanceof FormData?e:t&&"application/x-www-form-urlencoded"===(t.get instanceof Function?t.get("Content-Type")??t.get("content-type"):t["Content-Type"]??t["content-type"])?new URLSearchParams(e).toString():JSON.stringify(e)}function p(...e){let t=new Headers;for(let r of e)if(r&&"object"==typeof r)for(let[e,o]of r instanceof Headers?r.entries():Object.entries(r))if(null===o)t.delete(e);else if(Array.isArray(o))for(let r of o)t.append(e,r);else void 0!==o&&t.set(e,o);return t}function u(e){return e.endsWith("/")?e.substring(0,e.length-1):e}},8934:(e,t,r)=>{"use strict";r.d(t,{PT:()=>o.PT,h_:()=>o.h_,iU:()=>o.iU,ri:()=>l,wR:()=>o.wR});var o=r(9293);let n=r(1756).env.NEXT_PUBLIC_AUTH_DOMAIN;function l(){(0,o.gf)(n)}},9293:(e,t,r)=>{"use strict";r.d(t,{gf:()=>i,yS:()=>n,iU:()=>p,PT:()=>c,wR:()=>d,h_:()=>a});var o=r(7647);function n(e){let{baseUrl:t,token:r,correlationId:n,headers:l}=e,s={...r?{Authorization:"Bearer ".concat(r)}:{},...n?{"x-correlation-id":n}:{},...null!=l?l:{}};return(0,o.Ay)({baseUrl:t,headers:s,credentials:"include"})}let l="vexel_token",s="vexel_refresh";function a(e,t,r){if("undefined"==typeof document)return;let o=new Date;o.setDate(o.getDate()+7);let n="path=/; ".concat(r?"domain=".concat(r,";"):""," expires=").concat(o.toUTCString(),"; samesite=lax");document.cookie="".concat(l,"=").concat(e,"; ").concat(n),document.cookie="".concat(s,"=").concat(t,"; ").concat(n),localStorage.setItem(l,e),localStorage.setItem(s,t)}function i(e){if("undefined"==typeof document)return;let t="path=/; ".concat(e?"domain=".concat(e,";"):""," expires=Thu, 01 Jan 1970 00:00:00 GMT");document.cookie="".concat(l,"=; ").concat(t),document.cookie="".concat(s,"=; ").concat(t),localStorage.removeItem(l),localStorage.removeItem(s)}function c(){return function(){if("undefined"==typeof document)return{token:null,refresh:null};let e=document.cookie.split(";").reduce((e,t)=>{let r=t.indexOf("=");if(-1===r)return e;let o=t.slice(0,r).trim(),n=t.slice(r+1).trim();return e[o]=n,e},{});return{token:e[l]||localStorage.getItem(l)||null,refresh:e[s]||localStorage.getItem(s)||null}}().token}function d(){return!!c()}function p(e){if(!e)return null;try{let t=e.split(".")[1].replace(/-/g,"+").replace(/_/g,"/"),r=decodeURIComponent(atob(t).split("").map(e=>"%"+("00"+e.charCodeAt(0).toString(16)).slice(-2)).join(""));return JSON.parse(r)}catch(e){return null}}}},e=>{e.O(0,[814,743,358],()=>e(e.s=6550)),_N_E=e.O()}]);
+
+$ rg -n 'Catalog validate failed|Proxy HTML error page|Unexpected token' .playwright-cli/page-2026-03-02T04-59-54-268Z.yml
+125:            - generic [ref=e195]: ✗ Catalog validate failed (HTTP 502). <html><body>Proxy HTML error page</body></html>
+
+$ ls -la OUT/incident_20260302_0932/06_screenshots
+total 816
+drwxrwxr-x+ 2 munaim munaim   4096 Mar  2 10:00 .
+drwxrwxr-x+ 3 munaim munaim   4096 Mar  2 09:58 ..
+-rw-rw-r--+ 1 munaim munaim 168459 Mar  2 10:00 admin_import_html_error_handled.png
+-rw-rw-r--+ 1 munaim munaim 190199 Mar  2 09:53 opd_worklist_clickable.png
+-rw-rw-r--+ 1 munaim munaim 306123 Mar  2 09:53 operator_dashboard_modules.png
+-rw-rw-r--+ 1 munaim munaim 154530 Mar  2 09:53 registration_catalog_suggestions.png
+
+$ git rev-parse HEAD
+f6de5ddb8048d9f38d26155b6fc1377cd994554d
+
+$ git log --oneline -2
+f6de5dd fix(operator-docker): include ui-system workspace package in build context
+d23ed48 fix(operator): server-side access gating and resilient catalog import parsing
+
+$ docker compose ps operator api admin
+NAME               IMAGE            COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+vexel-admin-1      vexel-admin      "docker-entrypoint.s…"   admin      4 minutes ago    Up 4 minutes              127.0.0.1:9023->3001/tcp
+vexel-api-1        vexel-api        "./docker-entrypoint…"   api        12 minutes ago   Up 12 minutes (healthy)   127.0.0.1:9021->3000/tcp
+vexel-operator-1   vexel-operator   "docker-entrypoint.s…"   operator   12 minutes ago   Up 12 minutes             127.0.0.1:9024->3000/tcp
+
+$ docker inspect -f '{{.Name}} {{.Image}} {{.Created}}' vexel-operator-1 vexel-api-1 vexel-admin-1
+/vexel-operator-1 sha256:ab86a542b17146b821ce205d130a40f348c543e1d59473dfcb019eb01044e1c3 2026-03-02T04:47:57.929782946Z
+/vexel-api-1 sha256:5065bf9b5d8b8aae04fba24f0ebc14767bdeb147821c327333b0f7aebcb1497a 2026-03-02T04:47:57.931939046Z
+/vexel-admin-1 sha256:7ef62152594660b4458cee591379af4ca251d8a95f9e5a31f2cae0e5ced119ab 2026-03-02T04:56:22.172599214Z
+
+$ docker images --no-trunc | rg 'vexel-(operator|api|admin)'
+vexel-admin          latest      sha256:7ef62152594660b4458cee591379af4ca251d8a95f9e5a31f2cae0e5ced119ab   4 minutes ago    302MB
+vexel-operator       latest      sha256:ab86a542b17146b821ce205d130a40f348c543e1d59473dfcb019eb01044e1c3   13 minutes ago   305MB
+vexel-api            latest      sha256:5065bf9b5d8b8aae04fba24f0ebc14767bdeb147821c327333b0f7aebcb1497a   13 minutes ago   920MB
+
+$ curl -H 'Authorization: Bearer ***' https://vexel.alshifalab.pk/api/catalog/templates/workbook.xlsx
+HTTP 200 saved=OUT/incident_20260302_0932/catalog-template.xlsx size=12188
+
+$ curl -F file=@catalog-template.xlsx https://vexel.alshifalab.pk/api/catalog/import/workbook?validate=true&mode=UPSERT_PATCH
+HTTP 201
+
+{
+  "inserted": 1,
+  "updated": 6,
+  "skipped": 0,
+  "errorCount": 0
+}
+
+$ curl -D - -o - -F file=@catalog-template.xlsx https://vexel.alshifalab.pk/api/catalog/import/workbook?validate=true&mode=UPSERT_PATCH
+HTTP 201
+content-type: application/json; charset=utf-8
+{
+  "inserted": 1,
+  "updated": 6,
+  "skipped": 0,
+  "errorCount": 0
+}
+
+$ git status
+On branch main
+Your branch is ahead of 'origin/main' by 2 commits.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   apps/admin/Dockerfile
+	modified:   apps/admin/next.config.ts
+	modified:   apps/admin/package.json
+	modified:   apps/admin/src/app/(protected)/layout.tsx
+	modified:   apps/admin/src/app/(protected)/users/page.tsx
+	modified:   apps/admin/tailwind.config.ts
+	modified:   apps/api/prisma/schema.prisma
+	modified:   apps/api/prisma/seed.ts
+	modified:   apps/api/src/app.module.ts
+	modified:   apps/api/src/auth/auth.module.ts
+	modified:   apps/api/src/auth/jwt-auth.guard.ts
+	modified:   apps/e2e/tests/02-admin-crud.spec.ts
+	modified:   apps/operator/next.config.ts
+	modified:   apps/operator/package.json
+	modified:   apps/operator/src/components/app/confirm-dialog.tsx
+	modified:   apps/operator/src/components/app/data-table.tsx
+	modified:   apps/operator/src/components/app/status-badge.tsx
+	new file:   apps/operator/src/components/impersonation-banner.tsx
+	modified:   apps/operator/src/components/nav/nav-config.ts
+	modified:   apps/operator/src/components/nav/topbar.tsx
+	modified:   apps/operator/src/components/shell/app-shell.tsx
+	modified:   apps/operator/src/components/status-badge.tsx
+	modified:   apps/operator/tailwind.config.ts
+	modified:   packages/contracts/openapi.yaml
+	modified:   packages/sdk/src/client.ts
+	modified:   packages/sdk/src/generated/api.d.ts
+	modified:   pnpm-lock.yaml
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   apps/admin/src/app/(protected)/opd/providers/page.tsx
+	modified:   apps/admin/src/app/(protected)/opd/schedules/page.tsx
+	modified:   apps/admin/tsconfig.tsbuildinfo
+	deleted:    apps/e2e/playwright-report/data/0c524eb4e72649d325c6b515843d80d4f9a298f3.md
+	deleted:    apps/e2e/playwright-report/data/1a313b6f460370a3c6a8ca5aa5057f347102e3fe.png
+	deleted:    apps/e2e/playwright-report/data/1e6421b3ef61359f96e41bb8a2b5c02ffff51862.webm
+	deleted:    apps/e2e/playwright-report/data/3722c3a8f6be2c89068ef59aa6557d84894dd1d9.md
+	deleted:    apps/e2e/playwright-report/data/47aab1b78451e0ee6d06f53a29ef3ac90c81b6a9.webm
+	deleted:    apps/e2e/playwright-report/data/4a32d5bbb495ad4ad2742bbe2b73c082abebfc9a.webm
+	deleted:    apps/e2e/playwright-report/data/679c2a17da222b8c8a4438016c26b17c867181ba.png
+	deleted:    apps/e2e/playwright-report/data/69a591c55298b7aa5defcaa407913709f3f3c392.md
+	deleted:    apps/e2e/playwright-report/data/8c67f9c89cfdd2d72a1aa44f5a620c4db2a1a746.webm
+	deleted:    apps/e2e/playwright-report/data/9323612d05eff25556741e5f55501e2f3d534f78.png
+	deleted:    apps/e2e/playwright-report/data/bcb2862ba788979785942afa7653f4fba1cbddf7.webm
+	deleted:    apps/e2e/playwright-report/data/e5c577d46e2bff3057db1e10f19ce6847622c13a.webm
+	modified:   apps/e2e/playwright-report/index.html
+	modified:   apps/e2e/test-results/.last-run.json
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-a0c14-irm-transitions-to-verified-operator/error-context.md
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-a0c14-irm-transitions-to-verified-operator/test-failed-1.png
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-a0c14-irm-transitions-to-verified-operator/video-1.webm
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-a0c14-irm-transitions-to-verified-operator/video.webm
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-c83f5-sible-after-verified-status-operator/error-context.md
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-c83f5-sible-after-verified-status-operator/test-failed-1.png
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-c83f5-sible-after-verified-status-operator/video-1.webm
+	deleted:    apps/e2e/test-results/05-operator-workflow-Opera-c83f5-sible-after-verified-status-operator/video.webm
+	deleted:    apps/e2e/test-results/06-document-pipeline-Docum-4ae06-nloadable-from-publish-page-operator/error-context.md
+	deleted:    apps/e2e/test-results/06-document-pipeline-Docum-4ae06-nloadable-from-publish-page-operator/test-failed-1.png
+	deleted:    apps/e2e/test-results/06-document-pipeline-Docum-4ae06-nloadable-from-publish-page-operator/video-1.webm
+	deleted:    apps/e2e/test-results/06-document-pipeline-Docum-4ae06-nloadable-from-publish-page-operator/video.webm
+	modified:   apps/operator/tsconfig.tsbuildinfo
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.playwright-cli/console-2026-03-02T04-41-15-633Z.log
+	.playwright-cli/console-2026-03-02T04-52-22-615Z.log
+	.playwright-cli/console-2026-03-02T04-52-46-148Z.log
+	.playwright-cli/console-2026-03-02T04-58-05-607Z.log
+	.playwright-cli/console-2026-03-02T04-58-32-656Z.log
+	.playwright-cli/page-2026-03-02T04-41-16-014Z.yml
+	.playwright-cli/page-2026-03-02T04-41-23-819Z.yml
+	.playwright-cli/page-2026-03-02T04-41-43-685Z.yml
+	.playwright-cli/page-2026-03-02T04-49-42-834Z.yml
+	.playwright-cli/page-2026-03-02T04-49-57-585Z.yml
+	.playwright-cli/page-2026-03-02T04-50-13-293Z.png
+	.playwright-cli/page-2026-03-02T04-50-26-633Z.yml
+	.playwright-cli/page-2026-03-02T04-50-45-932Z.yml
+	.playwright-cli/page-2026-03-02T04-50-52-394Z.png
+	.playwright-cli/page-2026-03-02T04-51-07-315Z.yml
+	.playwright-cli/page-2026-03-02T04-51-19-539Z.yml
+	.playwright-cli/page-2026-03-02T04-51-40-351Z.yml
+	.playwright-cli/page-2026-03-02T04-51-51-365Z.png
+	.playwright-cli/page-2026-03-02T04-52-22-903Z.yml
+	.playwright-cli/page-2026-03-02T04-52-36-357Z.yml
+	.playwright-cli/page-2026-03-02T04-52-46-331Z.yml
+	.playwright-cli/page-2026-03-02T04-53-06-542Z.yml
+	.playwright-cli/page-2026-03-02T04-53-29-614Z.yml
+	.playwright-cli/page-2026-03-02T04-58-06-003Z.yml
+	.playwright-cli/page-2026-03-02T04-58-24-036Z.yml
+	.playwright-cli/page-2026-03-02T04-58-32-862Z.yml
+	.playwright-cli/page-2026-03-02T04-58-44-631Z.yml
+	.playwright-cli/page-2026-03-02T04-58-50-195Z.yml
+	.playwright-cli/page-2026-03-02T04-59-01-305Z.yml
+	.playwright-cli/page-2026-03-02T04-59-04-847Z.yml
+	.playwright-cli/page-2026-03-02T04-59-07-320Z.yml
+	.playwright-cli/page-2026-03-02T04-59-54-268Z.yml
+	.playwright-cli/page-2026-03-02T05-00-07-976Z.png
+	OUT/impersonation_backend_tests.txt
+	OUT/impersonation_openapi.json
+	OUT/impersonation_playwright.txt
+	OUT/impersonation_security_notes.md
+	OUT/impersonation_status_sample.json
+	OUT/incident_20260302_0932/
+	apps/admin/src/components/admin-header.tsx
+	apps/admin/src/components/impersonation-banner.tsx
+	apps/api/prisma/migrations/20260302090000_add_impersonation_sessions/
+	apps/api/src/auth/jwt-auth.guard.impersonation.spec.ts
+	apps/api/src/impersonation/
+	docs/_audit/BASELINE_CONTEXT_2026-03-02.md
+	packages/ui-system/
+
+
+$ git push origin main

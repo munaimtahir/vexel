@@ -56,7 +56,7 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
     Forbidden:
-      description: Forbidden
+      description: Forbidden (including read-only impersonation write blocking)
       content:
         application/json:
           schema:
@@ -359,6 +359,41 @@ components:
           type: string
           format: date-time
           nullable: true
+
+    CatalogTestSearchResult:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        testCode:
+          type: string
+          nullable: true
+        userCode:
+          type: string
+          nullable: true
+        sampleTypeName:
+          type: string
+          nullable: true
+        departmentName:
+          type: string
+          nullable: true
+        price:
+          type: number
+          minimum: 0
+          nullable: true
+
+    TenantTopTestsUpdate:
+      type: object
+      required: [testIds]
+      properties:
+        testIds:
+          type: array
+          maxItems: 10
+          items:
+            type: string
 
     CatalogPanel:
       type: object
@@ -2502,6 +2537,85 @@ components:
         document:
           $ref: '#/components/schemas/Document'
 
+    AdminImpersonationStartRequest:
+      type: object
+      required: [user_id, reason]
+      properties:
+        user_id:
+          type: string
+        reason:
+          type: string
+          minLength: 10
+
+    AdminImpersonationUser:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          nullable: true
+
+    AdminImpersonationStartResponse:
+      type: object
+      required: [session_id, impersonated_user, mode, expires_at]
+      properties:
+        session_id:
+          type: string
+        impersonated_user:
+          $ref: '#/components/schemas/AdminImpersonationUser'
+        mode:
+          type: string
+          enum: [READ_ONLY]
+        expires_at:
+          type: string
+          format: date-time
+
+    AdminImpersonationStatusInactive:
+      type: object
+      required: [active]
+      properties:
+        active:
+          type: boolean
+          enum: [false]
+
+    AdminImpersonationStatusActive:
+      type: object
+      required: [active, session_id, started_by, impersonated_user, mode, started_at, expires_at]
+      properties:
+        active:
+          type: boolean
+          enum: [true]
+        session_id:
+          type: string
+        started_by:
+          type: object
+          required: [id, name]
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        impersonated_user:
+          $ref: '#/components/schemas/AdminImpersonationUser'
+        mode:
+          type: string
+          enum: [READ_ONLY]
+        started_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+
+    AdminImpersonationStatusResponse:
+      oneOf:
+        - $ref: '#/components/schemas/AdminImpersonationStatusInactive'
+        - $ref: '#/components/schemas/AdminImpersonationStatusActive'
+
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
   /health:
@@ -3097,6 +3211,66 @@ paths:
                 items:
                   $ref: '#/components/schemas/Role'
 
+  # ─── Admin Impersonation (Read-only) ─────────────────────────────────────
+  /admin/impersonation/start:
+    post:
+      operationId: startAdminImpersonation
+      summary: Start read-only impersonation session
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminImpersonationStartRequest'
+      responses:
+        "200":
+          description: Impersonation started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminImpersonationStartResponse'
+        "403":
+          description: Forbidden (non-admin, invalid reason, or invalid target)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/impersonation/stop:
+    post:
+      operationId: stopAdminImpersonation
+      summary: Stop active impersonation session
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        "200":
+          description: Stopped
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok:
+                    type: boolean
+
+  /admin/impersonation/status:
+    get:
+      operationId: getAdminImpersonationStatus
+      summary: Get current impersonation status
+      tags: [Users]
+      responses:
+        "200":
+          description: Impersonation status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminImpersonationStatusResponse'
+
   # ─── Roles ────────────────────────────────────────────────────────────────
   /roles:
     get:
@@ -3493,6 +3667,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CatalogTest'
+
+  /operator/catalog/tests/search:
+    get:
+      operationId: operatorCatalogTestsSearch
+      summary: Search catalog tests for operator registration (tenant-scoped)
+      tags: [Catalog]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        "200":
+          description: Ranked test search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogTestSearchResult'
+
+  /operator/catalog/tests/top:
+    get:
+      operationId: operatorCatalogTestsTop
+      summary: List tenant pinned top tests (up to 10)
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Top tests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogTestSearchResult'
 
   /catalog/tests/{testId}:
     get:
@@ -4428,6 +4646,16 @@ paths:
                   inserted: { type: integer }
                   updated: { type: integer }
                   skipped: { type: integer }
+                  bySheet:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        totalRows: { type: integer }
+                        inserted: { type: integer }
+                        updated: { type: integer }
+                        skipped: { type: integer }
+                        errors: { type: integer }
                   errors:
                     type: array
                     items:
@@ -4476,6 +4704,16 @@ paths:
                   inserted: { type: integer }
                   updated: { type: integer }
                   skipped: { type: integer }
+                  bySheet:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        totalRows: { type: integer }
+                        inserted: { type: integer }
+                        updated: { type: integer }
+                        skipped: { type: integer }
+                        errors: { type: integer }
                   errors:
                     type: array
                     items:
@@ -4571,42 +4809,6 @@ paths:
                 properties:
                   nextId:
                     type: string
-
-  /catalog/test-parameter-mappings/import:
-    post:
-      operationId: importTestParameterMappings
-      summary: Import test-parameter mappings from CSV
-      tags: [Catalog]
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [csv]
-              properties:
-                csv:
-                  type: string
-                  description: CSV text content (first col = test externalId, rest = param externalIds)
-      responses:
-        '200':
-          description: Import result
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  imported: { type: integer }
-                  skipped: { type: integer }
-                  warnings:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        row: { type: integer }
-                        message: { type: string }
 
   # ─── Catalog Reference Ranges ──────────────────────────────────────────────
   /catalog/reference-ranges:
@@ -4867,6 +5069,27 @@ paths:
       responses:
         "204":
           description: Deleted
+
+  /admin/catalog/tests/top:
+    put:
+      operationId: adminSetCatalogTopTests
+      summary: Set tenant pinned top tests (max 10)
+      tags: [Catalog]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantTopTestsUpdate'
+      responses:
+        "200":
+          description: Updated top tests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogTestSearchResult'
 
   /admin/catalog/parameters:
     get:
@@ -5140,6 +5363,16 @@ paths:
                   inserted: { type: integer }
                   updated: { type: integer }
                   skipped: { type: integer }
+                  bySheet:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        totalRows: { type: integer }
+                        inserted: { type: integer }
+                        updated: { type: integer }
+                        skipped: { type: integer }
+                        errors: { type: integer }
                   errors:
                     type: array
                     items:
@@ -6759,6 +6992,12 @@ paths:
           in: query
           schema:
             type: string
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [pending, verified_today]
+            default: pending
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/LimitParam'
       responses:

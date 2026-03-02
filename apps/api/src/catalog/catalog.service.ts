@@ -1,7 +1,18 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { normalizeCatalogName, normalizeUnit } from './catalog-validation';
+
+type CatalogTestSearchResult = {
+  id: string;
+  name: string;
+  testCode: string | null;
+  userCode: string | null;
+  sampleTypeName: string | null;
+  departmentName: string | null;
+  price: number | null;
+};
 
 @Injectable()
 export class CatalogService {
@@ -150,6 +161,162 @@ export class CatalogService {
       this.prisma.catalogTest.count({ where }),
     ]);
     return { data, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+  }
+
+  private normalizeCatalogSearchQuery(q: string): string {
+    return q.trim().replace(/\s+/g, ' ').toLowerCase();
+  }
+
+  private formatCatalogTestSearchResult(row: {
+    id: string;
+    name: string;
+    externalId: string | null;
+    userCode: string | null;
+    department: string | null;
+    price: unknown;
+    sampleTypeRef?: { name: string } | null;
+    sampleType?: string | null;
+  }): CatalogTestSearchResult {
+    const price = row.price == null ? null : Number(row.price as any);
+    return {
+      id: row.id,
+      name: row.name,
+      testCode: row.externalId,
+      userCode: row.userCode,
+      sampleTypeName: row.sampleTypeRef?.name ?? row.sampleType ?? null,
+      departmentName: row.department ?? null,
+      price: Number.isFinite(price) ? price : null,
+    };
+  }
+
+  private getCatalogSearchRank(row: { name: string; testCode: string; userCode: string }, q: string): number {
+    if (row.testCode === q || row.userCode === q) return 1;
+    if (row.testCode.startsWith(q) || row.userCode.startsWith(q) || row.name.startsWith(q)) return 2;
+    return 3;
+  }
+
+  async searchTestsForOperator(tenantId: string, opts: { q: string; limit?: number }): Promise<CatalogTestSearchResult[]> {
+    const q = this.normalizeCatalogSearchQuery(opts.q ?? '');
+    if (!q) throw new BadRequestException('q is required');
+
+    const requestedLimit = Number(opts.limit ?? 20);
+    const limit = Math.min(Math.max(requestedLimit || 20, 1), 50);
+
+    const matches = await this.prisma.catalogTest.findMany({
+      where: {
+        tenantId,
+        isActive: true,
+        OR: [
+          { name: { contains: q, mode: 'insensitive' } },
+          { externalId: { contains: q, mode: 'insensitive' } },
+          { userCode: { contains: q, mode: 'insensitive' } },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        externalId: true,
+        userCode: true,
+        department: true,
+        sampleType: true,
+        price: true,
+        sampleTypeRef: { select: { name: true } },
+      },
+    });
+
+    return matches
+      .map((row) => {
+        const normalized = {
+          ...row,
+          _rank: this.getCatalogSearchRank(
+            {
+              name: row.name.toLowerCase(),
+              testCode: (row.externalId ?? '').toLowerCase(),
+              userCode: (row.userCode ?? '').toLowerCase(),
+            },
+            q,
+          ),
+        };
+        return normalized;
+      })
+      .sort((a, b) => {
+        if (a._rank !== b._rank) return a._rank - b._rank;
+        return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      })
+      .slice(0, limit)
+      .map((row) => this.formatCatalogTestSearchResult(row));
+  }
+
+  async listTopTestsForOperator(tenantId: string): Promise<CatalogTestSearchResult[]> {
+    const rows = await this.prisma.tenantTopTest.findMany({
+      where: { tenantId },
+      orderBy: { rank: 'asc' },
+      include: {
+        test: {
+          select: {
+            id: true,
+            name: true,
+            externalId: true,
+            userCode: true,
+            department: true,
+            sampleType: true,
+            price: true,
+            isActive: true,
+            sampleTypeRef: { select: { name: true } },
+          },
+        },
+      },
+    });
+
+    return rows
+      .filter((row) => row.test?.isActive)
+      .map((row) => this.formatCatalogTestSearchResult(row.test))
+      .slice(0, 10);
+  }
+
+  async setTopTests(tenantId: string, testIds: string[], actorUserId: string, correlationId?: string): Promise<CatalogTestSearchResult[]> {
+    if (!Array.isArray(testIds)) throw new BadRequestException('testIds must be an array');
+    if (testIds.length > 10) throw new BadRequestException('A maximum of 10 testIds is allowed');
+
+    const sanitized = testIds.map((id) => String(id).trim()).filter(Boolean);
+    const deduped = Array.from(new Set(sanitized));
+    if (deduped.length !== sanitized.length) throw new BadRequestException('testIds must not contain duplicates');
+
+    if (deduped.length > 0) {
+      const existing = await this.prisma.catalogTest.findMany({
+        where: { tenantId, id: { in: deduped }, isActive: true },
+        select: { id: true },
+      });
+      if (existing.length !== deduped.length) {
+        throw new NotFoundException('One or more testIds were not found in tenant catalog');
+      }
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.tenantTopTest.deleteMany({ where: { tenantId } });
+      if (deduped.length > 0) {
+        await tx.tenantTopTest.createMany({
+          data: deduped.map((testId, index) => ({
+            id: randomUUID(),
+            tenantId,
+            testId,
+            rank: index + 1,
+          })),
+        });
+      }
+    });
+
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'catalog.test.top.update',
+      entityType: 'TenantTopTest',
+      entityId: tenantId,
+      after: { testIds: deduped },
+      correlationId,
+    });
+
+    return this.listTopTestsForOperator(tenantId);
   }
 
   async createTest(
@@ -518,66 +685,6 @@ export class CatalogService {
     if (!mapping) throw new NotFoundException('Mapping not found');
     await this.prisma.testParameterMapping.delete({ where: { tenantId_testId_parameterId: { tenantId, testId, parameterId } } });
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameter.remove', entityType: 'TestParameterMapping', entityId: mapping.id, correlationId });
-  }
-
-  // ─── Import Test-Parameter Mappings from CSV ──────────────────────────────
-
-  async importTestParameterMappings(
-    tenantId: string,
-    csvText: string,
-    actorUserId: string,
-    correlationId?: string,
-  ): Promise<{ imported: number; skipped: number; warnings: Array<{ row: number; message: string }> }> {
-    const lines = csvText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    let imported = 0;
-    let skipped = 0;
-    const warnings: Array<{ row: number; message: string }> = [];
-
-    for (let i = 0; i < lines.length; i++) {
-      const rowNum = i + 1;
-      const cols = lines[i].split(',').map(c => c.trim());
-      const testExternalId = cols[0];
-      const paramCols = cols.slice(1);
-
-      if (!testExternalId) {
-        warnings.push({ row: rowNum, message: `Invalid test_id empty` });
-        skipped++;
-        continue;
-      }
-
-      const test = await this.prisma.catalogTest.findFirst({
-        where: /^t\d+$/.test(testExternalId) ? { tenantId, externalId: testExternalId } : { tenantId, userCode: { equals: testExternalId, mode: 'insensitive' } }
-      });
-      if (!test) {
-        warnings.push({ row: rowNum, message: `Test '${testExternalId}' not found` });
-        skipped++;
-        continue;
-      }
-
-      for (let j = 0; j < paramCols.length; j++) {
-        const paramExternalId = paramCols[j];
-        if (!paramExternalId) continue;
-        const displayOrder = j + 1;
-
-        const param = await this.prisma.parameter.findFirst({
-          where: /^p\d+$/.test(paramExternalId) ? { tenantId, externalId: paramExternalId } : { tenantId, userCode: { equals: paramExternalId, mode: 'insensitive' } }
-        });
-        if (!param) {
-          warnings.push({ row: rowNum, message: `Parameter '${paramExternalId}' not found` });
-          continue;
-        }
-
-        await this.prisma.testParameterMapping.upsert({
-          where: { tenantId_testId_parameterId: { tenantId, testId: test.id, parameterId: param.id } },
-          create: { tenantId, testId: test.id, parameterId: param.id, ordering: displayOrder, displayOrder, isRequired: true, unitOverride: null },
-          update: { displayOrder, ordering: displayOrder },
-        });
-        imported++;
-      }
-    }
-
-    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameter_mappings.import', entityType: 'TestParameterMapping', entityId: tenantId, after: { imported, skipped, warningCount: warnings.length }, correlationId });
-    return { imported, skipped, warnings };
   }
 
   // ─── Panel-Test Mappings ──────────────────────────────────────────────────

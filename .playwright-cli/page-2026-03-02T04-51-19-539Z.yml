@@ -1,0 +1,135 @@
+- generic [ref=e1]:
+  - generic [ref=e616]:
+    - complementary [ref=e617]:
+      - generic [ref=e618]:
+        - generic [ref=e619]:
+          - link "Vexel Health Platform" [ref=e620] [cursor=pointer]:
+            - /url: /
+            - img [ref=e622]
+            - generic [ref=e624]:
+              - generic [ref=e625]: Vexel
+              - generic [ref=e626]: Health Platform
+          - button "Collapse sidebar (Ctrl+B)" [ref=e627] [cursor=pointer]:
+            - img [ref=e628]
+        - generic [ref=e630]:
+          - link "LIMS" [ref=e631] [cursor=pointer]:
+            - /url: /lims/worklist
+            - generic [ref=e633]: LIMS
+          - link "OPD" [ref=e634] [cursor=pointer]:
+            - /url: /opd/worklist
+            - generic [ref=e636]: OPD
+          - generic [ref=e637]: Radiology
+      - navigation [ref=e639]:
+        - generic [ref=e640]: LIMS Workspace
+        - link "Worklist" [ref=e641] [cursor=pointer]:
+          - /url: /lims/worklist
+          - img [ref=e643]
+          - generic [ref=e648]: Worklist
+        - link "New Registration" [ref=e650] [cursor=pointer]:
+          - /url: /lims/registrations/new
+          - img [ref=e651]
+          - generic [ref=e654]: New Registration
+        - link "Sample Collection" [ref=e655] [cursor=pointer]:
+          - /url: /lims/sample-collection
+          - img [ref=e656]
+          - generic [ref=e658]: Sample Collection
+        - link "Result Entry" [ref=e659] [cursor=pointer]:
+          - /url: /lims/results
+          - img [ref=e660]
+          - generic [ref=e661]: Result Entry
+        - link "Verification" [ref=e662] [cursor=pointer]:
+          - /url: /lims/verification
+          - img [ref=e663]
+          - generic [ref=e666]: Verification
+        - link "Published Reports" [ref=e667] [cursor=pointer]:
+          - /url: /lims/reports
+          - img [ref=e668]
+          - generic [ref=e671]: Published Reports
+        - link "Payments" [ref=e672] [cursor=pointer]:
+          - /url: /lims/payments
+          - img [ref=e673]
+          - generic [ref=e675]: Payments
+      - generic [ref=e677]:
+        - generic [ref=e678]:
+          - generic [ref=e679]: SA
+          - generic [ref=e680]:
+            - generic [ref=e681]: Super Admin
+            - generic [ref=e682]: LIMS Operator
+        - button "Sign Out" [ref=e683] [cursor=pointer]:
+          - img [ref=e684]
+    - generic [ref=e687]:
+      - banner [ref=e688]:
+        - generic [ref=e690]:
+          - heading "New Registration" [level=1] [ref=e998]
+          - paragraph [ref=e692]: Mon, Mar 2
+        - generic [ref=e693]:
+          - button "Notifications" [ref=e694] [cursor=pointer]:
+            - img [ref=e695]
+          - button "Toggle theme" [ref=e698] [cursor=pointer]:
+            - img [ref=e699]
+            - generic [ref=e705]: Toggle theme
+          - generic [ref=e706]:
+            - generic [ref=e707]: A
+            - generic [ref=e708]: admin
+      - main [ref=e709]:
+        - generic [ref=e999]:
+          - generic [ref=e1003]:
+            - heading "New Registration" [level=1] [ref=e1004]
+            - paragraph [ref=e1005]: Patient · Order · Payment
+          - generic [ref=e1007]:
+            - heading "Patient Registration" [level=3] [ref=e1009]
+            - generic [ref=e1010]:
+              - generic [ref=e1011]: Mobile
+              - generic [ref=e1012]:
+                - textbox "0300" [active] [ref=e1013]
+                - generic [ref=e1014]: "-"
+                - textbox "1234567" [ref=e1015]
+            - generic [ref=e1016]:
+              - generic [ref=e1017]: Full Name *
+              - textbox "e.g. Ali Hassan" [ref=e1018]
+            - generic [ref=e1019]:
+              - generic [ref=e1020]:
+                - generic [ref=e1021]: Age (yrs)
+                - spinbutton [ref=e1022]
+              - generic [ref=e1023]:
+                - generic [ref=e1024]: Date of Birth
+                - textbox [ref=e1025]
+              - generic [ref=e1026]:
+                - generic [ref=e1027]: Gender *
+                - combobox [ref=e1028]:
+                  - option "Male" [selected]
+                  - option "Female"
+                  - option "Other"
+              - generic [ref=e1029]:
+                - generic [ref=e1030]: CNIC
+                - textbox "XXXXX-XXXXXXX-X" [ref=e1031]
+            - generic [ref=e1032]:
+              - generic [ref=e1033]: Address
+              - textbox "Press Enter to go to Register Patient, Shift+Enter for new line" [ref=e1034]
+            - button "👤 Register Patient" [ref=e1036] [cursor=pointer]
+          - generic [ref=e1037]:
+            - generic [ref=e1039]:
+              - heading "Order Tests" [level=3] [ref=e1040]
+              - textbox "Type test name or code, Enter to add…" [ref=e1042]
+              - generic [ref=e1043]: Search and add tests · Press Enter to add, Tab for payment
+            - generic [ref=e1045]:
+              - heading "Payment" [level=3] [ref=e1046]
+              - generic [ref=e1047]:
+                - generic [ref=e1048]: Total (PKR)
+                - generic [ref=e1049]: "0"
+              - generic [ref=e1050]:
+                - generic [ref=e1051]: Discount
+                - generic [ref=e1052]:
+                  - spinbutton [ref=e1053]: "0"
+                  - spinbutton [ref=e1054]: "0"
+              - generic [ref=e1055]:
+                - generic [ref=e1056]: Paid (PKR)
+                - spinbutton [ref=e1057]: "0"
+              - generic [ref=e1058]:
+                - generic [ref=e1059]: Due (PKR)
+                - generic [ref=e1060]: "0"
+          - generic [ref=e1061]:
+            - button "Reset" [ref=e1062] [cursor=pointer]
+            - button "💾 Save & Print Receipt" [ref=e1063] [cursor=pointer]
+  - region "Notifications alt+T"
+  - alert [ref=e14]

@@ -1,15 +1,19 @@
 'use client';
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { DataTable } from '@vexel/ui-system';
+
+type DiffRow = { key: string; before: string; after: string; kind: 'changed' | 'added' | 'removed' };
 
 export default function AuditPage() {
   const [events, setEvents] = useState<any[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ action: '', entityType: '', actorUserId: '', page: 1 });
+  const [filters, setFilters] = useState({ action: '', entityType: '', actorUserId: '', correlationId: '', page: 1 });
   const [detailEvent, setDetailEvent] = useState<any | null>(null);
+  const [groupByCorrelation, setGroupByCorrelation] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -22,22 +26,47 @@ export default function AuditPage() {
           ...(filters.action && { action: filters.action }),
           ...(filters.entityType && { entityType: filters.entityType }),
           ...(filters.actorUserId && { actorUserId: filters.actorUserId }),
+          ...(filters.correlationId && { correlationId: filters.correlationId }),
         } as any,
       },
     });
-    setEvents(data?.data ?? []);
-    setPagination(data?.pagination ?? null);
+    setEvents((data as any)?.data ?? []);
+    setPagination((data as any)?.pagination ?? null);
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [filters]);
+  useEffect(() => {
+    load();
+  }, [filters]);
+
+  const groups = useMemo(() => {
+    const map = new Map<string, any[]>();
+    for (const event of events) {
+      const key = event.correlationId || 'uncorrelated';
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(event);
+    }
+    return Array.from(map.entries())
+      .map(([correlationId, rows]) => ({
+        correlationId,
+        count: rows.length,
+        latestAt: rows.reduce((max, row) => (row.createdAt > max ? row.createdAt : max), rows[0]?.createdAt ?? ''),
+        actions: Array.from(new Set(rows.map((r) => r.action))).slice(0, 3),
+        events: rows,
+      }))
+      .sort((a, b) => new Date(b.latestAt).getTime() - new Date(a.latestAt).getTime());
+  }, [events]);
+
+  const diffRows = useMemo<DiffRow[]>(() => {
+    if (!detailEvent) return [];
+    return buildDiffRows(detailEvent.before, detailEvent.after);
+  }, [detailEvent]);
 
   return (
     <div>
-      {/* Detail Modal */}
       {detailEvent && (
         <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.5)', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ background: 'hsl(var(--card))', borderRadius: '10px', maxWidth: '640px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+          <div style={{ background: 'hsl(var(--card))', borderRadius: '10px', maxWidth: '760px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--muted))', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 700 }}>Audit Event Detail</h2>
               <button onClick={() => setDetailEvent(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}>×</button>
@@ -51,22 +80,47 @@ export default function AuditPage() {
               <Row label="Tenant ID" value={detailEvent.tenantId ?? '—'} mono />
               <Row label="Correlation ID" value={detailEvent.correlationId ?? '—'} mono />
               <Row label="Time" value={new Date(detailEvent.createdAt).toLocaleString()} />
-              {detailEvent.before != null && (
-                <div>
-                  <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>Before</div>
-                  <pre style={{ fontSize: '11px', background: 'hsl(var(--status-warning-bg))', padding: '10px', borderRadius: '6px', overflow: 'auto', maxHeight: '200px', margin: 0, color: 'hsl(var(--status-warning-fg))' }}>
-                    {JSON.stringify(detailEvent.before, null, 2)}
-                  </pre>
+              {entityHref(detailEvent) ? (
+                <div style={{ marginTop: '2px' }}>
+                  <span style={{ marginRight: '8px', fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontWeight: 600, textTransform: 'uppercase' }}>Entity</span>
+                  <Link href={entityHref(detailEvent)!} style={{ color: 'hsl(var(--primary))', fontSize: '13px', textDecoration: 'none' }}>Open in Admin →</Link>
                 </div>
-              )}
-              {detailEvent.after != null && (
-                <div>
-                  <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>After</div>
-                  <pre style={{ fontSize: '11px', background: 'hsl(var(--status-success-bg))', padding: '10px', borderRadius: '6px', overflow: 'auto', maxHeight: '200px', margin: 0, color: 'hsl(var(--status-success-fg))' }}>
-                    {JSON.stringify(detailEvent.after, null, 2)}
-                  </pre>
+              ) : null}
+
+              <div style={{ marginTop: '6px' }}>
+                <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>
+                  Before/After Diff
                 </div>
-              )}
+                {diffRows.length === 0 ? (
+                  <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', margin: 0 }}>No before/after delta captured for this event.</p>
+                ) : (
+                  <div style={{ border: '1px solid hsl(var(--border))', borderRadius: '8px', overflow: 'hidden' }}>
+                    {diffRows.map((row) => (
+                      <div
+                        key={row.key}
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'minmax(160px, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
+                          gap: '8px',
+                          padding: '8px 10px',
+                          borderBottom: '1px solid hsl(var(--muted))',
+                          background:
+                            row.kind === 'changed'
+                              ? 'hsl(var(--status-warning-bg))'
+                              : row.kind === 'added'
+                                ? 'hsl(var(--status-success-bg))'
+                                : 'hsl(var(--status-destructive-bg))',
+                        }}
+                      >
+                        <code style={{ fontSize: '11px', alignSelf: 'center' }}>{row.key}</code>
+                        <code style={{ fontSize: '11px', whiteSpace: 'pre-wrap', color: 'hsl(var(--muted-foreground))' }}>{row.before}</code>
+                        <code style={{ fontSize: '11px', whiteSpace: 'pre-wrap' }}>{row.after}</code>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {detailEvent.metadata != null && (
                 <div>
                   <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase' }}>Metadata</div>
@@ -161,92 +215,261 @@ export default function AuditPage() {
             style={{ padding: '6px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', width: '160px' }}
           />
         </div>
-        <div style={{ alignSelf: 'flex-end' }}>
-          <button onClick={() => setFilters({ action: '', entityType: '', actorUserId: '', page: 1 })}
-            style={{ padding: '6px 12px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>
+        <div>
+          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>Correlation ID</label>
+          <input
+            value={filters.correlationId}
+            onChange={(e) => setFilters({ ...filters, correlationId: e.target.value, page: 1 })}
+            placeholder="correlation ID…"
+            style={{ padding: '6px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', width: '200px' }}
+          />
+        </div>
+        <div style={{ alignSelf: 'flex-end', display: 'flex', gap: '8px' }}>
+          <button
+            onClick={() => setGroupByCorrelation((v) => !v)}
+            style={{ padding: '6px 12px', background: groupByCorrelation ? 'hsl(var(--status-info-bg))' : 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
+          >
+            {groupByCorrelation ? 'Grouped by Correlation' : 'Flat Events'}
+          </button>
+          <button
+            onClick={() => setFilters({ action: '', entityType: '', actorUserId: '', correlationId: '', page: 1 })}
+            style={{ padding: '6px 12px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
+          >
             Clear
           </button>
         </div>
       </div>
 
       <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <DataTable
-          data={events}
-          loading={loading}
-          emptyMessage="No audit events found."
-          keyExtractor={(event) => event.id}
-          columns={[
-            {
-              key: 'action',
-              header: 'Action',
-              cell: (event) => (
-                <code style={{ background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>
-                  {event.action}
-                </code>
-              ),
-            },
-            {
-              key: 'entity',
-              header: 'Entity',
-              cell: (event) => (
-                <span style={{ color: 'hsl(var(--muted-foreground))' }}>
-                  {event.entityType ?? '—'}
-                  {event.entityId ? ` (${event.entityId.slice(0, 8)}…)` : ''}
-                </span>
-              ),
-            },
-            {
-              key: 'actor',
-              header: 'Actor',
-              cell: (event) => (
-                <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>
-                  {event.actorUserId ? event.actorUserId.slice(0, 12) : 'system'}
-                </span>
-              ),
-            },
-            {
-              key: 'correlation',
-              header: 'Correlation ID',
-              cell: (event) => (
-                <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>
-                  {event.correlationId?.slice(0, 12) ?? '—'}
-                </span>
-              ),
-            },
-            {
-              key: 'time',
-              header: 'Time',
-              cell: (event) => (
-                <span style={{ color: 'hsl(var(--muted-foreground))', whiteSpace: 'nowrap' }}>
-                  {new Date(event.createdAt).toLocaleString()}
-                </span>
-              ),
-            },
-            {
-              key: 'actions',
-              header: '',
-              cell: (event) => (
-                <button onClick={() => setDetailEvent(event)} style={{ padding: '3px 8px', fontSize: '11px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>
-                  Detail
-                </button>
-              ),
-            },
-          ]}
-        />
+        {groupByCorrelation ? (
+          <DataTable
+            data={groups}
+            loading={loading}
+            emptyMessage="No correlation groups found."
+            keyExtractor={(g) => g.correlationId}
+            columns={[
+              {
+                key: 'correlation',
+                header: 'Correlation ID',
+                cell: (group) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>
+                    {group.correlationId === 'uncorrelated' ? 'uncorrelated' : group.correlationId}
+                  </span>
+                ),
+              },
+              {
+                key: 'count',
+                header: 'Events',
+                cell: (group) => <strong>{group.count}</strong>,
+              },
+              {
+                key: 'actions',
+                header: 'Actions',
+                cell: (group) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{group.actions.join(', ')}</span>
+                ),
+              },
+              {
+                key: 'latest',
+                header: 'Latest',
+                cell: (group) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))' }}>{new Date(group.latestAt).toLocaleString()}</span>
+                ),
+              },
+              {
+                key: 'actionsBtn',
+                header: '',
+                cell: (group) => (
+                  <button
+                    onClick={() => setDetailEvent(group.events[0])}
+                    style={{ padding: '3px 8px', fontSize: '11px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}
+                  >
+                    Open Latest
+                  </button>
+                ),
+              },
+            ]}
+          />
+        ) : (
+          <DataTable
+            data={events}
+            loading={loading}
+            emptyMessage="No audit events found."
+            keyExtractor={(event) => event.id}
+            columns={[
+              {
+                key: 'action',
+                header: 'Action',
+                cell: (event) => (
+                  <code style={{ background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>
+                    {event.action}
+                  </code>
+                ),
+              },
+              {
+                key: 'entity',
+                header: 'Entity',
+                cell: (event) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    {event.entityType ?? '—'}
+                    {event.entityId ? ` (${event.entityId.slice(0, 8)}…)` : ''}
+                  </span>
+                ),
+              },
+              {
+                key: 'actor',
+                header: 'Actor',
+                cell: (event) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>
+                    {event.actorUserId ? event.actorUserId.slice(0, 12) : 'system'}
+                  </span>
+                ),
+              },
+              {
+                key: 'correlation',
+                header: 'Correlation ID',
+                cell: (event) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>
+                    {event.correlationId?.slice(0, 12) ?? '—'}
+                  </span>
+                ),
+              },
+              {
+                key: 'time',
+                header: 'Time',
+                cell: (event) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))', whiteSpace: 'nowrap' }}>
+                    {new Date(event.createdAt).toLocaleString()}
+                  </span>
+                ),
+              },
+              {
+                key: 'entityNav',
+                header: 'Entity',
+                cell: (event) => {
+                  const href = entityHref(event);
+                  return href ? (
+                    <Link href={href} style={{ color: 'hsl(var(--primary))', textDecoration: 'none', fontSize: '12px' }}>Go</Link>
+                  ) : (
+                    <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>—</span>
+                  );
+                },
+              },
+              {
+                key: 'details',
+                header: '',
+                cell: (event) => (
+                  <button onClick={() => setDetailEvent(event)} style={{ padding: '3px 8px', fontSize: '11px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>
+                    Detail
+                  </button>
+                ),
+              },
+            ]}
+          />
+        )}
+
         {pagination && pagination.totalPages > 1 && (
           <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid hsl(var(--muted))', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
             <span>Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)</span>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button disabled={filters.page <= 1} onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
-                style={{ padding: '4px 12px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer', background: 'hsl(var(--card))' }}>← Prev</button>
-              <button disabled={filters.page >= pagination.totalPages} onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
-                style={{ padding: '4px 12px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer', background: 'hsl(var(--card))' }}>Next →</button>
+              <button
+                disabled={filters.page <= 1}
+                onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
+                style={{ padding: '4px 12px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer', background: 'hsl(var(--card))' }}
+              >
+                ← Prev
+              </button>
+              <button
+                disabled={filters.page >= pagination.totalPages}
+                onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
+                style={{ padding: '4px 12px', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer', background: 'hsl(var(--card))' }}
+              >
+                Next →
+              </button>
             </div>
           </div>
         )}
       </div>
     </div>
   );
+}
+
+function entityHref(event: any): string | null {
+  const id = event?.entityId;
+  if (!id) return null;
+  switch (event.entityType) {
+    case 'User':
+      return '/users';
+    case 'Role':
+      return '/roles';
+    case 'Tenant':
+      return '/tenants';
+    case 'Patient':
+      return '/patients';
+    case 'Encounter':
+      return '/encounters';
+    case 'Document':
+      return '/documents';
+    case 'CatalogTest':
+      return '/catalog/tests';
+    case 'CatalogParameter':
+      return '/catalog/parameters';
+    case 'CatalogPanel':
+      return '/catalog/panels';
+    default:
+      return null;
+  }
+}
+
+function flattenObject(value: any, prefix = ''): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (value === null || value === undefined) return out;
+
+  if (typeof value !== 'object') {
+    out[prefix || '(root)'] = String(value);
+    return out;
+  }
+
+  if (Array.isArray(value)) {
+    out[prefix || '(root)'] = JSON.stringify(value);
+    return out;
+  }
+
+  for (const [k, v] of Object.entries(value)) {
+    const key = prefix ? `${prefix}.${k}` : k;
+    if (v !== null && typeof v === 'object' && !Array.isArray(v)) {
+      const nested = flattenObject(v, key);
+      for (const [nk, nv] of Object.entries(nested)) out[nk] = nv;
+    } else {
+      out[key] = v === undefined ? 'undefined' : JSON.stringify(v);
+    }
+  }
+
+  return out;
+}
+
+function buildDiffRows(before: any, after: any): DiffRow[] {
+  const b = flattenObject(before);
+  const a = flattenObject(after);
+  const keys = new Set([...Object.keys(b), ...Object.keys(a)]);
+  const rows: DiffRow[] = [];
+
+  for (const key of keys) {
+    const left = b[key];
+    const right = a[key];
+    if (left === right) continue;
+    if (left === undefined) {
+      rows.push({ key, before: '∅', after: right, kind: 'added' });
+      continue;
+    }
+    if (right === undefined) {
+      rows.push({ key, before: left, after: '∅', kind: 'removed' });
+      continue;
+    }
+    rows.push({ key, before: left, after: right, kind: 'changed' });
+  }
+
+  return rows.sort((x, y) => x.key.localeCompare(y.key));
 }
 
 function Row({ label, value, mono, badge, badgeText }: { label: string; value: string; mono?: boolean; badge?: string; badgeText?: string }) {

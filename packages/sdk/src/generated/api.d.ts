@@ -272,6 +272,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/impersonation/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start read-only impersonation session */
+        post: operations["startAdminImpersonation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/impersonation/stop": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Stop active impersonation session */
+        post: operations["stopAdminImpersonation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/impersonation/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get current impersonation status */
+        get: operations["getAdminImpersonationStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/roles": {
         parameters: {
             query?: never;
@@ -465,6 +516,40 @@ export interface paths {
         put?: never;
         /** Create a catalog test */
         post: operations["createCatalogTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/operator/catalog/tests/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search catalog tests for operator registration (tenant-scoped) */
+        get: operations["operatorCatalogTestsSearch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/operator/catalog/tests/top": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List tenant pinned top tests (up to 10) */
+        get: operations["operatorCatalogTestsTop"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1032,23 +1117,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/catalog/test-parameter-mappings/import": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Import test-parameter mappings from CSV */
-        post: operations["importTestParameterMappings"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/catalog/reference-ranges": {
         parameters: {
             query?: never;
@@ -1147,6 +1215,23 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["adminUpdateCatalogTest"];
+        trace?: never;
+    };
+    "/admin/catalog/tests/top": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set tenant pinned top tests (max 10) */
+        put: operations["adminSetCatalogTopTests"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/admin/catalog/parameters": {
@@ -2743,6 +2828,18 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string | null;
         };
+        CatalogTestSearchResult: {
+            id: string;
+            name: string;
+            testCode?: string | null;
+            userCode?: string | null;
+            sampleTypeName?: string | null;
+            departmentName?: string | null;
+            price?: number | null;
+        };
+        TenantTopTestsUpdate: {
+            testIds: string[];
+        };
         CatalogPanel: {
             id: string;
             tenantId: string;
@@ -3728,6 +3825,44 @@ export interface components {
             invoice: components["schemas"]["OpdInvoice"];
             document: components["schemas"]["Document"];
         };
+        AdminImpersonationStartRequest: {
+            user_id: string;
+            reason: string;
+        };
+        AdminImpersonationUser: {
+            id: string;
+            name: string;
+            role?: string | null;
+        };
+        AdminImpersonationStartResponse: {
+            session_id: string;
+            impersonated_user: components["schemas"]["AdminImpersonationUser"];
+            /** @enum {string} */
+            mode: "READ_ONLY";
+            /** Format: date-time */
+            expires_at: string;
+        };
+        AdminImpersonationStatusInactive: {
+            /** @enum {boolean} */
+            active: false;
+        };
+        AdminImpersonationStatusActive: {
+            /** @enum {boolean} */
+            active: true;
+            session_id: string;
+            started_by: {
+                id: string;
+                name: string;
+            };
+            impersonated_user: components["schemas"]["AdminImpersonationUser"];
+            /** @enum {string} */
+            mode: "READ_ONLY";
+            /** Format: date-time */
+            started_at: string;
+            /** Format: date-time */
+            expires_at: string;
+        };
+        AdminImpersonationStatusResponse: components["schemas"]["AdminImpersonationStatusInactive"] | components["schemas"]["AdminImpersonationStatusActive"];
     };
     responses: {
         /** @description Unauthorized */
@@ -3739,7 +3874,7 @@ export interface components {
                 "application/json": components["schemas"]["Error"];
             };
         };
-        /** @description Forbidden */
+        /** @description Forbidden (including read-only impersonation write blocking) */
         Forbidden: {
             headers: {
                 [name: string]: unknown;
@@ -4427,6 +4562,87 @@ export interface operations {
             };
         };
     };
+    startAdminImpersonation: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminImpersonationStartRequest"];
+            };
+        };
+        responses: {
+            /** @description Impersonation started */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminImpersonationStartResponse"];
+                };
+            };
+            /** @description Forbidden (non-admin, invalid reason, or invalid target) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    stopAdminImpersonation: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Stopped */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ok: boolean;
+                    };
+                };
+            };
+        };
+    };
+    getAdminImpersonationStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Impersonation status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminImpersonationStatusResponse"];
+                };
+            };
+        };
+    };
     listRoles: {
         parameters: {
             query?: never;
@@ -4847,6 +5063,49 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CatalogTest"];
+                };
+            };
+        };
+    };
+    operatorCatalogTestsSearch: {
+        parameters: {
+            query: {
+                q: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ranked test search results */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogTestSearchResult"][];
+                };
+            };
+        };
+    };
+    operatorCatalogTestsTop: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Top tests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogTestSearchResult"][];
                 };
             };
         };
@@ -5786,6 +6045,15 @@ export interface operations {
                         inserted?: number;
                         updated?: number;
                         skipped?: number;
+                        bySheet?: {
+                            [key: string]: {
+                                totalRows?: number;
+                                inserted?: number;
+                                updated?: number;
+                                skipped?: number;
+                                errors?: number;
+                            };
+                        };
                         errors?: {
                             sheet?: string;
                             row?: number;
@@ -5829,6 +6097,15 @@ export interface operations {
                         inserted?: number;
                         updated?: number;
                         skipped?: number;
+                        bySheet?: {
+                            [key: string]: {
+                                totalRows?: number;
+                                inserted?: number;
+                                updated?: number;
+                                skipped?: number;
+                                errors?: number;
+                            };
+                        };
                         errors?: {
                             sheet?: string;
                             row?: number;
@@ -5940,40 +6217,6 @@ export interface operations {
                 content: {
                     "application/json": {
                         nextId?: string;
-                    };
-                };
-            };
-        };
-    };
-    importTestParameterMappings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description CSV text content (first col = test externalId, rest = param externalIds) */
-                    csv: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Import result */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        imported?: number;
-                        skipped?: number;
-                        warnings?: {
-                            row?: number;
-                            message?: string;
-                        }[];
                     };
                 };
             };
@@ -6302,6 +6545,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CatalogTest"];
+                };
+            };
+        };
+    };
+    adminSetCatalogTopTests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TenantTopTestsUpdate"];
+            };
+        };
+        responses: {
+            /** @description Updated top tests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogTestSearchResult"][];
                 };
             };
         };
@@ -6658,6 +6925,15 @@ export interface operations {
                         inserted?: number;
                         updated?: number;
                         skipped?: number;
+                        bySheet?: {
+                            [key: string]: {
+                                totalRows?: number;
+                                inserted?: number;
+                                updated?: number;
+                                skipped?: number;
+                                errors?: number;
+                            };
+                        };
                         errors?: Record<string, never>[];
                     };
                 };
@@ -8261,6 +8537,7 @@ export interface operations {
         parameters: {
             query?: {
                 search?: string;
+                view?: "pending" | "verified_today";
                 page?: components["parameters"]["PageParam"];
                 limit?: components["parameters"]["LimitParam"];
             };

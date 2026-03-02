@@ -1,0 +1,22 @@
+[     221ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/admin/impersonation/status' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[     223ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/admin/impersonation/status:0
+[     223ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/me' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[     223ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/me:0
+[     223ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/health' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[     223ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/health:0
+[     229ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/jobs/failed-count' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[     229ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/jobs/failed-count:0
+[     229ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/audit-events?limit=10&page=1' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[     229ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/audit-events?limit=10&page=1:0
+[     229ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/patients?limit=1&page=1' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[     230ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/patients?limit=1&page=1:0
+[     230ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/encounters?limit=1&page=1' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[     230ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/encounters?limit=1&page=1:0
+[     230ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/documents?limit=1&page=1' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[     230ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/documents?limit=1&page=1:0
+[   30208ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/admin/impersonation/status' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[   30208ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/admin/impersonation/status:0
+[   60209ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/admin/impersonation/status' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[   60209ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/admin/impersonation/status:0
+[   90208ms] [ERROR] Access to fetch at 'http://127.0.0.1:9021/api/admin/impersonation/status' from origin 'https://vexel.alshifalab.pk' has been blocked by CORS policy: Permission was denied for this request to access the `loopback` address space. @ https://vexel.alshifalab.pk/admin/dashboard:0
+[   90209ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:9021/api/admin/impersonation/status:0

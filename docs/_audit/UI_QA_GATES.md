@@ -41,3 +41,11 @@ pnpm check:admin-openapi-parity
 cd apps/operator && npx tsc --noEmit && npx next lint
 cd ../admin && npx tsc --noEmit && npx next lint
 ```
+
+## Manual Smoke Notes — Registration Catalog Typeahead (2026-03-02)
+- [ ] In `/lims/registrations/new`, typing `cb` shows test suggestions quickly (target ~300ms perceived).
+- [ ] While typing fast (`c` → `cb` → `cbc`), older responses do not overwrite newer results.
+- [ ] Arrow keys move suggestion highlight and `Enter` adds the highlighted test.
+- [ ] Searching by user code (for example `bili-d`) returns the matching test.
+- [ ] Clearing search input (`< 2` chars) hides suggestions and shows Top tests chips.
+- [ ] Clicking a Top test chip immediately adds that test to the selected order list.

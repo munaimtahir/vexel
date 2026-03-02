@@ -1,0 +1,51 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: Vexel
+        - generic [ref=e6]: Health Platform
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - paragraph [ref=e17]: Super Admin
+          - paragraph [ref=e18]: super-admin
+        - generic [ref=e19]: S
+        - button "Logout" [ref=e20] [cursor=pointer]
+    - main [ref=e7]:
+      - generic [ref=e8]:
+        - heading "Good morning, Super!" [level=1] [ref=e21]
+        - generic [ref=e22]:
+          - generic [ref=e23]: 🏢 System Tenant
+          - generic [ref=e24]: 4 modules active
+          - generic [ref=e25]: ⭐ Super Admin
+      - heading "Active Modules" [level=2] [ref=e26]
+      - generic [ref=e27]:
+        - button "🧪 Laboratory (LIMS) Patient registrations, sample collection, results entry, verification, and reports. Open →" [ref=e28] [cursor=pointer]:
+          - generic [ref=e29]: 🧪
+          - heading "Laboratory (LIMS)" [level=3] [ref=e30]
+          - paragraph [ref=e31]: Patient registrations, sample collection, results entry, verification, and reports.
+          - generic [ref=e32]:
+            - text: Open
+            - generic [ref=e33]: →
+        - button "🏥 OPD / Clinic Outpatient consultations, appointments, prescriptions, and billing. Open →" [ref=e34] [cursor=pointer]:
+          - generic [ref=e35]: 🏥
+          - heading "OPD / Clinic" [level=3] [ref=e36]
+          - paragraph [ref=e37]: Outpatient consultations, appointments, prescriptions, and billing.
+          - generic [ref=e38]:
+            - text: Open
+            - generic [ref=e39]: →
+        - button "🩻 Radiology (RIMS) Radiology orders, imaging workflows, and reports. Open →" [ref=e40] [cursor=pointer]:
+          - generic [ref=e41]: 🩻
+          - heading "Radiology (RIMS)" [level=3] [ref=e42]
+          - paragraph [ref=e43]: Radiology orders, imaging workflows, and reports.
+          - generic [ref=e44]:
+            - text: Open
+            - generic [ref=e45]: →
+        - button "⚙️ Admin Panel Tenant configuration, user management, roles, catalog, and feature flags. Open →" [ref=e46] [cursor=pointer]:
+          - generic [ref=e47]: ⚙️
+          - heading "Admin Panel" [level=3] [ref=e48]
+          - paragraph [ref=e49]: Tenant configuration, user management, roles, catalog, and feature flags.
+          - generic [ref=e50]:
+            - text: Open
+            - generic [ref=e51]: →
+  - region "Notifications alt+T"
+  - alert [ref=e14]

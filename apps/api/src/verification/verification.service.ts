@@ -29,21 +29,41 @@ export class VerificationService {
 
   async getVerificationQueue(
     tenantId: string,
-    filters: { search?: string; page?: number; limit?: number } = {},
+    filters: { search?: string; page?: number; limit?: number; view?: 'pending' | 'verified_today' } = {},
   ): Promise<{ data: VerificationEncounterSummary[]; total: number; page: number; limit: number }> {
     const page = filters.page ?? 1;
     const limit = filters.limit ?? 20;
+    const view = filters.view ?? 'pending';
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 
-    const baseWhere: any = {
-      tenantId,
-      status: { not: 'cancelled' },
-      labOrders: {
-        some: {
-          resultStatus: 'SUBMITTED',
-          status: { not: 'verified' },
-        },
-      },
-    };
+    const baseWhere: any =
+      view === 'verified_today'
+        ? {
+            tenantId,
+            status: { in: ['verified', 'published'] },
+            labOrders: {
+              some: {
+                status: 'verified',
+                results: {
+                  some: {
+                    verifiedAt: { gte: todayStart, lt: tomorrowStart },
+                  },
+                },
+              },
+            },
+          }
+        : {
+            tenantId,
+            status: { not: 'cancelled' },
+            labOrders: {
+              some: {
+                resultStatus: 'SUBMITTED',
+                status: { not: 'verified' },
+              },
+            },
+          };
 
     if (filters.search) {
       baseWhere.OR = [
@@ -59,11 +79,30 @@ export class VerificationService {
         include: {
           patient: true,
           labOrders: {
-            where: { resultStatus: 'SUBMITTED', status: { not: 'verified' } },
-            orderBy: { submittedAt: 'asc' },
+            where:
+              view === 'verified_today'
+                ? {
+                    status: 'verified',
+                    results: {
+                      some: {
+                        verifiedAt: { gte: todayStart, lt: tomorrowStart },
+                      },
+                    },
+                  }
+                : { resultStatus: 'SUBMITTED', status: { not: 'verified' } },
+            include:
+              view === 'verified_today'
+                ? {
+                    results: {
+                      where: { verifiedAt: { gte: todayStart, lt: tomorrowStart } },
+                      select: { verifiedAt: true },
+                    },
+                  }
+                : undefined,
+            orderBy: view === 'verified_today' ? { updatedAt: 'desc' } : { submittedAt: 'asc' },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: view === 'verified_today' ? { updatedAt: 'desc' } : { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -72,8 +111,15 @@ export class VerificationService {
 
     const data: VerificationEncounterSummary[] = encounters.map((enc) => {
       const submittedOrders = enc.labOrders;
-      const oldestSubmittedAt =
-        submittedOrders.length > 0 ? (submittedOrders[0].submittedAt ?? null) : null;
+      const oldestSubmittedAt = view === 'verified_today'
+        ? (() => {
+            const verifiedTimes = submittedOrders
+              .flatMap((order: any) => (order.results ?? []).map((r: any) => r.verifiedAt))
+              .filter((d: Date | null | undefined): d is Date => !!d)
+              .sort((a, b) => a.getTime() - b.getTime());
+            return verifiedTimes[0] ?? null;
+          })()
+        : (submittedOrders.length > 0 ? (submittedOrders[0].submittedAt ?? null) : null);
       return {
         encounterId: enc.id,
         encounterCode: enc.encounterCode,

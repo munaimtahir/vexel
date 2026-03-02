@@ -1,0 +1,174 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: 🧬
+          - generic [ref=e7]:
+            - generic [ref=e8]: Vexel Admin
+            - generic [ref=e9]: Back Office
+        - generic [ref=e10]:
+          - link "ADMIN" [ref=e11] [cursor=pointer]:
+            - /url: /admin/dashboard
+            - generic [ref=e13]: ADMIN
+          - link "OPD" [ref=e14] [cursor=pointer]:
+            - /url: /admin/opd
+            - generic [ref=e16]: OPD
+      - navigation [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: Overview
+          - link "Dashboard" [ref=e21] [cursor=pointer]:
+            - /url: /admin/dashboard
+            - img [ref=e23]
+            - generic [ref=e28]: Dashboard
+        - generic [ref=e29]:
+          - generic [ref=e30]: Operations
+          - link "Patients" [ref=e31] [cursor=pointer]:
+            - /url: /admin/patients
+            - img [ref=e33]
+            - generic [ref=e36]: Patients
+        - link "Encounters" [ref=e38] [cursor=pointer]:
+          - /url: /admin/encounters
+          - img [ref=e40]
+          - generic [ref=e43]: Encounters
+        - link "Documents" [ref=e45] [cursor=pointer]:
+          - /url: /admin/documents
+          - img [ref=e47]
+          - generic [ref=e50]: Documents
+        - generic [ref=e51]:
+          - generic [ref=e52]: LIMS
+          - link "Catalog" [ref=e53] [cursor=pointer]:
+            - /url: /admin/catalog
+            - img [ref=e55]
+            - generic [ref=e57]: Catalog
+            - img [ref=e58]
+          - generic [ref=e60]:
+            - link "Overview" [ref=e61] [cursor=pointer]:
+              - /url: /admin/catalog
+            - link "Sample Types" [ref=e62] [cursor=pointer]:
+              - /url: /admin/catalog/sample-types
+            - link "Tests" [ref=e63] [cursor=pointer]:
+              - /url: /admin/catalog/tests
+            - link "Parameters" [ref=e64] [cursor=pointer]:
+              - /url: /admin/catalog/parameters
+            - link "Panels" [ref=e65] [cursor=pointer]:
+              - /url: /admin/catalog/panels
+            - link "Reference Ranges" [ref=e66] [cursor=pointer]:
+              - /url: /admin/catalog/reference-ranges
+            - link "Import / Export" [ref=e67] [cursor=pointer]:
+              - /url: /admin/catalog/import-export
+        - generic [ref=e68]:
+          - generic [ref=e69]: Settings
+          - link "Tenants" [ref=e70] [cursor=pointer]:
+            - /url: /admin/tenants
+            - img [ref=e72]
+            - generic [ref=e76]: Tenants
+        - link "Users & Roles" [ref=e78] [cursor=pointer]:
+          - /url: /admin/users
+          - img [ref=e80]
+          - generic [ref=e85]: Users & Roles
+          - img [ref=e86]
+        - link "Branding" [ref=e89] [cursor=pointer]:
+          - /url: /admin/branding
+          - img [ref=e91]
+          - generic [ref=e97]: Branding
+        - link "Feature Flags" [ref=e99] [cursor=pointer]:
+          - /url: /admin/feature-flags
+          - img [ref=e101]
+          - generic [ref=e104]: Feature Flags
+        - generic [ref=e105]:
+          - generic [ref=e106]: System
+          - link "Audit Log" [ref=e107] [cursor=pointer]:
+            - /url: /admin/audit
+            - img [ref=e109]
+            - generic [ref=e112]: Audit Log
+        - link "Jobs" [ref=e114] [cursor=pointer]:
+          - /url: /admin/jobs
+          - img [ref=e116]
+          - generic [ref=e119]: Jobs
+        - link "System Health" [ref=e121] [cursor=pointer]:
+          - /url: /admin/system/health
+          - img [ref=e123]
+          - generic [ref=e125]: System Health
+      - button "Sign Out" [ref=e128] [cursor=pointer]
+    - generic [ref=e129]:
+      - banner [ref=e130]:
+        - generic [ref=e132]:
+          - navigation "Breadcrumb" [ref=e133]:
+            - list [ref=e134]:
+              - listitem [ref=e135]:
+                - link "Catalog" [ref=e136] [cursor=pointer]:
+                  - /url: /catalog
+                - generic [ref=e137]: /
+              - listitem [ref=e138]:
+                - generic [ref=e139]: Import Export
+          - heading "Import Export" [level=1] [ref=e140]
+      - main [ref=e141]:
+        - generic [ref=e143]:
+          - heading "Import / Export" [level=1] [ref=e144]
+          - paragraph [ref=e145]: Workbook validate/apply import plus job-based export and template downloads.
+          - generic [ref=e146]:
+            - heading "📥 Import Catalog Workbook" [level=2] [ref=e147]
+            - paragraph [ref=e148]: Upload workbook/CSV, run validate first, then apply when validation passes.
+            - generic [ref=e149]:
+              - generic [ref=e150]:
+                - generic [ref=e151]: File (.xlsx or .csv)
+                - button "Choose File" [ref=e152] [cursor=pointer]
+              - generic [ref=e153]:
+                - generic [ref=e154]: Mode
+                - combobox [ref=e155] [cursor=pointer]:
+                  - option "UPSERT_PATCH — update existing, insert new" [selected]
+                  - option "CREATE_ONLY — inserts only"
+            - generic [ref=e156]:
+              - button "✓ Validate" [ref=e157] [cursor=pointer]
+              - button "▶ Apply" [disabled] [ref=e158]
+            - generic [ref=e195]: ✗ Catalog validate failed (HTTP 502). <html><body>Proxy HTML error page</body></html>
+          - generic [ref=e159]:
+            - heading "🔗 Import Parameter Mappings (CSV)" [level=2] [ref=e160]
+            - paragraph [ref=e161]: Dedicated CSV import endpoint for test-parameter mappings remains available.
+            - paragraph [ref=e162]: Alternatively, use the TestParameters and PanelTests sheets in the job-based workbook import above.
+            - generic [ref=e163]:
+              - generic [ref=e164]: File (.csv only)
+              - button "Choose File" [ref=e165] [cursor=pointer]
+            - button "▶ Import Mappings" [disabled] [ref=e166]
+          - generic [ref=e167]:
+            - heading "📤 Export Catalog (Job-Based)" [level=2] [ref=e168]
+            - paragraph [ref=e169]: "Creates an export job, waits for completion, then downloads the XLSX from `/catalog/export-jobs/{id}/download`."
+            - button "⬇ Export All as XLSX" [ref=e170] [cursor=pointer]
+          - generic [ref=e171]:
+            - heading "📋 Download Templates" [level=2] [ref=e172]
+            - paragraph [ref=e173]:
+              - text: "Fill these templates and upload above. IDs use format: tests ="
+              - strong [ref=e174]: t1, t2…
+              - text: ", parameters ="
+              - strong [ref=e175]: p1, p2…
+              - text: ", panels ="
+              - strong [ref=e176]: g1, g2…
+              - text: .
+            - generic [ref=e177]:
+              - button "📊 Full Workbook Template (XLSX) — all sheets" [ref=e178] [cursor=pointer]:
+                - generic [ref=e179]: 📊
+                - text: Full Workbook Template (XLSX) — all sheets
+              - button "🧪 Sample Types CSV" [ref=e180] [cursor=pointer]:
+                - generic [ref=e181]: 🧪
+                - text: Sample Types CSV
+              - button "📄 Parameters CSV" [ref=e182] [cursor=pointer]:
+                - generic [ref=e183]: 📄
+                - text: Parameters CSV
+              - button "📄 Tests CSV" [ref=e184] [cursor=pointer]:
+                - generic [ref=e185]: 📄
+                - text: Tests CSV
+              - button "🔗 Test-Parameters Mapping CSV" [ref=e186] [cursor=pointer]:
+                - generic [ref=e187]: 🔗
+                - text: Test-Parameters Mapping CSV
+              - button "📄 Panels CSV" [ref=e188] [cursor=pointer]:
+                - generic [ref=e189]: 📄
+                - text: Panels CSV
+              - button "🔗 Panel-Tests Mapping CSV" [ref=e190] [cursor=pointer]:
+                - generic [ref=e191]: 🔗
+                - text: Panel-Tests Mapping CSV
+              - button "📏 Reference Ranges CSV" [ref=e192] [cursor=pointer]:
+                - generic [ref=e193]: 📏
+                - text: Reference Ranges CSV
+  - region "Notifications alt+T"
+  - alert [ref=e194]

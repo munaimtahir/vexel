@@ -1,0 +1,7 @@
+[global-setup] API health check passed.
+
+Running 1 test using 1 worker
+
+  ✓  1 [admin] › tests/02-admin-crud.spec.ts:128:7 › Admin CRUD › read-only impersonation blocks writes and can be stopped (2.3s)
+
+  1 passed (3.5s)

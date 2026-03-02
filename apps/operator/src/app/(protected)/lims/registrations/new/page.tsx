@@ -10,6 +10,15 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 type PatientData = { fullName: string; dateOfBirth: string; gender: string; cnic: string; address: string };
+type CatalogTestSearchItem = {
+  id: string;
+  name: string;
+  testCode?: string | null;
+  userCode?: string | null;
+  sampleTypeName?: string | null;
+  departmentName?: string | null;
+  price?: number | null;
+};
 type SelectedTest = { id: string; name: string; code: string; price: number | null };
 type FieldErrors = Partial<Record<keyof PatientData | 'mobile' | 'tests', string>>;
 const EMPTY: PatientData = { fullName: '', dateOfBirth: '', gender: 'male', cnic: '', address: '' };
@@ -54,12 +63,15 @@ export default function NewRegistrationPage() {
 
   // Order
   const [testSearch, setTestSearch] = useState('');
-  const [testResults, setTestResults] = useState<any[]>([]);
+  const [testResults, setTestResults] = useState<CatalogTestSearchItem[]>([]);
+  const [topTests, setTopTests] = useState<CatalogTestSearchItem[]>([]);
+  const [loadingTopTests, setLoadingTopTests] = useState(false);
   const [testDropOpen, setTestDropOpen] = useState(false);
   const [testDropIdx, setTestDropIdx] = useState(-1);
   const [searching, setSearching] = useState(false);
   const [selectedTests, setSelectedTests] = useState<SelectedTest[]>([]);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchRequestSeqRef = useRef(0);
 
   // Payment
   const [discountPKR, setDiscountPKR] = useState('0');
@@ -156,32 +168,79 @@ export default function NewRegistrationPage() {
   const handleAgeInput = (v: string) => { const dob = dobFromAge(v); if (dob) setField('dateOfBirth', dob); };
 
   // ── Test search ──────────────────────────────────────────────────
+  const getTestCodeSubtitle = (t: CatalogTestSearchItem | SelectedTest) => {
+    if ('code' in t) return t.code;
+    const parts = [t.userCode, t.testCode].filter(Boolean);
+    return parts.join(' • ');
+  };
+
+  const loadTopTests = useCallback(async () => {
+    setLoadingTopTests(true);
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      // @ts-ignore
+      const { data } = await api.GET('/operator/catalog/tests/top');
+      const list = Array.isArray(data) ? (data as CatalogTestSearchItem[]) : [];
+      setTopTests(list);
+    } catch {
+      setTopTests([]);
+    } finally {
+      setLoadingTopTests(false);
+    }
+  }, []);
+
   const doTestSearch = useCallback(async (q: string) => {
-    if (!q.trim()) { setTestResults([]); setTestDropOpen(false); return; }
+    const query = q.trim();
+    if (query.length < 2) {
+      searchRequestSeqRef.current += 1;
+      setSearching(false);
+      setTestResults([]);
+      setTestDropOpen(false);
+      setTestDropIdx(-1);
+      return;
+    }
+
+    const requestId = ++searchRequestSeqRef.current;
     setSearching(true);
     try {
       const api = getApiClient(getToken() ?? undefined);
       // @ts-ignore
-      const { data } = await api.GET('/catalog/tests', { params: { query: { search: q.trim(), limit: 10 } } });
-      const list: any[] = (data as any)?.data ?? [];
+      const { data } = await api.GET('/operator/catalog/tests/search', { params: { query: { q: query, limit: 20 } } });
+      if (requestId !== searchRequestSeqRef.current) return;
+      const list: CatalogTestSearchItem[] = Array.isArray(data) ? data : [];
       setTestResults(list);
       setTestDropOpen(list.length > 0);
       setTestDropIdx(list.length > 0 ? 0 : -1);
-    } catch { setTestResults([]); }
-    finally { setSearching(false); }
+    } catch {
+      if (requestId !== searchRequestSeqRef.current) return;
+      setTestResults([]);
+      setTestDropOpen(false);
+      setTestDropIdx(-1);
+    } finally {
+      if (requestId === searchRequestSeqRef.current) setSearching(false);
+    }
   }, []);
 
   // Focus mobile field on mount
-  useEffect(() => { mob1Ref.current?.focus(); }, []);
+  useEffect(() => {
+    mob1Ref.current?.focus();
+    loadTopTests();
+  }, [loadTopTests]);
 
   useEffect(() => {
-    searchTimerRef.current = setTimeout(() => doTestSearch(testSearch), 300);
+    searchTimerRef.current = setTimeout(() => doTestSearch(testSearch), 250);
     return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current); };
   }, [testSearch, doTestSearch]);
 
-  const addTest = (t: any) => {
+  const addTest = (t: CatalogTestSearchItem) => {
     if (selectedTests.some(x => x.id === t.id)) return;
-    setSelectedTests(prev => [...prev, { id: t.id, name: t.name, code: t.code ?? '', price: Number((t as any).price) || null }]);
+    const normalizedPrice = t.price == null ? null : Number(t.price);
+    setSelectedTests(prev => [...prev, {
+      id: t.id,
+      name: t.name,
+      code: getTestCodeSubtitle(t),
+      price: Number.isFinite(normalizedPrice) ? normalizedPrice : null,
+    }]);
     setTestSearch('');
     setTestDropOpen(false);
     setTestDropIdx(-1);
@@ -665,11 +724,14 @@ export default function NewRegistrationPage() {
             <input
               ref={testSearchRef}
               value={testSearch}
-              onChange={e => setTestSearch(e.target.value)}
+              onChange={e => {
+                setTestSearch(e.target.value);
+                setTestDropIdx(-1);
+              }}
               onKeyDown={handleTestKeyDown}
               onBlur={() => setTimeout(() => setTestDropOpen(false), 150)}
               onFocus={() => testResults.length > 0 && setTestDropOpen(true)}
-              placeholder="Type test name or code, Enter to add…"
+              placeholder="Type at least 2 chars (name, test code, or user code)"
               className={cn(
                 'w-full px-2.5 py-2 border rounded-md text-sm bg-background outline-none focus:ring-1 focus:ring-ring',
                 fieldErrors.tests ? 'border-destructive focus:ring-destructive' : 'border-input'
@@ -686,10 +748,15 @@ export default function NewRegistrationPage() {
                       'px-3.5 py-2.5 cursor-pointer border-b border-border flex justify-between items-center',
                       i === testDropIdx ? 'bg-muted' : 'bg-background hover:bg-muted/30'
                     )}
-                  >
-                    <div>
-                      <div className="font-medium text-sm text-foreground">{t.name}</div>
-                      {t.code && <div className="text-xs text-muted-foreground">{t.code}</div>}
+                    >
+                      <div>
+                        <div className="font-medium text-sm text-foreground">{t.name}</div>
+                      {getTestCodeSubtitle(t) && <div className="text-xs text-muted-foreground">{getTestCodeSubtitle(t)}</div>}
+                      {(t.sampleTypeName || t.departmentName) && (
+                        <div className="text-[11px] text-muted-foreground/90">
+                          {[t.sampleTypeName, t.departmentName].filter(Boolean).join(' • ')}
+                        </div>
+                      )}
                     </div>
                     <span className="text-xs text-muted-foreground">{t.price != null ? `PKR ${t.price}` : 'N/A'}</span>
                   </div>
@@ -697,6 +764,30 @@ export default function NewRegistrationPage() {
               </div>
             )}
           </div>
+          {testSearch.trim().length < 2 && (
+            <div className="mb-3 rounded-md border border-input bg-muted/20 p-3">
+              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Top tests</div>
+              {loadingTopTests ? (
+                <div className="text-xs text-muted-foreground">Loading top tests…</div>
+              ) : topTests.length === 0 ? (
+                <div className="text-xs text-muted-foreground">No pinned tests configured for this tenant.</div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {topTests.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => addTest(t)}
+                      className="rounded-md border border-input bg-background px-2.5 py-1.5 text-left text-xs text-foreground hover:bg-muted"
+                    >
+                      <div className="font-semibold">{t.name}</div>
+                      {getTestCodeSubtitle(t) && <div className="text-muted-foreground">{getTestCodeSubtitle(t)}</div>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {fieldErrors.tests && <p className="text-destructive text-xs -mt-2 mb-2">{fieldErrors.tests}</p>}
 
           {selectedTests.length === 0 ? (
