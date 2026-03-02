@@ -86,6 +86,8 @@ export default function SampleCollectionPage() {
   // Per-row action loading (key: specimenItemId or `all-{encounterId}`)
   const [acting, setActing] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState('');
+  const [selectedEncounterIds, setSelectedEncounterIds] = useState<Set<string>>(new Set());
+  const [bulkReceiving, setBulkReceiving] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -105,6 +107,7 @@ export default function SampleCollectionPage() {
       if (apiErr) { setError('Failed to load worklist'); return; }
       const loaded: any[] = (data as any)?.data ?? [];
       setRows(loaded);
+      setSelectedEncounterIds(new Set());
       // Auto-expand rows that have pending specimens
       setExpanded(new Set(loaded.filter((r: any) => r.pendingCount > 0).map((r: any) => r.id)));
     } catch {
@@ -194,6 +197,60 @@ export default function SampleCollectionPage() {
     }
   };
 
+  const toggleEncounterSelection = (encounterId: string) => {
+    setSelectedEncounterIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(encounterId)) next.delete(encounterId);
+      else next.add(encounterId);
+      return next;
+    });
+  };
+
+  const selectedRows = rows.filter((r: any) => selectedEncounterIds.has(r.id));
+  const selectedCollectableCount = selectedRows.reduce((sum: number, r: any) => {
+    const collected = (r.specimenItems ?? []).filter((s: any) => s.status === 'COLLECTED');
+    return sum + collected.length;
+  }, 0);
+
+  const bulkReceiveSelected = async () => {
+    if (!receiveSeparate || bulkReceiving) return;
+    if (selectedEncounterIds.size === 0) {
+      showToast('Select encounters first');
+      return;
+    }
+    const targets = rows
+      .filter((r: any) => selectedEncounterIds.has(r.id))
+      .map((r: any) => ({
+        encounterId: r.id,
+        ids: (r.specimenItems ?? []).filter((s: any) => s.status === 'COLLECTED').map((s: any) => s.id),
+      }))
+      .filter((t: any) => t.ids.length > 0);
+    if (targets.length === 0) {
+      showToast('No collected specimens found in selected encounters');
+      return;
+    }
+
+    setBulkReceiving(true);
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const settled = await Promise.allSettled(
+        targets.map((t: any) =>
+          // @ts-ignore
+          api.POST('/encounters/{encounterId}:receive-specimens', {
+            params: { path: { encounterId: t.encounterId } },
+            body: { specimenItemIds: t.ids } as any,
+          }),
+        ),
+      );
+      const ok = settled.filter((r) => r.status === 'fulfilled' && !(r.value as any).error).length;
+      const fail = settled.length - ok;
+      showToast(fail > 0 ? `Bulk receive completed (${ok} success, ${fail} failed)` : `Bulk receive completed (${ok})`);
+      await load();
+    } finally {
+      setBulkReceiving(false);
+    }
+  };
+
 
   return (
     <div>
@@ -239,9 +296,18 @@ export default function SampleCollectionPage() {
       <PageHeader
         title="Sample Collection"
         description={`Collect, postpone, and${receiveSeparate ? ' receive' : ''} specimens`}
-        actions={barcodeEnabled ? (
-          <span className="bg-[hsl(var(--status-info-bg))] text-primary rounded px-2 py-0.5 text-xs font-medium">Barcode labels enabled</span>
-        ) : undefined}
+        actions={(
+          <div className="flex items-center gap-2">
+            {barcodeEnabled && (
+              <span className="bg-[hsl(var(--status-info-bg))] text-primary rounded px-2 py-0.5 text-xs font-medium">Barcode labels enabled</span>
+            )}
+            {receiveSeparate && (
+              <Button size="sm" onClick={bulkReceiveSelected} disabled={bulkReceiving || selectedCollectableCount === 0}>
+                {bulkReceiving ? 'Receiving…' : `Bulk Receive (${selectedCollectableCount})`}
+              </Button>
+            )}
+          </div>
+        )}
       />
 
       {/* Filters */}
@@ -289,7 +355,17 @@ export default function SampleCollectionPage() {
       <div className="bg-card rounded-lg border overflow-hidden">
         {/* Table header */}
         <div className="grid bg-muted/50 border-b px-4 py-2.5 text-xs font-bold text-muted-foreground uppercase tracking-wide"
-          style={{ gridTemplateColumns: '80px 1fr 130px 60px 140px 60px' }}>
+          style={{ gridTemplateColumns: '44px 80px 1fr 130px 60px 140px 60px' }}>
+          <div className="flex items-center justify-center">
+            <input
+              type="checkbox"
+              checked={rows.length > 0 && selectedEncounterIds.size === rows.length}
+              onChange={(e) => {
+                if (e.target.checked) setSelectedEncounterIds(new Set(rows.map((r: any) => r.id)));
+                else setSelectedEncounterIds(new Set());
+              }}
+            />
+          </div>
           <div>Time</div>
           <div>Patient</div>
           <div>Order ID</div>
@@ -325,9 +401,17 @@ export default function SampleCollectionPage() {
               {/* Main row */}
               <div
                 className={cn('grid items-center px-4 py-3 cursor-pointer transition-colors hover:bg-muted/20', isOpen ? 'bg-muted/10' : '')}
-                style={{ gridTemplateColumns: '80px 1fr 130px 60px 140px 60px' }}
+                style={{ gridTemplateColumns: '44px 80px 1fr 130px 60px 140px 60px' }}
                 onClick={() => toggleExpand(row.id)}
               >
+                <div className="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedEncounterIds.has(row.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={() => toggleEncounterSelection(row.id)}
+                  />
+                </div>
                 <div className="text-xs text-muted-foreground">
                   <div>{fmtDate(row.createdAt)}</div>
                   <div>{fmt(row.createdAt)}</div>
@@ -470,4 +554,3 @@ export default function SampleCollectionPage() {
     </div>
   );
 }
-

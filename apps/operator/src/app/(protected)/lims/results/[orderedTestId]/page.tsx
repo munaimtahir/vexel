@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
@@ -32,6 +32,27 @@ function patientLabel(p: any): string {
 }
 
 const FLAG_CYCLE: (string | null)[] = [null, 'high', 'low', 'normal'];
+
+function parseRange(referenceRange?: string | null): { low: number; high: number } | null {
+  if (!referenceRange) return null;
+  const m = referenceRange.match(/(-?\d+(?:\.\d+)?)\s*[-–]\s*(-?\d+(?:\.\d+)?)/);
+  if (!m) return null;
+  const low = Number(m[1]);
+  const high = Number(m[2]);
+  if (Number.isNaN(low) || Number.isNaN(high)) return null;
+  return { low, high };
+}
+
+function derivedFlagForValue(p: any, value: string): string | null {
+  if (p?.dataType !== 'number') return null;
+  const n = Number(value);
+  if (value === '' || Number.isNaN(n)) return null;
+  const range = parseRange(p.referenceRange);
+  if (!range) return null;
+  if (n < range.low) return 'low';
+  if (n > range.high) return 'high';
+  return 'normal';
+}
 
 function FlagBadge({ flag, locked, onClick }: { flag: string | null; locked: boolean; onClick: () => void }) {
   if (!flag) {
@@ -87,6 +108,7 @@ export default function ResultsEntryPage() {
   const [publishedDoc, setPublishedDoc] = useState<any>(null);
   const [actionError, setActionError] = useState('');
   const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRefs = useRef<Record<string, HTMLInputElement | HTMLSelectElement | null>>({});
 
   const fetchDetail = useCallback(async () => {
     const api = getApiClient(getToken() ?? undefined);
@@ -291,12 +313,26 @@ export default function ResultsEntryPage() {
     } catch { /* ignore */ }
   };
 
-  if (loading) return <p className="text-muted-foreground p-6">Loading...</p>;
-  if (error) return <p className="text-destructive p-6">{error}</p>;
-  if (!detail) return null;
+  const patient = detail?.patient;
+  const parameters: any[] = detail?.parameters ?? [];
+  const editableIds = useMemo(
+    () => parameters.filter((p) => !p.locked && !p.verifiedAt).map((p) => p.parameterId),
+    [parameters],
+  );
+  const incompleteCount = useMemo(
+    () => parameters.filter((p) => !p.locked && !p.verifiedAt && !String(localValues[p.parameterId] ?? '').trim()).length,
+    [parameters, localValues],
+  );
+  const hasIncompleteParameters = incompleteCount > 0;
 
-  const patient = detail.patient;
-  const parameters: any[] = detail.parameters ?? [];
+  useEffect(() => {
+    const firstEmpty = parameters.find((p) => !p.locked && !p.verifiedAt && !String(localValues[p.parameterId] ?? '').trim());
+    if (!firstEmpty) return;
+    const el = inputRefs.current[firstEmpty.parameterId];
+    if (el && document.activeElement !== el) {
+      el.focus();
+    }
+  }, [orderedTestId, parameters]);
 
   const inputCls = (locked: boolean) => cn(
     'px-2.5 py-1.5 border rounded-md text-sm w-40 transition-colors',
@@ -304,6 +340,36 @@ export default function ResultsEntryPage() {
       ? 'bg-muted/50 text-muted-foreground border-transparent cursor-default'
       : 'bg-white dark:bg-slate-800 border-border dark:border-slate-600 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm'
   );
+
+  const handleGridKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>, parameterId: string) => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        if (!hasIncompleteParameters) {
+          void handleSubmit();
+        }
+        return;
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        void saveCurrentValues();
+        return;
+      }
+      if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+      e.preventDefault();
+      const idx = editableIds.indexOf(parameterId);
+      if (idx < 0) return;
+      const nextIdx = e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? idx - 1 : idx + 1;
+      if (nextIdx < 0 || nextIdx >= editableIds.length) return;
+      const nextEl = inputRefs.current[editableIds[nextIdx]];
+      if (nextEl) nextEl.focus();
+    },
+    [editableIds, hasIncompleteParameters, saveCurrentValues, handleSubmit],
+  );
+
+  if (loading) return <p className="text-muted-foreground p-6">Loading...</p>;
+  if (error) return <p className="text-destructive p-6">{error}</p>;
+  if (!detail) return null;
 
   return (
     <div className="pb-20">
@@ -427,13 +493,22 @@ export default function ResultsEntryPage() {
                 cell: (p) => {
                   const isLocked = !!p.locked || !!p.verifiedAt;
                   const currentValue = localValues[p.parameterId] ?? '';
+                  const autoFlag = derivedFlagForValue(p, currentValue);
+                  const resolvedFlag = (localFlags[p.parameterId] ?? autoFlag) as string | null;
+                  const valueToneClass = resolvedFlag === 'high' || resolvedFlag === 'low'
+                    ? 'text-[hsl(var(--status-destructive-fg))] border-[hsl(var(--status-destructive-border))]'
+                    : resolvedFlag === 'normal'
+                      ? 'text-[hsl(var(--status-success-fg))] border-[hsl(var(--status-success-border))]'
+                      : '';
                   if (p.dataType === 'select' && Array.isArray(p.allowedValues) && p.allowedValues.length > 0) {
                     return (
                       <select
+                        ref={(el) => { inputRefs.current[p.parameterId] = el; }}
                         disabled={isLocked}
                         value={currentValue}
                         onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
-                        className={inputCls(isLocked)}
+                        onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
+                        className={cn(inputCls(isLocked), valueToneClass)}
                       >
                         <option value="">—</option>
                         {p.allowedValues.map((opt: string) => (
@@ -445,10 +520,12 @@ export default function ResultsEntryPage() {
                   if (p.dataType === 'boolean') {
                     return (
                       <select
+                        ref={(el) => { inputRefs.current[p.parameterId] = el; }}
                         disabled={isLocked}
                         value={currentValue}
                         onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
-                        className={inputCls(isLocked)}
+                        onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
+                        className={cn(inputCls(isLocked), valueToneClass)}
                       >
                         <option value="">—</option>
                         <option value="true">Yes</option>
@@ -459,22 +536,26 @@ export default function ResultsEntryPage() {
                   if (p.dataType === 'number') {
                     return (
                       <input
+                        ref={(el) => { inputRefs.current[p.parameterId] = el; }}
                         type="number"
                         step="any"
                         readOnly={isLocked}
                         value={currentValue}
                         onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
-                        className={inputCls(isLocked)}
+                        onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
+                        className={cn(inputCls(isLocked), valueToneClass)}
                       />
                     );
                   }
                   return (
                     <input
+                      ref={(el) => { inputRefs.current[p.parameterId] = el; }}
                       type="text"
                       readOnly={isLocked}
                       value={currentValue}
                       onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
-                      className={inputCls(isLocked)}
+                      onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
+                      className={cn(inputCls(isLocked), valueToneClass)}
                     />
                   );
                 },
@@ -486,7 +567,9 @@ export default function ResultsEntryPage() {
                 header: 'Flag',
                 cell: (p) => {
                   const isLocked = !!p.locked || !!p.verifiedAt;
-                  const currentFlag = localFlags[p.parameterId] ?? null;
+                  const currentValue = localValues[p.parameterId] ?? '';
+                  const autoFlag = derivedFlagForValue(p, currentValue);
+                  const currentFlag = (localFlags[p.parameterId] ?? autoFlag) as string | null;
                   const cycleFlag = () => {
                     if (isLocked) return;
                     const idx = FLAG_CYCLE.indexOf(currentFlag);
@@ -518,7 +601,23 @@ export default function ResultsEntryPage() {
         >
           {submitting || saving ? 'Saving…' : 'Save & Forward'}
         </Button>
+        <Button
+          onClick={handleSubmitAndVerify}
+          disabled={!specimenReady || verifying || saving || isVerified || hasIncompleteParameters}
+          title={hasIncompleteParameters ? 'Complete all unlocked parameters before verify/publish' : 'Submit, verify and publish'}
+          className="bg-primary hover:bg-primary/90"
+        >
+          {verifying ? 'Verifying…' : 'Verify & Publish'}
+        </Button>
+        <span className="self-center text-xs text-muted-foreground">
+          Enter: save, Ctrl+Enter: save & next
+        </span>
       </div>
+      {hasIncompleteParameters && (
+        <p className="mt-2 text-xs text-[hsl(var(--status-warning-fg))]">
+          {incompleteCount} parameter{incompleteCount > 1 ? 's are' : ' is'} incomplete. Verify/publish is disabled.
+        </p>
+      )}
 
       {/* Toast */}
       {toast && <Toast message={toast} onDone={() => setToast('')} />}

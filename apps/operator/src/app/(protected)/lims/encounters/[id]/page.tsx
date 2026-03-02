@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import IdentityHeader from '@/components/identity-header';
+import { EncounterTimeline } from '@/components/EncounterTimeline';
 import { useFeatureFlags, isReceiveSeparate } from '@/hooks/use-feature-flags';
 import { SectionCard, DocumentStatusBadge, DataTable } from '@/components/app';
 import { Button } from '@/components/ui/button';
@@ -122,6 +123,9 @@ export default function EncounterDetailPage() {
         status={status}
         createdAt={encounter.createdAt}
       />
+      <div className="mb-4">
+        <EncounterTimeline encounterId={id} status={status} />
+      </div>
 
       {/* Action Buttons */}
       <div className="flex gap-3 mb-6 flex-wrap">
@@ -265,4 +269,3 @@ export default function EncounterDetailPage() {
     </div>
   );
 }
-

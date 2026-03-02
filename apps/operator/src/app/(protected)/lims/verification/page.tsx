@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { PageHeader, EmptyState, DataTable } from '@/components/app';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -47,6 +48,11 @@ export default function VerificationPage() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'pending' | 'verified'>('pending');
+  const [selectedEncounterIds, setSelectedEncounterIds] = useState<Set<string>>(new Set());
+  const [bulkVerifying, setBulkVerifying] = useState(false);
+  const [toast, setToast] = useState('');
+  const { user } = useCurrentUser();
+  const canBulkVerify = Boolean(user?.isSuperAdmin || user?.permissions?.includes('result.verify'));
 
   const load = async (q: string, view: 'pending' | 'verified_today') => {
     setLoading(true);
@@ -61,6 +67,7 @@ export default function VerificationPage() {
         ? (data as any).data
         : Array.isArray(data) ? data : [];
       setQueue(list);
+      setSelectedEncounterIds(new Set());
     } catch {
       setError('Failed to load verification queue');
     } finally {
@@ -79,9 +86,38 @@ export default function VerificationPage() {
     load(search, view);
   };
 
+  const bulkVerify = async () => {
+    if (!canBulkVerify || bulkVerifying || selectedEncounterIds.size === 0) return;
+    setBulkVerifying(true);
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const ids = Array.from(selectedEncounterIds);
+      const settled = await Promise.allSettled(
+        ids.map((encounterId) =>
+          api.POST('/verification/encounters/{encounterId}:verify', {
+            params: { path: { encounterId } },
+          }),
+        ),
+      );
+      const ok = settled.filter((r) => r.status === 'fulfilled' && !(r.value as any).error).length;
+      const fail = settled.length - ok;
+      setToast(fail > 0 ? `Bulk verification completed (${ok} success, ${fail} failed)` : `Bulk verification completed (${ok})`);
+      const view = tab === 'verified' ? 'verified_today' : 'pending';
+      await load(search, view);
+    } finally {
+      setBulkVerifying(false);
+      setTimeout(() => setToast(''), 2500);
+    }
+  };
+
   return (
     <div>
       <PageHeader title="Verification" />
+      {toast && (
+        <div className="mb-3 rounded-md border border-[hsl(var(--status-success-border))] bg-[hsl(var(--status-success-bg))] px-3 py-2 text-sm text-[hsl(var(--status-success-fg))]">
+          {toast}
+        </div>
+      )}
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as 'pending' | 'verified')} className="mb-5">
         <TabsList>
@@ -99,6 +135,15 @@ export default function VerificationPage() {
           className="max-w-sm"
         />
         <Button type="submit">Search</Button>
+        {tab === 'pending' && canBulkVerify && (
+          <Button
+            type="button"
+            onClick={bulkVerify}
+            disabled={bulkVerifying || selectedEncounterIds.size === 0}
+          >
+            {bulkVerifying ? 'Verifying…' : `Bulk Verify (${selectedEncounterIds.size})`}
+          </Button>
+        )}
       </form>
 
       {loading && <p className="text-muted-foreground text-sm">Loading...</p>}
@@ -112,6 +157,36 @@ export default function VerificationPage() {
             data={queue}
             keyExtractor={(row) => row.encounterId}
             columns={[
+              {
+                key: 'select',
+                header: (
+                  tab === 'pending' ? (
+                    <input
+                      type="checkbox"
+                      checked={queue.length > 0 && selectedEncounterIds.size === queue.length}
+                      onChange={(e) => {
+                        if (e.target.checked) setSelectedEncounterIds(new Set(queue.map((q) => q.encounterId)));
+                        else setSelectedEncounterIds(new Set());
+                      }}
+                    />
+                  ) : null
+                ),
+                cell: (row) =>
+                  tab === 'pending' ? (
+                    <input
+                      type="checkbox"
+                      checked={selectedEncounterIds.has(row.encounterId)}
+                      onChange={() =>
+                        setSelectedEncounterIds((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(row.encounterId)) next.delete(row.encounterId);
+                          else next.add(row.encounterId);
+                          return next;
+                        })
+                      }
+                    />
+                  ) : null,
+              },
               {
                 key: 'time',
                 header: 'Time',

@@ -76,6 +76,10 @@ export default function ReportsPage() {
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const [selectedPatientName, setSelectedPatientName] = useState<string>('');
   const [patientEncounterIds, setPatientEncounterIds] = useState<string[]>([]);
+  const [selectedDocIds, setSelectedDocIds] = useState<Set<string>>(new Set());
+  const [bulkPrinting, setBulkPrinting] = useState(false);
+  const [bulkExporting, setBulkExporting] = useState(false);
+  const [toast, setToast] = useState('');
 
   const fetchDocs = useCallback(async () => {
     setLoading(true);
@@ -114,6 +118,7 @@ export default function ReportsPage() {
       }
 
       setDocs(rows);
+      setSelectedDocIds(new Set());
     } catch (e: any) {
       setError(e.message ?? 'Error loading documents');
     } finally {
@@ -171,6 +176,49 @@ export default function ReportsPage() {
     setDrawerQuery('');
   };
 
+  const bulkPrint = async () => {
+    if (bulkPrinting || selectedDocIds.size === 0) return;
+    setBulkPrinting(true);
+    try {
+      Array.from(selectedDocIds).forEach((id) => {
+        window.open(`/lims/print/${id}`, '_blank');
+      });
+      setToast(`Opened ${selectedDocIds.size} report(s) for printing`);
+      setTimeout(() => setToast(''), 2500);
+    } finally {
+      setBulkPrinting(false);
+    }
+  };
+
+  const bulkExport = async () => {
+    if (bulkExporting || selectedDocIds.size === 0) return;
+    setBulkExporting(true);
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const ids = Array.from(selectedDocIds);
+      let ok = 0;
+      for (const id of ids) {
+        const res = await api.GET('/documents/{id}/download', {
+          params: { path: { id } },
+          parseAs: 'blob',
+        });
+        if (!res.data) continue;
+        const url = URL.createObjectURL(res.data);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `lab-report-${id.slice(0, 8)}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+        ok += 1;
+      }
+      const fail = ids.length - ok;
+      setToast(fail > 0 ? `Exported ${ok}, failed ${fail}` : `Exported ${ok} report(s)`);
+      setTimeout(() => setToast(''), 2500);
+    } finally {
+      setBulkExporting(false);
+    }
+  };
+
   const presets: { key: DatePreset; label: string }[] = [
     { key: 'today', label: 'Today' },
     { key: '3days', label: 'Last 3 days' },
@@ -180,10 +228,25 @@ export default function ReportsPage() {
 
   return (
     <div>
+      {toast && (
+        <div className="mb-3 rounded-md border border-[hsl(var(--status-success-border))] bg-[hsl(var(--status-success-bg))] px-3 py-2 text-sm text-[hsl(var(--status-success-fg))]">
+          {toast}
+        </div>
+      )}
       <PageHeader
         title="Published Reports"
         description="Published lab reports for your lab"
-        actions={<Button variant="outline" size="sm" onClick={fetchDocs}>Refresh</Button>}
+        actions={(
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={fetchDocs}>Refresh</Button>
+            <Button variant="outline" size="sm" onClick={bulkPrint} disabled={bulkPrinting || selectedDocIds.size === 0}>
+              {bulkPrinting ? 'Printing…' : `Bulk Print (${selectedDocIds.size})`}
+            </Button>
+            <Button size="sm" onClick={bulkExport} disabled={bulkExporting || selectedDocIds.size === 0}>
+              {bulkExporting ? 'Exporting…' : `Bulk Export (${selectedDocIds.size})`}
+            </Button>
+          </div>
+        )}
       />
 
       {/* Filters row */}
@@ -318,13 +381,40 @@ export default function ReportsPage() {
       )}
 
       {!loading && !error && docs.length > 0 && (
-        <DataTable
-          data={docs}
-          keyExtractor={(doc: any) => doc.id}
-          columns={[
-            {
-              key: 'type',
-              header: 'Type',
+          <DataTable
+            data={docs}
+            keyExtractor={(doc: any) => doc.id}
+            columns={[
+              {
+                key: 'select',
+                header: (
+                  <input
+                    type="checkbox"
+                    checked={docs.length > 0 && selectedDocIds.size === docs.length}
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedDocIds(new Set(docs.map((d: any) => d.id)));
+                      else setSelectedDocIds(new Set());
+                    }}
+                  />
+                ),
+                cell: (doc: any) => (
+                  <input
+                    type="checkbox"
+                    checked={selectedDocIds.has(doc.id)}
+                    onChange={() =>
+                      setSelectedDocIds((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(doc.id)) next.delete(doc.id);
+                        else next.add(doc.id);
+                        return next;
+                      })
+                    }
+                  />
+                ),
+              },
+              {
+                key: 'type',
+                header: 'Type',
               cell: (doc: any) => (
                 <Badge variant="secondary">
                   {DOC_TYPE_LABELS[doc.type ?? doc.docType] ?? (doc.type ?? doc.docType)}

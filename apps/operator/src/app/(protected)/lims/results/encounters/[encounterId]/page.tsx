@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
@@ -34,6 +34,27 @@ function patientLabel(p: any): string {
 }
 
 const FLAG_CYCLE: (string | null)[] = [null, 'high', 'low', 'normal'];
+
+function parseRange(referenceRange?: string | null): { low: number; high: number } | null {
+  if (!referenceRange) return null;
+  const m = referenceRange.match(/(-?\d+(?:\.\d+)?)\s*[-–]\s*(-?\d+(?:\.\d+)?)/);
+  if (!m) return null;
+  const low = Number(m[1]);
+  const high = Number(m[2]);
+  if (Number.isNaN(low) || Number.isNaN(high)) return null;
+  return { low, high };
+}
+
+function derivedFlagForValue(p: any, value: string): string | null {
+  if (p?.dataType !== 'number') return null;
+  const n = Number(value);
+  if (value === '' || Number.isNaN(n)) return null;
+  const range = parseRange(p.referenceRange);
+  if (!range) return null;
+  if (n < range.low) return 'low';
+  if (n > range.high) return 'high';
+  return 'normal';
+}
 
 function FlagBadge({ flag, locked, onClick }: { flag: string | null; locked: boolean; onClick: () => void }) {
   if (!flag) {
@@ -118,6 +139,7 @@ export default function EncounterResultsPage() {
   const [verifyStatus, setVerifyStatus] = useState<Record<string, 'idle' | 'verifying' | 'verified' | 'published'>>({});
   const [publishedDocs, setPublishedDocs] = useState<Record<string, any>>({});
   const pollRefs = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const inputRefs = useRef<Record<string, HTMLInputElement | HTMLSelectElement | null>>({});
 
   const initTestState = useCallback((detail: TestDetail) => {
     const vals: Record<string, string> = {};
@@ -359,6 +381,55 @@ export default function EncounterResultsPage() {
     } catch { /* ignore */ }
   };
 
+  const firstTest = tests[0];
+  const activeTest = tests.find(t => t.id === activeTestId) ?? firstTest;
+  const patient = firstTest?.patient;
+  const encounterCode = firstTest?.encounterCode ?? encounterId.slice(0, 12);
+  const specimenReady = (firstTest?.specimenStatus ?? '')
+    ? SPECIMEN_READY_STATUSES.some(s => (firstTest.specimenStatus ?? '').toLowerCase().includes(s))
+    : false;
+
+  const isTestSubmitted = activeTest?.resultStatus === 'SUBMITTED';
+  const isTestVerified = ((activeTest?.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
+    || ((activeTest?.specimenStatus ?? '').toLowerCase() === 'verified');
+  const testValues = localValues[activeTest?.id] ?? {};
+  const testFlags = localFlags[activeTest?.id] ?? {};
+  const parameters: any[] = activeTest?.parameters ?? [];
+  const editableIds = useMemo(
+    () => parameters.filter((p) => !p.locked && !p.verifiedAt).map((p) => p.parameterId),
+    [parameters],
+  );
+
+  const allPendingDone = tests.every(t =>
+    ((t.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
+  );
+
+  const handleGridKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>, parameterId: string) => {
+      if (!activeTest?.id) return;
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        void handleSubmit(activeTest.id);
+        return;
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        void saveTest(activeTest.id);
+        return;
+      }
+      if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+      e.preventDefault();
+      const idx = editableIds.indexOf(parameterId);
+      if (idx < 0) return;
+      const nextIdx = e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? idx - 1 : idx + 1;
+      if (nextIdx < 0 || nextIdx >= editableIds.length) return;
+      const nextKey = `${activeTest.id}:${editableIds[nextIdx]}`;
+      const nextEl = inputRefs.current[nextKey];
+      if (nextEl) nextEl.focus();
+    },
+    [activeTest?.id, editableIds, handleSubmit, saveTest],
+  );
+
   if (loading) return <p className="text-muted-foreground p-6">Loading…</p>;
   if (error) return <p className="text-destructive p-6">{error}</p>;
   if (tests.length === 0) return (
@@ -366,24 +437,6 @@ export default function EncounterResultsPage() {
       <Link href="/lims/results" className="text-primary text-sm">← Back to Results</Link>
       <p className="mt-4 text-muted-foreground">No tests found for this encounter.</p>
     </div>
-  );
-
-  const patient = tests[0]?.patient;
-  const encounterCode = tests[0]?.encounterCode ?? encounterId.slice(0, 12);
-  const specimenReady = (tests[0]?.specimenStatus ?? '')
-    ? SPECIMEN_READY_STATUSES.some(s => (tests[0].specimenStatus ?? '').toLowerCase().includes(s))
-    : false;
-
-  const activeTest = tests.find(t => t.id === activeTestId) ?? tests[0];
-  const isTestSubmitted = activeTest?.resultStatus === 'SUBMITTED';
-  const isTestVerified = ((activeTest?.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
-    || ((activeTest?.specimenStatus ?? '').toLowerCase() === 'verified');
-  const testValues = localValues[activeTest?.id] ?? {};
-  const testFlags = localFlags[activeTest?.id] ?? {};
-  const parameters: any[] = activeTest?.parameters ?? [];
-
-  const allPendingDone = tests.every(t =>
-    ((t.parameters ?? []) as any[]).some((p) => !!p.verifiedAt || !!p.locked)
   );
 
   return (
@@ -537,6 +590,13 @@ export default function EncounterResultsPage() {
                 cell: (p) => {
                   const isLocked = !!p.locked || !!p.verifiedAt;
                   const currentValue = testValues[p.parameterId] ?? '';
+                  const autoFlag = derivedFlagForValue(p, currentValue);
+                  const resolvedFlag = (testFlags[p.parameterId] ?? autoFlag) as string | null;
+                  const valueToneClass = resolvedFlag === 'high' || resolvedFlag === 'low'
+                    ? 'text-[hsl(var(--status-destructive-fg))] border-[hsl(var(--status-destructive-border))]'
+                    : resolvedFlag === 'normal'
+                      ? 'text-[hsl(var(--status-success-fg))] border-[hsl(var(--status-success-border))]'
+                      : '';
                   const onValueChange = (val: string) =>
                     setLocalValues((v) => ({
                       ...v,
@@ -544,7 +604,14 @@ export default function EncounterResultsPage() {
                     }));
                   if (p.dataType === 'select' && Array.isArray(p.allowedValues) && p.allowedValues.length > 0) {
                     return (
-                      <select disabled={isLocked} value={currentValue} onChange={(e) => onValueChange(e.target.value)} className={inputCls(isLocked)}>
+                      <select
+                        ref={(el) => { inputRefs.current[`${activeTest.id}:${p.parameterId}`] = el; }}
+                        disabled={isLocked}
+                        value={currentValue}
+                        onChange={(e) => onValueChange(e.target.value)}
+                        onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
+                        className={cn(inputCls(isLocked), valueToneClass)}
+                      >
                         <option value="">—</option>
                         {p.allowedValues.map((opt: string) => <option key={opt} value={opt}>{opt}</option>)}
                       </select>
@@ -552,7 +619,14 @@ export default function EncounterResultsPage() {
                   }
                   if (p.dataType === 'boolean') {
                     return (
-                      <select disabled={isLocked} value={currentValue} onChange={(e) => onValueChange(e.target.value)} className={inputCls(isLocked)}>
+                      <select
+                        ref={(el) => { inputRefs.current[`${activeTest.id}:${p.parameterId}`] = el; }}
+                        disabled={isLocked}
+                        value={currentValue}
+                        onChange={(e) => onValueChange(e.target.value)}
+                        onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
+                        className={cn(inputCls(isLocked), valueToneClass)}
+                      >
                         <option value="">—</option>
                         <option value="true">Yes</option>
                         <option value="false">No</option>
@@ -561,11 +635,28 @@ export default function EncounterResultsPage() {
                   }
                   if (p.dataType === 'number') {
                     return (
-                      <input type="number" step="any" readOnly={isLocked} value={currentValue} onChange={(e) => onValueChange(e.target.value)} className={inputCls(isLocked)} />
+                      <input
+                        ref={(el) => { inputRefs.current[`${activeTest.id}:${p.parameterId}`] = el; }}
+                        type="number"
+                        step="any"
+                        readOnly={isLocked}
+                        value={currentValue}
+                        onChange={(e) => onValueChange(e.target.value)}
+                        onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
+                        className={cn(inputCls(isLocked), valueToneClass)}
+                      />
                     );
                   }
                   return (
-                    <input type="text" readOnly={isLocked} value={currentValue} onChange={(e) => onValueChange(e.target.value)} className={inputCls(isLocked)} />
+                    <input
+                      ref={(el) => { inputRefs.current[`${activeTest.id}:${p.parameterId}`] = el; }}
+                      type="text"
+                      readOnly={isLocked}
+                      value={currentValue}
+                      onChange={(e) => onValueChange(e.target.value)}
+                      onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
+                      className={cn(inputCls(isLocked), valueToneClass)}
+                    />
                   );
                 },
               },
@@ -576,7 +667,9 @@ export default function EncounterResultsPage() {
                 header: 'Flag',
                 cell: (p) => {
                   const isLocked = !!p.locked || !!p.verifiedAt;
-                  const currentFlag = testFlags[p.parameterId] ?? null;
+                  const currentValue = testValues[p.parameterId] ?? '';
+                  const autoFlag = derivedFlagForValue(p, currentValue);
+                  const currentFlag = (testFlags[p.parameterId] ?? autoFlag) as string | null;
                   const cycleFlag = () => {
                     if (isLocked) return;
                     const idx = FLAG_CYCLE.indexOf(currentFlag);
@@ -612,6 +705,7 @@ export default function EncounterResultsPage() {
         >
           {submitting[activeTest.id] || saving[activeTest.id] ? 'Saving…' : 'Save & Forward'}
         </Button>
+        <span className="self-center text-xs text-muted-foreground">Enter: save, Ctrl+Enter: save & next</span>
       </div>
 
       {/* Divider + bulk actions */}
