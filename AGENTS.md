@@ -16,6 +16,17 @@
 ### Pending / follow-up
 - Remote GitHub Actions confirmation run (push + CI on GitHub) can be treated as final external verification; another agent is currently handling CI follow-up.
 
+### Agent tooling baseline (2026-03-02)
+- Playwright MCP server is now repository-owned for restore safety:
+  - Root MCP config: `.mcp.json`
+  - Cursor MCP config: `.cursor/mcp.json`
+  - VS Code MCP config: `.vscode/mcp.json`
+  - Launcher: `scripts/playwright-mcp.sh`
+  - Setup/run guide: `docs/ops/PLAYWRIGHT_MCP_SETUP.md`
+- Fresh machine bootstrap:
+  - `pnpm install --frozen-lockfile`
+  - `pnpm mcp:playwright:install-browsers`
+
 **Live URL:** https://vexel.alshifalab.pk  
 **Repo:** `git@github.com:munaimtahir/vexel.git` (SSH auth)  
 **HEAD commit:** `2287b59` on `main`  

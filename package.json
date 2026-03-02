@@ -6,6 +6,8 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "mcp:playwright": "./scripts/playwright-mcp.sh",
+    "mcp:playwright:install-browsers": "pnpm --filter @vexel/e2e exec playwright install --with-deps chromium",
     "ui:color-lint": "node scripts/ui-color-lint.mjs",
     "sdk:generate": "pnpm --filter @vexel/contracts sdk:generate",
     "check:admin-openapi-parity": "node scripts/check-admin-openapi-parity.js",
@@ -15,6 +17,7 @@
     "mock:smoke": "node scripts/mock-smoke.js"
   },
   "devDependencies": {
+    "@playwright/mcp": "0.0.68",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.12",
     "prisma": "^6.19.2",

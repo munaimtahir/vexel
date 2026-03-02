@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "playwright": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": ["mcp:playwright"]
+    }
+  }
+}
