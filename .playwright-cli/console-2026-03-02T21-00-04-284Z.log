@@ -1,0 +1,3 @@
+[     352ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://vexel.alshifalab.pk/favicon.ico:0
+[   16299ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://vexel.alshifalab.pk/api/verification/encounters/pending?limit=100&view=pending:0
+[   16363ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://vexel.alshifalab.pk/api/verification/encounters/pending?limit=100&view=pending:0

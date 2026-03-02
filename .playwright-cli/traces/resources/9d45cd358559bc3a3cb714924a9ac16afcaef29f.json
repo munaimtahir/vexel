@@ -1,0 +1,1 @@
+{"userId":"92d9d369-65f9-49be-b696-14abd3a95639","email":"operator@demo.vexel.pk","tenantId":"system","roles":["operator"],"isSuperAdmin":false,"permissions":["catalog.read","patient.manage","encounter.manage","result.enter","document.generate"],"firstName":"Demo","lastName":"Operator"}
