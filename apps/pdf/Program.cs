@@ -756,7 +756,6 @@ class ReceiptDocument : IDocument
         var footerLayout  = _branding.ReceiptFooterLayout ?? "text";
 
         container
-            .ShowEntire()
             .Border(0.7f)
             .BorderColor(Colors.Grey.Lighten1)
             .Padding(3f, Unit.Millimetre)
@@ -818,7 +817,7 @@ class ReceiptDocument : IDocument
             });
 
             // 6. Items table + totals
-            col.Item().ExtendVertical().Element(ComposeReceiptBodyA4);
+            col.Item().Element(ComposeReceiptBodyA4);
 
             // 8. Barcode
             if (barcodeBytes != null)
@@ -834,17 +833,20 @@ class ReceiptDocument : IDocument
             // 9. Footer — respects footerLayout
             col.Item().PaddingTop(2).Element(footer =>
             {
-                footer.LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
-                if (footerLayout == "both" && _logoBytes != null)
+                footer.Column(fc =>
                 {
-                    footer.PaddingTop(2).Column(fc => {
-                        fc.Item().AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
-                    });
-                }
-                else
-                {
-                    footer.PaddingTop(2).AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
-                }
+                    fc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
+                    if (footerLayout == "both" && _logoBytes != null)
+                    {
+                        fc.Item().PaddingTop(2).Column(inner => {
+                            inner.Item().AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+                        });
+                    }
+                    else
+                    {
+                        fc.Item().PaddingTop(2).AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    }
+                });
             });
         });
     }

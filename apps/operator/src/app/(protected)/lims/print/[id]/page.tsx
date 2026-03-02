@@ -19,7 +19,33 @@ export default function PrintPage() {
   const [downloading, setDownloading] = useState(false);
   const [docName, setDocName]     = useState('document');
 
-  async function loadPdf(docId: string, fmt?: Format) {
+  // Track whether the user has explicitly changed the format toggle so we only
+  // re-render via PDF service when needed (not on the initial docType population).
+  const prevFormatRef = useRef<Format>('a4');
+  const initialLoadDoneRef = useRef(false);
+
+  /** Serve already-rendered bytes from MinIO — fast path (~200ms). */
+  async function loadFromStorage(docId: string) {
+    setLoading(true);
+    setError('');
+    if (pdfUrl) { URL.revokeObjectURL(pdfUrl); setPdfUrl(null); }
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const { data, error: apiError } = await api.GET('/documents/{id}/download', {
+        params: { path: { id: docId } },
+        parseAs: 'blob',
+      });
+      if (apiError || !data) throw new Error('Failed to download PDF');
+      setPdfUrl(URL.createObjectURL(data));
+    } catch (e: any) {
+      setError(e.message ?? 'Failed to load PDF');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /** Re-render via PDF service — used only for format overrides (thermal layout). */
+  async function loadWithFormatOverride(docId: string, fmt: Format) {
     setLoading(true);
     setError('');
     if (pdfUrl) { URL.revokeObjectURL(pdfUrl); setPdfUrl(null); }
@@ -28,13 +54,12 @@ export default function PrintPage() {
       const { data, error: apiError } = await api.GET('/documents/{id}/render', {
         params: {
           path: { id: docId },
-          query: fmt ? { format: fmt } : {},
+          query: fmt !== 'a4' ? { format: fmt } : {},
         },
         parseAs: 'blob',
       });
       if (apiError || !data) throw new Error('Failed to render PDF');
-      const objUrl = URL.createObjectURL(data);
-      setPdfUrl(objUrl);
+      setPdfUrl(URL.createObjectURL(data));
     } catch (e: any) {
       setError(e.message ?? 'Failed to load PDF');
     } finally {
@@ -42,7 +67,7 @@ export default function PrintPage() {
     }
   }
 
-  // Load doc metadata on mount
+  // Load doc metadata + initial PDF bytes from storage on mount.
   useEffect(() => {
     if (!id) return;
     const api = getApiClient(getToken() ?? undefined);
@@ -52,14 +77,20 @@ export default function PrintPage() {
       const mrn = data?.sourceRef ?? '';
       setDocName(type === 'RECEIPT' ? `receipt-${mrn}` : `lab-report-${mrn}`);
     }).catch(() => {});
-    loadPdf(id);
+    // Always serve from MinIO on initial load (fast path).
+    loadFromStorage(id);
+    initialLoadDoneRef.current = true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // Reload PDF when format changes (only for RECEIPT)
+  // Only re-render via PDF service when the user explicitly changes the format toggle.
   useEffect(() => {
-    if (!id || !docType) return;
-    if (docType === 'RECEIPT') loadPdf(id, format);
+    if (!id || !docType || !initialLoadDoneRef.current) return;
+    if (docType !== 'RECEIPT') return;
+    // Guard: only fire when format actually changed from previous value.
+    if (format === prevFormatRef.current) return;
+    prevFormatRef.current = format;
+    loadWithFormatOverride(id, format);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [format, docType]);
 
@@ -96,7 +127,7 @@ export default function PrintPage() {
           {docType === 'RECEIPT' ? '🧾 Receipt' : '📋 Lab Report'}
         </span>
 
-        {/* Format toggle — RECEIPT only */}
+        {/* Format toggle — RECEIPT only; switches to thermal re-render via PDF service */}
         {docType === 'RECEIPT' && (
           <div style={{
             display: 'flex', border: '1px solid hsl(var(--border))', borderRadius: '6px',

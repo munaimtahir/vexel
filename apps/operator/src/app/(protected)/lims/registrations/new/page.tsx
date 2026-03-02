@@ -403,18 +403,19 @@ export default function NewRegistrationPage() {
       // Show success screen immediately
       setSavedEncounterId(encounterId);
 
-      // Poll for receipt PDF in background (up to 30 seconds)
+      // Poll for receipt PDF in background with exponential backoff
+      // Stops as soon as status is RENDERED or PUBLISHED (receipts auto-publish after render)
       setPollingReceipt(true);
       (async () => {
-        for (let i = 0; i < 20; i++) {
-          await new Promise(r => setTimeout(r, 1500));
+        const delays = [500, 1000, 2000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
+        for (let i = 0; i < delays.length; i++) {
+          await new Promise(r => setTimeout(r, delays[i]));
           try {
-            const { data: docs } = await api.GET('/documents' as any, { params: { query: { sourceRef: encounterId, status: 'PUBLISHED', docType: 'RECEIPT', limit: 1 } } });
+            const { data: docs } = await api.GET('/documents' as any, { params: { query: { sourceRef: encounterId, docType: 'RECEIPT', limit: 1 } } });
             // API returns a plain array
             const items: any[] = Array.isArray(docs) ? docs : ((docs as any)?.items ?? (docs as any)?.data ?? []);
-            if (items.length > 0) {
-              setReceiptDocId(items[0].id); break;
-            }
+            const ready = items.find((d: any) => d.status === 'PUBLISHED' || d.status === 'RENDERED');
+            if (ready) { setReceiptDocId(ready.id); break; }
           } catch { /* keep trying */ }
         }
         setPollingReceipt(false);

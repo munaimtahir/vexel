@@ -6,6 +6,9 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
 
+// RECEIPTs are auto-published immediately after rendering (no manual publish step needed)
+const AUTO_PUBLISH_TYPES = new Set(['RECEIPT', 'OPD_INVOICE_RECEIPT']);
+
 interface RenderJobData {
   documentId: string;
   tenantId: string;
@@ -60,7 +63,12 @@ async function writeAudit(
   }
 }
 
-function postJson(url: string, body: string, timeoutMs = 30_000): Promise<{ pdfHash: string; bytes: Buffer }> {
+function postJson(
+  url: string,
+  body: string,
+  correlationId: string,
+  timeoutMs = 60_000,
+): Promise<{ pdfHash: string; bytes: Buffer }> {
   return new Promise((resolve, reject) => {
     const parsed = new URL(url);
     const isHttps = parsed.protocol === 'https:';
@@ -74,6 +82,7 @@ function postJson(url: string, body: string, timeoutMs = 30_000): Promise<{ pdfH
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(body),
+        'X-Correlation-ID': correlationId,
       },
     };
 
@@ -104,12 +113,16 @@ function postJson(url: string, body: string, timeoutMs = 30_000): Promise<{ pdfH
 
 export async function processDocumentRender(job: Job<RenderJobData>) {
   const { documentId, tenantId, correlationId } = job.data;
+  const t0 = Date.now();
+  const logCtx = `[document-render] correlationId=${correlationId} docId=${documentId}`;
 
   // Fetch document with template
+  const tFetch = Date.now();
   const doc = await prisma.document.findUnique({
     where: { id: documentId },
     include: { template: true },
   });
+  console.log(`${logCtx} fetch_doc_ms=${Date.now() - tFetch} type=${doc?.type ?? 'unknown'}`);
 
   if (!doc) {
     throw new Error(`Document ${documentId} not found`);
@@ -117,7 +130,7 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
 
   // Idempotent: already rendered or published
   if (doc.status === 'RENDERED' || doc.status === 'PUBLISHED') {
-    console.log(`[document-render] Document ${documentId} already ${doc.status}, skipping`);
+    console.log(`${logCtx} status=${doc.status} → skipping (idempotent)`);
     return;
   }
 
@@ -137,22 +150,37 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
   });
 
   try {
-    const { pdfHash, bytes } = await postJson(`${PDF_SERVICE_URL}/render`, renderBody);
+    const tPdf = Date.now();
+    const { pdfHash, bytes } = await postJson(
+      `${PDF_SERVICE_URL}/render`,
+      renderBody,
+      correlationId,
+    );
+    console.log(`${logCtx} pdf_render_ms=${Date.now() - tPdf} bytes=${bytes.length}`);
 
     // Upload to MinIO
+    const tUpload = Date.now();
     const storageKey = await uploadToStorage(tenantId, documentId, bytes);
+    console.log(`${logCtx} storage_upload_ms=${Date.now() - tUpload} key=${storageKey}`);
 
-    // Transition to RENDERED first (preserves state machine integrity)
+    // Transition to RENDERED
     await prisma.document.update({
       where: { id: documentId },
-      data: {
-        status: 'RENDERED',
-        pdfHash: pdfHash || null,
-        storageKey,
-      },
+      data: { status: 'RENDERED', pdfHash: pdfHash || null, storageKey },
     });
     await writeAudit(tenantId, 'document.rendered', documentId, correlationId, { pdfHash, storageKey });
-    console.log(`[document-render] Document ${documentId} rendered, key=${storageKey}`);
+
+    // Auto-publish receipt types (no manual publish step required)
+    if (AUTO_PUBLISH_TYPES.has(doc.type)) {
+      await prisma.document.update({
+        where: { id: documentId },
+        data: { status: 'PUBLISHED', publishedAt: new Date() },
+      });
+      await writeAudit(tenantId, 'document.auto_published', documentId, correlationId, { type: doc.type });
+      console.log(`${logCtx} auto_published type=${doc.type} total_ms=${Date.now() - t0}`);
+    } else {
+      console.log(`${logCtx} rendered total_ms=${Date.now() - t0}`);
+    }
   } catch (err) {
     const errorMessage = (err as Error).message;
     await prisma.document.update({
@@ -161,7 +189,7 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
     });
 
     await writeAudit(tenantId, 'document.render_failed', documentId, correlationId, { errorMessage });
-    console.error(`[document-render] Document ${documentId} failed:`, errorMessage);
+    console.error(`${logCtx} FAILED total_ms=${Date.now() - t0} error=${errorMessage}`);
     throw err; // Re-throw so BullMQ can retry
   }
 }

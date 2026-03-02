@@ -174,7 +174,7 @@ export class DocumentsService {
             data: {
               templateId: template.id,
               payloadJson: jsonPayload,
-              status: 'DRAFT',
+              status: 'RENDERING',
               sourceRef,
               sourceType,
               errorMessage: null,
@@ -190,25 +190,22 @@ export class DocumentsService {
               templateId: template.id,
               payloadJson: jsonPayload,
               payloadHash: hash,
-              status: 'DRAFT',
+              status: 'RENDERING',
               sourceRef,
               sourceType,
               createdBy: actorUserId,
             },
           });
 
-    // Enqueue BullMQ job
-    await this.renderQueue.add('render', {
-      documentId: doc.id,
-      tenantId,
-      correlationId,
-    });
-
-    // Update status to RENDERING
-    const updated = await this.prisma.document.update({
-      where: { id: doc.id },
-      data: { status: 'RENDERING' },
-    });
+    // Enqueue BullMQ job (status already RENDERING — no race with worker)
+    await this.renderQueue.add(
+      'render',
+      { documentId: doc.id, tenantId, correlationId },
+      {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 2000 },
+      },
+    );
 
     // Write AuditEvent
     await this.audit.log({
@@ -221,7 +218,7 @@ export class DocumentsService {
       after: { type, status: 'RENDERING', payloadHash: hash, templateId: template.id },
     });
 
-    return { document: updated, created: true };
+    return { document: doc, created: true };
   }
 
   async publishDocument(

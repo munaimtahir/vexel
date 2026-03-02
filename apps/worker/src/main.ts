@@ -51,8 +51,11 @@ const catalogImportWorker = new Worker('catalog-import', processCatalogImport, {
 // Catalog export processor
 const catalogExportWorker = new Worker('catalog-export', processCatalogExport, { connection });
 
-// Document render processor
-const documentRenderWorker = new Worker('document-render', processDocumentRender, { connection });
+// Document render processor — concurrency=3 so multiple render jobs run in parallel
+const documentRenderWorker = new Worker('document-render', processDocumentRender, {
+  connection,
+  concurrency: 3,
+});
 
 jobsWorker.on('completed', (job) => console.log(`[jobs] Job ${job.id} completed`));
 jobsWorker.on('failed', (job, err) => console.error(`[jobs] Job ${job?.id} failed: ${err.message}`));
