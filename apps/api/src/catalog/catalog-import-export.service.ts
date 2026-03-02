@@ -20,7 +20,7 @@ export class CatalogImportExportService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
-  ) {}
+  ) { }
 
   // ─── Template Generation ──────────────────────────────────────────────────
 
@@ -443,11 +443,18 @@ export class CatalogImportExportService {
 
   private async _importSampleType(tenantId: string, row: Record<string, string>, rowNum: number, opts: { mode: string; validate: boolean }, result: any) {
     let externalId = this._val(row, 'externalId') ?? null;
+    const userCode = this._valOrNull(row, 'userCode');
     if (externalId && !/^s\d+$/.test(externalId)) {
-      result.errors.push({ row: rowNum, field: 'externalId', code: 'INVALID_EXTERNAL_ID', message: `externalId must match s<number> format, got '${externalId}'` });
-      return;
+      if (!userCode) {
+        row.userCode = externalId;
+      }
+      externalId = null;
     }
-    const existing = externalId ? await this.prisma.sampleType.findFirst({ where: { tenantId, externalId } }) : null;
+    let existing = externalId ? await this.prisma.sampleType.findFirst({ where: { tenantId, externalId } }) : null;
+    if (!existing && row.userCode) {
+      existing = await this.prisma.sampleType.findFirst({ where: { tenantId, userCode: row.userCode } });
+      if (existing) externalId = existing.externalId;
+    }
     if (existing) {
       if (opts.mode === 'CREATE_ONLY') { result.skipped++; return; }
       if (!opts.validate) {
@@ -486,16 +493,24 @@ export class CatalogImportExportService {
 
   private async _importParameter(tenantId: string, row: Record<string, string>, rowNum: number, opts: { mode: string; validate: boolean }, result: any) {
     let externalId = this._val(row, 'externalId') ?? null;
+    const userCode = this._valOrNull(row, 'userCode');
     if (externalId) {
       if (!/^p\d+$/.test(externalId)) {
-        result.errors.push({ row: rowNum, field: 'externalId', code: 'INVALID_EXTERNAL_ID', message: `externalId must match p<number> format, got '${externalId}'` });
-        return;
+        if (!userCode) {
+          row.userCode = externalId;
+        }
+        externalId = null;
       }
     }
 
-    const existing = externalId
+    let existing = externalId
       ? await this.prisma.parameter.findFirst({ where: { tenantId, externalId } })
       : null;
+
+    if (!existing && row.userCode) {
+      existing = await this.prisma.parameter.findFirst({ where: { tenantId, userCode: row.userCode } });
+      if (existing) externalId = existing.externalId;
+    }
 
     if (existing) {
       if (opts.mode === 'CREATE_ONLY') { result.skipped++; return; }
@@ -542,10 +557,13 @@ export class CatalogImportExportService {
 
   private async _importTest(tenantId: string, row: Record<string, string>, rowNum: number, opts: { mode: string; validate: boolean }, result: any) {
     let externalId = this._val(row, 'externalId') ?? null;
+    const userCode = this._valOrNull(row, 'userCode');
     if (externalId) {
       if (!/^t\d+$/.test(externalId)) {
-        result.errors.push({ row: rowNum, field: 'externalId', code: 'INVALID_EXTERNAL_ID', message: `externalId must match t<number> format, got '${externalId}'` });
-        return;
+        if (!userCode) {
+          row.userCode = externalId;
+        }
+        externalId = null;
       }
     }
     const priceRaw = this._val(row, 'price');
@@ -563,18 +581,25 @@ export class CatalogImportExportService {
     let sampleTypeId: string | undefined;
     let resolvedSampleTypeName: string | null | undefined = specimenType;
     if (sampleTypeExternalId) {
-      const sampleType = await this.prisma.sampleType.findFirst({ where: { tenantId, externalId: sampleTypeExternalId } });
+      const sampleType = await this.prisma.sampleType.findFirst({
+        where: /^s\d+$/.test(sampleTypeExternalId) ? { tenantId, externalId: sampleTypeExternalId } : { tenantId, userCode: { equals: sampleTypeExternalId, mode: 'insensitive' } }
+      });
       if (!sampleType) {
-        result.errors.push({ row: rowNum, field: 'sampleTypeExternalId', code: 'INVALID_SAMPLE_TYPE', message: `SampleType externalId '${sampleTypeExternalId}' not found`, suggestion: 'Add SampleTypes sheet row first or fix externalId' });
+        result.errors.push({ row: rowNum, field: 'sampleTypeExternalId', code: 'INVALID_SAMPLE_TYPE', message: `SampleType externalId or userCode '${sampleTypeExternalId}' not found`, suggestion: 'Add SampleTypes sheet row first or fix externalId' });
         return;
       }
       sampleTypeId = sampleType.id;
       resolvedSampleTypeName = sampleType.name;
     }
 
-    const existing = externalId
+    let existing = externalId
       ? await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId } })
       : null;
+
+    if (!existing && row.userCode) {
+      existing = await this.prisma.catalogTest.findFirst({ where: { tenantId, userCode: row.userCode } });
+      if (existing) externalId = existing.externalId;
+    }
 
     if (existing) {
       if (opts.mode === 'CREATE_ONLY') { result.skipped++; return; }
@@ -629,10 +654,13 @@ export class CatalogImportExportService {
 
   private async _importPanel(tenantId: string, row: Record<string, string>, rowNum: number, opts: { mode: string; validate: boolean }, result: any) {
     let externalId = this._val(row, 'externalId') ?? null;
+    const userCode = this._valOrNull(row, 'userCode');
     if (externalId) {
       if (!/^g\d+$/.test(externalId)) {
-        result.errors.push({ row: rowNum, field: 'externalId', code: 'INVALID_EXTERNAL_ID', message: `externalId must match g<number> format, got '${externalId}'` });
-        return;
+        if (!userCode) {
+          row.userCode = externalId;
+        }
+        externalId = null;
       }
     }
     const priceRaw = this._val(row, 'price');
@@ -646,9 +674,14 @@ export class CatalogImportExportService {
       price = parsed;
     }
 
-    const existing = externalId
+    let existing = externalId
       ? await this.prisma.catalogPanel.findFirst({ where: { tenantId, externalId } })
       : null;
+
+    if (!existing && row.userCode) {
+      existing = await this.prisma.catalogPanel.findFirst({ where: { tenantId, userCode: row.userCode } });
+      if (existing) externalId = existing.externalId;
+    }
 
     if (existing) {
       if (opts.mode === 'CREATE_ONLY') { result.skipped++; return; }
@@ -690,11 +723,15 @@ export class CatalogImportExportService {
     const paramExtId = this._val(row, 'parameterExternalId');
     if (!testExtId || !paramExtId) { result.errors.push({ row: rowNum, field: 'testExternalId', code: 'REQUIRED', message: 'testExternalId and parameterExternalId are required' }); return; }
 
-    const test = await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId: testExtId } });
-    if (!test) { result.errors.push({ row: rowNum, field: 'testExternalId', code: 'NOT_FOUND', message: `Test externalId '${testExtId}' not found` }); return; }
+    const test = await this.prisma.catalogTest.findFirst({
+      where: /^t\d+$/.test(testExtId) ? { tenantId, externalId: testExtId } : { tenantId, userCode: { equals: testExtId, mode: 'insensitive' } }
+    });
+    if (!test) { result.errors.push({ row: rowNum, field: 'testExternalId', code: 'NOT_FOUND', message: `Test externalId or userCode '${testExtId}' not found` }); return; }
 
-    const param = await this.prisma.parameter.findFirst({ where: { tenantId, externalId: paramExtId } });
-    if (!param) { result.errors.push({ row: rowNum, field: 'parameterExternalId', code: 'NOT_FOUND', message: `Parameter externalId '${paramExtId}' not found` }); return; }
+    const param = await this.prisma.parameter.findFirst({
+      where: /^p\d+$/.test(paramExtId) ? { tenantId, externalId: paramExtId } : { tenantId, userCode: { equals: paramExtId, mode: 'insensitive' } }
+    });
+    if (!param) { result.errors.push({ row: rowNum, field: 'parameterExternalId', code: 'NOT_FOUND', message: `Parameter externalId or userCode '${paramExtId}' not found` }); return; }
 
     const displayOrder = parseInt(this._val(row, 'displayOrder') ?? '0', 10);
     const isRequired = this._val(row, 'isRequired') !== 'false';
@@ -728,11 +765,15 @@ export class CatalogImportExportService {
     const testExtId = this._val(row, 'testExternalId');
     if (!panelExtId || !testExtId) { result.errors.push({ row: rowNum, field: 'panelExternalId', code: 'REQUIRED', message: 'panelExternalId and testExternalId are required' }); return; }
 
-    const panel = await this.prisma.catalogPanel.findFirst({ where: { tenantId, externalId: panelExtId } });
-    if (!panel) { result.errors.push({ row: rowNum, field: 'panelExternalId', code: 'NOT_FOUND', message: `Panel externalId '${panelExtId}' not found` }); return; }
+    const panel = await this.prisma.catalogPanel.findFirst({
+      where: /^g\d+$/.test(panelExtId) ? { tenantId, externalId: panelExtId } : { tenantId, userCode: { equals: panelExtId, mode: 'insensitive' } }
+    });
+    if (!panel) { result.errors.push({ row: rowNum, field: 'panelExternalId', code: 'NOT_FOUND', message: `Panel externalId or userCode '${panelExtId}' not found` }); return; }
 
-    const test = await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId: testExtId } });
-    if (!test) { result.errors.push({ row: rowNum, field: 'testExternalId', code: 'NOT_FOUND', message: `Test externalId '${testExtId}' not found` }); return; }
+    const test = await this.prisma.catalogTest.findFirst({
+      where: /^t\d+$/.test(testExtId) ? { tenantId, externalId: testExtId } : { tenantId, userCode: { equals: testExtId, mode: 'insensitive' } }
+    });
+    if (!test) { result.errors.push({ row: rowNum, field: 'testExternalId', code: 'NOT_FOUND', message: `Test externalId or userCode '${testExtId}' not found` }); return; }
 
     const displayOrder = parseInt(this._val(row, 'displayOrder') ?? '0', 10);
 
@@ -766,18 +807,22 @@ export class CatalogImportExportService {
       return;
     }
 
-    const parameter = await this.prisma.parameter.findFirst({ where: { tenantId, externalId: parameterExternalId } });
+    const parameter = await this.prisma.parameter.findFirst({
+      where: /^p\d+$/.test(parameterExternalId) ? { tenantId, externalId: parameterExternalId } : { tenantId, userCode: { equals: parameterExternalId, mode: 'insensitive' } }
+    });
     if (!parameter) {
-      result.errors.push({ row: rowNum, field: 'parameterExternalId', code: 'NOT_FOUND', message: `Parameter externalId '${parameterExternalId}' not found` });
+      result.errors.push({ row: rowNum, field: 'parameterExternalId', code: 'NOT_FOUND', message: `Parameter externalId or userCode '${parameterExternalId}' not found` });
       return;
     }
 
     let testId: string | undefined;
     const testExternalId = this._val(row, 'testExternalId');
     if (testExternalId) {
-      const test = await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId: testExternalId } });
+      const test = await this.prisma.catalogTest.findFirst({
+        where: /^t\d+$/.test(testExternalId) ? { tenantId, externalId: testExternalId } : { tenantId, userCode: { equals: testExternalId, mode: 'insensitive' } }
+      });
       if (!test) {
-        result.errors.push({ row: rowNum, field: 'testExternalId', code: 'NOT_FOUND', message: `Test externalId '${testExternalId}' not found` });
+        result.errors.push({ row: rowNum, field: 'testExternalId', code: 'NOT_FOUND', message: `Test externalId or userCode '${testExternalId}' not found` });
         return;
       }
       testId = test.id;
@@ -799,12 +844,12 @@ export class CatalogImportExportService {
 
     const effectiveLow =
       parsedRange?.kind === 'between' ? parsedRange.low
-      : parsedRange?.kind === 'gt' || parsedRange?.kind === 'gte' ? parsedRange.value
-      : explicitLow;
+        : parsedRange?.kind === 'gt' || parsedRange?.kind === 'gte' ? parsedRange.value
+          : explicitLow;
     const effectiveHigh =
       parsedRange?.kind === 'between' ? parsedRange.high
-      : parsedRange?.kind === 'lt' || parsedRange?.kind === 'lte' ? parsedRange.value
-      : explicitHigh;
+        : parsedRange?.kind === 'lt' || parsedRange?.kind === 'lte' ? parsedRange.value
+          : explicitHigh;
     const gender = this._val(row, 'gender');
     if (gender !== undefined && gender !== 'M' && gender !== 'F') {
       result.errors.push({ row: rowNum, field: 'gender', code: 'INVALID_ENUM', message: "gender must be 'M' or 'F'" });

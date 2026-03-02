@@ -81,6 +81,7 @@ export default function ImportExportPage() {
       const { data, error } = await api.POST('/catalog/import/workbook' as any, {
         params: { query: { validate, mode } },
         body: form as any,
+        bodySerializer: (body: any) => body,
       } as any);
       if (error || !data) {
         const errMsg = (error as any)?.message ?? (error as any)?.detail ?? JSON.stringify(error) ?? 'Import failed';

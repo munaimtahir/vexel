@@ -539,15 +539,17 @@ export class CatalogService {
       const testExternalId = cols[0];
       const paramCols = cols.slice(1);
 
-      if (!testExternalId || !/^t\d+$/.test(testExternalId)) {
-        warnings.push({ row: rowNum, message: `Invalid test_id format '${testExternalId}' — must match t<number>` });
+      if (!testExternalId) {
+        warnings.push({ row: rowNum, message: `Invalid test_id empty` });
         skipped++;
         continue;
       }
 
-      const test = await this.prisma.catalogTest.findFirst({ where: { tenantId, externalId: testExternalId } });
+      const test = await this.prisma.catalogTest.findFirst({
+        where: /^t\d+$/.test(testExternalId) ? { tenantId, externalId: testExternalId } : { tenantId, userCode: { equals: testExternalId, mode: 'insensitive' } }
+      });
       if (!test) {
-        warnings.push({ row: rowNum, message: `Test externalId '${testExternalId}' not found` });
+        warnings.push({ row: rowNum, message: `Test '${testExternalId}' not found` });
         skipped++;
         continue;
       }
@@ -557,14 +559,11 @@ export class CatalogService {
         if (!paramExternalId) continue;
         const displayOrder = j + 1;
 
-        if (!/^p\d+$/.test(paramExternalId)) {
-          warnings.push({ row: rowNum, message: `Invalid parameter externalId '${paramExternalId}' at column ${j + 2} — must match p<number>` });
-          continue;
-        }
-
-        const param = await this.prisma.parameter.findFirst({ where: { tenantId, externalId: paramExternalId } });
+        const param = await this.prisma.parameter.findFirst({
+          where: /^p\d+$/.test(paramExternalId) ? { tenantId, externalId: paramExternalId } : { tenantId, userCode: { equals: paramExternalId, mode: 'insensitive' } }
+        });
         if (!param) {
-          warnings.push({ row: rowNum, message: `Parameter externalId '${paramExternalId}' not found` });
+          warnings.push({ row: rowNum, message: `Parameter '${paramExternalId}' not found` });
           continue;
         }
 
