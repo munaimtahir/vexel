@@ -1,23 +1,12 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
-import { getApiClient } from '@/lib/api-client';
-import { getToken, logout, decodeJwt } from '@/lib/auth';
+import { logout } from '@/lib/auth';
+import { useCurrentUser, invalidateCurrentUserCache, type CurrentUser } from '@/hooks/use-current-user';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-type MeUser = {
-  userId: string;
-  email: string;
-  tenantId: string;
-  roles: string[];
-  permissions: string[];
-  isSuperAdmin: boolean;
-  firstName: string | null;
-  lastName: string | null;
-};
 
 type ModuleDef = {
   id: string;
@@ -76,7 +65,7 @@ function hasAnyPerm(userPerms: string[], required: string[]): boolean {
   return required.some((p) => userPerms.includes(p));
 }
 
-function displayName(user: MeUser): string {
+function displayName(user: CurrentUser): string {
   if (user.firstName || user.lastName) {
     return [user.firstName, user.lastName].filter(Boolean).join(' ');
   }
@@ -101,42 +90,19 @@ function tenantLabel(tenantId: string): string {
 export default function OperatorLandingPage() {
   const router = useRouter();
   const { flags, loading: flagsLoading } = useFeatureFlags();
-  const [user, setUser] = useState<MeUser | null>(null);
-  const [userLoading, setUserLoading] = useState(true);
-
-  // Fetch current user profile — decode JWT immediately for instant RBAC, then enrich with /me
-  useEffect(() => {
-    const jwtData = decodeJwt(getToken());
-    if (jwtData) {
-      setUser({
-        userId: jwtData.sub,
-        email: jwtData.email,
-        tenantId: jwtData.tenantId,
-        roles: jwtData.roles ?? [],
-        permissions: jwtData.permissions ?? [],
-        isSuperAdmin: jwtData.isSuperAdmin ?? false,
-        firstName: null,
-        lastName: null,
-      } as MeUser);
-      setUserLoading(false);
-    }
-    const api = getApiClient(getToken() ?? undefined);
-    (api.GET as any)('/me').then(({ data }: any) => {
-      if (data) setUser(data as MeUser);
-      setUserLoading(false);
-    }).catch(() => setUserLoading(false));
-  }, []);
+  const { user, loading: userLoading } = useCurrentUser();
 
   const loading = flagsLoading || userLoading;
   const userPerms: string[] = user?.permissions ?? [];
-  const isAdmin = user?.isSuperAdmin || hasAnyPerm(userPerms, ADMIN_MODULE.requiredPerms);
+  const isAdmin = Boolean(user?.isSuperAdmin) || hasAnyPerm(userPerms, ADMIN_MODULE.requiredPerms);
 
   // Resolve module visibility: feature flag enabled AND user has required permission
   const modules = useMemo(() => {
     return MODULE_DEFS.map((mod) => {
       const flagEnabled = mod.flagKey ? Boolean(flags?.[mod.flagKey]) : true;
       const canAccess = user?.isSuperAdmin || hasAnyPerm(userPerms, mod.requiredPerms);
-      return { ...mod, flagEnabled, canAccess, visible: flagEnabled && canAccess };
+      const isFeatureActive = flagEnabled || Boolean(user?.isSuperAdmin);
+      return { ...mod, flagEnabled: isFeatureActive, canAccess, visible: isFeatureActive && canAccess };
     });
   }, [flags, user, userPerms]);
 
@@ -144,6 +110,7 @@ export default function OperatorLandingPage() {
   const comingSoonModules = modules.filter((m) => !m.visible && !m.flagEnabled);
 
   function handleLogout() {
+    invalidateCurrentUserCache();
     logout();
     router.replace('/login');
   }

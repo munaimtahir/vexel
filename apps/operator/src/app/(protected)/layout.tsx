@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getToken, decodeJwt } from '@/lib/auth';
+import { getToken } from '@/lib/auth';
 import QueryProvider from '@/components/query-provider';
+import { ImpersonationBanner } from '@/components/impersonation-banner';
 
 /** Auth guard only — no sidebar here. Sidebar lives in /lims/layout.tsx */
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
@@ -13,12 +14,6 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     const token = getToken();
     if (!token) {
       router.replace('/login');
-      return;
-    }
-    const payload = decodeJwt(token);
-    const hasAccess = payload?.isSuperAdmin || payload?.permissions?.includes('module.operator');
-    if (!hasAccess) {
-      router.replace('/login?error=no_operator_access');
       return;
     }
     setChecked(true);
@@ -32,5 +27,10 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     );
   }
 
-  return <QueryProvider>{children}</QueryProvider>;
+  return (
+    <QueryProvider>
+      <ImpersonationBanner />
+      {children}
+    </QueryProvider>
+  );
 }

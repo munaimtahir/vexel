@@ -3,9 +3,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, FlaskConical, LogOut } from 'lucide-react';
-import { clearTokens, decodeJwt, getToken } from '@/lib/auth';
+import { clearTokens } from '@/lib/auth';
 import { LIMS_NAV, OPD_NAV, FUTURE_MODULES, type NavItem } from './nav-config';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
+import { invalidateCurrentUserCache, useCurrentUser } from '@/hooks/use-current-user';
 
 const STORAGE_KEY = 'vexel-sidebar-collapsed';
 
@@ -36,21 +37,18 @@ function GlowDivider() {
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
-  const [userName, setUserName]   = useState('');
   const pathname = usePathname();
-  const router   = useRouter();
-  const { flags } = useFeatureFlags();
+  const router = useRouter();
+  const { flags, loading: flagsLoading } = useFeatureFlags();
+  const { user, loading: userLoading } = useCurrentUser();
+  const isSuperAdmin = Boolean(user?.isSuperAdmin);
+  const userName = ((user?.firstName || user?.lastName)
+    ? [user?.firstName, user?.lastName].filter(Boolean).join(' ')
+    : user?.email?.split('@')[0]) || '';
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === 'true') setCollapsed(true);
-    const token = getToken();
-    if (token) {
-      try {
-        const p = decodeJwt(token) as Record<string, unknown>;
-        setUserName(((p?.name as string) || (p?.email as string) || '').split('@')[0]);
-      } catch { /* ignore */ }
-    }
   }, []);
 
   const toggle = useCallback(() => {
@@ -69,14 +67,20 @@ export function Sidebar() {
     return () => window.removeEventListener('keydown', handler);
   }, [toggle]);
 
-  const handleLogout = () => { clearTokens(); router.push('/login'); };
+  const handleLogout = () => { invalidateCurrentUserCache(); clearTokens(); router.push('/login'); };
+
+  const moduleGateLoading = userLoading || flagsLoading;
+  const isFeatureEnabled = (featureFlag?: string) => (
+    !featureFlag || isSuperAdmin || (!moduleGateLoading && Boolean(flags?.[featureFlag]))
+  );
 
   const visibleNav: NavItem[] = LIMS_NAV.filter(item =>
-    !item.featureFlag || flags?.[item.featureFlag]
+    isFeatureEnabled(item.featureFlag)
   );
   const visibleOpdNav: NavItem[] = OPD_NAV.filter(item =>
-    !item.featureFlag || flags?.[item.featureFlag]
+    isFeatureEnabled(item.featureFlag)
   );
+  const opdEnabled = isFeatureEnabled('module.opd');
   const currentModule: 'lims' | 'opd' | 'other' =
     pathname.startsWith('/lims') ? 'lims' : pathname.startsWith('/opd') ? 'opd' : 'other';
   const currentNav = currentModule === 'opd' ? visibleOpdNav : visibleNav;
@@ -104,7 +108,7 @@ export function Sidebar() {
 
   return (
     <aside style={{
-      width:    collapsed ? '64px' : '240px',
+      width: collapsed ? '64px' : '240px',
       minWidth: collapsed ? '64px' : '240px',
       height: '100vh',
       display: 'flex',
@@ -164,7 +168,7 @@ export function Sidebar() {
           {!collapsed && (
             <button onClick={toggle} style={{ ...iconBtn, width: '26px', height: '26px' }}
               onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'hsl(var(--primary) / 0.3)'; el.style.background = 'hsl(var(--primary) / 0.1)'; }}
-              onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
+              onMouseOut={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
               title="Collapse sidebar (Ctrl+B)">
               <ChevronLeft style={{ width: '13px', height: '13px' }} />
             </button>
@@ -190,7 +194,15 @@ export function Sidebar() {
               <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: currentModule === 'lims' ? 'hsl(var(--primary))' : 'hsl(var(--sidebar-muted))', boxShadow: currentModule === 'lims' ? '0 0 5px hsl(var(--primary) / 0.55)' : 'none' }} />
               <span style={{ fontSize: '10px', fontWeight: 700, color: currentModule === 'lims' ? 'hsl(var(--sidebar-foreground))' : 'hsl(var(--sidebar-muted))', letterSpacing: '0.07em' }}>LIMS</span>
             </Link>
-            {visibleOpdNav.length > 0 ? (
+            {moduleGateLoading && !isSuperAdmin ? (
+              <div style={{
+                padding: '5px 11px', borderRadius: '99px',
+                background: 'hsl(var(--sidebar-foreground) / 0.04)',
+                border: '1px solid hsl(var(--sidebar-foreground) / 0.08)',
+              }}>
+                <span style={{ fontSize: '10px', fontWeight: 600, color: 'hsl(var(--sidebar-muted))', letterSpacing: '0.04em' }}>OPD …</span>
+              </div>
+            ) : opdEnabled ? (
               <Link
                 href="/opd/worklist"
                 style={{
@@ -237,7 +249,7 @@ export function Sidebar() {
       {collapsed && (
         <button onClick={toggle} style={{ ...iconBtn, width: '32px', height: '32px', margin: '10px auto 6px' }}
           onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconActive; el.style.borderColor = 'hsl(var(--primary) / 0.3)'; el.style.background = 'hsl(var(--primary) / 0.1)'; }}
-          onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
+          onMouseOut={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
           title="Expand sidebar (Ctrl+B)">
           <ChevronRight style={{ width: '13px', height: '13px' }} />
         </button>
@@ -272,7 +284,7 @@ export function Sidebar() {
                 overflow: 'hidden', whiteSpace: 'nowrap',
               }}
               onMouseOver={e => { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'hsl(var(--sidebar-foreground) / 0.09)'; el.style.color = S.hoverText; } }}
-              onMouseOut={e =>  { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = S.inactiveText; } }}
+              onMouseOut={e => { if (!isActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = S.inactiveText; } }}
             >
               {isActive && (
                 <div style={{
@@ -306,7 +318,7 @@ export function Sidebar() {
         {collapsed ? (
           <button onClick={handleLogout} style={{ ...iconBtn, width: '36px', height: '36px' }}
             onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(var(--status-destructive-fg))'; el.style.borderColor = 'hsl(var(--status-destructive-border))'; el.style.background = 'hsl(var(--status-destructive-bg))'; }}
-            onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
+            onMouseOut={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
             title="Sign Out">
             <LogOut style={{ width: '14px', height: '14px' }} />
           </button>
@@ -334,7 +346,7 @@ export function Sidebar() {
             </div>
             <button onClick={handleLogout} style={{ ...iconBtn, width: '30px', height: '30px' }}
               onMouseOver={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'hsl(var(--status-destructive-fg))'; el.style.borderColor = 'hsl(var(--status-destructive-border))'; el.style.background = 'hsl(var(--status-destructive-bg))'; }}
-              onMouseOut={e =>  { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
+              onMouseOut={e => { const el = e.currentTarget as HTMLElement; el.style.color = S.iconInactive; el.style.borderColor = 'hsl(var(--sidebar-foreground) / 0.13)'; el.style.background = 'hsl(var(--sidebar-foreground) / 0.07)'; }}
               title="Sign Out">
               <LogOut style={{ width: '13px', height: '13px' }} />
             </button>

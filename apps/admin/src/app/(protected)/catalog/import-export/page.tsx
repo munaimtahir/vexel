@@ -25,6 +25,46 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+function previewText(input: unknown, max = 220): string {
+  if (typeof input !== 'string') {
+    if (input == null) return '';
+    try {
+      return JSON.stringify(input).slice(0, max);
+    } catch {
+      return String(input).slice(0, max);
+    }
+  }
+  return input.replace(/\s+/g, ' ').trim().slice(0, max);
+}
+
+async function expectJsonFromTextResponse<T>(
+  operation: string,
+  promise: Promise<{ data?: unknown; error?: unknown; response?: Response }>,
+): Promise<T> {
+  const { data, error, response } = await promise;
+  const status = response?.status ?? 0;
+  const contentType = (response?.headers.get('content-type') ?? '').toLowerCase();
+  const rawText = typeof data === 'string' ? data : '';
+
+  if (!response?.ok) {
+    const bodyPreview = previewText(rawText || (error as any)?.message || error);
+    throw new Error(`${operation} failed (HTTP ${status}). ${bodyPreview || 'No response body.'}`);
+  }
+
+  if (!contentType.includes('application/json')) {
+    const bodyPreview = previewText(rawText || error);
+    throw new Error(
+      `${operation} failed: expected JSON response but received ${contentType || 'unknown content-type'} (HTTP ${status}). ${bodyPreview || 'No response body.'}`,
+    );
+  }
+
+  try {
+    return JSON.parse(rawText) as T;
+  } catch {
+    throw new Error(`${operation} failed: response JSON is invalid (HTTP ${status}). ${previewText(rawText)}`);
+  }
+}
+
 async function downloadFile(url: string, filename: string) {
   const api = getApiClient(getToken() ?? undefined);
   const { data, error } = await api.GET(url as any, { parseAs: 'blob' } as any);
@@ -78,16 +118,15 @@ export default function ImportExportPage() {
       const api = getApiClient(getToken() ?? undefined);
       const form = new FormData();
       form.append('file', file);
-      const { data, error } = await api.POST('/catalog/import/workbook' as any, {
-        params: { query: { validate, mode } },
-        body: form as any,
-        bodySerializer: (body: any) => body,
-      } as any);
-      if (error || !data) {
-        const errMsg = (error as any)?.message ?? (error as any)?.detail ?? JSON.stringify(error) ?? 'Import failed';
-        throw new Error(errMsg);
-      }
-      const summary = data as any;
+      const summary = await expectJsonFromTextResponse<any>(
+        validate ? 'Catalog validate' : 'Catalog apply',
+        api.POST('/catalog/import/workbook' as any, {
+          params: { query: { validate, mode } },
+          body: form as any,
+          bodySerializer: (body: any) => body,
+          parseAs: 'text',
+        } as any),
+      );
       setImportResult(summary);
       const hasErrors = Array.isArray(summary?.errors) && summary.errors.length > 0;
       if (validate && !hasErrors) {
@@ -121,11 +160,14 @@ export default function ImportExportPage() {
     try {
       const csv = await mappingFile.text();
       const api = getApiClient(getToken() ?? undefined);
-      const { data, error } = await api.POST('/catalog/test-parameter-mappings/import', {
-        body: { csv },
-      });
-      if (error || !data) throw new Error((error as any)?.message ?? 'Import failed');
-      setMappingResult(data as any);
+      const result = await expectJsonFromTextResponse<any>(
+        'Mapping import',
+        api.POST('/catalog/test-parameter-mappings/import', {
+          body: { csv },
+          parseAs: 'text',
+        } as any),
+      );
+      setMappingResult(result);
     } catch (err: any) {
       setMappingError(err.message ?? 'Import failed');
     } finally {
