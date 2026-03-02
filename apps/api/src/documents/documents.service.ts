@@ -348,7 +348,7 @@ export class DocumentsService {
         patient: true,
         labOrders: {
           include: {
-            test: true,
+            test: { include: { parameterMappings: true } },
             results: { orderBy: { enteredAt: 'asc' } },
             specimen: true,
           },
@@ -401,28 +401,45 @@ export class DocumentsService {
       sampleReceivedAt: (firstSpecimen as any)?.collectedAt?.toISOString() ?? firstSpecimen?.createdAt?.toISOString(),
       reportStatus: encounter.status === 'verified' ? 'Verified' : encounter.status === 'published' ? 'Verified' : 'Provisional',
       reportHeaderLayout: (tenantConfig as any)?.reportHeaderLayout ?? 'default',
-      tests: encounter.labOrders.map((order) => {
-        const testMeta = (order as any).test;
-        // Build parameters from all LabResult rows for this order
-        const allResults: any[] = (order as any).results ?? [];
-        const parameters = allResults.length > 0
-          ? allResults.map((r: any) => ({
-              parameterCode: r.parameterId ?? 'result',
-              parameterName: r.parameterNameSnapshot ?? 'Result',
-              value: r.value,
-              unit: r.unit ?? undefined,
-              referenceRange: r.referenceRange ?? undefined,
-              flag: r.flag ?? undefined,
-            }))
-          : [];
-        return {
-          testCode: testMeta?.userCode ?? testMeta?.externalId ?? order.id,
-          testName: testMeta?.name ?? 'Unknown',
-          department: testMeta?.department ?? undefined,
-          printAlone: testMeta?.printAlone ?? false,
-          parameters,
-        };
-      }),
+      tests: [...encounter.labOrders]
+        // Deterministic test ordering: by test name (stable)
+        .sort((a, b) => {
+          const an = (a as any).test?.name ?? '';
+          const bn = (b as any).test?.name ?? '';
+          return an.localeCompare(bn);
+        })
+        .map((order) => {
+          const testMeta = (order as any).test;
+          // Build lookup for displayOrder from TestParameterMapping
+          const mappings: any[] = testMeta?.parameterMappings ?? [];
+          const getMappingOrder = (parameterId: string | null): number => {
+            if (!parameterId) return 999;
+            const m = mappings.find((m: any) => m.parameterId === parameterId);
+            return m?.displayOrder ?? m?.ordering ?? 999;
+          };
+          // Sort results deterministically: by displayOrder, then parameterNameSnapshot
+          const sortedResults = [...((order as any).results ?? [])].sort((a, b) => {
+            const aOrd = getMappingOrder(a.parameterId);
+            const bOrd = getMappingOrder(b.parameterId);
+            if (aOrd !== bOrd) return aOrd - bOrd;
+            return (a.parameterNameSnapshot ?? '').localeCompare(b.parameterNameSnapshot ?? '');
+          });
+          const parameters = sortedResults.map((r: any) => ({
+            parameterCode: r.parameterId ?? 'result',
+            parameterName: r.parameterNameSnapshot ?? 'Result',
+            value: r.value,
+            unit: r.unit ?? undefined,
+            referenceRange: r.referenceRange ?? undefined,
+            flag: r.flag ?? undefined,
+          }));
+          return {
+            testCode: testMeta?.userCode ?? testMeta?.externalId ?? order.id,
+            testName: testMeta?.name ?? 'Unknown',
+            department: testMeta?.department ?? undefined,
+            printAlone: testMeta?.printAlone ?? false,
+            parameters,
+          };
+        }),
       verifiedBy: verifiedByName,
       verifiedAt,
       tenantName: tenantConfig?.brandName ?? tenantId,

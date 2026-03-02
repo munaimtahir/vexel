@@ -1,0 +1,2 @@
+lab_report_v2 smoke test: 9caafbc7138471eaf2476414112710bfd77f636bb2ff9219aeff790d3750d108
+Identical payload rendered twice produces same hash → DETERMINISTIC ✅

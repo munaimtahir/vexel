@@ -72,6 +72,7 @@ export default function NewRegistrationPage() {
   const [selectedTests, setSelectedTests] = useState<SelectedTest[]>([]);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchRequestSeqRef = useRef(0);
+  const latestSearchQueryRef = useRef('');
 
   // Payment
   const [discountPKR, setDiscountPKR] = useState('0');
@@ -190,9 +191,10 @@ export default function NewRegistrationPage() {
   }, []);
 
   const doTestSearch = useCallback(async (q: string) => {
-    const query = q.trim();
+    const query = q.trim().replace(/\s+/g, ' ');
     if (query.length < 2) {
       searchRequestSeqRef.current += 1;
+      latestSearchQueryRef.current = query;
       setSearching(false);
       setTestResults([]);
       setTestDropOpen(false);
@@ -207,17 +209,19 @@ export default function NewRegistrationPage() {
       // @ts-ignore
       const { data } = await api.GET('/operator/catalog/tests/search', { params: { query: { q: query, limit: 20 } } });
       if (requestId !== searchRequestSeqRef.current) return;
+      if (query !== latestSearchQueryRef.current) return;
       const list: CatalogTestSearchItem[] = Array.isArray(data) ? data : [];
       setTestResults(list);
       setTestDropOpen(list.length > 0);
       setTestDropIdx(list.length > 0 ? 0 : -1);
     } catch {
       if (requestId !== searchRequestSeqRef.current) return;
+      if (query !== latestSearchQueryRef.current) return;
       setTestResults([]);
       setTestDropOpen(false);
       setTestDropIdx(-1);
     } finally {
-      if (requestId === searchRequestSeqRef.current) setSearching(false);
+      if (requestId === searchRequestSeqRef.current && query === latestSearchQueryRef.current) setSearching(false);
     }
   }, []);
 
@@ -228,6 +232,7 @@ export default function NewRegistrationPage() {
   }, [loadTopTests]);
 
   useEffect(() => {
+    latestSearchQueryRef.current = testSearch.trim().replace(/\s+/g, ' ');
     searchTimerRef.current = setTimeout(() => doTestSearch(testSearch), 250);
     return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current); };
   }, [testSearch, doTestSearch]);
@@ -726,8 +731,11 @@ export default function NewRegistrationPage() {
               ref={testSearchRef}
               value={testSearch}
               onChange={e => {
-                setTestSearch(e.target.value);
+                const nextValue = e.target.value;
+                latestSearchQueryRef.current = nextValue.trim().replace(/\s+/g, ' ');
+                setTestSearch(nextValue);
                 setTestDropIdx(-1);
+                if (nextValue.trim().length >= 2) setTestDropOpen(true);
               }}
               onKeyDown={handleTestKeyDown}
               onBlur={() => setTimeout(() => setTestDropOpen(false), 150)}

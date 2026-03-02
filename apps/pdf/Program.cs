@@ -43,6 +43,7 @@ app.MapPost("/render", async (HttpContext context) =>
         pdfBytes = templateKey switch
         {
             "lab_report_v1"          => GenerateLabReport(payload, req?.BrandingConfig, logoBytes, footerImageBytes),
+            "lab_report_v2"          => GenerateLabReportV2(payload, req?.BrandingConfig, logoBytes, footerImageBytes),
             "receipt_v1"             => GenerateReceipt(payload, req?.BrandingConfig, logoBytes),
             "opd_invoice_receipt_v1" => GenerateOpdInvoiceReceipt(payload, req?.BrandingConfig),
             _                        => GeneratePlaceholderPdf(body),
@@ -67,6 +68,12 @@ app.Run();
 static byte[] GenerateLabReport(JsonElement payload, BrandingConfig? branding, byte[]? logoBytes, byte[]? footerImageBytes)
 {
     var report = new LabReportDocument(payload, branding ?? new BrandingConfig(), logoBytes, footerImageBytes);
+    return report.GeneratePdf();
+}
+
+static byte[] GenerateLabReportV2(JsonElement payload, BrandingConfig? branding, byte[]? logoBytes, byte[]? footerImageBytes)
+{
+    var report = new LabReportDocumentV2(payload, branding ?? new BrandingConfig(), logoBytes, footerImageBytes);
     return report.GeneratePdf();
 }
 
@@ -491,6 +498,424 @@ class LabReportDocument : IDocument
             });
         });
     }
+
+    void ComposeReportFooter(IContainer container, byte[]? footerImageBytes)
+    {
+        var footerText = _branding.FooterText ?? _branding.ReportFooter
+                         ?? "This report is generated electronically and is valid without signature.";
+        var layout = _branding.ReportFooterLayout ?? (footerImageBytes != null ? "image" : "text");
+        container.BorderTop(0.5f).BorderColor(Colors.Grey.Lighten1).PaddingTop(4).Row(row =>
+        {
+            row.RelativeItem().Element(left =>
+            {
+                if (layout == "both" && footerImageBytes != null)
+                {
+                    left.Column(c => {
+                        c.Item().Height(20).Image(footerImageBytes).FitHeight();
+                        c.Item().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    });
+                }
+                else if ((layout == "image" || layout == "both") && footerImageBytes != null)
+                    left.Height(20).Image(footerImageBytes).FitHeight();
+                else
+                    left.Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+            });
+            row.ConstantItem(100).AlignRight().Text(text =>
+            {
+                text.Span("Page ").FontSize(7);
+                text.CurrentPageNumber().FontSize(7);
+                text.Span(" of ").FontSize(7);
+                text.TotalPages().FontSize(7);
+            });
+        });
+    }
+}
+
+// ─── LabReportDocumentV2 ─────────────────────────────────────────────────────
+// v2 layout: single-parameter tests render as a single labelled line (no heading);
+// multi-parameter tests render with a blue test heading + parameter table.
+// Arrays are rendered in the order received (pre-sorted by the API payload builder).
+
+class LabReportDocumentV2 : IDocument
+{
+    private readonly JsonElement    _payload;
+    private readonly BrandingConfig _branding;
+    private readonly byte[]?        _logoBytes;
+    private readonly byte[]?        _footerImageBytes;
+
+    public LabReportDocumentV2(JsonElement payload, BrandingConfig branding, byte[]? logoBytes, byte[]? footerImageBytes)
+    {
+        _payload          = payload;
+        _branding         = branding;
+        _logoBytes        = logoBytes;
+        _footerImageBytes = footerImageBytes;
+    }
+
+    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+
+    string Get(string key, string fallback = "\u2014")
+    {
+        if (_payload.TryGetProperty(key, out var v)) return DocHelpers.ToDisplay(v, fallback);
+        return fallback;
+    }
+
+    static string GetFrom(JsonElement obj, string key, string fallback = "\u2014")
+    {
+        if (obj.ValueKind == JsonValueKind.Object && obj.TryGetProperty(key, out var v))
+            return DocHelpers.ToDisplay(v, fallback);
+        return fallback;
+    }
+
+    public void Compose(IDocumentContainer container)
+    {
+        container.Page(page =>
+        {
+            page.Size(PageSizes.A4);
+            page.Margin(1.5f, Unit.Centimetre);
+            page.DefaultTextStyle(x => x.FontSize(9).FontFamily(Fonts.Arial));
+
+            page.Header().Element(c => ComposeReportHeader(c, _logoBytes));
+            page.Content().Element(ComposeReportContent);
+            page.Footer().Element(c => ComposeReportFooter(c, _footerImageBytes));
+        });
+    }
+
+    // ── Header (identical to v1) ─────────────────────────────────────────────
+
+    void ComposeReportHeader(IContainer container, byte[]? logoBytes)
+    {
+        var layout        = (_payload.TryGetProperty("reportHeaderLayout", out var rl) ? rl.GetString() : null)
+                            ?? _branding.ReportHeaderLayout ?? "default";
+        var brandName     = _branding.BrandName ?? "Laboratory";
+        var address       = _branding.ReportHeader ?? "";
+        var encounterCode = Get("encounterCode");
+        var reportNumber  = Get("reportNumber");
+        var reportStatus  = Get("reportStatus", "Provisional");
+        var isVerified    = reportStatus.Equals("Verified", StringComparison.OrdinalIgnoreCase);
+
+        byte[]? barcodeBytes = null;
+        if (encounterCode != "\u2014" && !string.IsNullOrWhiteSpace(encounterCode))
+            barcodeBytes = DocHelpers.GenerateBarcodePng(encounterCode);
+
+        container.Column(col =>
+        {
+            col.Item().Row(row =>
+            {
+                if (layout != "minimal")
+                {
+                    row.ConstantItem(50, Unit.Millimetre).Element(area =>
+                    {
+                        if (logoBytes != null)
+                            area.MaxHeight(40).Image(logoBytes).FitHeight();
+                    });
+                }
+
+                row.RelativeItem().AlignCenter().Column(nameCol =>
+                {
+                    nameCol.Item().AlignCenter().Text(brandName).Bold().FontSize(16).FontColor(Colors.Blue.Darken3);
+                    if (layout == "classic" && !string.IsNullOrWhiteSpace(address))
+                        nameCol.Item().AlignCenter().Text(address).FontSize(8).FontColor(Colors.Grey.Darken1);
+                });
+
+                row.ConstantItem(70, Unit.Millimetre).Column(rightCol =>
+                {
+                    if (barcodeBytes != null)
+                        rightCol.Item().Height(25).AlignRight().Image(barcodeBytes).FitHeight();
+                    if (encounterCode != "\u2014")
+                        rightCol.Item().AlignRight()
+                            .Text($"Lab Order: {encounterCode}").FontSize(7).FontColor(Colors.Grey.Darken1);
+                    rightCol.Item().AlignRight()
+                        .Text($"Report #: {reportNumber}").FontSize(7).FontColor(Colors.Grey.Darken1);
+                    rightCol.Item().AlignRight().Element(badge =>
+                    {
+                        if (isVerified)
+                            badge.Background(Colors.Green.Lighten3).Padding(3)
+                                 .Text("\u2713 VERIFIED").Bold().FontSize(7).FontColor(Colors.Green.Darken3);
+                        else
+                            badge.Background(Colors.Orange.Lighten3).Padding(3)
+                                 .Text("PROVISIONAL").Bold().FontSize(7).FontColor(Colors.Orange.Darken2);
+                    });
+                });
+            });
+
+            if ((layout == "default" || layout == "minimal") && !string.IsNullOrWhiteSpace(address))
+                col.Item().PaddingTop(3).AlignCenter().Text(address).FontSize(7).FontColor(Colors.Grey.Darken1);
+
+            col.Item().PaddingTop(4).LineHorizontal(1).LineColor(Colors.Grey.Darken2);
+        });
+    }
+
+    // ── Patient info block (identical to v1) ─────────────────────────────────
+
+    void ComposePatientInfoBlock(IContainer container)
+    {
+        var reportStatus = Get("reportStatus", "Provisional");
+        var isVerified   = reportStatus.Equals("Verified", StringComparison.OrdinalIgnoreCase);
+
+        container.Background(Colors.Grey.Lighten5).Padding(4).Table(table =>
+        {
+            table.ColumnsDefinition(c =>
+            {
+                c.ConstantColumn(80);
+                c.RelativeColumn();
+                c.ConstantColumn(80);
+                c.RelativeColumn();
+            });
+
+            PiRow(table, "MRN",            Get("patientMrn"),                     "Lab Order ID",    Get("encounterCode"));
+            PiRow(table, "Patient Name",   Get("patientName"),                    "Sample Received", DocHelpers.FormatDate(Get("sampleReceivedAt")));
+            PiRow(table, "Age / Gender",   $"{Get("patientAge")} / {Get("patientGender")}", "Issued Date",  DocHelpers.FormatDate(Get("issuedAt")));
+
+            table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+                 .BorderColor(Colors.Grey.Lighten2).Padding(3)
+                 .Text("Referring Physician").Bold().FontSize(8);
+            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                 .Padding(3).Text(Get("orderedBy", "\u2014")).FontSize(8);
+            table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+                 .BorderColor(Colors.Grey.Lighten2).Padding(3)
+                 .Text("Report Status").Bold().FontSize(8);
+            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3)
+                 .Text(t => t.Span(reportStatus).Bold()
+                             .FontColor(isVerified ? Colors.Green.Darken2 : Colors.Orange.Darken2));
+        });
+    }
+
+    void PiRow(TableDescriptor table, string l1, string v1, string l2, string v2)
+    {
+        table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+             .BorderColor(Colors.Grey.Lighten2).Padding(3).Text(l1).Bold().FontSize(8);
+        table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+             .Padding(3).Text(v1).FontSize(8);
+        table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+             .BorderColor(Colors.Grey.Lighten2).Padding(3).Text(l2).Bold().FontSize(8);
+        table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+             .Padding(3).Text(v2).FontSize(8);
+    }
+
+    // ── Content ──────────────────────────────────────────────────────────────
+
+    void ComposeReportContent(IContainer container)
+    {
+        container.Column(col =>
+        {
+            col.Spacing(4);
+
+            col.Item().Element(ComposePatientInfoBlock);
+            col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten1);
+
+            if (_payload.TryGetProperty("tests", out var testsEl) && testsEl.ValueKind == JsonValueKind.Array)
+            {
+                var testList = testsEl.EnumerateArray().ToList();
+                bool isFirst = true;
+                foreach (var test in testList)
+                {
+                    var printAlone = test.TryGetProperty("printAlone", out var pa) &&
+                                     (pa.ValueKind == JsonValueKind.True ||
+                                      (pa.ValueKind == JsonValueKind.String && pa.GetString() == "true"));
+                    if (!isFirst && printAlone)
+                        col.Item().PageBreak();
+                    col.Item().Element(c => ComposeTestSectionV2(c, test));
+                    isFirst = false;
+                }
+            }
+            else
+            {
+                col.Item().Text("No results available.").FontColor(Colors.Grey.Darken1);
+            }
+
+            var verifiedBy = Get("verifiedBy", "");
+            if (!string.IsNullOrWhiteSpace(verifiedBy) && verifiedBy != "\u2014")
+                col.Item().PaddingTop(4).Element(ComposeVerificationBlock);
+        });
+    }
+
+    // ── V2 test section: single vs multi parameter ────────────────────────────
+
+    void ComposeTestSectionV2(IContainer container, JsonElement test)
+    {
+        var testName   = GetFrom(test, "testName",   GetFrom(test, "name",     "Unknown Test"));
+        var testCode   = GetFrom(test, "testCode",   "");
+        var department = GetFrom(test, "department", "");
+
+        if (!test.TryGetProperty("parameters", out var paramsEl) || paramsEl.ValueKind != JsonValueKind.Array)
+        {
+            // No parameters: show test name as a placeholder line
+            container.Column(col =>
+            {
+                col.Item().Row(row =>
+                {
+                    row.RelativeItem().Text(testName).Bold().FontSize(9);
+                    row.ConstantItem(60).AlignRight().Text("No results").FontSize(8).FontColor(Colors.Grey.Darken1);
+                });
+                col.Item().LineHorizontal(0.3f).LineColor(Colors.Grey.Lighten2);
+            });
+            return;
+        }
+
+        var paramsList = paramsEl.EnumerateArray().ToList();
+        var isSingle   = paramsList.Count == 1;
+
+        container.Column(col =>
+        {
+            if (isSingle)
+            {
+                // ── Single-parameter: one labelled line, no test heading ──────
+                var param    = paramsList[0];
+                var pName    = GetFrom(param, "parameterName", testName);
+                var pValue   = GetFrom(param, "value",         "\u2014");
+                var pUnit    = GetFrom(param, "unit",          "");
+                var pRange   = GetFrom(param, "referenceRange", "");
+                var pFlag    = GetFrom(param, "flag",          "");
+                var flagU    = pFlag.ToUpperInvariant();
+                bool isHigh  = flagU is "H" or "HIGH";
+                bool isLow   = flagU is "L" or "LOW";
+                bool isCrit  = flagU is "CRITICAL";
+
+                col.Item().PaddingVertical(2).Row(row =>
+                {
+                    // Parameter name
+                    row.ConstantItem(145).Text(pName + ":").Bold().FontSize(9).FontColor(Colors.Grey.Darken3);
+
+                    // Value (colored when flagged)
+                    var valItem = row.ConstantItem(65);
+                    if (isCrit)
+                        valItem.Text(pValue).Bold().FontSize(9).FontColor(Colors.Red.Darken2);
+                    else if (isHigh)
+                        valItem.Text(pValue + " \u2191").Bold().FontSize(9).FontColor(Colors.Red.Medium);
+                    else if (isLow)
+                        valItem.Text(pValue + " \u2193").Bold().FontSize(9).FontColor(Colors.Blue.Medium);
+                    else
+                        valItem.Text(pValue).Bold().FontSize(9);
+
+                    // Unit
+                    var unitStr = (pUnit == "\u2014" || string.IsNullOrWhiteSpace(pUnit)) ? "" : pUnit;
+                    row.ConstantItem(45).Text(unitStr).FontSize(8).FontColor(Colors.Grey.Darken1);
+
+                    // Reference range
+                    var rangeStr = (pRange == "\u2014" || string.IsNullOrWhiteSpace(pRange))
+                        ? "" : $"Ref: {pRange}";
+                    row.RelativeItem().Text(rangeStr).FontSize(8).FontColor(Colors.Grey.Medium);
+
+                    // Flag badge (critical only; H/L already encoded in value arrows)
+                    if (isCrit)
+                        row.ConstantItem(48).AlignRight()
+                           .Background(Colors.Red.Lighten4).Padding(2)
+                           .Text("CRITICAL").Bold().FontSize(7).FontColor(Colors.Red.Darken3);
+                    else
+                        row.ConstantItem(48);
+                });
+                col.Item().LineHorizontal(0.3f).LineColor(Colors.Grey.Lighten2);
+            }
+            else
+            {
+                // ── Multi-parameter: centered blue heading + table ────────────
+                var codeLabel = (testCode != "\u2014" && !string.IsNullOrWhiteSpace(testCode))
+                                ? $"  ({testCode})" : "";
+
+                col.Item().Background(Colors.Blue.Lighten4).Padding(4).Row(hRow =>
+                {
+                    hRow.RelativeItem().Text(testName + codeLabel).Bold().FontSize(10);
+                    if (department != "\u2014" && !string.IsNullOrWhiteSpace(department))
+                        hRow.ConstantItem(100).AlignRight()
+                            .Text(department).FontSize(8).FontColor(Colors.Grey.Darken2);
+                });
+
+                col.Item().Table(table =>
+                {
+                    table.ColumnsDefinition(c =>
+                    {
+                        c.RelativeColumn(3);    // parameter name
+                        c.RelativeColumn(1.5f); // result
+                        c.RelativeColumn(1);    // unit
+                        c.RelativeColumn(2);    // reference range
+                        c.ConstantColumn(32);   // flag
+                    });
+
+                    // Header row
+                    foreach (var h in new[] { "Parameter", "Result", "Unit", "Reference Range", "" })
+                        table.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text(h).Bold().FontSize(8);
+
+                    int rowIdx = 0;
+                    foreach (var param in paramsEl.EnumerateArray())
+                    {
+                        var pName  = GetFrom(param, "parameterName", GetFrom(param, "name", "\u2014"));
+                        var pValue = GetFrom(param, "value",          "\u2014");
+                        var pUnit  = GetFrom(param, "unit",           "");
+                        var pRange = GetFrom(param, "referenceRange", GetFrom(param, "refRange", "\u2014"));
+                        var pFlag  = GetFrom(param, "flag",           "");
+                        var flagU  = pFlag.ToUpperInvariant();
+                        bool isHigh = flagU is "H" or "HIGH";
+                        bool isLow  = flagU is "L" or "LOW";
+                        bool isCrit = flagU is "CRITICAL";
+                        var rowBg   = rowIdx % 2 == 0 ? Colors.White : Colors.Grey.Lighten5;
+                        rowIdx++;
+
+                        // Parameter name
+                        table.Cell().Background(rowBg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                             .Padding(3).Text(pName).FontSize(8);
+
+                        // Result (colored if flagged)
+                        var valCell = table.Cell().Background(rowBg).BorderBottom(0.5f)
+                                          .BorderColor(Colors.Grey.Lighten2).Padding(3);
+                        if (isCrit)
+                            valCell.Text(pValue).Bold().FontSize(8).FontColor(Colors.Red.Darken2);
+                        else if (isHigh)
+                            valCell.Text(pValue + " \u2191").Bold().FontSize(8).FontColor(Colors.Red.Medium);
+                        else if (isLow)
+                            valCell.Text(pValue + " \u2193").Bold().FontSize(8).FontColor(Colors.Blue.Medium);
+                        else
+                            valCell.Text(pValue).FontSize(8);
+
+                        // Unit
+                        table.Cell().Background(rowBg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                             .Padding(3).Text(pUnit == "\u2014" ? "" : pUnit).FontSize(8).FontColor(Colors.Grey.Darken1);
+
+                        // Reference range
+                        table.Cell().Background(rowBg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                             .Padding(3).Text(pRange).FontSize(8);
+
+                        // Flag badge
+                        var flagCell = table.Cell().Background(rowBg).BorderBottom(0.5f)
+                                           .BorderColor(Colors.Grey.Lighten2).Padding(3);
+                        if (isCrit)
+                            flagCell.Text("CRIT").Bold().FontSize(7).FontColor(Colors.Red.Darken3);
+                        else if (isHigh)
+                            flagCell.AlignCenter().Text("H \u2191").Bold().FontSize(7).FontColor(Colors.Red.Medium);
+                        else if (isLow)
+                            flagCell.AlignCenter().Text("L \u2193").Bold().FontSize(7).FontColor(Colors.Blue.Medium);
+                        else
+                            flagCell.Text("").FontSize(7);
+                    }
+                });
+
+                col.Item().Height(4);
+            }
+        });
+    }
+
+    // ── Verification block (identical to v1) ─────────────────────────────────
+
+    void ComposeVerificationBlock(IContainer container)
+    {
+        var verifiedBy = Get("verifiedBy");
+        var verifiedAt = DocHelpers.FormatDate(Get("verifiedAt"));
+
+        container.AlignRight().Width(200).Border(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(6).Column(col =>
+        {
+            col.Item().Row(row =>
+            {
+                row.ConstantItem(70).Text("Verified by:").FontSize(8).FontColor(Colors.Grey.Darken1);
+                row.RelativeItem().Text(verifiedBy).Bold().FontSize(8);
+            });
+            col.Item().Row(row =>
+            {
+                row.ConstantItem(70).Text("Date:").FontSize(8).FontColor(Colors.Grey.Darken1);
+                row.RelativeItem().Text(verifiedAt).FontSize(8);
+            });
+        });
+    }
+
+    // ── Footer (identical to v1) ──────────────────────────────────────────────
 
     void ComposeReportFooter(IContainer container, byte[]? footerImageBytes)
     {

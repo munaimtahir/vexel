@@ -319,6 +319,18 @@ export async function main() {
       type: 'LAB_REPORT',
       templateKey: 'lab_report_v1',
       version: 1,
+      isActive: false, // superseded by v2
+    },
+    update: { isActive: false },
+  });
+
+  await prisma.documentTemplate.upsert({
+    where: { tenantId_type_version: { tenantId: systemTenant.id, type: 'LAB_REPORT', version: 2 } },
+    create: {
+      tenantId: systemTenant.id,
+      type: 'LAB_REPORT',
+      templateKey: 'lab_report_v2',
+      version: 2,
       isActive: true,
     },
     update: {},

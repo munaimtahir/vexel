@@ -1,10 +1,11 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 type Format = 'a4' | 'thermal';
+type DocStatus = 'QUEUED' | 'RENDERING' | 'RENDERED' | 'PUBLISHED' | 'FAILED' | '';
 
 export default function PrintPage() {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +14,7 @@ export default function PrintPage() {
 
   const [pdfUrl, setPdfUrl]       = useState<string | null>(null);
   const [docType, setDocType]     = useState<string>('');
+  const [docStatus, setDocStatus] = useState<DocStatus>('');
   const [format, setFormat]       = useState<Format>('a4');
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState('');
@@ -23,9 +25,27 @@ export default function PrintPage() {
   // re-render via PDF service when needed (not on the initial docType population).
   const prevFormatRef = useRef<Format>('a4');
   const initialLoadDoneRef = useRef(false);
+  const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /** Fetch document metadata and return its status. */
+  const fetchDocStatus = useCallback(async (docId: string): Promise<DocStatus> => {
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const { data } = await (api.GET as any)(`/documents/${docId}`, {});
+      const status: DocStatus = data?.status ?? '';
+      const type = data?.type ?? data?.docType ?? '';
+      setDocType(type);
+      setDocStatus(status);
+      const mrn = data?.sourceRef ?? '';
+      setDocName(type === 'RECEIPT' ? `receipt-${mrn}` : `lab-report-${mrn}`);
+      return status;
+    } catch {
+      return '';
+    }
+  }, []);
 
   /** Serve already-rendered bytes from MinIO — fast path (~200ms). */
-  async function loadFromStorage(docId: string) {
+  const loadFromStorage = useCallback(async (docId: string) => {
     setLoading(true);
     setError('');
     if (pdfUrl) { URL.revokeObjectURL(pdfUrl); setPdfUrl(null); }
@@ -42,7 +62,7 @@ export default function PrintPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /** Re-render via PDF service — used only for format overrides (thermal layout). */
   async function loadWithFormatOverride(docId: string, fmt: Format) {
@@ -68,18 +88,52 @@ export default function PrintPage() {
   }
 
   // Load doc metadata + initial PDF bytes from storage on mount.
+  // If doc is still rendering, poll every 3 s until ready.
   useEffect(() => {
     if (!id) return;
-    const api = getApiClient(getToken() ?? undefined);
-    (api.GET as any)(`/documents/${id}`, {}).then(({ data }: any) => {
-      const type = data?.type ?? data?.docType ?? '';
-      setDocType(type);
-      const mrn = data?.sourceRef ?? '';
-      setDocName(type === 'RECEIPT' ? `receipt-${mrn}` : `lab-report-${mrn}`);
-    }).catch(() => {});
-    // Always serve from MinIO on initial load (fast path).
-    loadFromStorage(id);
-    initialLoadDoneRef.current = true;
+    let cancelled = false;
+
+    async function bootstrap() {
+      const status = await fetchDocStatus(id!);
+      if (cancelled) return;
+
+      if (status === 'RENDERED' || status === 'PUBLISHED') {
+        await loadFromStorage(id!);
+        initialLoadDoneRef.current = true;
+      } else if (status === 'QUEUED' || status === 'RENDERING') {
+        setLoading(false); // show polling state, not spinner
+        schedulePolling();
+      } else if (status === 'FAILED') {
+        setLoading(false);
+        setError('PDF generation failed. Please re-generate from the encounter page.');
+      } else {
+        // Unknown status — try loading anyway
+        await loadFromStorage(id!);
+        initialLoadDoneRef.current = true;
+      }
+    }
+
+    function schedulePolling() {
+      pollTimerRef.current = setTimeout(async () => {
+        if (cancelled) return;
+        const status = await fetchDocStatus(id!);
+        if (status === 'RENDERED' || status === 'PUBLISHED') {
+          await loadFromStorage(id!);
+          initialLoadDoneRef.current = true;
+        } else if (status === 'FAILED') {
+          setLoading(false);
+          setError('PDF generation failed. Please re-generate from the encounter page.');
+        } else if (status === 'QUEUED' || status === 'RENDERING') {
+          schedulePolling(); // keep polling
+        }
+      }, 3000);
+    }
+
+    bootstrap();
+    return () => {
+      cancelled = true;
+      if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -127,6 +181,18 @@ export default function PrintPage() {
           {docType === 'RECEIPT' ? '🧾 Receipt' : '📋 Lab Report'}
         </span>
 
+        {/* Status badge when not yet rendered */}
+        {(docStatus === 'QUEUED' || docStatus === 'RENDERING') && (
+          <span style={{
+            padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
+            background: 'hsl(var(--status-warning-bg, 48 100% 93%))',
+            color: 'hsl(var(--status-warning-fg, 32 95% 44%))',
+            border: '1px solid hsl(var(--status-warning-border, 48 100% 80%))',
+          }}>
+            ⏳ {docStatus === 'QUEUED' ? 'Queued…' : 'Generating PDF…'}
+          </span>
+        )}
+
         {/* Format toggle — RECEIPT only; switches to thermal re-render via PDF service */}
         {docType === 'RECEIPT' && (
           <div style={{
@@ -157,9 +223,11 @@ export default function PrintPage() {
         </button>
         <button onClick={handlePrint} disabled={!pdfUrl}
           style={{
-            padding: '7px 18px', borderRadius: '6px', cursor: 'pointer', border: 'none',
-            background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))',
+            padding: '7px 18px', borderRadius: '6px', border: 'none',
+            background: !pdfUrl ? 'hsl(var(--muted))' : 'hsl(var(--primary))',
+            color: !pdfUrl ? 'hsl(var(--muted-foreground))' : 'hsl(var(--primary-foreground))',
             fontSize: '13px', fontWeight: 600,
+            cursor: !pdfUrl ? 'not-allowed' : 'pointer',
           }}>
           🖨 Print
         </button>
@@ -173,6 +241,20 @@ export default function PrintPage() {
             justifyContent: 'center', color: 'hsl(var(--foreground))', fontSize: '14px',
           }}>
             Loading PDF…
+          </div>
+        )}
+        {!loading && !pdfUrl && !error && (docStatus === 'QUEUED' || docStatus === 'RENDERING') && (
+          <div style={{
+            position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', gap: '12px',
+          }}>
+            <div style={{ fontSize: '36px' }}>⏳</div>
+            <p style={{ margin: 0, fontWeight: 600, color: 'hsl(var(--foreground))' }}>
+              PDF is being generated…
+            </p>
+            <p style={{ margin: 0, fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
+              This page will refresh automatically. Please wait.
+            </p>
           </div>
         )}
         {error && !loading && (
