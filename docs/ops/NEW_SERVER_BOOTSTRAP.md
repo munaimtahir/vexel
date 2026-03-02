@@ -21,6 +21,10 @@ So the next blocking focus is:
 2. Run localhost smoke checks.
 3. Run public-domain smoke checks after DNS propagation.
 
+Domain note for this migration:
+- Public domain remains unchanged: `vexel.alshifalab.pk`
+- DNS now points to the new server IP.
+
 ---
 
 ## 1) Snapshot of Current Architecture
@@ -106,7 +110,7 @@ Set at minimum:
 
 ```env
 JWT_SECRET=<64-byte-random-hex>
-NEXT_PUBLIC_API_URL=https://<your-domain>
+NEXT_PUBLIC_API_URL=https://vexel.alshifalab.pk
 ```
 
 Generate JWT secret:
@@ -116,8 +120,8 @@ python3 -c "import secrets; print(secrets.token_hex(64))"
 ```
 
 Important:
-- `NEXT_PUBLIC_API_URL` is a Docker build-arg for admin/operator images. If domain changes, rebuild those images.
-- `docker-compose.yml` currently includes production defaults for `vexel.alshifalab.pk`. Update if your new domain differs.
+- `NEXT_PUBLIC_API_URL` is a Docker build-arg for admin/operator images. Keep it set to `https://vexel.alshifalab.pk` for this migration.
+- `docker-compose.yml` already uses `vexel.alshifalab.pk` defaults aligned with this cutover.
 
 ---
 
@@ -142,7 +146,7 @@ API container entrypoint behavior:
 
 ## 7) Caddy Reverse Proxy (Domain Front Door)
 
-Add site block in Caddy config for your domain (example for `vexel.alshifalab.pk`):
+Add site block in Caddy config for `vexel.alshifalab.pk`:
 
 ```caddy
 vexel.alshifalab.pk {
@@ -290,12 +294,6 @@ Since `.env` and Caddy routing are already done, run:
 cd /home/munaim/srv/apps/vexel
 chmod +x scripts/new-server-resume.sh
 ./scripts/new-server-resume.sh
-```
-
-If your public domain is different, run:
-
-```bash
-DOMAIN=<your-domain> ./scripts/new-server-resume.sh
 ```
 
 If any command fails, collect logs:

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOMAIN="${DOMAIN:-vexel.alshifalab.pk}"
+DOMAIN="vexel.alshifalab.pk"
 ROOT_DIR="${ROOT_DIR:-/home/munaim/srv/apps/vexel}"
 
 if ! command -v docker >/dev/null 2>&1; then
@@ -67,7 +67,7 @@ check_http_code "http://127.0.0.1:9025/"
 check_http_code "http://127.0.0.1:9027/minio/health/live"
 
 echo
-echo "==> Public-domain smoke checks (DOMAIN=$DOMAIN)"
+echo "==> Public-domain smoke checks (DOMAIN fixed: $DOMAIN)"
 check_json_health "https://$DOMAIN/api/health"
 check_http_code "https://$DOMAIN/admin/login"
 check_http_code "https://$DOMAIN/lims/worklist"
