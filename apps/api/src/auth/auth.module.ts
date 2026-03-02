@@ -6,12 +6,9 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
-import { ImpersonationModule } from '../impersonation/impersonation.module';
-
 @Module({
   imports: [
     PrismaModule,
-    ImpersonationModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET ?? 'vexel-dev-secret-change-in-production',

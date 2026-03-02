@@ -56,7 +56,7 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
     Forbidden:
-      description: Forbidden (including read-only impersonation write blocking)
+      description: Forbidden
       content:
         application/json:
           schema:
@@ -2537,84 +2537,6 @@ components:
         document:
           $ref: '#/components/schemas/Document'
 
-    AdminImpersonationStartRequest:
-      type: object
-      required: [user_id, reason]
-      properties:
-        user_id:
-          type: string
-        reason:
-          type: string
-          minLength: 10
-
-    AdminImpersonationUser:
-      type: object
-      required: [id, name]
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-          nullable: true
-
-    AdminImpersonationStartResponse:
-      type: object
-      required: [session_id, impersonated_user, mode, expires_at]
-      properties:
-        session_id:
-          type: string
-        impersonated_user:
-          $ref: '#/components/schemas/AdminImpersonationUser'
-        mode:
-          type: string
-          enum: [READ_ONLY]
-        expires_at:
-          type: string
-          format: date-time
-
-    AdminImpersonationStatusInactive:
-      type: object
-      required: [active]
-      properties:
-        active:
-          type: boolean
-          enum: [false]
-
-    AdminImpersonationStatusActive:
-      type: object
-      required: [active, session_id, started_by, impersonated_user, mode, started_at, expires_at]
-      properties:
-        active:
-          type: boolean
-          enum: [true]
-        session_id:
-          type: string
-        started_by:
-          type: object
-          required: [id, name]
-          properties:
-            id:
-              type: string
-            name:
-              type: string
-        impersonated_user:
-          $ref: '#/components/schemas/AdminImpersonationUser'
-        mode:
-          type: string
-          enum: [READ_ONLY]
-        started_at:
-          type: string
-          format: date-time
-        expires_at:
-          type: string
-          format: date-time
-
-    AdminImpersonationStatusResponse:
-      oneOf:
-        - $ref: '#/components/schemas/AdminImpersonationStatusInactive'
-        - $ref: '#/components/schemas/AdminImpersonationStatusActive'
 
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
@@ -3210,66 +3132,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Role'
-
-  # ─── Admin Impersonation (Read-only) ─────────────────────────────────────
-  /admin/impersonation/start:
-    post:
-      operationId: startAdminImpersonation
-      summary: Start read-only impersonation session
-      tags: [Users]
-      parameters:
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdminImpersonationStartRequest'
-      responses:
-        "200":
-          description: Impersonation started
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdminImpersonationStartResponse'
-        "403":
-          description: Forbidden (non-admin, invalid reason, or invalid target)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /admin/impersonation/stop:
-    post:
-      operationId: stopAdminImpersonation
-      summary: Stop active impersonation session
-      tags: [Users]
-      parameters:
-        - $ref: '#/components/parameters/CorrelationId'
-      responses:
-        "200":
-          description: Stopped
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [ok]
-                properties:
-                  ok:
-                    type: boolean
-
-  /admin/impersonation/status:
-    get:
-      operationId: getAdminImpersonationStatus
-      summary: Get current impersonation status
-      tags: [Users]
-      responses:
-        "200":
-          description: Impersonation status
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdminImpersonationStatusResponse'
 
   # ─── Roles ────────────────────────────────────────────────────────────────
   /roles:

@@ -31,10 +31,6 @@ export default function UsersPage() {
   const [roleUser, setRoleUser] = useState<any | null>(null);
   const [userRoles, setUserRoles] = useState<string[]>([]);
   const [roleSaving, setRoleSaving] = useState(false);
-  const [impersonateUser, setImpersonateUser] = useState<any | null>(null);
-  const [impersonateReason, setImpersonateReason] = useState('');
-  const [impersonateError, setImpersonateError] = useState('');
-  const [impersonating, setImpersonating] = useState(false);
 
   async function loadData() {
     const api = getApiClient(getToken() ?? undefined);
@@ -105,51 +101,6 @@ export default function UsersPage() {
     loadData();
   }
 
-  function getImpersonationLanding(target: any): string {
-    const operatorBase = process.env.NEXT_PUBLIC_OPERATOR_URL?.replace(/\/$/, '');
-    const roleNames = (target?.roles ?? [])
-      .map((r: any) => (typeof r === 'string' ? r : r?.name))
-      .filter(Boolean) as string[];
-    const lowerRoles = roleNames.map((r) => r.toLowerCase());
-
-    if (lowerRoles.some((r) => r.includes('opd'))) return operatorBase ? `${operatorBase}/opd/worklist` : '/admin/dashboard';
-    if (lowerRoles.some((r) => r.includes('operator') || r.includes('verifier') || r.includes('resident') || r.includes('supervisor') || r.includes('hod'))) {
-      return operatorBase ? `${operatorBase}/lims/worklist` : '/admin/dashboard';
-    }
-    if (lowerRoles.some((r) => r.includes('admin'))) return '/admin/dashboard';
-    return '/admin/dashboard';
-  }
-
-  async function handleImpersonateStart() {
-    if (!impersonateUser) return;
-    setImpersonating(true);
-    setImpersonateError('');
-
-    const reason = impersonateReason.trim();
-    if (reason.length < 10) {
-      setImpersonateError('Reason must be at least 10 characters.');
-      setImpersonating(false);
-      return;
-    }
-
-    const api = getApiClient(getToken() ?? undefined);
-    const { error } = await api.POST('/admin/impersonation/start', {
-      body: {
-        user_id: impersonateUser.id,
-        reason,
-      },
-    });
-
-    if (error) {
-      setImpersonateError((error as any)?.message ?? 'Failed to start impersonation');
-      setImpersonating(false);
-      return;
-    }
-
-    const next = getImpersonationLanding(impersonateUser);
-    window.location.href = next;
-  }
-
   if (loading) return <p style={{ padding: '32px' }}>Loading...</p>;
 
   return (
@@ -212,44 +163,6 @@ export default function UsersPage() {
             <div style={{ display: 'flex', gap: '8px' }}>
               <button onClick={handleRoleSave} disabled={roleSaving} style={btnPrimary}>{roleSaving ? 'Saving...' : 'Save Roles'}</button>
               <button onClick={() => setRoleUser(null)} style={btnSecondary}>Cancel</button>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Impersonation modal */}
-      {impersonateUser && (
-        <>
-          <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.3)', zIndex: 40 }} onClick={() => { setImpersonateUser(null); setImpersonateReason(''); setImpersonateError(''); }} />
-          <div style={{ position: 'fixed', top: '8%', left: '50%', transform: 'translateX(-50%)', width: 'min(560px, 92vw)', background: 'hsl(var(--card))', zIndex: 50, boxShadow: 'var(--shadow-lg)', borderRadius: '10px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Act as (Read-only)</h2>
-              <button onClick={() => { setImpersonateUser(null); setImpersonateReason(''); setImpersonateError(''); }} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}>×</button>
-            </div>
-            <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', marginBottom: '14px' }}>
-              You are about to impersonate <strong>{impersonateUser.firstName} {impersonateUser.lastName}</strong> ({(impersonateUser.roles ?? []).map((r: any) => typeof r === 'string' ? r : r.name).filter(Boolean).join(', ') || 'user'}) in strict read-only mode.
-            </p>
-            <div style={{ marginBottom: '12px' }}>
-              <label htmlFor="impersonation-reason" style={labelStyle}>Reason (required)</label>
-              <textarea
-                id="impersonation-reason"
-                value={impersonateReason}
-                onChange={(e) => setImpersonateReason(e.target.value)}
-                placeholder="Testing workflow path for ..."
-                rows={4}
-                style={{ ...inputStyle, resize: 'vertical', minHeight: '88px' }}
-              />
-            </div>
-            {impersonateError ? (
-              <div style={{ background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px', borderRadius: '6px', fontSize: '13px', marginBottom: '12px' }}>
-                {impersonateError}
-              </div>
-            ) : null}
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-              <button type="button" onClick={() => { setImpersonateUser(null); setImpersonateReason(''); setImpersonateError(''); }} style={btnSecondary}>Cancel</button>
-              <button type="button" onClick={handleImpersonateStart} disabled={impersonating} style={btnPrimary}>
-                {impersonating ? 'Starting...' : 'Start Read-only Impersonation'}
-              </button>
             </div>
           </div>
         </>
@@ -327,9 +240,6 @@ export default function UsersPage() {
               <div style={{ display: 'flex', gap: '6px' }}>
                 <button onClick={() => openEdit(u)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
                 <button onClick={() => openRoles(u)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer' }}>Roles</button>
-                <button onClick={() => { setImpersonateUser(u); setImpersonateReason(''); setImpersonateError(''); }} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-warning-bg))', color: 'hsl(var(--status-warning-fg))', border: '1px solid hsl(var(--status-warning-border))', borderRadius: '4px', cursor: 'pointer' }}>
-                  Act as (Read-only)
-                </button>
                 <button onClick={() => handleStatusToggle(u.id, u.status)} style={{ padding: '4px 10px', fontSize: '12px', background: u.status === 'active' ? 'hsl(var(--status-destructive-bg))' : 'hsl(var(--status-success-bg))', color: u.status === 'active' ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--status-success-fg))', border: `1px solid ${u.status === 'active' ? 'hsl(var(--status-destructive-border))' : 'hsl(var(--status-success-border))'}`, borderRadius: '4px', cursor: 'pointer' }}>
                   {u.status === 'active' ? 'Disable' : 'Enable'}
                 </button>

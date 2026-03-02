@@ -5,7 +5,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { API_BASE, apiLogin } from '../helpers/api-client';
+import { API_BASE, apiGet, apiLogin } from '../helpers/api-client';
 
 const ADMIN_EMAIL = process.env.OPERATOR_EMAIL || 'admin@vexel.system';
 const ADMIN_PASSWORD = process.env.OPERATOR_PASSWORD || 'Admin@vexel123!';
@@ -77,11 +77,12 @@ test.describe('Admin CRUD', () => {
     await adminLogin(page);
     await page.goto('/admin/feature-flags');
 
-    await expect(page.getByRole('heading', { name: 'Feature Flags' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
 
-    // Main app toggles section exists
-    await expect(page.getByRole('heading', { name: 'Main Apps' })).toBeVisible();
+    // Grouped module sections exist
+    await expect(page.getByText('Core', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('LIMS', { exact: true }).first()).toBeVisible();
 
     // Toggle controls are rendered
     const firstToggle = page.getByRole('button', { name: 'Toggle' }).first();
@@ -96,7 +97,7 @@ test.describe('Admin CRUD', () => {
     const getTenantFlags = async () =>
       apiGet<Array<{ key: string; enabled: boolean }>>(`/tenants/${tenantId}/feature-flags`, accessToken);
 
-    const targetFlagKey = 'module.rad';
+    const targetFlagKey = 'lims.operator.sample.receiveSeparate.enabled';
 
     const readTargetFlag = async () => {
       const flags = await getTenantFlags();
@@ -123,58 +124,5 @@ test.describe('Admin CRUD', () => {
     // Toggle back to restore original state
     await toggle.click();
     await expect.poll(async () => await readTargetFlag(), { timeout: 10_000 }).toBe(initialEnabled);
-  });
-
-  test('read-only impersonation blocks writes and can be stopped', async ({ page }) => {
-    const { accessToken: adminToken } = await apiLogin(ADMIN_EMAIL, ADMIN_PASSWORD);
-    const { accessToken: operatorToken } = await apiLogin('operator@demo.vexel.pk', 'Operator@demo123!');
-    const operatorJwtPayload = JSON.parse(Buffer.from(operatorToken.split('.')[1], 'base64url').toString('utf8'));
-    const operatorUserId = operatorJwtPayload.sub as string;
-
-    await adminLogin(page);
-
-    const startResult = await page.evaluate(async ({ token, userId, apiBase }) => {
-      const res = await fetch(`${apiBase}/admin/impersonation/start`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          reason: 'Testing operator workflow in strict read-only mode',
-        }),
-      });
-      return { status: res.status, body: await res.text() };
-    }, { token: adminToken, userId: operatorUserId, apiBase: API_BASE });
-    expect(startResult.status).toBe(200);
-
-    await page.goto('/admin/dashboard');
-
-    await expect(page.getByText(/Impersonating:/)).toBeVisible({ timeout: 15_000 });
-
-    const token = await page.evaluate(() => localStorage.getItem('vexel_token'));
-    expect(token).toBeTruthy();
-
-    const patchResult = await page.evaluate(async ({ token, apiBase }) => {
-      const res = await fetch(`${apiBase}/users/non-existent-id`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ firstName: 'Blocked' }),
-      });
-      const text = await res.text();
-      return { status: res.status, text };
-    }, { token, apiBase: API_BASE });
-    expect(patchResult.status).toBe(403);
-    const patchBody = JSON.parse(patchResult.text);
-    expect(String(patchBody.message ?? patchBody.detail ?? '')).toMatch(/read-only/i);
-
-    await page.getByRole('button', { name: 'Stop impersonating' }).click();
-    await expect(page.getByText(/Impersonating:/)).not.toBeVisible({ timeout: 15_000 });
   });
 });

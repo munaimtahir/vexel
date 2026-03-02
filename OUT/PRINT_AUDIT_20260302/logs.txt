@@ -1,0 +1,77 @@
+🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render
+[document-render] correlationId=9fb35213-d684-4fc6-b108-c2220b142b25 docId=091a658d-3325-4863-b7cb-b0d20b58b241 fetch_doc_ms=100 type=RECEIPT
+[document-render] correlationId=9fb35213-d684-4fc6-b108-c2220b142b25 docId=091a658d-3325-4863-b7cb-b0d20b58b241 FAILED total_ms=117 error=PDF service returned 500: 
+[document-render] correlationId=9fb35213-d684-4fc6-b108-c2220b142b25 docId=091a658d-3325-4863-b7cb-b0d20b58b241 fetch_doc_ms=3 type=RECEIPT
+[document-render] correlationId=9fb35213-d684-4fc6-b108-c2220b142b25 docId=091a658d-3325-4863-b7cb-b0d20b58b241 FAILED total_ms=15 error=PDF service returned 500: 
+[document-render] correlationId=9fb35213-d684-4fc6-b108-c2220b142b25 docId=091a658d-3325-4863-b7cb-b0d20b58b241 fetch_doc_ms=2 type=RECEIPT
+[document-render] correlationId=9fb35213-d684-4fc6-b108-c2220b142b25 docId=091a658d-3325-4863-b7cb-b0d20b58b241 FAILED total_ms=13 error=PDF service returned 500: 
+[document-render] correlationId=87257db8-2ea0-4a74-b2f3-a533cb9df56c docId=e213de29-681a-4999-9e54-c77fff1b9644 fetch_doc_ms=6 type=RECEIPT
+[document-render] correlationId=7493d2fd-00fa-4b60-a86b-cbac6f3446d4 docId=3ad95a55-3f83-4d10-8324-4c35a044ce34 fetch_doc_ms=3 type=RECEIPT
+[document-render] correlationId=4d7ab5a3-b7e8-49b9-9362-03e89e1eb998 docId=7d9cf721-97cb-4a4c-96e2-cb693446dfb1 fetch_doc_ms=4 type=RECEIPT
+[document-render] correlationId=87257db8-2ea0-4a74-b2f3-a533cb9df56c docId=e213de29-681a-4999-9e54-c77fff1b9644 FAILED total_ms=294 error=PDF service returned 500: 
+[document-render] correlationId=7493d2fd-00fa-4b60-a86b-cbac6f3446d4 docId=3ad95a55-3f83-4d10-8324-4c35a044ce34 FAILED total_ms=280 error=PDF service returned 500: 
+[document-render] correlationId=4d7ab5a3-b7e8-49b9-9362-03e89e1eb998 docId=7d9cf721-97cb-4a4c-96e2-cb693446dfb1 FAILED total_ms=269 error=PDF service returned 500: 
+[document-render] correlationId=87257db8-2ea0-4a74-b2f3-a533cb9df56c docId=e213de29-681a-4999-9e54-c77fff1b9644 fetch_doc_ms=4 type=RECEIPT
+[document-render] correlationId=7493d2fd-00fa-4b60-a86b-cbac6f3446d4 docId=3ad95a55-3f83-4d10-8324-4c35a044ce34 fetch_doc_ms=8 type=RECEIPT
+[document-render] correlationId=4d7ab5a3-b7e8-49b9-9362-03e89e1eb998 docId=7d9cf721-97cb-4a4c-96e2-cb693446dfb1 fetch_doc_ms=8 type=RECEIPT
+[document-render] correlationId=87257db8-2ea0-4a74-b2f3-a533cb9df56c docId=e213de29-681a-4999-9e54-c77fff1b9644 FAILED total_ms=26 error=PDF service returned 500: 
+[document-render] correlationId=4d7ab5a3-b7e8-49b9-9362-03e89e1eb998 docId=7d9cf721-97cb-4a4c-96e2-cb693446dfb1 FAILED total_ms=31 error=PDF service returned 500: 
+[document-render] correlationId=7493d2fd-00fa-4b60-a86b-cbac6f3446d4 docId=3ad95a55-3f83-4d10-8324-4c35a044ce34 FAILED total_ms=34 error=PDF service returned 500: 
+[document-render] correlationId=87257db8-2ea0-4a74-b2f3-a533cb9df56c docId=e213de29-681a-4999-9e54-c77fff1b9644 fetch_doc_ms=4 type=RECEIPT
+[document-render] correlationId=4d7ab5a3-b7e8-49b9-9362-03e89e1eb998 docId=7d9cf721-97cb-4a4c-96e2-cb693446dfb1 fetch_doc_ms=4 type=RECEIPT
+[document-render] correlationId=7493d2fd-00fa-4b60-a86b-cbac6f3446d4 docId=3ad95a55-3f83-4d10-8324-4c35a044ce34 fetch_doc_ms=4 type=RECEIPT
+[document-render] correlationId=87257db8-2ea0-4a74-b2f3-a533cb9df56c docId=e213de29-681a-4999-9e54-c77fff1b9644 FAILED total_ms=30 error=PDF service returned 500: 
+[document-render] correlationId=7493d2fd-00fa-4b60-a86b-cbac6f3446d4 docId=3ad95a55-3f83-4d10-8324-4c35a044ce34 FAILED total_ms=29 error=PDF service returned 500: 
+[document-render] correlationId=4d7ab5a3-b7e8-49b9-9362-03e89e1eb998 docId=7d9cf721-97cb-4a4c-96e2-cb693446dfb1 FAILED total_ms=31 error=PDF service returned 500: 
+[document-render] correlationId=8f3679f2-769b-45c2-8209-787f8598ed8f docId=0e32437d-c466-4c5f-b83f-4c91c01697e8 fetch_doc_ms=7 type=RECEIPT
+[document-render] correlationId=d7d6eb43-38c1-408a-8666-e3f242a74510 docId=a4fb57fd-4b8d-4a4b-8b46-4102b8a7f808 fetch_doc_ms=5 type=RECEIPT
+[document-render] correlationId=c3135bc4-51c4-461a-a348-1ac2434b8d7b docId=1b05d6a8-3fcc-4f08-a726-595fcaacb891 fetch_doc_ms=3 type=RECEIPT
+[document-render] correlationId=8f3679f2-769b-45c2-8209-787f8598ed8f docId=0e32437d-c466-4c5f-b83f-4c91c01697e8 pdf_render_ms=280 bytes=54779
+[document-render] correlationId=d7d6eb43-38c1-408a-8666-e3f242a74510 docId=a4fb57fd-4b8d-4a4b-8b46-4102b8a7f808 pdf_render_ms=287 bytes=55147
+[document-render] correlationId=c3135bc4-51c4-461a-a348-1ac2434b8d7b docId=1b05d6a8-3fcc-4f08-a726-595fcaacb891 pdf_render_ms=260 bytes=54812
+[document-render] correlationId=8f3679f2-769b-45c2-8209-787f8598ed8f docId=0e32437d-c466-4c5f-b83f-4c91c01697e8 storage_upload_ms=33 key=system/0e32437d-c466-4c5f-b83f-4c91c01697e8/report.pdf
+[document-render] correlationId=d7d6eb43-38c1-408a-8666-e3f242a74510 docId=a4fb57fd-4b8d-4a4b-8b46-4102b8a7f808 storage_upload_ms=21 key=system/a4fb57fd-4b8d-4a4b-8b46-4102b8a7f808/report.pdf
+[document-render] correlationId=c3135bc4-51c4-461a-a348-1ac2434b8d7b docId=1b05d6a8-3fcc-4f08-a726-595fcaacb891 storage_upload_ms=18 key=system/1b05d6a8-3fcc-4f08-a726-595fcaacb891/report.pdf
+[document-render] correlationId=8f3679f2-769b-45c2-8209-787f8598ed8f docId=0e32437d-c466-4c5f-b83f-4c91c01697e8 auto_published type=RECEIPT total_ms=340
+[document-render] correlationId=d7d6eb43-38c1-408a-8666-e3f242a74510 docId=a4fb57fd-4b8d-4a4b-8b46-4102b8a7f808 auto_published type=RECEIPT total_ms=332
+[document-render] correlationId=c3135bc4-51c4-461a-a348-1ac2434b8d7b docId=1b05d6a8-3fcc-4f08-a726-595fcaacb891 auto_published type=RECEIPT total_ms=297
+[document-render] correlationId=9a82eae5-e981-4dde-b0fe-f3428728ccd1 docId=625c6248-224d-4c0f-9c98-237c14dab470 fetch_doc_ms=21 type=RECEIPT
+[document-render] correlationId=9a82eae5-e981-4dde-b0fe-f3428728ccd1 docId=625c6248-224d-4c0f-9c98-237c14dab470 pdf_render_ms=20 bytes=52657
+[document-render] correlationId=9a82eae5-e981-4dde-b0fe-f3428728ccd1 docId=625c6248-224d-4c0f-9c98-237c14dab470 storage_upload_ms=10 key=system/625c6248-224d-4c0f-9c98-237c14dab470/report.pdf
+[document-render] correlationId=9a82eae5-e981-4dde-b0fe-f3428728ccd1 docId=625c6248-224d-4c0f-9c98-237c14dab470 auto_published type=RECEIPT total_ms=67
+[document-render] correlationId=fa3c8910-cbd4-4033-b90e-4f650331f4b9 docId=2f0a7feb-82fd-4536-b451-0b8e2c401d6e fetch_doc_ms=3 type=RECEIPT
+[document-render] correlationId=fa3c8910-cbd4-4033-b90e-4f650331f4b9 docId=2f0a7feb-82fd-4536-b451-0b8e2c401d6e pdf_render_ms=18 bytes=52662
+[document-render] correlationId=fa3c8910-cbd4-4033-b90e-4f650331f4b9 docId=2f0a7feb-82fd-4536-b451-0b8e2c401d6e storage_upload_ms=10 key=system/2f0a7feb-82fd-4536-b451-0b8e2c401d6e/report.pdf
+[document-render] correlationId=fa3c8910-cbd4-4033-b90e-4f650331f4b9 docId=2f0a7feb-82fd-4536-b451-0b8e2c401d6e auto_published type=RECEIPT total_ms=44
+[document-render] correlationId=b0964730-3d5d-42e2-8818-1bd04e438f16 docId=fe943e85-6c82-4598-aef9-702e1b1eb721 fetch_doc_ms=4 type=RECEIPT
+[document-render] correlationId=b0964730-3d5d-42e2-8818-1bd04e438f16 docId=fe943e85-6c82-4598-aef9-702e1b1eb721 pdf_render_ms=18 bytes=53065
+[document-render] correlationId=b0964730-3d5d-42e2-8818-1bd04e438f16 docId=fe943e85-6c82-4598-aef9-702e1b1eb721 storage_upload_ms=20 key=system/fe943e85-6c82-4598-aef9-702e1b1eb721/report.pdf
+[document-render] correlationId=b0964730-3d5d-42e2-8818-1bd04e438f16 docId=fe943e85-6c82-4598-aef9-702e1b1eb721 auto_published type=RECEIPT total_ms=58
+[document-render] correlationId=8cd8094f-586b-41c2-aae4-b0515317df5f docId=9f16fd9f-a58d-4204-91a3-bd5b6a314d32 fetch_doc_ms=2 type=RECEIPT
+[document-render] correlationId=8cd8094f-586b-41c2-aae4-b0515317df5f docId=9f16fd9f-a58d-4204-91a3-bd5b6a314d32 pdf_render_ms=16 bytes=52901
+[document-render] correlationId=8cd8094f-586b-41c2-aae4-b0515317df5f docId=9f16fd9f-a58d-4204-91a3-bd5b6a314d32 storage_upload_ms=9 key=system/9f16fd9f-a58d-4204-91a3-bd5b6a314d32/report.pdf
+[document-render] correlationId=8cd8094f-586b-41c2-aae4-b0515317df5f docId=9f16fd9f-a58d-4204-91a3-bd5b6a314d32 auto_published type=RECEIPT total_ms=43
+[document-render] correlationId=0e441d05-e5ee-4740-b467-0b4f3c8e9608 docId=1204c6f4-d7a8-4623-91dd-b973ef76ed0c fetch_doc_ms=4 type=RECEIPT
+[document-render] correlationId=0e441d05-e5ee-4740-b467-0b4f3c8e9608 docId=1204c6f4-d7a8-4623-91dd-b973ef76ed0c pdf_render_ms=18 bytes=52664
+[document-render] correlationId=0e441d05-e5ee-4740-b467-0b4f3c8e9608 docId=1204c6f4-d7a8-4623-91dd-b973ef76ed0c storage_upload_ms=13 key=system/1204c6f4-d7a8-4623-91dd-b973ef76ed0c/report.pdf
+[document-render] correlationId=0e441d05-e5ee-4740-b467-0b4f3c8e9608 docId=1204c6f4-d7a8-4623-91dd-b973ef76ed0c auto_published type=RECEIPT total_ms=50
+[document-render] correlationId=7fe529d3-02c3-437e-be24-5e30c7efd90b docId=7c01b268-4944-4da7-975b-5e3c89c8db0c fetch_doc_ms=6 type=RECEIPT
+[document-render] correlationId=7fe529d3-02c3-437e-be24-5e30c7efd90b docId=7c01b268-4944-4da7-975b-5e3c89c8db0c pdf_render_ms=18 bytes=52662
+[document-render] correlationId=7fe529d3-02c3-437e-be24-5e30c7efd90b docId=7c01b268-4944-4da7-975b-5e3c89c8db0c storage_upload_ms=10 key=system/7c01b268-4944-4da7-975b-5e3c89c8db0c/report.pdf
+[document-render] correlationId=7fe529d3-02c3-437e-be24-5e30c7efd90b docId=7c01b268-4944-4da7-975b-5e3c89c8db0c auto_published type=RECEIPT total_ms=47
+[document-render] correlationId=35860b0b-93b3-44b1-a787-1fe417052e26 docId=ee0019bb-a335-4f95-995c-45c6f6c9c83f fetch_doc_ms=3 type=RECEIPT
+[document-render] correlationId=35860b0b-93b3-44b1-a787-1fe417052e26 docId=ee0019bb-a335-4f95-995c-45c6f6c9c83f pdf_render_ms=12 bytes=52844
+[document-render] correlationId=35860b0b-93b3-44b1-a787-1fe417052e26 docId=ee0019bb-a335-4f95-995c-45c6f6c9c83f storage_upload_ms=10 key=system/ee0019bb-a335-4f95-995c-45c6f6c9c83f/report.pdf
+[document-render] correlationId=35860b0b-93b3-44b1-a787-1fe417052e26 docId=ee0019bb-a335-4f95-995c-45c6f6c9c83f auto_published type=RECEIPT total_ms=36
+[document-render] correlationId=d8017b21-4f69-4f4a-8b9a-1a369835a23f docId=eac3f6fd-62e4-49bf-8d98-6cec66a5a8b3 fetch_doc_ms=4 type=RECEIPT
+[document-render] correlationId=d8017b21-4f69-4f4a-8b9a-1a369835a23f docId=eac3f6fd-62e4-49bf-8d98-6cec66a5a8b3 pdf_render_ms=18 bytes=53134
+[document-render] correlationId=d8017b21-4f69-4f4a-8b9a-1a369835a23f docId=eac3f6fd-62e4-49bf-8d98-6cec66a5a8b3 storage_upload_ms=15 key=system/eac3f6fd-62e4-49bf-8d98-6cec66a5a8b3/report.pdf
+[document-render] correlationId=d8017b21-4f69-4f4a-8b9a-1a369835a23f docId=eac3f6fd-62e4-49bf-8d98-6cec66a5a8b3 auto_published type=RECEIPT total_ms=50
+[document-render] correlationId=3374965c-3075-46d2-843c-d775fabb34f0 docId=2fae85e0-609d-46e3-99c4-df3f649beb2c fetch_doc_ms=5 type=RECEIPT
+[document-render] correlationId=3374965c-3075-46d2-843c-d775fabb34f0 docId=2fae85e0-609d-46e3-99c4-df3f649beb2c pdf_render_ms=13 bytes=52982
+[document-render] correlationId=3374965c-3075-46d2-843c-d775fabb34f0 docId=2fae85e0-609d-46e3-99c4-df3f649beb2c storage_upload_ms=9 key=system/2fae85e0-609d-46e3-99c4-df3f649beb2c/report.pdf
+[document-render] correlationId=3374965c-3075-46d2-843c-d775fabb34f0 docId=2fae85e0-609d-46e3-99c4-df3f649beb2c auto_published type=RECEIPT total_ms=39
+[document-render] correlationId=307837fc-c13e-4fbc-86ac-199c926dd901 docId=9909d222-ed29-46b2-b63f-325fda00a1f6 fetch_doc_ms=6 type=RECEIPT
+[document-render] correlationId=307837fc-c13e-4fbc-86ac-199c926dd901 docId=9909d222-ed29-46b2-b63f-325fda00a1f6 pdf_render_ms=13 bytes=52649
+[document-render] correlationId=307837fc-c13e-4fbc-86ac-199c926dd901 docId=9909d222-ed29-46b2-b63f-325fda00a1f6 storage_upload_ms=10 key=system/9909d222-ed29-46b2-b63f-325fda00a1f6/report.pdf
+[document-render] correlationId=307837fc-c13e-4fbc-86ac-199c926dd901 docId=9909d222-ed29-46b2-b63f-325fda00a1f6 auto_published type=RECEIPT total_ms=41

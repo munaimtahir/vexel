@@ -272,57 +272,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/impersonation/start": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Start read-only impersonation session */
-        post: operations["startAdminImpersonation"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/impersonation/stop": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Stop active impersonation session */
-        post: operations["stopAdminImpersonation"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/impersonation/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get current impersonation status */
-        get: operations["getAdminImpersonationStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/roles": {
         parameters: {
             query?: never;
@@ -3825,44 +3774,6 @@ export interface components {
             invoice: components["schemas"]["OpdInvoice"];
             document: components["schemas"]["Document"];
         };
-        AdminImpersonationStartRequest: {
-            user_id: string;
-            reason: string;
-        };
-        AdminImpersonationUser: {
-            id: string;
-            name: string;
-            role?: string | null;
-        };
-        AdminImpersonationStartResponse: {
-            session_id: string;
-            impersonated_user: components["schemas"]["AdminImpersonationUser"];
-            /** @enum {string} */
-            mode: "READ_ONLY";
-            /** Format: date-time */
-            expires_at: string;
-        };
-        AdminImpersonationStatusInactive: {
-            /** @enum {boolean} */
-            active: false;
-        };
-        AdminImpersonationStatusActive: {
-            /** @enum {boolean} */
-            active: true;
-            session_id: string;
-            started_by: {
-                id: string;
-                name: string;
-            };
-            impersonated_user: components["schemas"]["AdminImpersonationUser"];
-            /** @enum {string} */
-            mode: "READ_ONLY";
-            /** Format: date-time */
-            started_at: string;
-            /** Format: date-time */
-            expires_at: string;
-        };
-        AdminImpersonationStatusResponse: components["schemas"]["AdminImpersonationStatusInactive"] | components["schemas"]["AdminImpersonationStatusActive"];
     };
     responses: {
         /** @description Unauthorized */
@@ -3874,7 +3785,7 @@ export interface components {
                 "application/json": components["schemas"]["Error"];
             };
         };
-        /** @description Forbidden (including read-only impersonation write blocking) */
+        /** @description Forbidden */
         Forbidden: {
             headers: {
                 [name: string]: unknown;
@@ -4558,87 +4469,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Role"][];
-                };
-            };
-        };
-    };
-    startAdminImpersonation: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-supplied correlation ID. If not provided, server generates one. */
-                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AdminImpersonationStartRequest"];
-            };
-        };
-        responses: {
-            /** @description Impersonation started */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AdminImpersonationStartResponse"];
-                };
-            };
-            /** @description Forbidden (non-admin, invalid reason, or invalid target) */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    stopAdminImpersonation: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-supplied correlation ID. If not provided, server generates one. */
-                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Stopped */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ok: boolean;
-                    };
-                };
-            };
-        };
-    };
-    getAdminImpersonationStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Impersonation status */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AdminImpersonationStatusResponse"];
                 };
             };
         };

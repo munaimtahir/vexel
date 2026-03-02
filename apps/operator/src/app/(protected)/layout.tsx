@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/auth';
 import QueryProvider from '@/components/query-provider';
-import { ImpersonationBanner } from '@/components/impersonation-banner';
 
 /** Auth guard only — no sidebar here. Sidebar lives in /lims/layout.tsx */
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
@@ -29,7 +28,6 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <QueryProvider>
-      <ImpersonationBanner />
       {children}
     </QueryProvider>
   );
