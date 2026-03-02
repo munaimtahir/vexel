@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { TenantScopeBanner } from '@/components/tenant-scope-banner';
+import { DataTable } from '@vexel/ui-system';
 
 const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' };
@@ -30,6 +31,10 @@ export default function UsersPage() {
   const [roleUser, setRoleUser] = useState<any | null>(null);
   const [userRoles, setUserRoles] = useState<string[]>([]);
   const [roleSaving, setRoleSaving] = useState(false);
+  const [impersonateUser, setImpersonateUser] = useState<any | null>(null);
+  const [impersonateReason, setImpersonateReason] = useState('');
+  const [impersonateError, setImpersonateError] = useState('');
+  const [impersonating, setImpersonating] = useState(false);
 
   async function loadData() {
     const api = getApiClient(getToken() ?? undefined);
@@ -100,6 +105,51 @@ export default function UsersPage() {
     loadData();
   }
 
+  function getImpersonationLanding(target: any): string {
+    const operatorBase = process.env.NEXT_PUBLIC_OPERATOR_URL?.replace(/\/$/, '');
+    const roleNames = (target?.roles ?? [])
+      .map((r: any) => (typeof r === 'string' ? r : r?.name))
+      .filter(Boolean) as string[];
+    const lowerRoles = roleNames.map((r) => r.toLowerCase());
+
+    if (lowerRoles.some((r) => r.includes('opd'))) return operatorBase ? `${operatorBase}/opd/worklist` : '/admin/dashboard';
+    if (lowerRoles.some((r) => r.includes('operator') || r.includes('verifier') || r.includes('resident') || r.includes('supervisor') || r.includes('hod'))) {
+      return operatorBase ? `${operatorBase}/lims/worklist` : '/admin/dashboard';
+    }
+    if (lowerRoles.some((r) => r.includes('admin'))) return '/admin/dashboard';
+    return '/admin/dashboard';
+  }
+
+  async function handleImpersonateStart() {
+    if (!impersonateUser) return;
+    setImpersonating(true);
+    setImpersonateError('');
+
+    const reason = impersonateReason.trim();
+    if (reason.length < 10) {
+      setImpersonateError('Reason must be at least 10 characters.');
+      setImpersonating(false);
+      return;
+    }
+
+    const api = getApiClient(getToken() ?? undefined);
+    const { error } = await api.POST('/admin/impersonation/start', {
+      body: {
+        user_id: impersonateUser.id,
+        reason,
+      },
+    });
+
+    if (error) {
+      setImpersonateError((error as any)?.message ?? 'Failed to start impersonation');
+      setImpersonating(false);
+      return;
+    }
+
+    const next = getImpersonationLanding(impersonateUser);
+    window.location.href = next;
+  }
+
   if (loading) return <p style={{ padding: '32px' }}>Loading...</p>;
 
   return (
@@ -167,6 +217,44 @@ export default function UsersPage() {
         </>
       )}
 
+      {/* Impersonation modal */}
+      {impersonateUser && (
+        <>
+          <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.3)', zIndex: 40 }} onClick={() => { setImpersonateUser(null); setImpersonateReason(''); setImpersonateError(''); }} />
+          <div style={{ position: 'fixed', top: '8%', left: '50%', transform: 'translateX(-50%)', width: 'min(560px, 92vw)', background: 'hsl(var(--card))', zIndex: 50, boxShadow: 'var(--shadow-lg)', borderRadius: '10px', padding: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Act as (Read-only)</h2>
+              <button onClick={() => { setImpersonateUser(null); setImpersonateReason(''); setImpersonateError(''); }} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}>×</button>
+            </div>
+            <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', marginBottom: '14px' }}>
+              You are about to impersonate <strong>{impersonateUser.firstName} {impersonateUser.lastName}</strong> ({(impersonateUser.roles ?? []).map((r: any) => typeof r === 'string' ? r : r.name).filter(Boolean).join(', ') || 'user'}) in strict read-only mode.
+            </p>
+            <div style={{ marginBottom: '12px' }}>
+              <label htmlFor="impersonation-reason" style={labelStyle}>Reason (required)</label>
+              <textarea
+                id="impersonation-reason"
+                value={impersonateReason}
+                onChange={(e) => setImpersonateReason(e.target.value)}
+                placeholder="Testing workflow path for ..."
+                rows={4}
+                style={{ ...inputStyle, resize: 'vertical', minHeight: '88px' }}
+              />
+            </div>
+            {impersonateError ? (
+              <div style={{ background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px', borderRadius: '6px', fontSize: '13px', marginBottom: '12px' }}>
+                {impersonateError}
+              </div>
+            ) : null}
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button type="button" onClick={() => { setImpersonateUser(null); setImpersonateReason(''); setImpersonateError(''); }} style={btnSecondary}>Cancel</button>
+              <button type="button" onClick={handleImpersonateStart} disabled={impersonating} style={btnPrimary}>
+                {impersonating ? 'Starting...' : 'Start Read-only Impersonation'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Users</h1>
         <button onClick={() => setCreateOpen(true)} style={{ ...btnPrimary, fontSize: '14px' }}>+ New User</button>
@@ -201,49 +289,59 @@ export default function UsersPage() {
         </div>
       )}
 
-      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-          <thead style={{ background: 'hsl(var(--background))' }}>
-            <tr>
-              {['Name', 'Email', 'Status', 'Roles', 'Actions'].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '12px 16px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {users.length === 0 ? (
-              <tr><td colSpan={5} style={{ padding: '32px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No users found</td></tr>
-            ) : users.map((u: any) => {
+      <DataTable
+        columns={[
+          {
+            key: 'name',
+            header: 'Name',
+            cell: (u: any) => <span style={{ fontWeight: 500 }}>{u.firstName} {u.lastName}</span>,
+          },
+          {
+            key: 'email',
+            header: 'Email',
+            cell: (u: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{u.email}</span>,
+          },
+          {
+            key: 'status',
+            header: 'Status',
+            cell: (u: any) => <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '12px', background: u.status === 'active' ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: u.status === 'active' ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>{u.status}</span>,
+          },
+          {
+            key: 'roles',
+            header: 'Roles',
+            cell: (u: any) => {
               const roleNames = (u.roles ?? []).map((r: any) => typeof r === 'string' ? r : r.name).filter(Boolean);
               return (
-                <tr key={u.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                  <td style={{ padding: '12px 16px', fontWeight: 500 }}>{u.firstName} {u.lastName}</td>
-                  <td style={{ padding: '12px 16px', color: 'hsl(var(--muted-foreground))' }}>{u.email}</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '12px', background: u.status === 'active' ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: u.status === 'active' ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>{u.status}</span>
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
-                      {roleNames.length === 0 ? <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>—</span> : roleNames.map((n: string) => (
-                        <span key={n} style={{ background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', padding: '1px 6px', borderRadius: '10px', fontSize: '11px' }}>{n}</span>
-                      ))}
-                    </div>
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button onClick={() => openEdit(u)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                      <button onClick={() => openRoles(u)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer' }}>Roles</button>
-                      <button onClick={() => handleStatusToggle(u.id, u.status)} style={{ padding: '4px 10px', fontSize: '12px', background: u.status === 'active' ? 'hsl(var(--status-destructive-bg))' : 'hsl(var(--status-success-bg))', color: u.status === 'active' ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--status-success-fg))', border: `1px solid ${u.status === 'active' ? 'hsl(var(--status-destructive-border))' : 'hsl(var(--status-success-border))'}`, borderRadius: '4px', cursor: 'pointer' }}>
-                        {u.status === 'active' ? 'Disable' : 'Enable'}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
+                  {roleNames.length === 0 ? <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>—</span> : roleNames.map((n: string) => (
+                    <span key={n} style={{ background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', padding: '1px 6px', borderRadius: '10px', fontSize: '11px' }}>{n}</span>
+                  ))}
+                </div>
               );
-            })}
-          </tbody>
-        </table>
-      </div>
+            },
+          },
+          {
+            key: 'actions',
+            header: 'Actions',
+            cell: (u: any) => (
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button onClick={() => openEdit(u)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+                <button onClick={() => openRoles(u)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer' }}>Roles</button>
+                <button onClick={() => { setImpersonateUser(u); setImpersonateReason(''); setImpersonateError(''); }} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-warning-bg))', color: 'hsl(var(--status-warning-fg))', border: '1px solid hsl(var(--status-warning-border))', borderRadius: '4px', cursor: 'pointer' }}>
+                  Act as (Read-only)
+                </button>
+                <button onClick={() => handleStatusToggle(u.id, u.status)} style={{ padding: '4px 10px', fontSize: '12px', background: u.status === 'active' ? 'hsl(var(--status-destructive-bg))' : 'hsl(var(--status-success-bg))', color: u.status === 'active' ? 'hsl(var(--status-destructive-fg))' : 'hsl(var(--status-success-fg))', border: `1px solid ${u.status === 'active' ? 'hsl(var(--status-destructive-border))' : 'hsl(var(--status-success-border))'}`, borderRadius: '4px', cursor: 'pointer' }}>
+                  {u.status === 'active' ? 'Disable' : 'Enable'}
+                </button>
+              </div>
+            ),
+          },
+        ]}
+        data={users}
+        keyExtractor={(u: any) => `${u.id}`}
+        emptyMessage="No users found"
+        className="shadow-sm"
+      />
     </div>
   );
 }

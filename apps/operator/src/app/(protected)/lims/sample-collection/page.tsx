@@ -375,7 +375,7 @@ export default function SampleCollectionPage() {
                     <div className="pt-2.5 mb-2">
                       <Button
                         size="sm"
-                        className="bg-primary hover:bg-primary/90 text-white"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
                         onClick={() => collectSpecimens(row.id, [])}
                         disabled={acting.has(`all-${row.id}`)}
                       >
@@ -423,7 +423,7 @@ export default function SampleCollectionPage() {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-primary hover:bg-primary/90 text-white"
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground"
                                 onClick={() => collectSpecimens(row.id, [sp.id])}
                                 disabled={isActing}
                               >
@@ -431,7 +431,7 @@ export default function SampleCollectionPage() {
                               </Button>
                               <Button
                                 size="sm"
-                                className="bg-primary hover:bg-primary/90 text-white"
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground"
                                 onClick={() => { setPostponeModal({ encounterId: row.id, specimenItemId: sp.id, label: specimenLabel }); setPostponeReason(''); setPostponeError(''); }}
                               >
                                 Postpone
@@ -450,7 +450,7 @@ export default function SampleCollectionPage() {
                           {sp.status === 'POSTPONED' && (
                             <Button
                               size="sm"
-                              className="bg-primary hover:bg-primary/90 text-white"
+                              className="bg-primary hover:bg-primary/90 text-primary-foreground"
                               onClick={() => collectSpecimens(row.id, [sp.id])}
                               disabled={isActing}
                             >

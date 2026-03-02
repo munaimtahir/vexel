@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { DataTable, type DataTableColumn } from '@vexel/ui-system';
 
 type FinancialsData = {
   encounter: {
@@ -280,24 +281,47 @@ export default function PaymentsPage() {
 
           {/* Financial summary */}
           <SectionCard title="Financial Summary">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="bg-muted/50">
-                  {['Total', 'Discount', 'Payable', 'Paid', 'Due'].map(h => (
-                    <th key={h} className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground uppercase border-b border-border">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {[totalAmount, discountAmt, payableAmt, paidAmt, dueAmt].map((v, i) => (
-                    <td key={i} className={`px-4 py-3 text-right text-base ${i === 4 ? 'font-bold' : 'font-medium'} ${i === 4 && v > 0 ? 'text-destructive' : 'text-foreground'}`}>
-                      PKR {v.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
-                    </td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
+            <DataTable
+              columns={[
+                {
+                  key: 'total',
+                  header: 'Total',
+                  numeric: true,
+                  cell: () => <span className="text-base font-medium">PKR {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>,
+                },
+                {
+                  key: 'discount',
+                  header: 'Discount',
+                  numeric: true,
+                  cell: () => <span className="text-base font-medium">PKR {discountAmt.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>,
+                },
+                {
+                  key: 'payable',
+                  header: 'Payable',
+                  numeric: true,
+                  cell: () => <span className="text-base font-medium">PKR {payableAmt.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>,
+                },
+                {
+                  key: 'paid',
+                  header: 'Paid',
+                  numeric: true,
+                  cell: () => <span className="text-base font-medium">PKR {paidAmt.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>,
+                },
+                {
+                  key: 'due',
+                  header: 'Due',
+                  numeric: true,
+                  cell: () => (
+                    <span className={dueAmt > 0 ? 'text-base font-bold text-destructive' : 'text-base font-bold'}>
+                      PKR {dueAmt.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                    </span>
+                  ),
+                },
+              ] as DataTableColumn<{ id: string }>[]}
+              data={[{ id: 'summary' }]}
+              keyExtractor={(row) => row.id}
+              className="border-0 rounded-none"
+            />
           </SectionCard>
 
           {/* Action buttons */}

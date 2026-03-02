@@ -48,13 +48,13 @@ export default function VerificationPage() {
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'pending' | 'verified'>('pending');
 
-  const load = async (q: string) => {
+  const load = async (q: string, view: 'pending' | 'verified_today') => {
     setLoading(true);
     setError('');
     try {
       const api = getApiClient(getToken() ?? undefined);
       const { data, error: apiErr } = await api.GET('/verification/encounters/pending', {
-        params: { query: { search: q || undefined, limit: 50 } },
+        params: { query: { search: q || undefined, limit: 50, view } },
       });
       if (apiErr || !data) { setError('Failed to load verification queue'); return; }
       const list: VerificationSummary[] = Array.isArray((data as any).data)
@@ -68,9 +68,16 @@ export default function VerificationPage() {
     }
   };
 
-  useEffect(() => { load(search); }, []);
+  useEffect(() => {
+    const view = tab === 'verified' ? 'verified_today' : 'pending';
+    load(search, view);
+  }, [tab]);
 
-  const handleSearch = (e: React.FormEvent) => { e.preventDefault(); load(search); };
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const view = tab === 'verified' ? 'verified_today' : 'pending';
+    load(search, view);
+  };
 
   return (
     <div>
@@ -79,7 +86,7 @@ export default function VerificationPage() {
       <Tabs value={tab} onValueChange={(v) => setTab(v as 'pending' | 'verified')} className="mb-5">
         <TabsList>
           <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="verified" disabled>Verified today</TabsTrigger>
+          <TabsTrigger value="verified">Verified today</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -99,7 +106,7 @@ export default function VerificationPage() {
 
       {!loading && !error && (
         queue.length === 0 ? (
-          <EmptyState title="No patients pending verification" />
+          <EmptyState title={tab === 'verified' ? 'No patients verified today' : 'No patients pending verification'} />
         ) : (
           <DataTable
             data={queue}
@@ -150,7 +157,7 @@ export default function VerificationPage() {
                 header: 'Action',
                 cell: (row) => (
                   <Button size="sm" onClick={() => router.push(`/lims/verification/encounters/${row.encounterId}`)}>
-                    Verify patient
+                    {tab === 'verified' ? 'Open patient' : 'Verify patient'}
                   </Button>
                 ),
               },

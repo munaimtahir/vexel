@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   basePath: '/admin',
   outputFileTracingRoot: path.join(__dirname, '../../'),
-  transpilePackages: ['@vexel/sdk', '@vexel/theme'],
+  transpilePackages: ['@vexel/sdk', '@vexel/theme', '@vexel/ui-system'],
 };
 
 export default nextConfig;

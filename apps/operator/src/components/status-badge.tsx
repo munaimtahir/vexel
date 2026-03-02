@@ -1,50 +1,46 @@
-'use client';
-import { StatusBadge, statusToneFromWorkflowStatus, type StatusTone } from '@vexel/theme';
+import { StatusBadge, statusToneFromValue, type StatusTone } from '@vexel/ui-system';
 
 const ENCOUNTER_STATUS_MAP: Record<string, { label: string; tone: StatusTone }> = {
   registered: { label: 'Registered', tone: 'neutral' },
-  lab_ordered: { label: 'Ordered', tone: 'info' },
-  specimen_collected: { label: 'Collected', tone: 'warning' },
-  specimen_received: { label: 'Received', tone: 'info' },
-  partial_resulted: { label: 'Partial', tone: 'warning' },
-  resulted: { label: 'Resulted', tone: 'success' },
-  verified: { label: 'Verified', tone: 'success' },
-  cancelled: { label: 'Cancelled', tone: 'destructive' },
+  lab_ordered: { label: 'Lab Ordered', tone: 'blue' },
+  specimen_collected: { label: 'Specimen Collected', tone: 'amber' },
+  specimen_received: { label: 'Specimen Received', tone: 'amber' },
+  resulted: { label: 'Resulted', tone: 'green' },
+  verified: { label: 'Verified', tone: 'blue' },
+  cancelled: { label: 'Cancelled', tone: 'red' },
 };
 
-const DOC_STATUS_MAP: Record<string, { label: string; tone: StatusTone }> = {
-  DRAFT: { label: 'Draft', tone: 'neutral' },
-  RENDERING: { label: 'Rendering…', tone: 'warning' },
-  RENDERED: { label: 'Ready', tone: 'info' },
-  PUBLISHED: { label: 'Published', tone: 'success' },
-  FAILED: { label: 'Failed', tone: 'destructive' },
+const DOCUMENT_STATUS_MAP: Record<string, { label: string; tone: StatusTone }> = {
+  QUEUED: { label: 'Queued', tone: 'neutral' },
+  RENDERING: { label: 'Rendering', tone: 'amber' },
+  RENDERED: { label: 'Rendered', tone: 'blue' },
+  PUBLISHED: { label: 'Published', tone: 'green' },
+  FAILED: { label: 'Failed', tone: 'red' },
 };
+
+function toneFromStatus(status: string): StatusTone {
+  const mapped = statusToneFromValue(status);
+  return mapped;
+}
 
 export function EncounterStatusBadge({ status }: { status: string }) {
-  const s = ENCOUNTER_STATUS_MAP[status] ?? { label: status, tone: statusToneFromWorkflowStatus(status) };
+  const s = ENCOUNTER_STATUS_MAP[status] ?? { label: status || '-', tone: toneFromStatus(status) };
   return <StatusBadge tone={s.tone}>{s.label}</StatusBadge>;
 }
 
 export function DocumentStatusBadge({ status }: { status: string }) {
-  const s = DOC_STATUS_MAP[status] ?? { label: status, tone: statusToneFromWorkflowStatus(status) };
+  const s = DOCUMENT_STATUS_MAP[status] ?? { label: status || '-', tone: toneFromStatus(status) };
   return <StatusBadge tone={s.tone}>{s.label}</StatusBadge>;
 }
 
-/** Result flag badge (H/L/N/critical) — uses CSS variable tokens */
 export function FlagBadge({ flag }: { flag: string | null | undefined }) {
-  if (!flag) return null;
+  const upper = (flag ?? '').toUpperCase();
   const tone: StatusTone =
-    flag === 'high' || flag === 'critical'
-      ? 'destructive'
-      : flag === 'low'
-        ? 'info'
-        : flag === 'normal'
-          ? 'success'
-          : 'neutral';
-  const label =
-    flag === 'high'     ? 'H' :
-    flag === 'low'      ? 'L' :
-    flag === 'normal'   ? 'N' :
-    flag === 'critical' ? '!' : flag.charAt(0).toUpperCase();
+    upper === 'HIGH' || upper === 'PANIC_HIGH' || upper === 'PANIC_LOW'
+      ? 'red'
+      : upper === 'LOW'
+        ? 'amber'
+        : 'green';
+  const label = upper || 'NORMAL';
   return <StatusBadge tone={tone}>{label}</StatusBadge>;
 }

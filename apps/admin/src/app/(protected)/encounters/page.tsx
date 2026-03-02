@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   REGISTERED: { bg: 'hsl(var(--status-info-bg))', text: 'hsl(var(--status-info-fg))' },
@@ -57,41 +58,77 @@ export default function EncountersPage() {
       </div>
 
       <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: 'hsl(var(--background))' }}>
-            <tr>
-              {['Ref #', 'Patient', 'Status', 'Source', 'Ordered Tests', 'Tenant', 'Created'].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
-            ) : encounters.length === 0 ? (
-              <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No encounters found.</td></tr>
-            ) : encounters.map((e: any) => {
-              const colors = STATUS_COLORS[e.status] ?? { bg: 'hsl(var(--muted))', text: 'hsl(var(--muted-foreground))' };
-              return (
-                <tr key={e.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                  <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '12px', color: 'hsl(var(--primary))', fontWeight: 600 }}>{e.refNumber ?? e.id?.slice(0, 8)}</td>
-                  <td style={{ padding: '10px 12px' }}>
-                    {e.patient ? `${e.patient.firstName ?? ''} ${e.patient.lastName ?? ''}`.trim() || e.patientId?.slice(0, 8) : e.patientId?.slice(0, 8) ?? '—'}
-                  </td>
-                  <td style={{ padding: '10px 12px' }}>
-                    <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>{e.status?.replace(/_/g, ' ')}</span>
-                  </td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{e.source ?? '—'}</td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', textAlign: 'center' }}>
-                    {Array.isArray(e.orders) ? e.orders.length : (e.orderCount ?? '—')}
-                  </td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontFamily: 'monospace' }}>{e.tenantId?.slice(0, 8) ?? '—'}</td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{e.createdAt ? new Date(e.createdAt).toLocaleString() : '—'}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <DataTable
+          data={encounters}
+          loading={loading}
+          emptyMessage="No encounters found."
+          keyExtractor={(encounter) => encounter.id}
+          columns={[
+            {
+              key: 'ref',
+              header: 'Ref #',
+              cell: (encounter) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'hsl(var(--primary))', fontWeight: 600 }}>
+                  {encounter.refNumber ?? encounter.id?.slice(0, 8)}
+                </span>
+              ),
+            },
+            {
+              key: 'patient',
+              header: 'Patient',
+              cell: (encounter) => (
+                encounter.patient
+                  ? `${encounter.patient.firstName ?? ''} ${encounter.patient.lastName ?? ''}`.trim() || encounter.patientId?.slice(0, 8)
+                  : encounter.patientId?.slice(0, 8) ?? '—'
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Status',
+              cell: (encounter) => {
+                const colors = STATUS_COLORS[encounter.status] ?? { bg: 'hsl(var(--muted))', text: 'hsl(var(--muted-foreground))' };
+                return (
+                  <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>
+                    {encounter.status?.replace(/_/g, ' ')}
+                  </span>
+                );
+              },
+            },
+            {
+              key: 'source',
+              header: 'Source',
+              cell: (encounter) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{encounter.source ?? '—'}</span>,
+            },
+            {
+              key: 'orderedTests',
+              header: 'Ordered Tests',
+              numeric: true,
+              cell: (encounter) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>
+                  {Array.isArray(encounter.orders) ? encounter.orders.length : (encounter.orderCount ?? '—')}
+                </span>
+              ),
+            },
+            {
+              key: 'tenant',
+              header: 'Tenant',
+              cell: (encounter) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontFamily: 'monospace' }}>
+                  {encounter.tenantId?.slice(0, 8) ?? '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'created',
+              header: 'Created',
+              cell: (encounter) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>
+                  {encounter.createdAt ? new Date(encounter.createdAt).toLocaleString() : '—'}
+                </span>
+              ),
+            },
+          ]}
+        />
       </div>
 
       {totalPages > 1 && (

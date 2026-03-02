@@ -7,6 +7,7 @@ import { SectionCard } from '@/components/app';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { DataTable, type DataTableColumn } from '@vexel/ui-system';
 
 type FilledParam = {
   parameterId?: string | null;
@@ -263,7 +264,7 @@ export default function VerificationEncounterPage() {
               <Button
                 onClick={handleVerify}
                 disabled={verifying || pendingVerificationCount === 0}
-                className="bg-primary hover:bg-primary/90 text-white"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 {verifying ? 'Verifying…' : '✅ Verify patient'}
               </Button>
@@ -282,7 +283,10 @@ export default function VerificationEncounterPage() {
       {verified && (
         <div className="mx-6 mt-4 p-4 chip-success rounded-lg">
           <div className="text-base font-semibold text-[hsl(var(--status-success-fg))] mb-1.5">
-            ✅ All tests verified. Report rendering started…
+            ✅ All tests verified. Report PDF rendering started.
+          </div>
+          <div className="text-sm text-[hsl(var(--status-success-fg))]">
+            Verification does not publish the report. Publish remains a separate command step.
           </div>
           {pollingMsg && (
             <div className="text-sm text-[hsl(var(--status-success-fg))]">{pollingMsg}</div>
@@ -290,7 +294,7 @@ export default function VerificationEncounterPage() {
           {renderedDocId && (
             <div className="mt-2 flex gap-3 items-center">
               <span className="text-sm font-medium text-[hsl(var(--status-success-fg))]">📄 Report rendered</span>
-              <Button size="sm" className="bg-primary hover:bg-primary/90 text-white" asChild>
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
                 <a href={`/lims/encounters/${encounterId}/publish`}>Publish report</a>
               </Button>
             </div>
@@ -350,40 +354,36 @@ export default function VerificationEncounterPage() {
                 {!card.filledParameters || card.filledParameters.length === 0 ? (
                   <p className="text-muted-foreground text-sm">No results entered yet</p>
                 ) : (
-                  <table className="w-full text-sm border-collapse">
-                    <thead>
-                      <tr className="bg-muted/30">
-                        {['Parameter', 'Result', 'Unit', 'Ref Range', 'H/L'].map(h => (
-                          <th key={h} className="px-2.5 py-2 text-left font-semibold text-muted-foreground border-b border-border">
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {card.filledParameters.map((fp, i) => {
-                        const flagLabel = fp.flag === 'high' ? 'H' : fp.flag === 'low' ? 'L'
-                          : fp.flag === 'critical' ? 'C!' : fp.flag === 'normal' ? 'N' : '—';
-                        return (
-                          <tr key={fp.parameterId ?? i} className="border-b border-muted/30">
-                            <td className="px-2.5 py-2 text-muted-foreground">{fp.name ?? '—'}</td>
-                            <td className={cn("px-2.5 py-2 font-semibold", fp.flag && fp.flag !== 'normal' ? "text-destructive" : "text-foreground")}>
-                              {fp.value ?? '—'}
-                            </td>
-                            <td className="px-2.5 py-2 text-muted-foreground">{fp.unit ?? '—'}</td>
-                            <td className="px-2.5 py-2 text-muted-foreground">{fp.referenceRange ?? '—'}</td>
-                            <td className="px-2.5 py-2">
-                              {fp.flag ? (
-                                fp.flag !== 'normal'
-                                  ? <span className="px-2 py-0.5 rounded text-xs font-bold bg-[hsl(var(--status-destructive-bg))] text-[hsl(var(--status-destructive-fg))]">{flagLabel}</span>
-                                  : <span className="px-2 py-0.5 rounded text-xs font-bold bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]">{flagLabel}</span>
-                              ) : '—'}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                  <DataTable
+                    columns={[
+                      { key: 'name', header: 'Parameter', cell: (fp) => <span className="text-muted-foreground">{fp.name ?? '—'}</span> },
+                      {
+                        key: 'value',
+                        header: 'Result',
+                        cell: (fp) => (
+                          <span className={cn('font-semibold', fp.flag && fp.flag !== 'normal' ? 'text-destructive' : 'text-foreground')}>
+                            {fp.value ?? '—'}
+                          </span>
+                        ),
+                      },
+                      { key: 'unit', header: 'Unit', cell: (fp) => <span className="text-muted-foreground">{fp.unit ?? '—'}</span> },
+                      { key: 'referenceRange', header: 'Ref Range', cell: (fp) => <span className="text-muted-foreground">{fp.referenceRange ?? '—'}</span> },
+                      {
+                        key: 'flag',
+                        header: 'H/L',
+                        cell: (fp) => {
+                          const flagLabel = fp.flag === 'high' ? 'H' : fp.flag === 'low' ? 'L'
+                            : fp.flag === 'critical' ? 'C!' : fp.flag === 'normal' ? 'N' : '—';
+                          if (!fp.flag) return '—';
+                          return fp.flag !== 'normal'
+                            ? <span className="px-2 py-0.5 rounded text-xs font-bold bg-[hsl(var(--status-destructive-bg))] text-[hsl(var(--status-destructive-fg))]">{flagLabel}</span>
+                            : <span className="px-2 py-0.5 rounded text-xs font-bold bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]">{flagLabel}</span>;
+                        },
+                      },
+                    ] as DataTableColumn<FilledParam>[]}
+                    data={card.filledParameters}
+                    keyExtractor={(fp) => `${fp.parameterId ?? 'param'}-${fp.name ?? ''}-${fp.value ?? ''}`}
+                  />
                 )}
               </div>
             </div>

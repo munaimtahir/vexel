@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 const emptyForm = () => ({
   name: '', externalId: '', userCode: '', loincCode: '', price: '', isActive: true,
@@ -120,6 +121,57 @@ export default function PanelsPage() {
   function handleSearch(val: string) { setSearch(val); setPage(1); load(1, val); }
   function handlePage(p: number) { setPage(p); load(p, search); }
   const totalPages = Math.ceil(total / LIMIT);
+  const columns = [
+    {
+      key: 'userCode',
+      header: 'User Code',
+      cell: (p: any) => <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{p.userCode ?? '—'}</span>,
+    },
+    {
+      key: 'externalId',
+      header: 'Ext ID',
+      cell: (p: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{p.externalId ?? '—'}</span>,
+    },
+    {
+      key: 'name',
+      header: 'Name',
+      cell: (p: any) => <span style={{ fontWeight: 500 }}>{p.name}</span>,
+    },
+    {
+      key: 'price',
+      header: 'Price (PKR)',
+      cell: (p: any) => <span style={{ color: 'hsl(var(--foreground))', fontWeight: 500 }}>{p.price != null ? p.price.toLocaleString() : '—'}</span>,
+    },
+    {
+      key: 'loincCode',
+      header: 'LOINC',
+      cell: (p: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '12px' }}>{p.loincCode ?? '—'}</span>,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      cell: (p: any) => (
+        <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: p.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: p.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
+          {p.isActive ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: '',
+      cell: (p: any) => (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            openEdit(p);
+          }}
+          style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Edit
+        </button>
+      ),
+    },
+  ];
 
   const assignedTestIds = new Set(panelTests.map((t: any) => t.testId ?? t.id));
   const availableTests = allTests.filter((t: any) => !assignedTestIds.has(t.id));
@@ -198,43 +250,16 @@ export default function PanelsPage() {
       <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
         {/* Panels table */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-              <thead style={{ background: 'hsl(var(--background))' }}>
-                <tr>
-                  {['User Code', 'Ext ID', 'Name', 'Price (PKR)', 'LOINC', 'Status', ''].map((h) => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
-                ) : panels.length === 0 ? (
-                  <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No panels found.</td></tr>
-                ) : panels.map((p: any) => (
-                  <tr key={p.id} style={{ borderTop: '1px solid hsl(var(--muted))', background: selectedPanel?.id === p.id ? 'hsl(var(--status-info-bg))' : undefined, cursor: 'pointer' }}
-                    onClick={() => selectPanel(p)}>
-                    <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 600 }}>{p.userCode ?? '—'}</td>
-                    <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{p.externalId ?? '—'}</td>
-                    <td style={{ padding: '10px 12px', fontWeight: 500 }}>{p.name}</td>
-                    <td style={{ padding: '10px 12px', color: 'hsl(var(--foreground))', fontWeight: 500 }}>
-                      {p.price != null ? p.price.toLocaleString() : '—'}
-                    </td>
-                    <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '12px' }}>{p.loincCode ?? '—'}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: p.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: p.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
-                        {p.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td style={{ padding: '10px 12px' }} onClick={(e) => { e.stopPropagation(); openEdit(p); }}>
-                      <button style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            columns={columns}
+            data={panels}
+            keyExtractor={(p: any) => `${p.id}`}
+            onRowClick={(p: any) => selectPanel(p)}
+            loading={loading}
+            emptyMessage="No panels found."
+            className="shadow-sm"
+            rowClassName={(p: any) => (selectedPanel?.id === p.id ? 'bg-[hsl(var(--status-info-bg))]' : undefined)}
+          />
           {totalPages > 1 && (
             <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
               <button disabled={page <= 1} onClick={() => handlePage(page - 1)}

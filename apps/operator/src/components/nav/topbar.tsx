@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { decodeJwt, getToken } from '@/lib/auth';
 import { cn } from '@/lib/utils';
+import { Header } from '@vexel/ui-system';
 
 const ROUTE_TITLES: [string, string][] = [
   ['/opd/billing/invoices', 'OPD Invoice'],
@@ -43,7 +44,7 @@ function getTodayLabel(): string {
 }
 
 function getInitials(name: string): string {
-  return name.split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
+  return name.split(' ').map((p) => p[0]).join('').toUpperCase().slice(0, 2);
 }
 
 export function Topbar() {
@@ -60,59 +61,51 @@ export function Topbar() {
         const payload = decodeJwt(token) as Record<string, unknown>;
         const name = (payload?.name as string) || (payload?.email as string) || '';
         setUserName(name.split('@')[0]);
-      } catch { /* ignore */ }
+      } catch {
+        // ignore malformed token payload
+      }
     }
   }, []);
 
   const initials = userName ? getInitials(userName) : '?';
 
   return (
-    <header className="sticky top-0 z-40 flex h-[60px] items-center justify-between border-b bg-card/90 backdrop-blur-sm px-6"
-      style={{ boxShadow: 'var(--shadow-xs)', borderColor: 'hsl(var(--border))' }}
-    >
-      {/* Left: page title */}
-      <div className="flex items-center gap-3">
-        <div>
-          <h1 className="text-[15px] font-semibold text-foreground leading-tight">{title}</h1>
-          <p className="text-[11px] text-muted-foreground">{today}</p>
-        </div>
-      </div>
+    <Header
+      title={title}
+      subtitle={today}
+      right={
+        <>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            title="Notifications"
+          >
+            <Bell className="h-4 w-4" />
+          </Button>
 
-      {/* Right: actions + user */}
-      <div className="flex items-center gap-1.5">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          title="Notifications"
-        >
-          <Bell className="h-4 w-4" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            title="Toggle theme"
+          >
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          title="Toggle theme"
-        >
-          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-
-        {/* User avatar */}
-        {userName && (
-          <div className="flex items-center gap-2 ml-2 pl-2 border-l border-border">
-            <div className={cn(
-              'h-7 w-7 rounded-full gradient-primary flex items-center justify-center text-[11px] font-bold text-white shadow-xs select-none'
-            )}>
-              {initials}
+          {userName ? (
+            <div className="ml-2 flex items-center gap-2 border-l border-border pl-2">
+              <div className={cn('gradient-primary shadow-xs flex h-7 w-7 select-none items-center justify-center rounded-full text-[11px] font-bold text-white')}>
+                {initials}
+              </div>
+              <span className="hidden text-xs font-medium capitalize text-foreground sm:block">{userName}</span>
             </div>
-            <span className="text-xs font-medium text-foreground capitalize hidden sm:block">{userName}</span>
-          </div>
-        )}
-      </div>
-    </header>
+          ) : null}
+        </>
+      }
+    />
   );
 }

@@ -48,28 +48,28 @@ export default function OpdProviderDetailPage() {
         <Link href="/opd/providers" className="text-primary">← OPD Providers</Link>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">OPD Provider Detail</h1>
-        <p className="mt-2 text-sm text-slate-600">Read-only provider detail loaded from the OPD provider detail endpoint.</p>
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+        <h1 className="text-2xl font-bold text-foreground">OPD Provider Detail</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Read-only provider detail loaded from the OPD provider detail endpoint.</p>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         {loading ? (
-          <p className="text-sm text-slate-500">Loading provider...</p>
+          <p className="text-sm text-muted-foreground">Loading provider...</p>
         ) : error ? (
           <p className="text-sm text-[hsl(var(--status-destructive-fg))]">{error}</p>
         ) : !provider ? (
-          <p className="text-sm text-slate-500">Provider not found.</p>
+          <p className="text-sm text-muted-foreground">Provider not found.</p>
         ) : (
           <div className="grid gap-3 md:grid-cols-2 text-sm">
-            <div><span className="text-slate-500">ID:</span> <code>{provider.id}</code></div>
-            <div><span className="text-slate-500">Code:</span> {provider.code ?? '—'}</div>
-            <div><span className="text-slate-500">Name:</span> {provider.name ?? '—'}</div>
-            <div><span className="text-slate-500">Title:</span> {provider.title ?? '—'}</div>
-            <div><span className="text-slate-500">Specialty:</span> {provider.specialty ?? '—'}</div>
-            <div><span className="text-slate-500">Active:</span> {provider.isActive ? 'Yes' : 'No'}</div>
-            <div><span className="text-slate-500">Created:</span> {provider.createdAt ? new Date(provider.createdAt).toLocaleString() : '—'}</div>
-            <div><span className="text-slate-500">Updated:</span> {provider.updatedAt ? new Date(provider.updatedAt).toLocaleString() : '—'}</div>
+            <div><span className="text-muted-foreground">ID:</span> <code>{provider.id}</code></div>
+            <div><span className="text-muted-foreground">Code:</span> {provider.code ?? '—'}</div>
+            <div><span className="text-muted-foreground">Name:</span> {provider.name ?? '—'}</div>
+            <div><span className="text-muted-foreground">Title:</span> {provider.title ?? '—'}</div>
+            <div><span className="text-muted-foreground">Specialty:</span> {provider.specialty ?? '—'}</div>
+            <div><span className="text-muted-foreground">Active:</span> {provider.isActive ? 'Yes' : 'No'}</div>
+            <div><span className="text-muted-foreground">Created:</span> {provider.createdAt ? new Date(provider.createdAt).toLocaleString() : '—'}</div>
+            <div><span className="text-muted-foreground">Updated:</span> {provider.updatedAt ? new Date(provider.updatedAt).toLocaleString() : '—'}</div>
           </div>
         )}
       </div>

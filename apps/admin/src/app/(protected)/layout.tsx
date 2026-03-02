@@ -1,23 +1,20 @@
 'use client';
 import { AuthGuard } from '@/components/auth-guard';
 import { Sidebar } from '@/components/sidebar';
+import { AdminHeader } from '@/components/admin-header';
+import { ImpersonationBanner } from '@/components/impersonation-banner';
+import { LayoutShell } from '@vexel/ui-system';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthGuard>
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <Sidebar />
-        <main style={{
-          flex: 1,
-          overflow: 'auto',
-          background: 'linear-gradient(160deg, hsl(32,22%,94%) 0%, hsl(30,20%,91%) 100%)',
-          minHeight: '100vh',
-        }}>
-          <div style={{ padding: '32px', maxWidth: '1400px' }}>
-            {children}
-          </div>
-        </main>
-      </div>
+      <ImpersonationBanner />
+      <LayoutShell
+        sidebar={<Sidebar />}
+        header={<AdminHeader />}
+      >
+        {children}
+      </LayoutShell>
     </AuthGuard>
   );
 }

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 export default function AuditPage() {
   const [events, setEvents] = useState<any[]>([]);
@@ -169,33 +170,69 @@ export default function AuditPage() {
       </div>
 
       <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: 'hsl(var(--background))' }}>
-            <tr>
-              {['Action', 'Entity', 'Actor', 'Correlation ID', 'Time', ''].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 16px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading...</td></tr>
-            ) : events.length === 0 ? (
-              <tr><td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No audit events found.</td></tr>
-            ) : events.map((e: any) => (
-              <tr key={e.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                <td style={{ padding: '10px 16px' }}><code style={{ background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>{e.action}</code></td>
-                <td style={{ padding: '10px 16px', color: 'hsl(var(--muted-foreground))' }}>{e.entityType ?? '—'}{e.entityId ? ` (${e.entityId.slice(0, 8)}…)` : ''}</td>
-                <td style={{ padding: '10px 16px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>{e.actorUserId ? e.actorUserId.slice(0, 12) : 'system'}</td>
-                <td style={{ padding: '10px 16px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>{e.correlationId?.slice(0, 12) ?? '—'}</td>
-                <td style={{ padding: '10px 16px', color: 'hsl(var(--muted-foreground))', whiteSpace: 'nowrap' }}>{new Date(e.createdAt).toLocaleString()}</td>
-                <td style={{ padding: '10px 16px' }}>
-                  <button onClick={() => setDetailEvent(e)} style={{ padding: '3px 8px', fontSize: '11px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Detail</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          data={events}
+          loading={loading}
+          emptyMessage="No audit events found."
+          keyExtractor={(event) => event.id}
+          columns={[
+            {
+              key: 'action',
+              header: 'Action',
+              cell: (event) => (
+                <code style={{ background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>
+                  {event.action}
+                </code>
+              ),
+            },
+            {
+              key: 'entity',
+              header: 'Entity',
+              cell: (event) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))' }}>
+                  {event.entityType ?? '—'}
+                  {event.entityId ? ` (${event.entityId.slice(0, 8)}…)` : ''}
+                </span>
+              ),
+            },
+            {
+              key: 'actor',
+              header: 'Actor',
+              cell: (event) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>
+                  {event.actorUserId ? event.actorUserId.slice(0, 12) : 'system'}
+                </span>
+              ),
+            },
+            {
+              key: 'correlation',
+              header: 'Correlation ID',
+              cell: (event) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '11px' }}>
+                  {event.correlationId?.slice(0, 12) ?? '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'time',
+              header: 'Time',
+              cell: (event) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', whiteSpace: 'nowrap' }}>
+                  {new Date(event.createdAt).toLocaleString()}
+                </span>
+              ),
+            },
+            {
+              key: 'actions',
+              header: '',
+              cell: (event) => (
+                <button onClick={() => setDetailEvent(event)} style={{ padding: '3px 8px', fontSize: '11px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>
+                  Detail
+                </button>
+              ),
+            },
+          ]}
+        />
         {pagination && pagination.totalPages > 1 && (
           <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid hsl(var(--muted))', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
             <span>Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)</span>

@@ -3,6 +3,7 @@
 import { FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { ConfirmActionModal, DataTable, StatusBadge } from '@vexel/ui-system';
 
 type Provider = { id: string; name: string; code?: string | null; isActive: boolean };
 type Schedule = {
@@ -95,6 +96,7 @@ export default function OpdSchedulesPage() {
   const [savingEdit, setSavingEdit] = useState(false);
   const [editError, setEditError] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDeleteSchedule, setPendingDeleteSchedule] = useState<Schedule | null>(null);
 
   async function loadProviders() {
     setProvidersLoading(true);
@@ -189,8 +191,6 @@ export default function OpdSchedulesPage() {
 
   async function handleDelete(scheduleId: string) {
     if (!providerId) return;
-    const confirmed = window.confirm('Delete this schedule configuration? This does not change appointment workflow states.');
-    if (!confirmed) return;
     setDeletingId(scheduleId);
     const api = getApiClient(getToken() ?? undefined);
     const { error: deleteErr } = await api.DELETE('/opd/providers/{providerId}/schedules/{scheduleId}' as any, {
@@ -209,24 +209,24 @@ export default function OpdSchedulesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">OPD Schedules</h1>
-        <p className="mt-2 text-sm text-slate-600">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+        <h1 className="text-2xl font-bold text-foreground">OPD Schedules</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
           Weekly provider schedule configuration only. No appointment/visit/invoice workflow mutations are available here.
         </p>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="grid gap-4 md:grid-cols-3">
           <Field label="Provider List Filter">
-            <select className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={providerFilter} onChange={(e) => setProviderFilter(e.target.value as any)}>
+            <select className="w-full rounded-md border border-border px-3 py-2 text-sm" value={providerFilter} onChange={(e) => setProviderFilter(e.target.value as any)}>
               <option value="active">Active providers only</option>
               <option value="all">All providers</option>
             </select>
           </Field>
           <Field label="Provider">
             <select
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-border px-3 py-2 text-sm"
               value={providerId}
               onChange={(e) => setProviderId(e.target.value)}
               disabled={providersLoading || providers.length === 0}
@@ -239,7 +239,7 @@ export default function OpdSchedulesPage() {
             </select>
           </Field>
           <Field label="Schedule Filter">
-            <select className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={scheduleFilter} onChange={(e) => setScheduleFilter(e.target.value as any)}>
+            <select className="w-full rounded-md border border-border px-3 py-2 text-sm" value={scheduleFilter} onChange={(e) => setScheduleFilter(e.target.value as any)}>
               <option value="all">All schedules</option>
               <option value="active">Active only</option>
               <option value="inactive">Inactive only</option>
@@ -247,42 +247,42 @@ export default function OpdSchedulesPage() {
           </Field>
         </div>
         {selectedProvider ? (
-          <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-foreground">
-            Editing schedules for <span className="font-semibold text-slate-900">{selectedProvider.name}</span>
+          <div className="mt-4 rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground">
+            Editing schedules for <span className="font-semibold text-foreground">{selectedProvider.name}</span>
             {selectedProvider.code ? <span> ({selectedProvider.code})</span> : null}
           </div>
         ) : null}
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">Create Schedule</h2>
         {!providerId ? (
-          <p className="mt-3 text-sm text-slate-500">Select a provider first.</p>
+          <p className="mt-3 text-sm text-muted-foreground">Select a provider first.</p>
         ) : (
           <form onSubmit={handleCreate} className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <Field label="Day">
-              <select className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={createForm.dayOfWeek} onChange={(e) => setCreateForm((s) => ({ ...s, dayOfWeek: e.target.value }))}>
+              <select className="w-full rounded-md border border-border px-3 py-2 text-sm" value={createForm.dayOfWeek} onChange={(e) => setCreateForm((s) => ({ ...s, dayOfWeek: e.target.value }))}>
                 {DAYS.map((day, i) => (
                   <option key={day} value={String(i)}>{day}</option>
                 ))}
               </select>
             </Field>
             <Field label="Start Time">
-              <input type="time" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={createForm.startTime} onChange={(e) => setCreateForm((s) => ({ ...s, startTime: e.target.value }))} />
+              <input type="time" className="w-full rounded-md border border-border px-3 py-2 text-sm" value={createForm.startTime} onChange={(e) => setCreateForm((s) => ({ ...s, startTime: e.target.value }))} />
             </Field>
             <Field label="End Time">
-              <input type="time" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={createForm.endTime} onChange={(e) => setCreateForm((s) => ({ ...s, endTime: e.target.value }))} />
+              <input type="time" className="w-full rounded-md border border-border px-3 py-2 text-sm" value={createForm.endTime} onChange={(e) => setCreateForm((s) => ({ ...s, endTime: e.target.value }))} />
             </Field>
             <Field label="Slot Minutes">
-              <input type="number" min="5" step="5" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={createForm.slotMinutes} onChange={(e) => setCreateForm((s) => ({ ...s, slotMinutes: e.target.value }))} />
+              <input type="number" min="5" step="5" className="w-full rounded-md border border-border px-3 py-2 text-sm" value={createForm.slotMinutes} onChange={(e) => setCreateForm((s) => ({ ...s, slotMinutes: e.target.value }))} />
             </Field>
             <Field label="Max Appointments">
-              <input type="number" min="1" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={createForm.maxAppointments} onChange={(e) => setCreateForm((s) => ({ ...s, maxAppointments: e.target.value }))} placeholder="Optional" />
+              <input type="number" min="1" className="w-full rounded-md border border-border px-3 py-2 text-sm" value={createForm.maxAppointments} onChange={(e) => setCreateForm((s) => ({ ...s, maxAppointments: e.target.value }))} placeholder="Optional" />
             </Field>
             <Field label="Location">
-              <input className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={createForm.location} onChange={(e) => setCreateForm((s) => ({ ...s, location: e.target.value }))} placeholder="Room 3 / Clinic A" />
+              <input className="w-full rounded-md border border-border px-3 py-2 text-sm" value={createForm.location} onChange={(e) => setCreateForm((s) => ({ ...s, location: e.target.value }))} placeholder="Room 3 / Clinic A" />
             </Field>
-            <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-foreground">
+            <label className="flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground">
               <input type="checkbox" checked={createForm.isActive} onChange={(e) => setCreateForm((s) => ({ ...s, isActive: e.target.checked }))} />
               Active
             </label>
@@ -292,7 +292,7 @@ export default function OpdSchedulesPage() {
               </div>
             ) : null}
             <div className="md:col-span-2 xl:col-span-4">
-              <button type="submit" disabled={creating} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60">
+              <button type="submit" disabled={creating} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60">
                 {creating ? 'Creating...' : 'Create Schedule'}
               </button>
             </div>
@@ -300,10 +300,10 @@ export default function OpdSchedulesPage() {
         )}
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">Schedules</h2>
-          <button onClick={() => providerId && void loadSchedules(providerId)} className="rounded-md border border-slate-300 px-3 py-2 text-sm text-foreground">
+          <button onClick={() => providerId && void loadSchedules(providerId)} className="rounded-md border border-border px-3 py-2 text-sm text-foreground">
             Refresh
           </button>
         </div>
@@ -312,89 +312,87 @@ export default function OpdSchedulesPage() {
           <div className="mt-4 rounded-md border border-[hsl(var(--status-destructive-border))] bg-[hsl(var(--status-destructive-bg))] px-3 py-2 text-sm text-[hsl(var(--status-destructive-fg))]">{error}</div>
         ) : null}
 
-        <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-600">
-                <th className="px-3 py-2">Day</th>
-                <th className="px-3 py-2">Time</th>
-                <th className="px-3 py-2">Slot</th>
-                <th className="px-3 py-2">Max</th>
-                <th className="px-3 py-2">Location</th>
-                <th className="px-3 py-2">Active</th>
-                <th className="px-3 py-2">Updated</th>
-                <th className="px-3 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loadingSchedules ? (
-                <tr><td colSpan={8} className="px-3 py-6 text-center text-slate-500">Loading schedules...</td></tr>
-              ) : !providerId ? (
-                <tr><td colSpan={8} className="px-3 py-6 text-center text-slate-500">Select a provider to view schedules.</td></tr>
-              ) : schedules.length === 0 ? (
-                <tr><td colSpan={8} className="px-3 py-6 text-center text-slate-500">No schedules found for selected provider.</td></tr>
-              ) : schedules.map((s) => (
-                <tr key={s.id} className="border-b border-slate-100">
-                  <td className="px-3 py-2">{DAYS[s.dayOfWeek] ?? s.dayOfWeek}</td>
-                  <td className="px-3 py-2">{s.startTime} - {s.endTime}</td>
-                  <td className="px-3 py-2">{s.slotMinutes} min</td>
-                  <td className="px-3 py-2">{s.maxAppointments ?? '—'}</td>
-                  <td className="px-3 py-2">{s.location ?? '—'}</td>
-                  <td className="px-3 py-2">
-                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${s.isActive ? 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))]' : 'bg-slate-200 text-foreground'}`}>
-                      {s.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-xs text-slate-500">{new Date(s.updatedAt).toLocaleString()}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex gap-2">
-                      <button onClick={() => startEdit(s)} className="rounded-md border border-slate-300 px-2 py-1 text-xs text-foreground">
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => void handleDelete(s.id)}
-                        disabled={deletingId === s.id}
-                        className="rounded-md border border-[hsl(var(--status-destructive-border))] px-2 py-1 text-xs text-[hsl(var(--status-destructive-fg))] disabled:opacity-50"
-                      >
-                        {deletingId === s.id ? 'Deleting...' : 'Delete'}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-4">
+          <DataTable
+            data={schedules}
+            loading={loadingSchedules}
+            emptyMessage={!providerId ? 'Select a provider to view schedules.' : 'No schedules found for selected provider.'}
+            keyExtractor={(schedule) => schedule.id}
+            columns={[
+              { key: 'day', header: 'Day', cell: (schedule) => DAYS[schedule.dayOfWeek] ?? String(schedule.dayOfWeek) },
+              { key: 'time', header: 'Time', cell: (schedule) => `${schedule.startTime} - ${schedule.endTime}` },
+              { key: 'slot', header: 'Slot', cell: (schedule) => `${schedule.slotMinutes} min`, numeric: true },
+              { key: 'max', header: 'Max', cell: (schedule) => schedule.maxAppointments ?? '—', numeric: true },
+              { key: 'location', header: 'Location', cell: (schedule) => schedule.location ?? '—' },
+              {
+                key: 'active',
+                header: 'Active',
+                cell: (schedule) => (
+                  <StatusBadge tone={schedule.isActive ? 'green' : 'neutral'}>
+                    {schedule.isActive ? 'Active' : 'Inactive'}
+                  </StatusBadge>
+                ),
+              },
+              {
+                key: 'updated',
+                header: 'Updated',
+                cell: (schedule) => (
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(schedule.updatedAt).toLocaleString()}
+                  </span>
+                ),
+              },
+              {
+                key: 'actions',
+                header: 'Actions',
+                cell: (schedule) => (
+                  <div className="flex gap-2">
+                    <button onClick={() => startEdit(schedule)} className="rounded-md border border-border px-2 py-1 text-xs text-foreground">
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => setPendingDeleteSchedule(schedule)}
+                      disabled={deletingId === schedule.id}
+                      className="rounded-md border border-[hsl(var(--status-destructive-border))] px-2 py-1 text-xs text-[hsl(var(--status-destructive-fg))] disabled:opacity-50"
+                    >
+                      {deletingId === schedule.id ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
+                ),
+              },
+            ]}
+          />
         </div>
 
         {editingId ? (
           <div className="mt-6 rounded-lg border border-border bg-muted p-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-slate-900">Edit Schedule</h3>
-              <button onClick={() => setEditingId(null)} className="text-sm text-slate-600 underline">Close</button>
+              <h3 className="text-sm font-semibold text-foreground">Edit Schedule</h3>
+              <button onClick={() => setEditingId(null)} className="text-sm text-muted-foreground underline">Close</button>
             </div>
-            <p className="mt-1 text-xs text-slate-600">
+            <p className="mt-1 text-xs text-muted-foreground">
               Day of week is immutable in this UI to avoid accidental slot remapping; create a new schedule if needed.
             </p>
             <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <Field label="Day">
-                <input className="w-full rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-sm text-slate-600" value={DAYS[Number(editForm.dayOfWeek)] ?? editForm.dayOfWeek} disabled />
+                <input className="w-full rounded-md border border-border bg-muted/60 px-3 py-2 text-sm text-muted-foreground" value={DAYS[Number(editForm.dayOfWeek)] ?? editForm.dayOfWeek} disabled />
               </Field>
               <Field label="Start Time">
-                <input type="time" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={editForm.startTime} onChange={(e) => setEditForm((s) => ({ ...s, startTime: e.target.value }))} />
+                <input type="time" className="w-full rounded-md border border-border px-3 py-2 text-sm" value={editForm.startTime} onChange={(e) => setEditForm((s) => ({ ...s, startTime: e.target.value }))} />
               </Field>
               <Field label="End Time">
-                <input type="time" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={editForm.endTime} onChange={(e) => setEditForm((s) => ({ ...s, endTime: e.target.value }))} />
+                <input type="time" className="w-full rounded-md border border-border px-3 py-2 text-sm" value={editForm.endTime} onChange={(e) => setEditForm((s) => ({ ...s, endTime: e.target.value }))} />
               </Field>
               <Field label="Slot Minutes">
-                <input type="number" min="5" step="5" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={editForm.slotMinutes} onChange={(e) => setEditForm((s) => ({ ...s, slotMinutes: e.target.value }))} />
+                <input type="number" min="5" step="5" className="w-full rounded-md border border-border px-3 py-2 text-sm" value={editForm.slotMinutes} onChange={(e) => setEditForm((s) => ({ ...s, slotMinutes: e.target.value }))} />
               </Field>
               <Field label="Max Appointments">
-                <input type="number" min="1" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={editForm.maxAppointments} onChange={(e) => setEditForm((s) => ({ ...s, maxAppointments: e.target.value }))} />
+                <input type="number" min="1" className="w-full rounded-md border border-border px-3 py-2 text-sm" value={editForm.maxAppointments} onChange={(e) => setEditForm((s) => ({ ...s, maxAppointments: e.target.value }))} />
               </Field>
               <Field label="Location">
-                <input className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" value={editForm.location} onChange={(e) => setEditForm((s) => ({ ...s, location: e.target.value }))} />
+                <input className="w-full rounded-md border border-border px-3 py-2 text-sm" value={editForm.location} onChange={(e) => setEditForm((s) => ({ ...s, location: e.target.value }))} />
               </Field>
-              <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-foreground">
+              <label className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground">
                 <input type="checkbox" checked={editForm.isActive} onChange={(e) => setEditForm((s) => ({ ...s, isActive: e.target.checked }))} />
                 Active
               </label>
@@ -403,16 +401,37 @@ export default function OpdSchedulesPage() {
               <div className="mt-4 rounded-md border border-[hsl(var(--status-destructive-border))] bg-[hsl(var(--status-destructive-bg))] px-3 py-2 text-sm text-[hsl(var(--status-destructive-fg))]">{editError}</div>
             ) : null}
             <div className="mt-4 flex gap-2">
-              <button onClick={() => void saveEdit()} disabled={savingEdit} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-60">
+              <button onClick={() => void saveEdit()} disabled={savingEdit} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
                 {savingEdit ? 'Saving...' : 'Save Schedule'}
               </button>
-              <button onClick={() => setEditingId(null)} className="rounded-md border border-slate-300 px-4 py-2 text-sm text-foreground">
+              <button onClick={() => setEditingId(null)} className="rounded-md border border-border px-4 py-2 text-sm text-foreground">
                 Cancel
               </button>
             </div>
           </div>
         ) : null}
       </div>
+      <ConfirmActionModal
+        open={!!pendingDeleteSchedule}
+        title="Delete Schedule"
+        description="Delete this schedule configuration? This does not change appointment workflow states."
+        actionPreview={
+          pendingDeleteSchedule ? (
+            <span>
+              {DAYS[pendingDeleteSchedule.dayOfWeek]} {pendingDeleteSchedule.startTime}-{pendingDeleteSchedule.endTime}
+            </span>
+          ) : null
+        }
+        confirmText="Delete Schedule"
+        danger
+        loading={!!deletingId}
+        onCancel={() => setPendingDeleteSchedule(null)}
+        onConfirm={async () => {
+          if (!pendingDeleteSchedule) return;
+          await handleDelete(pendingDeleteSchedule.id);
+          setPendingDeleteSchedule(null);
+        }}
+      />
     </div>
   );
 }
@@ -420,7 +439,7 @@ export default function OpdSchedulesPage() {
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-600">{label}</span>
+      <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
       {children}
     </label>
   );

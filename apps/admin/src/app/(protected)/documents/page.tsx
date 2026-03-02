@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { TenantScopeBanner } from '@/components/tenant-scope-banner';
+import { DataTable } from '@vexel/ui-system';
 
 const DOC_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   QUEUED: { bg: 'hsl(var(--status-warning-bg))', text: 'hsl(var(--status-warning-fg))' },
@@ -87,45 +88,87 @@ export default function DocumentsPage() {
       </div>
 
       <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: 'hsl(var(--background))' }}>
-            <tr>
-              {['ID', 'Type', 'Status', 'Encounter', 'Template Ver', 'Tenant', 'Created', ''].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
-            ) : documents.length === 0 ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No documents found.</td></tr>
-            ) : documents.map((d: any) => {
-              const colors = DOC_STATUS_COLORS[d.status] ?? { bg: 'hsl(var(--muted))', text: 'hsl(var(--muted-foreground))' };
-              return (
-                <tr key={d.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                  <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{d.id?.slice(0, 12)}…</td>
-                  <td style={{ padding: '10px 12px', fontWeight: 500 }}>{d.type ?? '—'}</td>
-                  <td style={{ padding: '10px 12px' }}>
-                    <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>{d.status}</span>
-                  </td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{d.encounterId?.slice(0, 8) ?? '—'}</td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{d.templateVersion ?? '—'}</td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontFamily: 'monospace' }}>{d.tenantId?.slice(0, 8) ?? '—'}</td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{d.createdAt ? new Date(d.createdAt).toLocaleString() : '—'}</td>
-                  <td style={{ padding: '10px 12px' }}>
-                    {d.status === 'FAILED' && (
-                      <button onClick={() => handleRepublish(d.id)} disabled={publishing === d.id}
-                        style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--status-info-fg))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                        {publishing === d.id ? '...' : 'Re-publish'}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <DataTable
+          data={documents}
+          loading={loading}
+          emptyMessage="No documents found."
+          keyExtractor={(document) => document.id}
+          columns={[
+            {
+              key: 'id',
+              header: 'ID',
+              cell: (document) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>
+                  {document.id?.slice(0, 12)}…
+                </span>
+              ),
+            },
+            {
+              key: 'type',
+              header: 'Type',
+              cell: (document) => <span style={{ fontWeight: 500 }}>{document.type ?? '—'}</span>,
+            },
+            {
+              key: 'status',
+              header: 'Status',
+              cell: (document) => {
+                const colors = DOC_STATUS_COLORS[document.status] ?? { bg: 'hsl(var(--muted))', text: 'hsl(var(--muted-foreground))' };
+                return (
+                  <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>
+                    {document.status}
+                  </span>
+                );
+              },
+            },
+            {
+              key: 'encounter',
+              header: 'Encounter',
+              cell: (document) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>
+                  {document.encounterId?.slice(0, 8) ?? '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'templateVersion',
+              header: 'Template Ver',
+              cell: (document) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{document.templateVersion ?? '—'}</span>,
+            },
+            {
+              key: 'tenant',
+              header: 'Tenant',
+              cell: (document) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontFamily: 'monospace' }}>
+                  {document.tenantId?.slice(0, 8) ?? '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'created',
+              header: 'Created',
+              cell: (document) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>
+                  {document.createdAt ? new Date(document.createdAt).toLocaleString() : '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'actions',
+              header: '',
+              cell: (document) => (
+                document.status === 'FAILED' ? (
+                  <button
+                    onClick={() => handleRepublish(document.id)}
+                    disabled={publishing === document.id}
+                    style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--status-info-fg))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  >
+                    {publishing === document.id ? '...' : 'Re-publish'}
+                  </button>
+                ) : null
+              ),
+            },
+          ]}
+        />
       </div>
 
       {totalPages > 1 && (

@@ -9,6 +9,7 @@ import { PageHeader, SectionCard } from '@/components/app';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DataTable, type DataTableColumn } from '@vexel/ui-system';
 
 export default function OpdProviderAvailabilityPage() {
   const params = useParams<{ providerId: string }>();
@@ -93,32 +94,18 @@ export default function OpdProviderAvailabilityPage() {
               {' · '}
               Slots: {slots.length}
             </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-sm">
-                <thead>
-                  <tr className="border-b bg-muted/40 text-left">
-                    <th className="px-3 py-2">Start</th>
-                    <th className="px-3 py-2">End</th>
-                    <th className="px-3 py-2">Status</th>
-                    <th className="px-3 py-2">Schedule</th>
-                    <th className="px-3 py-2">Appointment</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {slots.length === 0 ? (
-                    <tr><td className="px-3 py-4 text-muted-foreground" colSpan={5}>No slots found.</td></tr>
-                  ) : slots.map((slot) => (
-                    <tr key={`${slot.startAt}-${slot.scheduleId}`} className="border-b">
-                      <td className="px-3 py-2">{slot.startAt ? new Date(slot.startAt).toLocaleString() : '—'}</td>
-                      <td className="px-3 py-2">{slot.endAt ? new Date(slot.endAt).toLocaleString() : '—'}</td>
-                      <td className="px-3 py-2">{slot.status}</td>
-                      <td className="px-3 py-2"><code>{slot.scheduleId ?? '—'}</code></td>
-                      <td className="px-3 py-2"><code>{slot.appointmentId ?? '—'}</code></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataTable
+              columns={[
+                { key: 'startAt', header: 'Start', cell: (slot) => (slot.startAt ? new Date(slot.startAt).toLocaleString() : '—') },
+                { key: 'endAt', header: 'End', cell: (slot) => (slot.endAt ? new Date(slot.endAt).toLocaleString() : '—') },
+                { key: 'status', header: 'Status', cell: (slot) => slot.status },
+                { key: 'scheduleId', header: 'Schedule', cell: (slot) => <code>{slot.scheduleId ?? '—'}</code> },
+                { key: 'appointmentId', header: 'Appointment', cell: (slot) => <code>{slot.appointmentId ?? '—'}</code> },
+              ] as DataTableColumn<any>[]}
+              data={slots}
+              keyExtractor={(slot) => `${slot.startAt ?? 'none'}-${slot.scheduleId ?? 'none'}`}
+              emptyMessage="No slots found."
+            />
           </>
         )}
       </SectionCard>

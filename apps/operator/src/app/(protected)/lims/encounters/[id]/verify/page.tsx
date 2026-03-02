@@ -9,6 +9,7 @@ import DocumentList from '@/components/document-list';
 import { useDocumentPolling } from '@/hooks/use-document-polling';
 import { Button } from '@/components/ui/button';
 import { FlagBadge } from '@/components/status-badge';
+import { DataTable, type DataTableColumn } from '@vexel/ui-system';
 
 export default function VerifyPage() {
   const router = useRouter();
@@ -112,34 +113,23 @@ export default function VerifyPage() {
       {error && <p className="text-destructive mb-4">{error}</p>}
 
       {/* Read-only results table */}
-      <div className="bg-card rounded-lg border border-border overflow-hidden mb-6">
-        <div className="px-5 py-4 border-b border-border bg-muted/40">
+      <div className="mb-6">
+        <div className="px-5 py-4 border border-border border-b-0 rounded-t-lg bg-muted/40">
           <h3 className="m-0 text-base font-semibold text-foreground">Results for Verification (Read-only)</h3>
         </div>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-muted/40">
-              {['Test', 'Value', 'Unit', 'Ref Range', 'Flag'].map((h) => (
-                <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {orders.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">No lab orders found.</td></tr>
-            ) : orders.map((order: any) => (
-              <tr key={order.id} className="border-b border-muted/50">
-                <td className="px-4 py-3 text-sm text-foreground font-medium">{order.test?.name ?? '—'}</td>
-                <td className="px-4 py-3 text-sm text-foreground">{order.result?.value ?? '—'}</td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">{order.result?.unit ?? '—'}</td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">{order.result?.referenceRange ?? '—'}</td>
-                <td className="px-4 py-3">
-                  {order.result?.flag ? <FlagBadge flag={order.result.flag} /> : '—'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          className="rounded-t-none"
+          columns={[
+            { key: 'test', header: 'Test', cell: (order) => <span className="text-sm text-foreground font-medium">{order.test?.name ?? '—'}</span> },
+            { key: 'value', header: 'Value', cell: (order) => <span className="text-sm text-foreground">{order.result?.value ?? '—'}</span> },
+            { key: 'unit', header: 'Unit', cell: (order) => <span className="text-sm text-muted-foreground">{order.result?.unit ?? '—'}</span> },
+            { key: 'refRange', header: 'Ref Range', cell: (order) => <span className="text-sm text-muted-foreground">{order.result?.referenceRange ?? '—'}</span> },
+            { key: 'flag', header: 'Flag', cell: (order) => (order.result?.flag ? <FlagBadge flag={order.result.flag} /> : '—') },
+          ] as DataTableColumn<any>[]}
+          data={orders}
+          keyExtractor={(order) => order.id}
+          emptyMessage="No lab orders found."
+        />
       </div>
 
       {/* Documents section */}

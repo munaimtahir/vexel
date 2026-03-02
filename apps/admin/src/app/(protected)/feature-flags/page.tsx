@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { TenantScopeBanner } from '@/components/tenant-scope-banner';
+import { DataTable } from '@vexel/ui-system';
 
 type BuildStatus = 'built' | 'scaffold' | 'planned';
 type FeatureStatus = 'implemented' | 'scaffold' | 'planned' | 'deprecated';
@@ -191,32 +192,50 @@ export default function FeatureFlagsPage() {
         <>
           {/* ─── Section 1: Main Apps ─────────────────────────────────────────── */}
           <Section title="Main Apps" subtitle="Enable or disable entire modules. Disabling a module forces all its sub-features OFF.">
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-              <thead>
-                <tr style={{ color: 'hsl(var(--muted-foreground))', borderBottom: '1px solid hsl(var(--border))' }}>
-                  <Th>App</Th><Th>Key</Th><Th>Description</Th><Th style={{ textAlign: 'center' }}>Build</Th><Th style={{ textAlign: 'center' }}>On/Off</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {mainApps.map((def) => {
-                  const val = getFlagValue(def.key, def.defaultValue);
-                  return (
-                    <tr key={def.key} style={{ borderBottom: '1px solid hsl(var(--border) / 0.5)' }}>
-                      <Td><strong>{def.label}</strong></Td>
-                      <Td><code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>{def.key}</code></Td>
-                      <Td style={{ color: 'hsl(var(--muted-foreground))' }}>{def.description}</Td>
-                      <Td style={{ textAlign: 'center' }}><BuildBadge status={def.buildStatus} /></Td>
-                      <Td style={{ textAlign: 'center' }}>
-                        <Toggle enabled={val} isSaving={saving === def.key}
-                          disabled={def.buildStatus === 'planned'}
-                          onToggle={() => handleToggle(def.key, !val)} />
-                      </Td>
-                    </tr>
-                  );
-                })}
-                {mainApps.length === 0 && <tr><td colSpan={5} style={{ padding: '12px', color: 'hsl(var(--muted-foreground))' }}>No results.</td></tr>}
-              </tbody>
-            </table>
+            <DataTable
+              data={mainApps}
+              emptyMessage="No results."
+              keyExtractor={(def) => def.key}
+              columns={[
+                { key: 'app', header: 'App', cell: (def) => <strong>{def.label}</strong> },
+                {
+                  key: 'key',
+                  header: 'Key',
+                  cell: (def) => (
+                    <code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>
+                      {def.key}
+                    </code>
+                  ),
+                },
+                {
+                  key: 'description',
+                  header: 'Description',
+                  cell: (def) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{def.description}</span>,
+                },
+                {
+                  key: 'build',
+                  header: 'Build',
+                  className: 'text-center',
+                  cell: (def) => <BuildBadge status={def.buildStatus} />,
+                },
+                {
+                  key: 'toggle',
+                  header: 'On/Off',
+                  className: 'text-center',
+                  cell: (def) => {
+                    const val = getFlagValue(def.key, def.defaultValue);
+                    return (
+                      <Toggle
+                        enabled={val}
+                        isSaving={saving === def.key}
+                        disabled={def.buildStatus === 'planned'}
+                        onToggle={() => handleToggle(def.key, !val)}
+                      />
+                    );
+                  },
+                },
+              ]}
+            />
           </Section>
 
           {/* ─── Section 2: App Features ──────────────────────────────────────── */}
@@ -231,33 +250,79 @@ export default function FeatureFlagsPage() {
                     <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>{isOpen ? '▲' : '▼'} {appDefs.length} feature{appDefs.length !== 1 ? 's' : ''}</span>
                   </button>
                   {isOpen && (
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                      <thead>
-                        <tr style={{ color: 'hsl(var(--muted-foreground))', borderBottom: '1px solid hsl(var(--border))' }}>
-                          <Th>Feature</Th><Th>Key</Th><Th>Description</Th><Th style={{ textAlign: 'center' }}>Build</Th><Th style={{ textAlign: 'center' }}>On/Off</Th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {appDefs.map((def) => {
-                          const isPlanned = def.buildStatus === 'planned' || def.status === 'planned';
-                          const val = getFlagValue(def.key, def.defaultValue);
-                          const isEnum = def.valueType === 'enum';
-                          const variantVal = isEnum ? getVariantValue(def.key) : null;
-                          const currentMode = (variantVal as any)?.mode ?? 'separate';
-
-                          return (
-                            <tr key={def.key} style={{ borderBottom: '1px solid hsl(var(--border) / 0.5)', opacity: isPlanned ? 0.65 : 1 }}>
-                              <Td>
+                    <DataTable
+                      data={appDefs}
+                      keyExtractor={(def) => def.key}
+                      columns={[
+                        {
+                          key: 'feature',
+                          header: 'Feature',
+                          cell: (def) => {
+                            const isPlanned = def.buildStatus === 'planned' || def.status === 'planned';
+                            return (
+                              <div style={{ opacity: isPlanned ? 0.65 : 1 }}>
                                 <span style={{ fontWeight: 500 }}>{def.label}</span>
-                                {isPlanned && <span style={{ marginLeft: '6px', fontSize: '11px', background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))', padding: '1px 6px', borderRadius: '4px' }}>TODO</span>}
-                              </Td>
-                              <Td><code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>{def.key}</code></Td>
-                              <Td style={{ color: 'hsl(var(--muted-foreground))' }}>
+                                {isPlanned ? (
+                                  <span style={{ marginLeft: '6px', fontSize: '11px', background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))', padding: '1px 6px', borderRadius: '4px' }}>
+                                    TODO
+                                  </span>
+                                ) : null}
+                              </div>
+                            );
+                          },
+                        },
+                        {
+                          key: 'key',
+                          header: 'Key',
+                          cell: (def) => (
+                            <code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>
+                              {def.key}
+                            </code>
+                          ),
+                        },
+                        {
+                          key: 'description',
+                          header: 'Description',
+                          cell: (def) => {
+                            const isPlanned = def.buildStatus === 'planned' || def.status === 'planned';
+                            return (
+                              <span style={{ color: 'hsl(var(--muted-foreground))', opacity: isPlanned ? 0.65 : 1 }}>
                                 {def.description}
-                                {isPlanned && <span style={{ display: 'block', fontSize: '11px', marginTop: '2px', color: 'hsl(var(--muted-foreground))' }}>⚠ No runtime effect yet</span>}
-                              </Td>
-                              <Td style={{ textAlign: 'center' }}><BuildBadge status={def.buildStatus} /></Td>
-                              <Td style={{ textAlign: 'center' }}>
+                                {isPlanned ? (
+                                  <span style={{ display: 'block', fontSize: '11px', marginTop: '2px', color: 'hsl(var(--muted-foreground))' }}>
+                                    ⚠ No runtime effect yet
+                                  </span>
+                                ) : null}
+                              </span>
+                            );
+                          },
+                        },
+                        {
+                          key: 'build',
+                          header: 'Build',
+                          className: 'text-center',
+                          cell: (def) => {
+                            const isPlanned = def.buildStatus === 'planned' || def.status === 'planned';
+                            return (
+                              <span style={{ opacity: isPlanned ? 0.65 : 1 }}>
+                                <BuildBadge status={def.buildStatus} />
+                              </span>
+                            );
+                          },
+                        },
+                        {
+                          key: 'toggle',
+                          header: 'On/Off',
+                          className: 'text-center',
+                          cell: (def) => {
+                            const isPlanned = def.buildStatus === 'planned' || def.status === 'planned';
+                            const val = getFlagValue(def.key, def.defaultValue);
+                            const isEnum = def.valueType === 'enum';
+                            const variantVal = isEnum ? getVariantValue(def.key) : null;
+                            const currentMode = (variantVal as any)?.mode ?? 'separate';
+
+                            return (
+                              <div style={{ opacity: isPlanned ? 0.65 : 1 }}>
                                 {isEnum ? (
                                   <select value={currentMode} disabled={saving === def.key || isPlanned}
                                     onChange={(e) => handleVariantSave(def.key, JSON.stringify({ mode: e.target.value }))}
@@ -269,12 +334,12 @@ export default function FeatureFlagsPage() {
                                     disabled={isPlanned}
                                     onToggle={() => !isPlanned && handleToggle(def.key, !val)} />
                                 )}
-                              </Td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                              </div>
+                            );
+                          },
+                        },
+                      ]}
+                    />
                   )}
                 </div>
               );
@@ -297,14 +362,6 @@ function Section({ title, subtitle, children }: { title: string; subtitle: strin
       </div>
     </section>
   );
-}
-
-function Th({ children, style }: { children?: React.ReactNode; style?: React.CSSProperties }) {
-  return <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 500, fontSize: '12px', ...style }}>{children}</th>;
-}
-
-function Td({ children, style }: { children?: React.ReactNode; style?: React.CSSProperties }) {
-  return <td style={{ padding: '10px 14px', verticalAlign: 'middle', ...style }}>{children}</td>;
 }
 
 function BuildBadge({ status }: { status: BuildStatus }) {

@@ -398,7 +398,7 @@ export default function NewRegistrationPage() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setTimeout(handleReset, 100)}
-              className="inline-block px-6 py-2.5 bg-primary text-white rounded-md font-semibold text-sm no-underline hover:bg-primary/90"
+              className="inline-block px-6 py-2.5 bg-primary text-primary-foreground rounded-md font-semibold text-sm no-underline hover:bg-primary/90"
             >
               🖨 Print / Download Receipt
             </a>
@@ -411,7 +411,7 @@ export default function NewRegistrationPage() {
           <Button onClick={() => router.push(`/lims/encounters/${savedEncounterId}`)}>
             Open Encounter →
           </Button>
-          <Button variant="outline" className="bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" onClick={handleReset}>
+          <Button variant="outline" className="bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground" onClick={handleReset}>
             + New Patient
           </Button>
         </div>
@@ -774,7 +774,7 @@ export default function NewRegistrationPage() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-primary hover:bg-primary/90 text-white"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
         >
           {saving ? 'Saving…' : '💾 Save & Print Receipt'}
         </Button>

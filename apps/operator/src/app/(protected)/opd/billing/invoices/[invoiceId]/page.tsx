@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { DataTable, type DataTableColumn } from '@vexel/ui-system';
 
 function currencyLine(invoice: any, amount: number) {
   return `${invoice?.currency ?? 'PKR'} ${amount ?? 0}`;
@@ -234,32 +235,18 @@ export default function OpdInvoiceDetailPage() {
       </SectionCard>
 
       <SectionCard title="Invoice Lines">
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b bg-muted/40 text-left">
-                <th className="px-3 py-2">Description</th>
-                <th className="px-3 py-2">Qty</th>
-                <th className="px-3 py-2">Unit Price</th>
-                <th className="px-3 py-2">Discount</th>
-                <th className="px-3 py-2">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(invoice.lines ?? []).length === 0 ? (
-                <tr><td colSpan={5} className="px-3 py-3 text-muted-foreground">No lines</td></tr>
-              ) : (invoice.lines ?? []).map((line: any) => (
-                <tr key={line.id ?? `${line.description}-${line.total}`} className="border-b">
-                  <td className="px-3 py-2">{line.description ?? '—'}</td>
-                  <td className="px-3 py-2">{line.quantity ?? 0}</td>
-                  <td className="px-3 py-2">{line.unitPrice ?? 0}</td>
-                  <td className="px-3 py-2">{line.discountAmount ?? 0}</td>
-                  <td className="px-3 py-2">{line.total ?? 0}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={[
+            { key: 'description', header: 'Description', cell: (line) => line.description ?? '—' },
+            { key: 'quantity', header: 'Qty', cell: (line) => line.quantity ?? 0, numeric: true },
+            { key: 'unitPrice', header: 'Unit Price', cell: (line) => line.unitPrice ?? 0, numeric: true },
+            { key: 'discountAmount', header: 'Discount', cell: (line) => line.discountAmount ?? 0, numeric: true },
+            { key: 'total', header: 'Total', cell: (line) => line.total ?? 0, numeric: true },
+          ] as DataTableColumn<any>[]}
+          data={invoice.lines ?? []}
+          keyExtractor={(line) => line.id ?? `${line.description ?? 'line'}-${line.total ?? 0}`}
+          emptyMessage="No lines"
+        />
       </SectionCard>
 
       <SectionCard title="Payments (GET /payments)">
@@ -268,32 +255,18 @@ export default function OpdInvoiceDetailPage() {
             {loadingPayments ? 'Loading...' : 'Refresh Payments'}
           </Button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b bg-muted/40 text-left">
-                <th className="px-3 py-2">Paid At</th>
-                <th className="px-3 py-2">Amount</th>
-                <th className="px-3 py-2">Method</th>
-                <th className="px-3 py-2">Reference</th>
-                <th className="px-3 py-2">Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {payments.length === 0 ? (
-                <tr><td colSpan={5} className="px-3 py-3 text-muted-foreground">No posted payments</td></tr>
-              ) : payments.map((p) => (
-                <tr key={p.id} className="border-b">
-                  <td className="px-3 py-2">{p.paidAt ? new Date(p.paidAt).toLocaleString() : '—'}</td>
-                  <td className="px-3 py-2">{currencyLine(invoice, p.amount)}</td>
-                  <td className="px-3 py-2">{p.method ?? '—'}</td>
-                  <td className="px-3 py-2">{p.referenceNo ?? '—'}</td>
-                  <td className="px-3 py-2">{p.note ?? '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={[
+            { key: 'paidAt', header: 'Paid At', cell: (p) => (p.paidAt ? new Date(p.paidAt).toLocaleString() : '—') },
+            { key: 'amount', header: 'Amount', cell: (p) => currencyLine(invoice, p.amount) },
+            { key: 'method', header: 'Method', cell: (p) => p.method ?? '—' },
+            { key: 'referenceNo', header: 'Reference', cell: (p) => p.referenceNo ?? '—' },
+            { key: 'note', header: 'Note', cell: (p) => p.note ?? '—' },
+          ] as DataTableColumn<any>[]}
+          data={payments}
+          keyExtractor={(p) => p.id}
+          emptyMessage="No posted payments"
+        />
       </SectionCard>
 
       <SectionCard title="Issue Invoice">

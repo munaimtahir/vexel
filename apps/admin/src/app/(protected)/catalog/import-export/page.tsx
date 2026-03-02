@@ -5,13 +5,6 @@ import { getToken } from '@/lib/auth';
 
 const TEMPLATES = [
   { label: 'Full Workbook Template (XLSX) — all sheets', path: 'workbook.xlsx', icon: '📊' },
-  { label: 'Sample Types CSV', path: 'sample-types.csv', icon: '🧪' },
-  { label: 'Parameters CSV', path: 'parameters.csv', icon: '📄' },
-  { label: 'Tests CSV', path: 'tests.csv', icon: '📄' },
-  { label: 'Test-Parameters Mapping CSV', path: 'test-parameters.csv', icon: '🔗' },
-  { label: 'Panels CSV', path: 'panels.csv', icon: '📄' },
-  { label: 'Panel-Tests Mapping CSV', path: 'panel-tests.csv', icon: '🔗' },
-  { label: 'Reference Ranges CSV', path: 'reference-ranges.csv', icon: '📏' },
 ];
 
 type JobRun = {
@@ -101,12 +94,6 @@ export default function ImportExportPage() {
   const [importError, setImportError] = useState<string | null>(null);
   const [validatePassed, setValidatePassed] = useState(false);
 
-  const mappingFileRef = useRef<HTMLInputElement>(null);
-  const [mappingFile, setMappingFile] = useState<File | null>(null);
-  const [mappingImporting, setMappingImporting] = useState(false);
-  const [mappingResult, setMappingResult] = useState<any | null>(null);
-  const [mappingError, setMappingError] = useState<string | null>(null);
-
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [exportJob, setExportJob] = useState<JobRun | null>(null);
@@ -152,27 +139,6 @@ export default function ImportExportPage() {
       return;
     }
     await runWorkbookImport(false);
-  }
-
-  async function handleMappingImport() {
-    if (!mappingFile) return;
-    setMappingImporting(true); setMappingError(null); setMappingResult(null);
-    try {
-      const csv = await mappingFile.text();
-      const api = getApiClient(getToken() ?? undefined);
-      const result = await expectJsonFromTextResponse<any>(
-        'Mapping import',
-        api.POST('/catalog/test-parameter-mappings/import', {
-          body: { csv },
-          parseAs: 'text',
-        } as any),
-      );
-      setMappingResult(result);
-    } catch (err: any) {
-      setMappingError(err.message ?? 'Import failed');
-    } finally {
-      setMappingImporting(false);
-    }
   }
 
   async function handleExport() {
@@ -227,13 +193,13 @@ export default function ImportExportPage() {
       <section style={sectionStyle}>
         <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>📥 Import Catalog Workbook</h2>
         <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
-          Upload workbook/CSV, run validate first, then apply when validation passes.
+          Upload workbook (.xlsx), run validate first, then apply when validation passes.
         </p>
 
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '16px' }}>
           <div style={{ flex: 1, minWidth: '220px' }}>
-            <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>File (.xlsx or .csv)</label>
-            <input ref={fileRef} type="file" accept=".xlsx,.csv"
+            <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>File (.xlsx)</label>
+            <input ref={fileRef} type="file" accept=".xlsx"
               onChange={e => { setFile(e.target.files?.[0] ?? null); setImportResult(null); setImportError(null); setValidatePassed(false); }}
               style={{ display: 'block', padding: '7px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', width: '100%' }} />
           </div>
@@ -289,48 +255,24 @@ export default function ImportExportPage() {
                 ))}
               </ul>
             )}
-          </div>
-        )}
-      </section>
-
-      <section style={sectionStyle}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>🔗 Import Parameter Mappings (CSV)</h2>
-        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>
-          Dedicated CSV import endpoint for test-parameter mappings remains available.
-        </p>
-        <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
-          Alternatively, use the TestParameters and PanelTests sheets in the job-based workbook import above.
-        </p>
-
-        <div style={{ marginBottom: '14px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}>File (.csv only)</label>
-          <input ref={mappingFileRef} type="file" accept=".csv"
-            onChange={e => { setMappingFile(e.target.files?.[0] ?? null); setMappingResult(null); setMappingError(null); }}
-            style={{ display: 'block', padding: '7px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }} />
-        </div>
-
-        <button onClick={handleMappingImport} disabled={mappingImporting || !mappingFile} style={btn('hsl(var(--primary))', mappingImporting || !mappingFile)}>
-          {mappingImporting ? '⏳ Importing…' : '▶ Import Mappings'}
-        </button>
-
-        {mappingError && (
-          <div style={{ marginTop: '12px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', padding: '10px 12px', borderRadius: '6px', fontSize: '13px' }}>
-            ✗ {mappingError}
-          </div>
-        )}
-        {mappingResult && (
-          <div style={{ marginTop: '12px', background: 'hsl(var(--status-success-bg))', border: '1px solid hsl(var(--status-success-border))', borderRadius: '6px', padding: '12px 16px', fontSize: '13px' }}>
-            <div style={{ fontWeight: 600, color: 'hsl(var(--status-success-fg))', marginBottom: '6px' }}>
-              ✓ Imported {mappingResult.imported ?? 0} mappings, Skipped {mappingResult.skipped ?? 0} rows
-            </div>
-            {(mappingResult.warnings?.length ?? 0) > 0 && (
-              <ul style={{ margin: 0, paddingLeft: '16px' }}>
-                {mappingResult.warnings.map((w: any, i: number) => (
-                  <li key={i} style={{ fontSize: '12px', color: 'hsl(var(--status-warning-fg))' }}>
-                    {w.row != null ? `Row ${w.row}: ` : ''}{w.message}
-                  </li>
-                ))}
-              </ul>
+            {importResult.bySheet && (
+              <div style={{ marginTop: '12px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: 'hsl(var(--foreground))' }}>
+                  Sheet breakdown
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px' }}>
+                  {Object.entries(importResult.bySheet as Record<string, any>).map(([sheet, stats]) => (
+                    <div key={sheet} style={{ border: '1px solid hsl(var(--border))', borderRadius: '6px', padding: '10px', background: 'hsl(var(--background))' }}>
+                      <div style={{ fontWeight: 600, fontSize: '12px', marginBottom: '6px', color: 'hsl(var(--foreground))' }}>{sheet}</div>
+                      <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>Rows: <strong style={{ color: 'hsl(var(--foreground))' }}>{stats.totalRows ?? 0}</strong></div>
+                      <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>Created: <strong style={{ color: 'hsl(var(--status-success-fg))' }}>{stats.inserted ?? 0}</strong></div>
+                      <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>Updated: <strong style={{ color: 'hsl(var(--status-info-fg))' }}>{stats.updated ?? 0}</strong></div>
+                      <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>Skipped: <strong style={{ color: 'hsl(var(--foreground))' }}>{stats.skipped ?? 0}</strong></div>
+                      <div style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>Errors: <strong style={{ color: 'hsl(var(--status-warning-fg))' }}>{stats.errors ?? 0}</strong></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         )}

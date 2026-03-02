@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState<any[]>([]);
@@ -95,36 +96,49 @@ export default function JobsPage() {
 
 function DocRenderTable({ docs, onRetry, retrying }: { docs: any[]; onRetry: (id: string) => void; retrying: string | null }) {
   return (
-    <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-        <thead style={{ background: 'hsl(var(--background))' }}>
-          <tr>
-            {['Document ID', 'Type', 'Status', 'Error', 'Created', ''].map((h) => (
-              <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {docs.map((d: any) => (
-            <tr key={d.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-              <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{d.id.slice(0, 12)}…</td>
-              <td style={{ padding: '10px 12px' }}>{d.type}</td>
-              <td style={{ padding: '10px 12px' }}>
-                <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))' }}>{d.status}</span>
-              </td>
-              <td style={{ padding: '10px 12px', color: 'hsl(var(--status-destructive-fg))', fontSize: '12px', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.errorMessage ?? '—'}</td>
-              <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{new Date(d.createdAt).toLocaleString()}</td>
-              <td style={{ padding: '10px 12px' }}>
-                <button onClick={() => onRetry(d.id)} disabled={retrying === d.id}
-                  style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--status-info-fg))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer' }}>
-                  {retrying === d.id ? '...' : 'Re-publish'}
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DataTable
+      columns={[
+        {
+          key: 'id',
+          header: 'Document ID',
+          cell: (d: any) => <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{d.id.slice(0, 12)}...</span>,
+        },
+        {
+          key: 'type',
+          header: 'Type',
+          cell: (d: any) => d.type,
+        },
+        {
+          key: 'status',
+          header: 'Status',
+          cell: (d: any) => <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))' }}>{d.status}</span>,
+        },
+        {
+          key: 'error',
+          header: 'Error',
+          cell: (d: any) => <span style={{ color: 'hsl(var(--status-destructive-fg))', fontSize: '12px' }}>{d.errorMessage ?? '—'}</span>,
+        },
+        {
+          key: 'createdAt',
+          header: 'Created',
+          cell: (d: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{new Date(d.createdAt).toLocaleString()}</span>,
+        },
+        {
+          key: 'actions',
+          header: '',
+          cell: (d: any) => (
+            <button onClick={() => onRetry(d.id)} disabled={retrying === d.id}
+              style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--status-info-fg))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer' }}>
+              {retrying === d.id ? '...' : 'Re-publish'}
+            </button>
+          ),
+        },
+      ]}
+      data={docs}
+      keyExtractor={(d: any) => `${d.id}`}
+      emptyMessage="No failed document renders"
+      className="shadow-sm"
+    />
   );
 }
 
@@ -137,63 +151,81 @@ function JobTable({ jobs, onRetry, retrying, expanded, onExpand }: any) {
     delayed: { bg: 'hsl(var(--status-info-bg))', text: 'hsl(var(--primary))' },
   };
   return (
-    <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-        <thead style={{ background: 'hsl(var(--background))' }}>
-          <tr>
-            {['ID', 'Queue', 'Name', 'Status', 'Attempts', 'Created', 'Actions'].map((h) => (
-              <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {jobs.map((j: any) => {
+    <DataTable
+      columns={[
+        {
+          key: 'id',
+          header: 'ID',
+          cell: (j: any) => <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{j.id.slice(0, 10)}...</span>,
+        },
+        {
+          key: 'queue',
+          header: 'Queue',
+          cell: (j: any) => j.queue,
+        },
+        {
+          key: 'name',
+          header: 'Name',
+          cell: (j: any) => j.name ?? '—',
+        },
+        {
+          key: 'status',
+          header: 'Status',
+          cell: (j: any) => {
             const colors = statusColors[j.status] ?? { bg: 'hsl(var(--muted))', text: 'hsl(var(--muted-foreground))' };
+            return <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>{j.status}</span>;
+          },
+        },
+        {
+          key: 'attempts',
+          header: 'Attempts',
+          cell: (j: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{j.attemptsMade ?? 0}</span>,
+        },
+        {
+          key: 'createdAt',
+          header: 'Created',
+          cell: (j: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{j.createdAt ? new Date(j.createdAt).toLocaleString() : '—'}</span>,
+        },
+        {
+          key: 'actions',
+          header: 'Actions',
+          cell: (j: any) => {
             const isExpanded = expanded === j.id;
+            const details = `${j.failedReason ?? ''}${j.stacktrace ? `\n\n${Array.isArray(j.stacktrace) ? j.stacktrace.join('\n') : j.stacktrace}` : ''}`.trim();
             return (
-              <>
-                <tr key={j.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                  <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{j.id.slice(0, 10)}…</td>
-                  <td style={{ padding: '10px 12px' }}>{j.queue}</td>
-                  <td style={{ padding: '10px 12px' }}>{j.name ?? '—'}</td>
-                  <td style={{ padding: '10px 12px' }}>
-                    <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>{j.status}</span>
-                  </td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{j.attemptsMade ?? 0}</td>
-                  <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{j.createdAt ? new Date(j.createdAt).toLocaleString() : '—'}</td>
-                  <td style={{ padding: '10px 12px' }}>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      {j.status === 'failed' && (
-                        <button onClick={() => onRetry(j.id)} disabled={retrying === j.id}
-                          style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--status-info-fg))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer' }}>
-                          {retrying === j.id ? '...' : 'Retry'}
-                        </button>
-                      )}
-                      {(j.failedReason || j.stacktrace) && (
-                        <button onClick={() => onExpand(isExpanded ? null : j.id)}
-                          style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>
-                          {isExpanded ? 'Hide' : 'Details'}
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+              <div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {j.status === 'failed' && (
+                    <button onClick={() => onRetry(j.id)} disabled={retrying === j.id}
+                      style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--status-info-fg))', border: '1px solid hsl(var(--status-info-border))', borderRadius: '4px', cursor: 'pointer' }}>
+                      {retrying === j.id ? '...' : 'Retry'}
+                    </button>
+                  )}
+                  {(j.failedReason || j.stacktrace) && (
+                    <button onClick={() => onExpand(isExpanded ? null : j.id)}
+                      style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>
+                      {isExpanded ? 'Hide' : 'Details'}
+                    </button>
+                  )}
+                </div>
                 {isExpanded && (
-                  <tr style={{ borderTop: '1px solid hsl(var(--muted))', background: 'hsl(var(--status-warning-bg))' }}>
-                    <td colSpan={7} style={{ padding: '12px 16px' }}>
-                      <div style={{ fontSize: '12px', color: 'hsl(var(--status-warning-fg))', marginBottom: '6px', fontWeight: 600 }}>Failure Reason:</div>
-                      <pre style={{ fontSize: '11px', color: 'hsl(var(--status-warning-fg))', overflow: 'auto', maxHeight: '200px', margin: 0, background: 'hsl(var(--status-warning-bg))', padding: '10px', borderRadius: '4px' }}>
-                        {j.failedReason ?? ''}{j.stacktrace ? '\n\n' + (Array.isArray(j.stacktrace) ? j.stacktrace.join('\n') : j.stacktrace) : ''}
-                      </pre>
-                    </td>
-                  </tr>
+                  <div style={{ marginTop: '8px', borderRadius: '4px', background: 'hsl(var(--status-warning-bg))', padding: '8px 10px' }}>
+                    <div style={{ fontSize: '12px', color: 'hsl(var(--status-warning-fg))', marginBottom: '6px', fontWeight: 600 }}>Failure Reason:</div>
+                    <pre style={{ fontSize: '11px', color: 'hsl(var(--status-warning-fg))', overflow: 'auto', maxHeight: '200px', margin: 0, whiteSpace: 'pre-wrap' }}>
+                      {details}
+                    </pre>
+                  </div>
                 )}
-              </>
+              </div>
             );
-          })}
-        </tbody>
-      </table>
-    </div>
+          },
+        },
+      ]}
+      data={jobs}
+      keyExtractor={(j: any) => `${j.id}`}
+      emptyMessage="No jobs found."
+      className="shadow-sm"
+    />
   );
 }
 
@@ -205,38 +237,57 @@ function JobRunTable({ jobRuns }: { jobRuns: any[] }) {
     failed:    { bg: 'hsl(var(--status-destructive-bg))', text: 'hsl(var(--status-destructive-fg))' },
   };
   return (
-    <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-        <thead style={{ background: 'hsl(var(--background))' }}>
-          <tr>
-            {['ID', 'Type', 'Status', 'Created By', 'Created', 'Finished', 'Summary'].map((h) => (
-              <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {jobRuns.map((j: any) => {
+    <DataTable
+      columns={[
+        {
+          key: 'id',
+          header: 'ID',
+          cell: (j: any) => <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{j.id.slice(0, 12)}...</span>,
+        },
+        {
+          key: 'type',
+          header: 'Type',
+          cell: (j: any) => <span style={{ fontFamily: 'monospace', fontSize: '11px' }}>{j.type}</span>,
+        },
+        {
+          key: 'status',
+          header: 'Status',
+          cell: (j: any) => {
             const colors = statusColors[j.status] ?? { bg: 'hsl(var(--muted))', text: 'hsl(var(--muted-foreground))' };
-            return (
-              <tr key={j.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{j.id.slice(0, 12)}…</td>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px' }}>{j.type}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>{j.status}</span>
-                </td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{j.createdBy?.slice(0, 12) ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{new Date(j.createdAt).toLocaleString()}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{j.finishedAt ? new Date(j.finishedAt).toLocaleString() : '—'}</td>
-                <td style={{ padding: '10px 12px', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>
-                  {j.errorSummary ? <span style={{ color: 'hsl(var(--status-destructive-fg))' }}>{j.errorSummary}</span>
-                    : j.resultSummary ? `${j.resultSummary.created ?? 0}↑ ${j.resultSummary.updated ?? 0}↻`
-                    : '—'}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+            return <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: colors.bg, color: colors.text }}>{j.status}</span>;
+          },
+        },
+        {
+          key: 'createdBy',
+          header: 'Created By',
+          cell: (j: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{j.createdBy?.slice(0, 12) ?? '—'}</span>,
+        },
+        {
+          key: 'createdAt',
+          header: 'Created',
+          cell: (j: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{new Date(j.createdAt).toLocaleString()}</span>,
+        },
+        {
+          key: 'finishedAt',
+          header: 'Finished',
+          cell: (j: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{j.finishedAt ? new Date(j.finishedAt).toLocaleString() : '—'}</span>,
+        },
+        {
+          key: 'summary',
+          header: 'Summary',
+          cell: (j: any) => (
+            <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>
+              {j.errorSummary ? <span style={{ color: 'hsl(var(--status-destructive-fg))' }}>{j.errorSummary}</span>
+                : j.resultSummary ? `${j.resultSummary.created ?? 0}↑ ${j.resultSummary.updated ?? 0}↻`
+                : '—'}
+            </span>
+          ),
+        },
+      ]}
+      data={jobRuns}
+      keyExtractor={(j: any) => `${j.id}`}
+      emptyMessage="No catalog job runs found."
+      className="shadow-sm"
+    />
   );
 }

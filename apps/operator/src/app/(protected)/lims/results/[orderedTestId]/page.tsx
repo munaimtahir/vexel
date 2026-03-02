@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 import { FlagBadge as StatusFlagBadge } from '@/components/status-badge';
+import { DataTable, type DataTableColumn } from '@vexel/ui-system';
 
 const SPECIMEN_READY_STATUSES = ['specimen_collected', 'specimen_received', 'partial_resulted', 'resulted', 'verified'];
 
@@ -408,34 +409,30 @@ export default function ResultsEntryPage() {
         </SectionCard>
       ) : (
         <SectionCard noPadding className="mb-6">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="bg-muted/50">
-                {['Parameter', 'Value', 'Unit', 'Ref Range', 'Flag'].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {parameters.map((p: any) => {
-                const isLocked = !!p.locked || !!p.verifiedAt;
-                const currentValue = localValues[p.parameterId] ?? '';
-                const currentFlag = localFlags[p.parameterId] ?? null;
-
-                const cycleFlag = () => {
-                  if (isLocked) return;
-                  const idx = FLAG_CYCLE.indexOf(currentFlag);
-                  const next = FLAG_CYCLE[(idx + 1) % FLAG_CYCLE.length];
-                  setLocalFlags(f => ({ ...f, [p.parameterId]: next }));
-                };
-
-                const renderInput = () => {
+          <DataTable
+            columns={[
+              {
+                key: 'parameter',
+                header: 'Parameter',
+                cell: (p) => (
+                  <span className="text-sm text-foreground font-medium">
+                    {p.name}
+                    {(p.locked || p.verifiedAt) && <span className="ml-1.5 text-xs">🔒</span>}
+                  </span>
+                ),
+              },
+              {
+                key: 'value',
+                header: 'Value',
+                cell: (p) => {
+                  const isLocked = !!p.locked || !!p.verifiedAt;
+                  const currentValue = localValues[p.parameterId] ?? '';
                   if (p.dataType === 'select' && Array.isArray(p.allowedValues) && p.allowedValues.length > 0) {
                     return (
                       <select
                         disabled={isLocked}
                         value={currentValue}
-                        onChange={e => setLocalValues(v => ({ ...v, [p.parameterId]: e.target.value }))}
+                        onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
                         className={inputCls(isLocked)}
                       >
                         <option value="">—</option>
@@ -450,7 +447,7 @@ export default function ResultsEntryPage() {
                       <select
                         disabled={isLocked}
                         value={currentValue}
-                        onChange={e => setLocalValues(v => ({ ...v, [p.parameterId]: e.target.value }))}
+                        onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
                         className={inputCls(isLocked)}
                       >
                         <option value="">—</option>
@@ -466,7 +463,7 @@ export default function ResultsEntryPage() {
                         step="any"
                         readOnly={isLocked}
                         value={currentValue}
-                        onChange={e => setLocalValues(v => ({ ...v, [p.parameterId]: e.target.value }))}
+                        onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
                         className={inputCls(isLocked)}
                       />
                     );
@@ -476,39 +473,39 @@ export default function ResultsEntryPage() {
                       type="text"
                       readOnly={isLocked}
                       value={currentValue}
-                      onChange={e => setLocalValues(v => ({ ...v, [p.parameterId]: e.target.value }))}
+                      onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
                       className={inputCls(isLocked)}
                     />
                   );
-                };
-
-                return (
-                  <tr key={p.parameterId} className={cn(
-                    'border-t border-muted/50',
-                    !isLocked && 'bg-muted/30 dark:bg-slate-800/30 hover:bg-muted/50',
-                    isLocked && 'bg-muted/20',
-                  )}>
-                    <td className="px-4 py-2.5 text-sm text-foreground font-medium">
-                      {p.name}
-                      {isLocked && <span className="ml-1.5 text-xs">🔒</span>}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      {renderInput()}
-                    </td>
-                    <td className="px-4 py-2.5 text-sm text-muted-foreground">
-                      {p.unit ?? '—'}
-                    </td>
-                    <td className="px-4 py-2.5 text-sm text-muted-foreground">
-                      {p.referenceRange ?? '—'}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <FlagBadge flag={currentFlag} locked={isLocked} onClick={cycleFlag} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                },
+              },
+              { key: 'unit', header: 'Unit', cell: (p) => <span className="text-sm text-muted-foreground">{p.unit ?? '—'}</span> },
+              { key: 'referenceRange', header: 'Ref Range', cell: (p) => <span className="text-sm text-muted-foreground">{p.referenceRange ?? '—'}</span> },
+              {
+                key: 'flag',
+                header: 'Flag',
+                cell: (p) => {
+                  const isLocked = !!p.locked || !!p.verifiedAt;
+                  const currentFlag = localFlags[p.parameterId] ?? null;
+                  const cycleFlag = () => {
+                    if (isLocked) return;
+                    const idx = FLAG_CYCLE.indexOf(currentFlag);
+                    const next = FLAG_CYCLE[(idx + 1) % FLAG_CYCLE.length];
+                    setLocalFlags((f) => ({ ...f, [p.parameterId]: next }));
+                  };
+                  return <FlagBadge flag={currentFlag} locked={isLocked} onClick={cycleFlag} />;
+                },
+              },
+            ] as DataTableColumn<any>[]}
+            data={parameters}
+            keyExtractor={(p) => p.parameterId}
+            rowClassName={(p) =>
+              cn(
+                !p.locked && !p.verifiedAt && 'bg-muted/30 dark:bg-slate-800/30 hover:bg-muted/50',
+                (p.locked || p.verifiedAt) && 'bg-muted/20',
+              )
+            }
+          />
         </SectionCard>
       )}
 

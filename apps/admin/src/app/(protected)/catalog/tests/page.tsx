@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 const emptyForm = () => ({
   name: '', externalId: '', userCode: '', loincCode: '',
@@ -154,6 +155,62 @@ export default function CatalogTestsPage() {
   function handleSearch(val: string) { setSearch(val); setPage(1); load(1, val); }
   function handlePage(p: number) { setPage(p); load(p, search); }
   const totalPages = Math.ceil(total / LIMIT);
+  const columns = [
+    {
+      key: 'userCode',
+      header: 'User Code',
+      cell: (t: any) => <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{t.userCode ?? '—'}</span>,
+    },
+    {
+      key: 'externalId',
+      header: 'Ext ID',
+      cell: (t: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{t.externalId ?? '—'}</span>,
+    },
+    {
+      key: 'name',
+      header: 'Name',
+      cell: (t: any) => <span style={{ fontWeight: 500 }}>{t.name}</span>,
+    },
+    {
+      key: 'price',
+      header: 'Price (PKR)',
+      cell: (t: any) => <span style={{ color: 'hsl(var(--foreground))', fontWeight: 500 }}>{t.price != null ? t.price.toLocaleString() : '—'}</span>,
+    },
+    {
+      key: 'department',
+      header: 'Department',
+      cell: (t: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{t.department ?? '—'}</span>,
+    },
+    {
+      key: 'loincCode',
+      header: 'LOINC',
+      cell: (t: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '12px' }}>{t.loincCode ?? '—'}</span>,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      cell: (t: any) => (
+        <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: t.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: t.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
+          {t.isActive ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: '',
+      cell: (t: any) => (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            openEdit(t);
+          }}
+          style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Edit
+        </button>
+      ),
+    },
+  ];
 
   const assignedParamIds = new Set(testParams.map((p: any) => p.parameterId ?? p.id));
   const availableParams = allParams.filter((p: any) => !assignedParamIds.has(p.id));
@@ -252,44 +309,16 @@ export default function CatalogTestsPage() {
       <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
         {/* Tests table */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-              <thead style={{ background: 'hsl(var(--background))' }}>
-                <tr>
-                  {['User Code', 'Ext ID', 'Name', 'Price (PKR)', 'Department', 'LOINC', 'Status', ''].map((h) => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
-                ) : tests.length === 0 ? (
-                  <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No tests found.</td></tr>
-                ) : tests.map((t: any) => (
-                  <tr key={t.id} style={{ borderTop: '1px solid hsl(var(--muted))', background: selectedTest?.id === t.id ? 'hsl(var(--status-info-bg))' : undefined, cursor: 'pointer' }}
-                    onClick={() => selectTest(t)}>
-                    <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 600 }}>{t.userCode ?? '—'}</td>
-                    <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{t.externalId ?? '—'}</td>
-                    <td style={{ padding: '10px 12px', fontWeight: 500 }}>{t.name}</td>
-                    <td style={{ padding: '10px 12px', color: 'hsl(var(--foreground))', fontWeight: 500 }}>
-                      {t.price != null ? t.price.toLocaleString() : '—'}
-                    </td>
-                    <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{t.department ?? '—'}</td>
-                    <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '12px' }}>{t.loincCode ?? '—'}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: t.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: t.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
-                        {t.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td style={{ padding: '10px 12px' }} onClick={(e) => { e.stopPropagation(); openEdit(t); }}>
-                      <button style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            columns={columns}
+            data={tests}
+            keyExtractor={(t: any) => `${t.id}`}
+            onRowClick={(t: any) => selectTest(t)}
+            loading={loading}
+            emptyMessage="No tests found."
+            className="shadow-sm"
+            rowClassName={(t: any) => (selectedTest?.id === t.id ? 'bg-[hsl(var(--status-info-bg))]' : undefined)}
+          />
           {totalPages > 1 && (
             <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
               <button disabled={page <= 1} onClick={() => handlePage(page - 1)}

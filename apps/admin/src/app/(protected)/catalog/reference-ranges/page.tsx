@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' };
@@ -112,6 +113,55 @@ export default function ReferenceRangesPage() {
   function handlePage(p: number) { setPage(p); load(p, filterParamId); }
   function handleFilter(paramId: string) { setFilterParamId(paramId); setPage(1); load(1, paramId); }
   const totalPages = Math.ceil(total / LIMIT);
+  const columns = [
+    {
+      key: 'parameter',
+      header: 'Parameter',
+      cell: (r: any) => <span style={{ fontWeight: 500 }}>{getParamName(r.parameterId)}</span>,
+    },
+    {
+      key: 'test',
+      header: 'Test',
+      cell: (r: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{r.testId ? getTestName(r.testId) : '—'}</span>,
+    },
+    {
+      key: 'gender',
+      header: 'Gender',
+      cell: (r: any) => (
+        r.gender ? <span style={{ padding: '2px 6px', borderRadius: '10px', fontSize: '11px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--status-info-fg))' }}>{r.gender === 'M' ? 'Male' : 'Female'}</span> : <span style={{ color: 'hsl(var(--muted-foreground))' }}>Any</span>
+      ),
+    },
+    {
+      key: 'age',
+      header: 'Age',
+      cell: (r: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{r.ageMinYears != null || r.ageMaxYears != null ? `${r.ageMinYears ?? 0}–${r.ageMaxYears ?? '∞'} yrs` : 'Any'}</span>,
+    },
+    {
+      key: 'normalRange',
+      header: 'Normal Range',
+      cell: (r: any) => <span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'hsl(var(--foreground))' }}>{r.lowValue != null || r.highValue != null ? `${r.lowValue ?? '?'} - ${r.highValue ?? '?'}` : r.normalText ?? '—'}</span>,
+    },
+    {
+      key: 'critical',
+      header: 'Critical',
+      cell: (r: any) => <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>{r.criticalLow != null || r.criticalHigh != null ? `${r.criticalLow ?? '?'} / ${r.criticalHigh ?? '?'}` : '—'}</span>,
+    },
+    {
+      key: 'unit',
+      header: 'Unit',
+      cell: (r: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{r.unit ?? '—'}</span>,
+    },
+    {
+      key: 'actions',
+      header: '',
+      cell: (r: any) => (
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button onClick={() => openEdit(r)} style={{ padding: '3px 8px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+          <button onClick={() => setDeleteId(r.id)} style={{ padding: '3px 8px', fontSize: '12px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', border: '1px solid hsl(var(--status-destructive-border))', borderRadius: '4px', cursor: 'pointer' }}>Del</button>
+        </div>
+      ),
+    },
+  ];
 
   const getParamName = (id: string) => parameters.find((p) => p.id === id)?.name ?? id?.slice(0, 8) ?? '—';
   const getTestName = (id: string) => tests.find((t) => t.id === id)?.name ?? id?.slice(0, 8) ?? '—';
@@ -239,48 +289,14 @@ export default function ReferenceRangesPage() {
         </select>
       </div>
 
-      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: 'hsl(var(--background))' }}>
-            <tr>
-              {['Parameter', 'Test', 'Gender', 'Age', 'Normal Range', 'Critical', 'Unit', ''].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
-            ) : ranges.length === 0 ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No reference ranges found.</td></tr>
-            ) : ranges.map((r: any) => (
-              <tr key={r.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                <td style={{ padding: '10px 12px', fontWeight: 500 }}>{getParamName(r.parameterId)}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{r.testId ? getTestName(r.testId) : '—'}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  {r.gender ? <span style={{ padding: '2px 6px', borderRadius: '10px', fontSize: '11px', background: r.gender === 'M' ? 'hsl(var(--status-info-bg))' : 'hsl(var(--status-info-bg))', color: r.gender === 'M' ? 'hsl(var(--status-info-fg))' : 'hsl(var(--status-info-fg))' }}>{r.gender === 'M' ? 'Male' : 'Female'}</span> : <span style={{ color: 'hsl(var(--muted-foreground))' }}>Any</span>}
-                </td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>
-                  {r.ageMinYears != null || r.ageMaxYears != null ? `${r.ageMinYears ?? 0}–${r.ageMaxYears ?? '∞'} yrs` : 'Any'}
-                </td>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '12px', color: 'hsl(var(--foreground))' }}>
-                  {r.lowValue != null || r.highValue != null ? `${r.lowValue ?? '?'} – ${r.highValue ?? '?'}` : r.normalText ?? '—'}
-                </td>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '11px', color: 'hsl(var(--status-destructive-fg))' }}>
-                  {r.criticalLow != null || r.criticalHigh != null ? `${r.criticalLow ?? '?'} / ${r.criticalHigh ?? '?'}` : '—'}
-                </td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{r.unit ?? '—'}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <button onClick={() => openEdit(r)} style={{ padding: '3px 8px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                    <button onClick={() => setDeleteId(r.id)} style={{ padding: '3px 8px', fontSize: '12px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', border: '1px solid hsl(var(--status-destructive-border))', borderRadius: '4px', cursor: 'pointer' }}>Del</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={ranges}
+        keyExtractor={(r: any) => `${r.id}`}
+        loading={loading}
+        emptyMessage="No reference ranges found."
+        className="shadow-sm"
+      />
 
       {totalPages > 1 && (
         <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>

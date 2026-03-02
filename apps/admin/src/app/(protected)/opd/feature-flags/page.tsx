@@ -108,19 +108,19 @@ export default function OpdFeatureFlagsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">OPD Feature Flags</h1>
-        <p className="mt-2 text-sm text-slate-600">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+        <h1 className="text-2xl font-bold text-foreground">OPD Feature Flags</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
           Tenant-scoped OPD flags only. This page does not expose appointment/visit/invoice command endpoints.
         </p>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="grid gap-4 md:grid-cols-2">
           <label className="block">
-            <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-600">Tenant</span>
+            <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Tenant</span>
             <select
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-border px-3 py-2 text-sm"
               value={tenantId}
               onChange={(e) => setTenantId(e.target.value)}
               disabled={loadingTenantContext || tenants.length === 0}
@@ -130,19 +130,19 @@ export default function OpdFeatureFlagsPage() {
               ))}
             </select>
           </label>
-          <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-foreground">
-            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">Selected Tenant</div>
-            <div className="mt-1 font-medium text-slate-900">{selectedTenant?.name ?? '—'}</div>
-            {selectedTenant?.status ? <div className="text-xs text-slate-500">{selectedTenant.status}</div> : null}
+          <div className="rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground">
+            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Selected Tenant</div>
+            <div className="mt-1 font-medium text-foreground">{selectedTenant?.name ?? '—'}</div>
+            {selectedTenant?.status ? <div className="text-xs text-muted-foreground">{selectedTenant.status}</div> : null}
           </div>
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">OPD Flags</h2>
           <div className="flex gap-2">
-            <button onClick={() => tenantId && void loadFlags(tenantId)} className="rounded-md border border-slate-300 px-3 py-2 text-sm text-foreground">
+            <button onClick={() => tenantId && void loadFlags(tenantId)} className="rounded-md border border-border px-3 py-2 text-sm text-foreground">
               Refresh
             </button>
             <button onClick={() => void seedModuleFlag()} disabled={!tenantId || savingKey === 'module.opd'} className="rounded-md border border-border px-3 py-2 text-sm text-primary disabled:opacity-60">
@@ -156,28 +156,28 @@ export default function OpdFeatureFlagsPage() {
         ) : null}
 
         {loadingFlags ? (
-          <p className="mt-4 text-sm text-slate-500">Loading flags...</p>
+          <p className="mt-4 text-sm text-muted-foreground">Loading flags...</p>
         ) : opdFlags.length === 0 ? (
           <div className="mt-4 rounded-md border border-[hsl(var(--status-warning-border))] bg-[hsl(var(--status-warning-bg))] px-3 py-2 text-sm text-[hsl(var(--status-warning-fg))]">
-            No OPD-specific flags found for this tenant. Use <code className="rounded bg-white px-1 py-0.5 text-xs">Ensure module.opd</code> to seed the module flag.
+            No OPD-specific flags found for this tenant. Use <code className="rounded bg-card px-1 py-0.5 text-xs">Ensure module.opd</code> to seed the module flag.
           </div>
         ) : (
           <div className="mt-4 space-y-3">
             {opdFlags.map((flag) => (
-              <div key={flag.key} className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 md:flex-row md:items-center md:justify-between">
+              <div key={flag.key} className="flex flex-col gap-3 rounded-lg border border-border bg-muted p-4 md:flex-row md:items-center md:justify-between">
                 <div className="min-w-0">
-                  <code className="rounded bg-white px-2 py-1 text-xs text-slate-800">{flag.key}</code>
-                  <p className="mt-2 text-sm text-slate-600">
+                  <code className="rounded bg-card px-2 py-1 text-xs text-foreground">{flag.key}</code>
+                  <p className="mt-2 text-sm text-muted-foreground">
                     {OPD_FLAG_HINTS[flag.key] ?? flag.description ?? 'Tenant-scoped OPD feature flag'}
                   </p>
                   {flag.variantJson ? (
-                    <p className="mt-1 break-all text-xs text-slate-500">variantJson: {flag.variantJson}</p>
+                    <p className="mt-1 break-all text-xs text-muted-foreground">variantJson: {flag.variantJson}</p>
                   ) : null}
                 </div>
                 <button
                   onClick={() => void toggleFlag(flag)}
                   disabled={savingKey === flag.key}
-                  className={`inline-flex min-w-28 items-center justify-center rounded-md px-3 py-2 text-sm font-medium ${flag.enabled ? 'bg-primary text-white' : 'bg-slate-200 text-slate-800'} disabled:opacity-60`}
+                  className={`inline-flex min-w-28 items-center justify-center rounded-md px-3 py-2 text-sm font-medium ${flag.enabled ? 'bg-primary text-white' : 'bg-slate-200 text-foreground'} disabled:opacity-60`}
                 >
                   {savingKey === flag.key ? 'Saving...' : flag.enabled ? 'Enabled' : 'Disabled'}
                 </button>

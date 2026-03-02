@@ -1,0 +1,26 @@
+{
+  "name": "@vexel/ui-system",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./tokens": "./tokens.ts",
+    "./LayoutShell": "./LayoutShell.tsx",
+    "./Sidebar": "./Sidebar.tsx",
+    "./Header": "./Header.tsx",
+    "./BreadcrumbBar": "./BreadcrumbBar.tsx",
+    "./DataTable": "./DataTable.tsx",
+    "./StatusBadge": "./StatusBadge.tsx",
+    "./ConfirmActionModal": "./ConfirmActionModal.tsx"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0"
+  }
+}

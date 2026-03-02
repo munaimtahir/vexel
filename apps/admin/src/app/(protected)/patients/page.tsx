@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 export default function PatientsPage() {
   const [patients, setPatients] = useState<any[]>([]);
@@ -53,33 +54,70 @@ export default function PatientsPage() {
       </form>
 
       <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: 'hsl(var(--background))' }}>
-            <tr>
-              {['MR #', 'Name', 'Gender', 'DOB', 'Phone', 'CNIC', 'Tenant', 'Created'].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
-            ) : patients.length === 0 ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No patients found.</td></tr>
-            ) : patients.map((p: any) => (
-              <tr key={p.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '12px', color: 'hsl(var(--primary))', fontWeight: 600 }}>{p.mrNumber ?? '—'}</td>
-                <td style={{ padding: '10px 12px', fontWeight: 500 }}>{p.firstName} {p.lastName}</td>
-                <td style={{ padding: '10px 12px' }}>{genderBadge(p.gender)}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString() : '—'}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{p.phone ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: 'monospace' }}>{p.cnic ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontFamily: 'monospace' }}>{p.tenantId?.slice(0, 8) ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '—'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          data={patients}
+          loading={loading}
+          emptyMessage="No patients found."
+          keyExtractor={(patient) => patient.id}
+          columns={[
+            {
+              key: 'mr',
+              header: 'MR #',
+              cell: (patient) => (
+                <span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'hsl(var(--primary))', fontWeight: 600 }}>
+                  {patient.mrNumber ?? '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'name',
+              header: 'Name',
+              cell: (patient) => <span style={{ fontWeight: 500 }}>{patient.firstName} {patient.lastName}</span>,
+            },
+            { key: 'gender', header: 'Gender', cell: (patient) => genderBadge(patient.gender) },
+            {
+              key: 'dob',
+              header: 'DOB',
+              cell: (patient) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>
+                  {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'phone',
+              header: 'Phone',
+              cell: (patient) => <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>{patient.phone ?? '—'}</span>,
+            },
+            {
+              key: 'cnic',
+              header: 'CNIC',
+              cell: (patient) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: 'monospace' }}>
+                  {patient.cnic ?? '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'tenant',
+              header: 'Tenant',
+              cell: (patient) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontFamily: 'monospace' }}>
+                  {patient.tenantId?.slice(0, 8) ?? '—'}
+                </span>
+              ),
+            },
+            {
+              key: 'created',
+              header: 'Created',
+              cell: (patient) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px' }}>
+                  {patient.createdAt ? new Date(patient.createdAt).toLocaleDateString() : '—'}
+                </span>
+              ),
+            },
+          ]}
+        />
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>

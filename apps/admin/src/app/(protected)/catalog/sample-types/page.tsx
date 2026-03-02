@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 const emptyForm = () => ({
   name: '', externalId: '', userCode: '', description: '', isActive: true,
@@ -75,6 +76,44 @@ export default function SampleTypesPage() {
   function handleSearch(val: string) { setSearch(val); setPage(1); load(1, val); }
   function handlePage(p: number) { setPage(p); load(p, search); }
   const totalPages = Math.ceil(total / LIMIT);
+  const columns = [
+    {
+      key: 'userCode',
+      header: 'User Code',
+      cell: (item: any) => <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{item.userCode ?? '—'}</span>,
+    },
+    {
+      key: 'externalId',
+      header: 'Ext ID',
+      cell: (item: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{item.externalId ?? '—'}</span>,
+    },
+    {
+      key: 'name',
+      header: 'Name',
+      cell: (item: any) => <span style={{ fontWeight: 500 }}>{item.name}</span>,
+    },
+    {
+      key: 'description',
+      header: 'Description',
+      cell: (item: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{item.description ?? '—'}</span>,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      cell: (item: any) => (
+        <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: item.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: item.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
+          {item.isActive ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: '',
+      cell: (item: any) => (
+        <button onClick={() => openEdit(item)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+      ),
+    },
+  ];
 
   const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
   const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' };
@@ -137,39 +176,14 @@ export default function SampleTypesPage() {
         <input value={search} onChange={(e) => handleSearch(e.target.value)} placeholder="Search by name, external ID or user code…" style={{ width: '320px', padding: '8px 12px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px' }} />
       </div>
 
-      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: 'hsl(var(--background))' }}>
-            <tr>
-              {['User Code', 'Ext ID', 'Name', 'Description', 'Status', ''].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={6} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
-            ) : items.length === 0 ? (
-              <tr><td colSpan={6} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No sample types found.</td></tr>
-            ) : items.map((item: any) => (
-              <tr key={item.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 600 }}>{item.userCode ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{item.externalId ?? '—'}</td>
-                <td style={{ padding: '10px 12px', fontWeight: 500 }}>{item.name}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{item.description ?? '—'}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: item.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: item.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
-                    {item.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </td>
-                <td style={{ padding: '10px 12px' }}>
-                  <button onClick={() => openEdit(item)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={items}
+        keyExtractor={(item: any) => `${item.id}`}
+        loading={loading}
+        emptyMessage="No sample types found."
+        className="shadow-sm"
+      />
 
       {totalPages > 1 && (
         <div style={{ display: 'flex', gap: '6px', marginTop: '16px', alignItems: 'center', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>

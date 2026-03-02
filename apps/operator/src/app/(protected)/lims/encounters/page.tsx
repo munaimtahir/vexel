@@ -1,10 +1,11 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { EncounterStatusBadge } from '@/components/status-badge';
+import { DataTable, type DataTableColumn } from '@vexel/ui-system';
 
 export default function EncountersPage() {
   const router = useRouter();
@@ -17,13 +18,46 @@ export default function EncountersPage() {
     const api = getApiClient(getToken() ?? undefined);
     api.GET('/encounters')
       .then(({ data, error: apiError }) => {
-        if (apiError || !data) { setError('Failed to load encounters'); return; }
+        if (apiError || !data) {
+          setError('Failed to load encounters');
+          return;
+        }
         setEncounters((data as any).data ?? []);
         setPagination((data as any).pagination ?? null);
       })
       .catch(() => setError('Failed to load encounters'))
       .finally(() => setLoading(false));
   }, []);
+
+  const columns = useMemo<DataTableColumn<any>[]>(
+    () => [
+      {
+        key: 'id',
+        header: 'ID',
+        cell: (enc) => <span className="text-xs text-muted-foreground font-mono">{enc.id.slice(0, 8)}…</span>,
+      },
+      {
+        key: 'patient',
+        header: 'Patient',
+        cell: (enc) => (
+          <span className="text-sm text-foreground font-medium">
+            {enc.patient ? `${enc.patient.firstName} ${enc.patient.lastName}` : enc.patientId.slice(0, 8)}
+          </span>
+        ),
+      },
+      {
+        key: 'status',
+        header: 'Status',
+        cell: (enc) => <EncounterStatusBadge status={enc.status} />,
+      },
+      {
+        key: 'createdAt',
+        header: 'Created',
+        cell: (enc) => <span className="text-sm text-muted-foreground">{new Date(enc.createdAt).toLocaleDateString()}</span>,
+      },
+    ],
+    [],
+  );
 
   return (
     <div>
@@ -50,33 +84,12 @@ export default function EncountersPage() {
       )}
 
       {!loading && encounters.length > 0 && (
-        <div className="bg-card rounded-lg border border-border overflow-hidden">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-muted/40 border-b border-border">
-                {['ID', 'Patient', 'Status', 'Created'].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {encounters.map((enc: any) => (
-                <tr
-                  key={enc.id}
-                  className="border-b border-border/50 cursor-pointer hover:bg-muted/30 transition-colors"
-                  onClick={() => router.push(`/lims/encounters/${enc.id}`)}
-                >
-                  <td className="px-4 py-3 text-xs text-muted-foreground font-mono">{enc.id.slice(0, 8)}…</td>
-                  <td className="px-4 py-3 text-sm text-foreground font-medium">
-                    {enc.patient ? `${enc.patient.firstName} ${enc.patient.lastName}` : enc.patientId.slice(0, 8)}
-                  </td>
-                  <td className="px-4 py-3"><EncounterStatusBadge status={enc.status} /></td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{new Date(enc.createdAt).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={columns}
+          data={encounters}
+          keyExtractor={(enc) => enc.id}
+          onRowClick={(enc) => router.push(`/lims/encounters/${enc.id}`)}
+        />
       )}
     </div>
   );

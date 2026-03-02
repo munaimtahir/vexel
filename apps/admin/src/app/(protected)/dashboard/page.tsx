@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import Link from 'next/link';
+import { DataTable } from '@vexel/ui-system';
 
 export default function DashboardPage() {
   const [health, setHealth] = useState<any>(null);
@@ -56,26 +57,48 @@ export default function DashboardPage() {
         {recentAudit.length === 0 ? (
           <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '14px' }}>No audit events yet.</p>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                <th style={{ textAlign: 'left', padding: '8px', color: 'hsl(var(--muted-foreground))' }}>Action</th>
-                <th style={{ textAlign: 'left', padding: '8px', color: 'hsl(var(--muted-foreground))' }}>Entity</th>
-                <th style={{ textAlign: 'left', padding: '8px', color: 'hsl(var(--muted-foreground))' }}>Actor</th>
-                <th style={{ textAlign: 'left', padding: '8px', color: 'hsl(var(--muted-foreground))' }}>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentAudit.map((e: any) => (
-                <tr key={e.id} style={{ borderBottom: '1px solid hsl(var(--muted))' }}>
-                  <td style={{ padding: '8px' }}><code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px' }}>{e.action}</code></td>
-                  <td style={{ padding: '8px', color: 'hsl(var(--muted-foreground))' }}>{e.entityType ?? '—'} {e.entityId ? `#${e.entityId.slice(0, 8)}` : ''}</td>
-                  <td style={{ padding: '8px', color: 'hsl(var(--muted-foreground))' }}>{e.actorUserId ? e.actorUserId.slice(0, 8) : 'system'}</td>
-                  <td style={{ padding: '8px', color: 'hsl(var(--muted-foreground))' }}>{new Date(e.createdAt).toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DataTable
+            data={recentAudit}
+            keyExtractor={(event) => event.id}
+            columns={[
+              {
+                key: 'action',
+                header: 'Action',
+                cell: (event) => (
+                  <code style={{ background: 'hsl(var(--muted))', padding: '2px 6px', borderRadius: '4px' }}>
+                    {event.action}
+                  </code>
+                ),
+              },
+              {
+                key: 'entity',
+                header: 'Entity',
+                cell: (event) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    {event.entityType ?? '—'} {event.entityId ? `#${event.entityId.slice(0, 8)}` : ''}
+                  </span>
+                ),
+              },
+              {
+                key: 'actor',
+                header: 'Actor',
+                cell: (event) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    {event.actorUserId ? event.actorUserId.slice(0, 8) : 'system'}
+                  </span>
+                ),
+              },
+              {
+                key: 'time',
+                header: 'Time',
+                cell: (event) => (
+                  <span style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    {new Date(event.createdAt).toLocaleString()}
+                  </span>
+                ),
+              },
+            ]}
+          />
         )}
       </section>
     </div>

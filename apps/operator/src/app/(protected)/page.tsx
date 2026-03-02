@@ -116,25 +116,25 @@ export default function OperatorLandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-background via-card to-muted">
       {/* Top bar */}
-      <header className="border-b border-slate-700/60 bg-slate-900/80 backdrop-blur px-6 py-3 flex items-center justify-between">
+      <header className="border-b border-border bg-card/95 backdrop-blur px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-2xl font-extrabold text-white tracking-tight">Vexel</span>
-          <span className="text-slate-500 text-sm hidden sm:inline">Health Platform</span>
+          <span className="text-2xl font-extrabold text-primary-foreground tracking-tight">Vexel</span>
+          <span className="text-muted-foreground text-sm hidden sm:inline">Health Platform</span>
         </div>
         {!userLoading && user && (
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-slate-100">{displayName(user)}</p>
-              <p className="text-xs text-slate-400">{user.roles.join(', ')}</p>
+              <p className="text-sm font-semibold text-foreground">{displayName(user)}</p>
+              <p className="text-xs text-muted-foreground">{user.roles.join(', ')}</p>
             </div>
             <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-sm font-bold text-primary">
               {displayName(user).charAt(0).toUpperCase()}
             </div>
             <button
               onClick={handleLogout}
-              className="text-xs text-slate-400 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-slate-800"
+              className="text-xs text-muted-foreground hover:text-[hsl(var(--status-destructive-fg))] transition-colors px-2 py-1 rounded hover:bg-muted"
             >
               Logout
             </button>
@@ -147,25 +147,25 @@ export default function OperatorLandingPage() {
         <div className="mb-8">
           {!loading && user ? (
             <>
-              <h1 className="text-2xl font-bold text-white mb-1">
+              <h1 className="text-2xl font-bold text-foreground mb-1">
                 {greeting()}, {displayName(user).split(' ')[0]}!
               </h1>
               <div className="flex items-center gap-3 mt-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border">
                   🏢 {tenantLabel(user.tenantId)}
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                   {activeModules.length + (isAdmin ? 1 : 0)} module{activeModules.length + (isAdmin ? 1 : 0) !== 1 ? 's' : ''} active
                 </span>
                 {user.isSuperAdmin && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))] border border-[hsl(var(--status-warning-border))]">
                     ⭐ Super Admin
                   </span>
                 )}
               </div>
             </>
           ) : (
-            <div className="h-8 w-48 bg-slate-800 rounded-lg animate-pulse" />
+            <div className="h-8 w-48 bg-muted rounded-lg animate-pulse" />
           )}
         </div>
 
@@ -173,14 +173,14 @@ export default function OperatorLandingPage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-52 rounded-2xl bg-slate-800 animate-pulse" />
+              <div key={i} className="h-52 rounded-2xl bg-muted animate-pulse" />
             ))}
           </div>
         ) : (
           <>
             {(activeModules.length > 0 || isAdmin) && (
               <>
-                <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3">
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
                   Active Modules
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -190,12 +190,12 @@ export default function OperatorLandingPage() {
                       onClick={() => router.push(mod.href)}
                       className={cn(
                         'text-left rounded-2xl p-6 border-2 transition-all duration-150 group',
-                        'bg-slate-800/60 border-primary/40 hover:border-primary hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/10 cursor-pointer',
+                        'bg-muted/60 border-primary/40 hover:border-primary hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/10 cursor-pointer',
                       )}
                     >
                       <div className="text-3xl mb-3">{mod.icon}</div>
-                      <h3 className="text-base font-bold text-white mb-1.5">{mod.label}</h3>
-                      <p className="text-slate-400 text-sm leading-relaxed mb-4">{mod.description}</p>
+                      <h3 className="text-base font-bold text-foreground mb-1.5">{mod.label}</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">{mod.description}</p>
                       <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:gap-2.5 transition-all">
                         Open <span>→</span>
                       </span>
@@ -208,13 +208,13 @@ export default function OperatorLandingPage() {
                       onClick={() => window.open(ADMIN_MODULE.href, '_blank')}
                       className={cn(
                         'text-left rounded-2xl p-6 border-2 transition-all duration-150 group',
-                        'bg-slate-800/60 border-amber-500/30 hover:border-amber-500 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-amber-500/10 cursor-pointer',
+                        'bg-muted/60 border-[hsl(var(--status-warning-border))] hover:border-[hsl(var(--status-warning-fg))] hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[hsl(var(--status-warning-bg))]/30 cursor-pointer',
                       )}
                     >
                       <div className="text-3xl mb-3">{ADMIN_MODULE.icon}</div>
-                      <h3 className="text-base font-bold text-white mb-1.5">{ADMIN_MODULE.label}</h3>
-                      <p className="text-slate-400 text-sm leading-relaxed mb-4">{ADMIN_MODULE.description}</p>
-                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-400 group-hover:gap-2.5 transition-all">
+                      <h3 className="text-base font-bold text-foreground mb-1.5">{ADMIN_MODULE.label}</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">{ADMIN_MODULE.description}</p>
+                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[hsl(var(--status-warning-fg))] group-hover:gap-2.5 transition-all">
                         Open <span>→</span>
                       </span>
                     </button>
@@ -225,9 +225,9 @@ export default function OperatorLandingPage() {
 
             {/* No access state */}
             {activeModules.length === 0 && !isAdmin && (
-              <div className="text-center py-16 text-slate-500">
+              <div className="text-center py-16 text-muted-foreground">
                 <p className="text-4xl mb-4">🔒</p>
-                <p className="text-base font-medium text-slate-400">No modules available</p>
+                <p className="text-base font-medium text-muted-foreground">No modules available</p>
                 <p className="text-sm mt-1">Your account does not have access to any active modules. Contact your administrator.</p>
               </div>
             )}
@@ -235,19 +235,19 @@ export default function OperatorLandingPage() {
             {/* Coming soon */}
             {comingSoonModules.length > 0 && (
               <>
-                <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-600 mb-3">
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
                   Coming Soon
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {comingSoonModules.map((mod) => (
                     <div
                       key={mod.id}
-                      className="rounded-2xl p-6 border-2 border-slate-800 bg-slate-900/40 opacity-50 cursor-default"
+                      className="rounded-2xl p-6 border-2 border-border bg-card/60 opacity-50 cursor-default"
                     >
                       <div className="text-3xl mb-3 grayscale">{mod.icon}</div>
-                      <h3 className="text-base font-bold text-slate-400 mb-1.5">{mod.label}</h3>
-                      <p className="text-slate-600 text-sm leading-relaxed mb-4">{mod.description}</p>
-                      <span className="inline-flex items-center px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-500">
+                      <h3 className="text-base font-bold text-muted-foreground mb-1.5">{mod.label}</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">{mod.description}</p>
+                      <span className="inline-flex items-center px-3 py-1 text-xs rounded-full bg-muted text-muted-foreground">
                         Coming soon
                       </span>
                     </div>

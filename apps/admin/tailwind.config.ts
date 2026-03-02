@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import { tailwindDesignTokens } from '@vexel/ui-system/tokens';
 
 const config: Config = {
   darkMode: ['class'],
@@ -10,27 +11,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
+        ...tailwindDesignTokens.colors,
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
@@ -43,30 +24,12 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        sidebar: {
-          DEFAULT: 'hsl(var(--sidebar))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          muted: 'hsl(var(--sidebar-muted))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          highlight: 'hsl(var(--sidebar-highlight))',
-        },
       },
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-      },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-      },
-      boxShadow: {
-        xs: 'var(--shadow-xs)',
-        card: 'var(--shadow-sm)',
-        'card-hover': 'var(--shadow-md)',
-        float: 'var(--shadow-lg)',
-      },
+      borderRadius: tailwindDesignTokens.borderRadius as any,
+      spacing: tailwindDesignTokens.spacing as any,
+      fontSize: tailwindDesignTokens.fontSize as any,
+      fontFamily: tailwindDesignTokens.fontFamily as any,
+      boxShadow: tailwindDesignTokens.boxShadow as any,
     },
   },
   plugins: [],

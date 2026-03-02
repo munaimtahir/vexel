@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { DataTable } from '@vexel/ui-system';
 
 const RESULT_TYPES = ['numeric', 'text', 'boolean', 'enum'];
 
@@ -93,6 +94,58 @@ export default function ParametersPage() {
   function handlePage(p: number) { setPage(p); load(p, search); }
 
   const totalPages = Math.ceil(total / LIMIT);
+  const columns = [
+    {
+      key: 'userCode',
+      header: 'User Code',
+      cell: (p: any) => <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{p.userCode ?? '—'}</span>,
+    },
+    {
+      key: 'externalId',
+      header: 'Ext ID',
+      cell: (p: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{p.externalId ?? '—'}</span>,
+    },
+    {
+      key: 'name',
+      header: 'Name',
+      cell: (p: any) => <span style={{ fontWeight: 500 }}>{p.name}</span>,
+    },
+    {
+      key: 'resultType',
+      header: 'Result Type',
+      cell: (p: any) => (
+        <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))' }}>
+          {p.resultType ?? p.dataType}
+        </span>
+      ),
+    },
+    {
+      key: 'defaultUnit',
+      header: 'Default Unit',
+      cell: (p: any) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{p.defaultUnit ?? p.unit ?? '—'}</span>,
+    },
+    {
+      key: 'loincCode',
+      header: 'LOINC',
+      cell: (p: any) => <span style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '12px' }}>{p.loincCode ?? '—'}</span>,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      cell: (p: any) => (
+        <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: p.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: p.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
+          {p.isActive ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: '',
+      cell: (p: any) => (
+        <button onClick={() => openEdit(p)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+      ),
+    },
+  ];
 
   const inputStyle: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
   const labelStyle: React.CSSProperties = { display: 'block', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '4px' };
@@ -194,43 +247,14 @@ export default function ParametersPage() {
         />
       </div>
 
-      <div style={{ background: 'hsl(var(--card))', borderRadius: '8px', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead style={{ background: 'hsl(var(--background))' }}>
-            <tr>
-              {['User Code', 'Ext ID', 'Name', 'Result Type', 'Default Unit', 'LOINC', 'Status', ''].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>Loading…</td></tr>
-            ) : params.length === 0 ? (
-              <tr><td colSpan={8} style={{ padding: '20px', textAlign: 'center', color: 'hsl(var(--muted-foreground))' }}>No parameters found.</td></tr>
-            ) : params.map((p: any) => (
-              <tr key={p.id} style={{ borderTop: '1px solid hsl(var(--muted))' }}>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 600 }}>{p.userCode ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{p.externalId ?? '—'}</td>
-                <td style={{ padding: '10px 12px', fontWeight: 500 }}>{p.name}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: 'hsl(var(--status-info-bg))', color: 'hsl(var(--primary))' }}>{p.resultType ?? p.dataType}</span>
-                </td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))' }}>{p.defaultUnit ?? p.unit ?? '—'}</td>
-                <td style={{ padding: '10px 12px', color: 'hsl(var(--muted-foreground))', fontFamily: 'monospace', fontSize: '12px' }}>{p.loincCode ?? '—'}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  <span style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: p.isActive ? 'hsl(var(--status-success-bg))' : 'hsl(var(--status-destructive-bg))', color: p.isActive ? 'hsl(var(--status-success-fg))' : 'hsl(var(--status-destructive-fg))' }}>
-                    {p.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </td>
-                <td style={{ padding: '10px 12px' }}>
-                  <button onClick={() => openEdit(p)} style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={params}
+        keyExtractor={(p: any) => `${p.id}`}
+        loading={loading}
+        emptyMessage="No parameters found."
+        className="shadow-sm"
+      />
 
       {/* Pagination */}
       {totalPages > 1 && (
