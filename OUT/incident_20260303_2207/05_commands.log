@@ -1,0 +1,987 @@
+## STEP 0 BASELINE
+$ git status --short
+ M .gitignore
+ M apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx
+ M apps/admin/tsconfig.tsbuildinfo
+ M apps/api/src/documents/__tests__/documents.service.spec.ts
+ D apps/e2e/playwright-report/data/1bc5b56a330752b07c3a7824f4c73d7c344fe6aa.webm
+ D apps/e2e/playwright-report/data/3da1700dab67ac2bb4affe39d8913f1339d3d2d5.md
+ D apps/e2e/playwright-report/data/811b0aae056d1bbc0d4bf4906d607bd4accd5688.png
+ M apps/e2e/playwright-report/index.html
+ M apps/e2e/playwright.config.ts
+ M apps/e2e/test-results/.last-run.json
+ D apps/e2e/test-results/02-admin-crud-Admin-CRUD-r-c21de-s-writes-and-can-be-stopped-admin/error-context.md
+ D apps/e2e/test-results/02-admin-crud-Admin-CRUD-r-c21de-s-writes-and-can-be-stopped-admin/test-failed-1.png
+ D apps/e2e/test-results/02-admin-crud-Admin-CRUD-r-c21de-s-writes-and-can-be-stopped-admin/video.webm
+ M apps/operator/tsconfig.tsbuildinfo
+ M apps/pdf/Program.cs
+ M docs/catalog/how-to-import-catalog.md
+?? OUT/incident_20260303_2207/
+?? apps/e2e/tests/08-verification-badge-refetch.spec.ts
+?? docker/
+?? docs/_audit/20260304_receipt_verify_fix/
+?? ops/
+?? runtime/
+
+$ git rev-parse HEAD
+c1f53793ade78095394a6caa1669677161f5c1f4
+
+$ docker compose ps
+NAME               IMAGE                                                                     COMMAND                  SERVICE    CREATED        STATUS                  PORTS
+vexel-admin-1      vexel-admin                                                               "docker-entrypoint.s…"   admin      22 hours ago   Up 22 hours             127.0.0.1:9023->3001/tcp
+vexel-api-1        vexel-api                                                                 "./docker-entrypoint…"   api        18 hours ago   Up 18 hours (healthy)   127.0.0.1:9021->3000/tcp
+vexel-minio-1      minio/minio:latest                                                        "/usr/bin/docker-ent…"   minio      23 hours ago   Up 22 hours (healthy)   127.0.0.1:9027->9000/tcp, 127.0.0.1:9025->9001/tcp
+vexel-operator-1   vexel-operator                                                            "docker-entrypoint.s…"   operator   22 hours ago   Up 22 hours             127.0.0.1:9024->3000/tcp
+vexel-pdf-1        sha256:faddc14501c5a8248ebbc7b70b95a0027e88bc56c0d8dbc2b96a5beb03d4cf4c   "dotnet VexelPdf.dll"    pdf        22 hours ago   Up 22 hours (healthy)   127.0.0.1:9022->8080/tcp
+vexel-postgres-1   postgres:16-alpine                                                        "docker-entrypoint.s…"   postgres   23 hours ago   Up 22 hours (healthy)   127.0.0.1:5433->5432/tcp
+vexel-redis-1      redis:7-alpine                                                            "docker-entrypoint.s…"   redis      23 hours ago   Up 22 hours (healthy)   127.0.0.1:6380->6379/tcp
+vexel-worker-1     vexel-worker                                                              "docker-entrypoint.s…"   worker     18 hours ago   Up 18 hours             
+
+$ docker images | head -n 20
+IMAGE                   ID             DISK USAGE   CONTENT SIZE   EXTRA
+alpine:3.20             a4f4213abb84       12.2MB         3.71MB        
+minio/minio:latest      14cea493d9a3        241MB         62.2MB   U    
+postgres:16-alpine      b7587f3cb74f        395MB          111MB   U    
+redis:7-alpine          8b81dd37ff02       61.2MB         17.7MB   U    
+vexel-admin:latest      fb84e00d2982        302MB         72.4MB   U    
+vexel-api:latest        84009f497012        920MB          180MB   U    
+vexel-operator:latest   bbe19bd5ba35        304MB         72.8MB   U    
+vexel-pdf:latest        2f8a38327266        556MB          163MB        
+vexel-worker:latest     eaf3130a8323        614MB          143MB   U    
+
+## STEP 1 TENANT DOMAIN CHECK
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "SELECT * FROM tenant_domains ORDER BY domain;"
+                  id                  | tenantId |       domain        
+--------------------------------------+----------+---------------------
+ 98259050-2ad4-4d8a-b141-e703bf483444 | system   | admin.localhost
+ 2b9191e9-659e-4f60-ae6f-83bff93e1546 | system   | localhost
+ 2ab25eeb-4e5c-4c34-9b7b-489bc8976465 | system   | vexel.alshifalab.pk
+(3 rows)
+
+
+$ docker compose exec -T postgres psql -U vexel -d vexel -c "SELECT id, name, \"isSuperAdmin\" FROM tenants ORDER BY id;"
+   id   |     name     | isSuperAdmin 
+--------+--------------+--------------
+ system | Vexel System | t
+(1 row)
+
+
+## STEP 1 TENANT RESOLUTION PROBE
+$ curl -sk https://vexel.alshifalab.pk/api/health
+{"status":"ok","version":"0.1.0","uptime":65258.751772716,"services":{"api":"ok"}}
+
+$ curl -sk https://vexel.alshifalab.pk/api/patients?limit=1 -H "Authorization: Bearer <token>"
+{
+  "count": 1,
+  "firstTenantId": "system",
+  "pagination": {
+    "page": 1,
+    "limit": 1,
+    "total": 23,
+    "totalPages": 23
+  }
+}
+
+## STEP 4 CATALOG API CHECK
+$ GET /api/catalog/tests?limit=5
+{
+  "count": 2,
+  "total": 2,
+  "tenantIds": [
+    "system"
+  ]
+}
+
+$ GET /api/catalog/parameters?limit=5
+{
+  "count": 0,
+  "total": 0,
+  "tenantIds": []
+}
+
+$ GET /api/catalog/panels?limit=5
+{
+  "count": 0,
+  "total": 0,
+  "tenantIds": []
+}
+
+## STEP 4 DB CATALOG COUNTS
+$ SQL tenant-scoped catalog counts
+
+## STEP 4 DB CATALOG COUNTS (quoted)
+ tenantId | tests 
+----------+-------
+ system   |     2
+(1 row)
+
+ tenantId | parameters 
+----------+------------
+(0 rows)
+
+ tenantId | mappings 
+----------+----------
+(0 rows)
+
+ tenantId | panels 
+----------+--------
+(0 rows)
+
+
+## STEP 5 IMPORT ENGINE REPRO
+$ curl multipart import workbook (validate=true)
+HTTP/2 201 
+access-control-allow-credentials: true
+alt-svc: h3=":443"; ma=2592000
+content-type: application/json; charset=utf-8
+date: Tue, 03 Mar 2026 22:09:29 GMT
+etag: W/"fcd1-oapCNmVMvy01/sOq52y2hDJ/2D4"
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Origin
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-correlation-id: edf8fa0e-805e-4cd5-bce9-c4d62ac89bce
+x-frame-options: SAMEORIGIN
+x-powered-by: Express
+content-length: 64721
+
+{"inserted":164,"updated":0,"skipped":0,"errors":[{"sheet":"Tests","row":2,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serumplasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":3,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'specimen' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":4,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":5,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":6,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":7,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":8,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'citrate_plasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":9,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":10,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":11,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":12,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":13,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":14,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":15,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":16,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":17,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":18,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":19,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":20,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'swab' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":21,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":22,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":23,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":24,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":25,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":26,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'csf' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":27,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":28,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":29,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":30,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":31,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":32,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serumplasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":33,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":34,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":35,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":36,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":37,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":38,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'swab' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":39,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":40,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":41,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'urine' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":42,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":43,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":44,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":45,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":46,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":47,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":48,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":49,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":50,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'specimen' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":51,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":52,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":53,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'citrate_plasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":54,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":55,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serumplasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":56,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":57,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":58,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'specimen' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":59,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'sputum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":60,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'stool' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":61,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'specimen' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":62,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'stool' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":63,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":64,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'stool' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":65,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":66,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":67,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":68,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":69,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":70,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":71,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'swab' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":72,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":73,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":74,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":75,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'urine' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":76,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'urine' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":77,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":78,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":79,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'swab' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":80,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'sputum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"TestParameters","row":2,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode '2hpp' not found"},{"sheet":"TestParameters","row":3,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'afre' not found"},{"sheet":"TestParameters","row":4,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'afre' not found"},{"sheet":"TestParameters","row":5,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'afre' not found"},{"sheet":"TestParameters","row":6,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'afre' not found"},{"sheet":"TestParameters","row":7,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'alb' not found"},{"sheet":"TestParameters","row":8,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'alp' not found"},{"sheet":"TestParameters","row":9,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'alt' not found"},{"sheet":"TestParameters","row":10,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'amyla' not found"},{"sheet":"TestParameters","row":11,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'aptt' not found"},{"sheet":"TestParameters","row":12,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'asici' not found"},{"sheet":"TestParameters","row":13,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'aso' not found"},{"sheet":"TestParameters","row":14,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ast' not found"},{"sheet":"TestParameters","row":15,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bfcpa' not found"},{"sheet":"TestParameters","row":16,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bfcpa' not found"},{"sheet":"TestParameters","row":17,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bg_rh' not found"},{"sheet":"TestParameters","row":18,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bg_rh' not found"},{"sheet":"TestParameters","row":19,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bhe' not found"},{"sheet":"TestParameters","row":20,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bhe' not found"},{"sheet":"TestParameters","row":21,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bhe' not found"},{"sheet":"TestParameters","row":22,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bild' not found"},{"sheet":"TestParameters","row":23,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bili' not found"},{"sheet":"TestParameters","row":24,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bilt' not found"},{"sheet":"TestParameters","row":25,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'blood_cs' not found"},{"sheet":"TestParameters","row":26,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'blood_cs' not found"},{"sheet":"TestParameters","row":27,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'blood_cs' not found"},{"sheet":"TestParameters","row":28,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'blood_cs' not found"},{"sheet":"TestParameters","row":29,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bmbh' not found"},{"sheet":"TestParameters","row":30,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bmbh' not found"},{"sheet":"TestParameters","row":31,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bmbh' not found"},{"sheet":"TestParameters","row":32,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'c1ar' not found"},{"sheet":"TestParameters","row":33,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ca' not found"},{"sheet":"TestParameters","row":34,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":35,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":36,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":37,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":38,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":39,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":40,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":41,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":42,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":43,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":44,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":45,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":46,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":47,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":48,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":49,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":50,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":51,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":52,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":53,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":54,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":55,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":56,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":57,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":58,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cct' not found"},{"sheet":"TestParameters","row":59,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cct' not found"},{"sheet":"TestParameters","row":60,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'chol' not found"},{"sheet":"TestParameters","row":61,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cl' not found"},{"sheet":"TestParameters","row":62,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":63,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":64,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":65,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":66,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":67,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'creat' not found"},{"sheet":"TestParameters","row":68,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'crp' not found"},{"sheet":"TestParameters","row":69,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'datdc' not found"},{"sheet":"TestParameters","row":70,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'datdc' not found"},{"sheet":"TestParameters","row":71,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'esr' not found"},{"sheet":"TestParameters","row":72,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'external' not found"},{"sheet":"TestParameters","row":73,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'external' not found"},{"sheet":"TestParameters","row":74,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'fbs' not found"},{"sheet":"TestParameters","row":75,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ffnac' not found"},{"sheet":"TestParameters","row":76,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ffnac' not found"},{"sheet":"TestParameters","row":77,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ft3' not found"},{"sheet":"TestParameters","row":78,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ft4' not found"},{"sheet":"TestParameters","row":79,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ggt' not found"},{"sheet":"TestParameters","row":80,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'glob' not found"},{"sheet":"TestParameters","row":81,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'gsas' not found"},{"sheet":"TestParameters","row":82,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hba1c' not found"},{"sheet":"TestParameters","row":83,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hbsag' not found"},{"sheet":"TestParameters","row":84,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hcg' not found"},{"sheet":"TestParameters","row":85,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hcvab' not found"},{"sheet":"TestParameters","row":86,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hdl' not found"},{"sheet":"TestParameters","row":87,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hiv12' not found"},{"sheet":"TestParameters","row":88,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'k' not found"},{"sheet":"TestParameters","row":89,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ldl' not found"},{"sheet":"TestParameters","row":90,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'lipas' not found"},{"sheet":"TestParameters","row":91,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'magne' not found"},{"sheet":"TestParameters","row":92,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pbs' not found"},{"sheet":"TestParameters","row":93,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pfre' not found"},{"sheet":"TestParameters","row":94,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pfre' not found"},{"sheet":"TestParameters","row":95,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pfre' not found"},{"sheet":"TestParameters","row":96,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pfre' not found"},{"sheet":"TestParameters","row":97,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'phos' not found"},{"sheet":"TestParameters","row":98,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pscc' not found"},{"sheet":"TestParameters","row":99,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pscc' not found"},{"sheet":"TestParameters","row":100,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pscc' not found"},{"sheet":"TestParameters","row":101,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pt_inr' not found"},{"sheet":"TestParameters","row":102,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pt_inr' not found"},{"sheet":"TestParameters","row":103,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'rapid' not found"},{"sheet":"TestParameters","row":104,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'rbs' not found"},{"sheet":"TestParameters","row":105,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'rc' not found"},{"sheet":"TestParameters","row":106,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'rf' not found"},{"sheet":"TestParameters","row":107,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":108,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":109,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":110,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":111,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":112,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":113,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":114,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc' not found"},{"sheet":"TestParameters","row":115,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc' not found"},{"sheet":"TestParameters","row":116,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc' not found"},{"sheet":"TestParameters","row":117,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc_2' not found"},{"sheet":"TestParameters","row":118,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc_2' not found"},{"sheet":"TestParameters","row":119,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc_2' not found"},{"sheet":"TestParameters","row":120,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sfe' not found"},{"sheet":"TestParameters","row":121,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sfe' not found"},{"sheet":"TestParameters","row":122,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sfe' not found"},{"sheet":"TestParameters","row":123,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sfe' not found"},{"sheet":"TestParameters","row":124,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sob' not found"},{"sheet":"TestParameters","row":125,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sod' not found"},{"sheet":"TestParameters","row":126,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":127,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":128,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":129,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":130,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":131,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":132,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":133,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":134,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 't_80' not found"},{"sheet":"TestParameters","row":135,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 't_80' not found"},{"sheet":"TestParameters","row":136,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 't_80' not found"},{"sheet":"TestParameters","row":137,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tccbh' not found"},{"sheet":"TestParameters","row":138,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tccbh' not found"},{"sheet":"TestParameters","row":139,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tccbh' not found"},{"sheet":"TestParameters","row":140,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tg' not found"},{"sheet":"TestParameters","row":141,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ti' not found"},{"sheet":"TestParameters","row":142,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ti_2' not found"},{"sheet":"TestParameters","row":143,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tp' not found"},{"sheet":"TestParameters","row":144,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tsc' not found"},{"sheet":"TestParameters","row":145,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tsc' not found"},{"sheet":"TestParameters","row":146,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tsc' not found"},{"sheet":"TestParameters","row":147,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tsh' not found"},{"sheet":"TestParameters","row":148,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urea' not found"},{"sheet":"TestParameters","row":149,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'uric' not found"},{"sheet":"TestParameters","row":150,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_cs' not found"},{"sheet":"TestParameters","row":151,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_cs' not found"},{"sheet":"TestParameters","row":152,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_cs' not found"},{"sheet":"TestParameters","row":153,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_cs' not found"},{"sheet":"TestParameters","row":154,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":155,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":156,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":157,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":158,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":159,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":160,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":161,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":162,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":163,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":164,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":165,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":166,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":167,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":168,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":169,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":170,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":171,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":172,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":173,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'vldl' not found"},{"sheet":"TestParameters","row":174,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'vr' not found"},{"sheet":"TestParameters","row":175,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'wound_cs' not found"},{"sheet":"TestParameters","row":176,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'wound_cs' not found"},{"sheet":"TestParameters","row":177,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'wound_cs' not found"},{"sheet":"TestParameters","row":178,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'wound_cs' not found"},{"sheet":"TestParameters","row":179,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'zn' not found"},{"sheet":"PanelTests","row":2,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bfrcpa' not found"},{"sheet":"PanelTests","row":3,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bfrcpa' not found"},{"sheet":"PanelTests","row":4,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bfrcpa' not found"},{"sheet":"PanelTests","row":5,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bfrcpa' not found"},{"sheet":"PanelTests","row":6,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bgcarc' not found"},{"sheet":"PanelTests","row":7,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bgcarc' not found"},{"sheet":"PanelTests","row":8,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bpcpm' not found"},{"sheet":"PanelTests","row":9,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bpcpm' not found"},{"sheet":"PanelTests","row":10,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bpcpm' not found"},{"sheet":"PanelTests","row":11,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_cbc' not found"},{"sheet":"PanelTests","row":12,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_cppia' not found"},{"sheet":"PanelTests","row":13,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_cppia' not found"},{"sheet":"PanelTests","row":14,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":15,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":16,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":17,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":18,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":19,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_deng_2' not found"},{"sheet":"PanelTests","row":20,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_deng_2' not found"},{"sheet":"PanelTests","row":21,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_deng_2' not found"},{"sheet":"PanelTests","row":22,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_epnkc' not found"},{"sheet":"PanelTests","row":23,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_epnkc' not found"},{"sheet":"PanelTests","row":24,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_epnkc' not found"},{"sheet":"PanelTests","row":25,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_hep' not found"},{"sheet":"PanelTests","row":26,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_hep' not found"},{"sheet":"PanelTests","row":27,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":28,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":29,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":30,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":31,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":32,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":33,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":34,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":35,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":36,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":37,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":38,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":39,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":40,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":41,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":42,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_peal' not found"},{"sheet":"PanelTests","row":43,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_peal' not found"},{"sheet":"PanelTests","row":44,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":45,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":46,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":47,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":48,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":49,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_seb' not found"},{"sheet":"PanelTests","row":50,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_seb' not found"},{"sheet":"PanelTests","row":51,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_sugar' not found"},{"sheet":"PanelTests","row":52,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_sugar' not found"},{"sheet":"PanelTests","row":53,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_sugar' not found"},{"sheet":"PanelTests","row":54,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_thyroid' not found"},{"sheet":"PanelTests","row":55,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_thyroid' not found"},{"sheet":"PanelTests","row":56,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_thyroid' not found"},{"sheet":"PanelTests","row":57,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_tpii' not found"},{"sheet":"PanelTests","row":58,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_tpii' not found"},{"sheet":"PanelTests","row":59,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_urine' not found"},{"sheet":"PanelTests","row":60,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_vshahh' not found"},{"sheet":"PanelTests","row":61,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_vshahh' not found"},{"sheet":"PanelTests","row":62,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_vshahh' not found"},{"sheet":"ReferenceRanges","row":2,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0001' not found"},{"sheet":"ReferenceRanges","row":3,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0001' not found"},{"sheet":"ReferenceRanges","row":4,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0002' not found"},{"sheet":"ReferenceRanges","row":5,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0003' not found"},{"sheet":"ReferenceRanges","row":6,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0004' not found"},{"sheet":"ReferenceRanges","row":7,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0005' not found"},{"sheet":"ReferenceRanges","row":8,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0024' not found"},{"sheet":"ReferenceRanges","row":9,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0024' not found"},{"sheet":"ReferenceRanges","row":10,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0028' not found"},{"sheet":"ReferenceRanges","row":11,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0029' not found"},{"sheet":"ReferenceRanges","row":12,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0030' not found"},{"sheet":"ReferenceRanges","row":13,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0031' not found"},{"sheet":"ReferenceRanges","row":14,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0031' not found"},{"sheet":"ReferenceRanges","row":15,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0031' not found"},{"sheet":"ReferenceRanges","row":16,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0032' not found"},{"sheet":"ReferenceRanges","row":17,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0033' not found"},{"sheet":"ReferenceRanges","row":18,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0034' not found"},{"sheet":"ReferenceRanges","row":19,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0034' not found"},{"sheet":"ReferenceRanges","row":20,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0035' not found"},{"sheet":"ReferenceRanges","row":21,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0036' not found"},{"sheet":"ReferenceRanges","row":22,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0037' not found"},{"sheet":"ReferenceRanges","row":23,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0038' not found"},{"sheet":"ReferenceRanges","row":24,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0039' not found"},{"sheet":"ReferenceRanges","row":25,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0040' not found"},{"sheet":"ReferenceRanges","row":26,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0041' not found"},{"sheet":"ReferenceRanges","row":27,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0042' not found"},{"sheet":"ReferenceRanges","row":28,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0043' not found"},{"sheet":"ReferenceRanges","row":29,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0044' not found"},{"sheet":"ReferenceRanges","row":30,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0045' not found"},{"sheet":"ReferenceRanges","row":31,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0046' not found"},{"sheet":"ReferenceRanges","row":32,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0048' not found"},{"sheet":"ReferenceRanges","row":33,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0049' not found"},{"sheet":"ReferenceRanges","row":34,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0050' not found"},{"sheet":"ReferenceRanges","row":35,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0051' not found"},{"sheet":"ReferenceRanges","row":36,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0052' not found"},{"sheet":"ReferenceRanges","row":37,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0053' not found"},{"sheet":"ReferenceRanges","row":38,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0053' not found"},{"sheet":"ReferenceRanges","row":39,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0054' not found"},{"sheet":"ReferenceRanges","row":40,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0055' not found"},{"sheet":"ReferenceRanges","row":41,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0056' not found"},{"sheet":"ReferenceRanges","row":42,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0057' not found"},{"sheet":"ReferenceRanges","row":43,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0058' not found"},{"sheet":"ReferenceRanges","row":44,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0059' not found"},{"sheet":"ReferenceRanges","row":45,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0060' not found"},{"sheet":"ReferenceRanges","row":46,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0061' not found"},{"sheet":"ReferenceRanges","row":47,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0068' not found"},{"sheet":"ReferenceRanges","row":48,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0069' not found"},{"sheet":"ReferenceRanges","row":49,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0078' not found"},{"sheet":"ReferenceRanges","row":50,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0079' not found"},{"sheet":"ReferenceRanges","row":51,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0121' not found"},{"sheet":"ReferenceRanges","row":52,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0099' not found"},{"sheet":"ReferenceRanges","row":53,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0093' not found"},{"sheet":"ReferenceRanges","row":54,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0097' not found"},{"sheet":"ReferenceRanges","row":55,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0106' not found"},{"sheet":"ReferenceRanges","row":56,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0091' not found"},{"sheet":"ReferenceRanges","row":57,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0105' not found"},{"sheet":"ReferenceRanges","row":58,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0126' not found"},{"sheet":"ReferenceRanges","row":59,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0107' not found"},{"sheet":"ReferenceRanges","row":60,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0125' not found"},{"sheet":"ReferenceRanges","row":61,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0124' not found"},{"sheet":"ReferenceRanges","row":62,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0094' not found"},{"sheet":"ReferenceRanges","row":63,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0089' not found"},{"sheet":"ReferenceRanges","row":64,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0098' not found"},{"sheet":"ReferenceRanges","row":65,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0098' not found"},{"sheet":"ReferenceRanges","row":66,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0098' not found"},{"sheet":"ReferenceRanges","row":67,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0078' not found"},{"sheet":"ReferenceRanges","row":68,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0079' not found"},{"sheet":"ReferenceRanges","row":69,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0109' not found"},{"sheet":"ReferenceRanges","row":70,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0111' not found"},{"sheet":"ReferenceRanges","row":71,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0114' not found"},{"sheet":"ReferenceRanges","row":72,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0115' not found"},{"sheet":"ReferenceRanges","row":73,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0111' not found"},{"sheet":"ReferenceRanges","row":74,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0130' not found"},{"sheet":"ReferenceRanges","row":75,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0069' not found"},{"sheet":"ReferenceRanges","row":76,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0110' not found"},{"sheet":"ReferenceRanges","row":77,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0116' not found"},{"sheet":"ReferenceRanges","row":78,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0122' not found"},{"sheet":"ReferenceRanges","row":79,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0123' not found"},{"sheet":"ReferenceRanges","row":80,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0127' not found"},{"sheet":"ReferenceRanges","row":81,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0129' not found"},{"sheet":"ReferenceRanges","row":82,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0031' not found"},{"sheet":"ReferenceRanges","row":83,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0067' not found"},{"sheet":"ReferenceRanges","row":84,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0117' not found"},{"sheet":"ReferenceRanges","row":85,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0119' not found"},{"sheet":"ReferenceRanges","row":86,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0128' not found"},{"sheet":"ReferenceRanges","row":87,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0118' not found"},{"sheet":"ReferenceRanges","row":88,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0119' not found"},{"sheet":"ReferenceRanges","row":89,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0128' not found"},{"sheet":"ReferenceRanges","row":90,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0118' not found"},{"sheet":"ReferenceRanges","row":91,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0119' not found"},{"sheet":"ReferenceRanges","row":92,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0128' not found"},{"sheet":"ReferenceRanges","row":93,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0082' not found"},{"sheet":"ReferenceRanges","row":94,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0119' not found"},{"sheet":"ReferenceRanges","row":95,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0128' not found"}],"bySheet":{"SampleTypes":{"totalRows":13,"inserted":13,"updated":0,"skipped":0,"errors":0},"Parameters":{"totalRows":131,"inserted":131,"updated":0,"skipped":0,"errors":0},"Tests":{"totalRows":79,"inserted":0,"updated":0,"skipped":0,"errors":79},"TestParameters":{"totalRows":178,"inserted":0,"updated":0,"skipped":0,"errors":178},"Panels":{"totalRows":20,"inserted":20,"updated":0,"skipped":0,"errors":0},"PanelTests":{"totalRows":61,"inserted":0,"updated":0,"skipped":0,"errors":61},"ReferenceRanges":{"totalRows":94,"inserted":0,"updated":0,"skipped":0,"errors":94}}}
+$ curl without auth (expect JSON 401, not HTML)
+HTTP/2 401 
+access-control-allow-credentials: true
+alt-svc: h3=":443"; ma=2592000
+content-type: application/json; charset=utf-8
+date: Tue, 03 Mar 2026 22:09:29 GMT
+etag: W/"4d-GqJRHLPhgBF3yVCKySnU12ZXTG0"
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Origin
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-correlation-id: 31c1cba6-6473-4487-9165-f49e368c0bfd
+x-frame-options: SAMEORIGIN
+x-powered-by: Express
+content-length: 77
+
+{"message":"Authentication required","error":"Unauthorized","statusCode":401}.                                        |  WARN  Unsupported engine: wanted: {"node":">=20"} (current: {"node":"v18.19.1","pnpm":"9.15.4"})
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+undefined
+/home/munaim/srv/apps/vexel/apps/e2e:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: node -
+.                                        |  WARN  Unsupported engine: wanted: {"node":">=20"} (current: {"node":"v18.19.1","pnpm":"9.15.4"})
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+undefined
+/home/munaim/srv/apps/vexel/apps/e2e:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: node -
+
+## VALIDATION RUNS
+$ pnpm --filter @vexel/operator exec tsc --noEmit
+.                                        |  WARN  Unsupported engine: wanted: {"node":">=20"} (current: {"node":"v18.19.1","pnpm":"9.15.4"})
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+$ pnpm --filter @vexel/api exec jest src/catalog/__tests__/catalog-import-multipart.spec.ts --runInBand
+  CatalogController — import multipart regression
+    Unit: importFromWorkbook is called with correct args
+      ✓ should delegate to importExportSvc with validate=true when query param is set (404 ms)
+      ✓ should default mode to UPSERT_PATCH when not specified (2 ms)
+    Unit: SDK client Content-Type fix
+      ✓ should NOT set Content-Type header when body is FormData (62 ms)
+      ✓ should keep Content-Type: application/json for JSON bodies (2 ms)
+      ✓ should not overwrite Content-Type if caller explicitly set it (1 ms)
+    Unit: controller null-guard for missing file
+      ✓ should return error object when file is missing (null guard) (1 ms)
+    Import result structure
+      ✓ should return summary with inserted/updated/skipped/errors fields (2 ms)
+      ✓ validate=true result with errors should prevent apply
+      ✓ validate=true result with no errors should allow apply (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        8.972 s, estimated 17 s
+Ran all test suites matching /src\/catalog\/__tests__\/catalog-import-multipart.spec.ts/i.
+
+## STEP 6 GIT LOCK CHECK
+$ ls -l .git/index.lock || true
+
+$ pgrep -af "git" || true
+1161168 /usr/local/lib/node_modules/@github/copilot/node_modules/@github/copilot-linux-x64/copilot --yolo
+1162828 /usr/local/lib/node_modules/@github/copilot/node_modules/@github/copilot-linux-x64/copilot --yolo
+1212110 /bin/bash -c set -euo pipefail cd /home/munaim/srv/apps/vexel OUTDIR=OUT/incident_20260303_2207 {   echo;   echo '## STEP 6 GIT LOCK CHECK';   echo '$ ls -l .git/index.lock || true';   ls -l .git/index.lock || true;   echo;   echo '$ pgrep -af "git" || true';   pgrep -af "git" || true;   echo;   echo '$ git status --short';   git status --short; } | tee -a "$OUTDIR/05_commands.log"
+1212111 /bin/bash -c set -euo pipefail cd /home/munaim/srv/apps/vexel OUTDIR=OUT/incident_20260303_2207 {   echo;   echo '## STEP 6 GIT LOCK CHECK';   echo '$ ls -l .git/index.lock || true';   ls -l .git/index.lock || true;   echo;   echo '$ pgrep -af "git" || true';   pgrep -af "git" || true;   echo;   echo '$ git status --short';   git status --short; } | tee -a "$OUTDIR/05_commands.log"
+
+$ git status --short
+ M .gitignore
+ M apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx
+ M apps/admin/tsconfig.tsbuildinfo
+ M apps/api/src/catalog/catalog.controller.ts
+ M apps/api/src/documents/__tests__/documents.service.spec.ts
+ D apps/e2e/playwright-report/data/1bc5b56a330752b07c3a7824f4c73d7c344fe6aa.webm
+ D apps/e2e/playwright-report/data/3da1700dab67ac2bb4affe39d8913f1339d3d2d5.md
+ D apps/e2e/playwright-report/data/811b0aae056d1bbc0d4bf4906d607bd4accd5688.png
+ M apps/e2e/playwright-report/index.html
+ M apps/e2e/playwright.config.ts
+ M apps/e2e/test-results/.last-run.json
+ D apps/e2e/test-results/02-admin-crud-Admin-CRUD-r-c21de-s-writes-and-can-be-stopped-admin/error-context.md
+ D apps/e2e/test-results/02-admin-crud-Admin-CRUD-r-c21de-s-writes-and-can-be-stopped-admin/test-failed-1.png
+ D apps/e2e/test-results/02-admin-crud-Admin-CRUD-r-c21de-s-writes-and-can-be-stopped-admin/video.webm
+ M apps/operator/src/components/nav/topbar.tsx
+ M apps/operator/src/hooks/use-feature-flags.ts
+ M apps/operator/tsconfig.tsbuildinfo
+ M apps/pdf/Program.cs
+ M docs/catalog/how-to-import-catalog.md
+?? OUT/VERIFY_CATALOG_SEARCH_20260303_2206/
+?? OUT/incident_20260303_2207/
+?? apps/e2e/tests/08-verification-badge-refetch.spec.ts
+?? docker/
+?? docs/_audit/20260304_receipt_verify_fix/
+?? ops/
+?? runtime/
+
+## STEP 6 COMMIT
+$ git add apps/operator/src/components/nav/topbar.tsx apps/operator/src/hooks/use-feature-flags.ts apps/api/src/catalog/catalog.controller.ts
+
+$ git commit -m "fix(operator): server-derived topbar identity + deterministic opd flag loading; harden catalog import missing-file response"
+[main d24bff4] fix(operator): server-derived topbar identity + deterministic opd flag loading; harden catalog import missing-file response
+ Committer: munaim <munaim@vps.us-central1-c.c.crack-saga-487819-k0.internal>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 3 files changed, 13 insertions(+), 18 deletions(-)
+
+$ git rev-parse HEAD
+d24bff4fdc940b7faee77b7027915c25459a7d81
+
+## STEP 6 DEPLOY
+$ docker compose build operator api --no-cache
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.08kB done
+#1 DONE 0.0s
+
+#2 [operator internal] load build definition from Dockerfile
+#2 DONE 0.0s
+
+#3 [api internal] load build definition from Dockerfile
+#3 transferring dockerfile: 714B done
+#3 DONE 0.4s
+
+#2 [operator internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.29kB 0.0s done
+#2 DONE 0.4s
+
+#4 [api internal] load metadata for docker.io/library/node:20-alpine
+#4 DONE 0.6s
+
+#5 [operator internal] load .dockerignore
+#5 transferring context: 355B 0.0s done
+#5 DONE 0.1s
+
+#6 [api internal] load .dockerignore
+#6 transferring context: 79B 0.0s done
+#6 DONE 0.2s
+
+#7 [operator internal] load build context
+#7 DONE 0.0s
+
+#8 [api base 1/3] FROM docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+#8 resolve docker.io/library/node:20-alpine@sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8 0.0s done
+#8 DONE 0.1s
+
+#9 [api base 2/3] WORKDIR /app
+#9 CACHED
+
+#10 [api internal] load build context
+#10 transferring context: 61.31kB 0.1s done
+#10 DONE 0.2s
+
+#7 [operator internal] load build context
+#7 transferring context: 1.04MB 0.2s done
+#7 DONE 0.3s
+
+#11 [api base 3/3] RUN apk add --no-cache python3 make g++
+#11 2.110 ( 1/29) Installing libstdc++-dev (15.2.0-r2)
+#11 2.446 ( 2/29) Installing jansson (2.14.1-r0)
+#11 2.473 ( 3/29) Installing zstd-libs (1.5.7-r2)
+#11 2.501 ( 4/29) Installing binutils (2.45.1-r0)
+#11 2.669 ( 5/29) Installing libgomp (15.2.0-r2)
+#11 2.702 ( 6/29) Installing libatomic (15.2.0-r2)
+#11 2.716 ( 7/29) Installing gmp (6.3.0-r4)
+#11 2.742 ( 8/29) Installing isl26 (0.26-r1)
+#11 2.808 ( 9/29) Installing mpfr4 (4.2.2-r0)
+#11 2.841 (10/29) Installing mpc1 (1.3.1-r1)
+#11 2.857 (11/29) Installing gcc (15.2.0-r2)
+#11 5.953 (12/29) Installing musl-dev (1.2.5-r21)
+#11 6.136 (13/29) Installing g++ (15.2.0-r2)
+#11 7.410 (14/29) Installing make (4.4.1-r3)
+#11 7.445 (15/29) Installing libbz2 (1.0.8-r6)
+#11 7.463 (16/29) Installing libexpat (2.7.4-r0)
+#11 7.485 (17/29) Installing libffi (3.5.2-r0)
+#11 7.503 (18/29) Installing gdbm (1.26-r0)
+#11 7.522 (19/29) Installing xz-libs (5.8.2-r0)
+#11 7.561 (20/29) Installing mpdecimal (4.0.1-r0)
+#11 7.597 (21/29) Installing ncurses-terminfo-base (6.5_p20251123-r0)
+#11 7.630 (22/29) Installing libncursesw (6.5_p20251123-r0)
+#11 7.669 (23/29) Installing libpanelw (6.5_p20251123-r0)
+#11 7.687 (24/29) Installing readline (8.3.1-r0)
+#11 7.722 (25/29) Installing sqlite-libs (3.51.2-r0)
+#11 7.863 (26/29) Installing python3 (3.12.12-r0)
+#11 ...
+
+#12 [operator base 3/3] RUN npm install -g pnpm
+#12 6.442 
+#12 6.442 added 1 package in 5s
+#12 6.442 
+#12 6.442 1 package is looking for funding
+#12 6.442   run `npm fund` for details
+#12 6.446 npm notice
+#12 6.446 npm notice New major version of npm available! 10.8.2 -> 11.11.0
+#12 6.446 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+#12 6.446 npm notice To update run: npm install -g npm@11.11.0
+#12 6.446 npm notice
+#12 DONE 9.2s
+
+#13 [operator build 1/9] WORKDIR /app
+#13 DONE 0.5s
+
+#14 [operator deps 1/6] COPY pnpm-workspace.yaml package.json ./
+#14 DONE 0.6s
+
+#15 [operator deps 2/6] COPY packages/sdk/package.json ./packages/sdk/
+#15 ...
+
+#11 [api base 3/3] RUN apk add --no-cache python3 make g++
+#11 9.244 (27/29) Installing python3-pycache-pyc0 (3.12.12-r0)
+#11 9.940 (28/29) Installing pyc (3.12.12-r0)
+#11 9.940 (29/29) Installing python3-pyc (3.12.12-r0)
+#11 9.940 Executing busybox-1.37.0-r30.trigger
+#11 9.976 OK: 301.2 MiB in 47 packages
+#11 DONE 10.2s
+
+#15 [operator deps 2/6] COPY packages/sdk/package.json ./packages/sdk/
+#15 DONE 0.4s
+
+#16 [operator deps 3/6] COPY packages/theme/package.json ./packages/theme/
+#16 ...
+
+#17 [api deps 1/2] COPY package.json ./
+#17 DONE 0.6s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#16 [operator deps 3/6] COPY packages/theme/package.json ./packages/theme/
+#16 DONE 0.7s
+
+#19 [operator deps 4/6] COPY packages/ui-system/package.json ./packages/ui-system/
+#19 DONE 0.4s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#20 [operator deps 5/6] COPY apps/operator/package.json ./apps/operator/
+#20 DONE 0.3s
+
+#21 [operator deps 6/6] RUN pnpm install --ignore-scripts --shamefully-hoist
+#21 5.824 Scope: all 5 workspace projects
+#21 6.668 Progress: resolved 1, reused 0, downloaded 0, added 0
+#21 7.748 Progress: resolved 10, reused 0, downloaded 5, added 0
+#21 8.302  WARN  deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#21 8.756 Progress: resolved 23, reused 0, downloaded 19, added 0
+#21 9.933 Progress: resolved 29, reused 0, downloaded 26, added 0
+#21 10.87 Progress: resolved 30, reused 0, downloaded 29, added 0
+#21 11.87 Progress: resolved 32, reused 0, downloaded 30, added 0
+#21 14.02 Progress: resolved 34, reused 0, downloaded 30, added 0
+#21 15.01 Progress: resolved 34, reused 0, downloaded 31, added 0
+#21 18.12 Progress: resolved 35, reused 0, downloaded 34, added 0
+#21 19.41 Progress: resolved 36, reused 0, downloaded 34, added 0
+#21 21.69 Progress: resolved 37, reused 0, downloaded 34, added 0
+#21 22.73 Progress: resolved 45, reused 0, downloaded 35, added 0
+#21 23.87 Progress: resolved 56, reused 0, downloaded 47, added 0
+#21 24.89 Progress: resolved 71, reused 0, downloaded 59, added 0
+#21 26.19 Progress: resolved 79, reused 0, downloaded 64, added 0
+#21 27.21 Progress: resolved 81, reused 0, downloaded 70, added 0
+#21 28.24 Progress: resolved 83, reused 0, downloaded 73, added 0
+#21 29.25 Progress: resolved 89, reused 0, downloaded 75, added 0
+#21 30.25 Progress: resolved 100, reused 0, downloaded 77, added 0
+#21 31.26 Progress: resolved 109, reused 0, downloaded 93, added 0
+#21 32.44 Progress: resolved 115, reused 0, downloaded 100, added 0
+#21 33.44 Progress: resolved 124, reused 0, downloaded 110, added 0
+#21 34.61 Progress: resolved 127, reused 0, downloaded 113, added 0
+#21 35.98 Progress: resolved 133, reused 0, downloaded 117, added 0
+#21 37.16 Progress: resolved 148, reused 0, downloaded 125, added 0
+#21 38.16 Progress: resolved 162, reused 0, downloaded 134, added 0
+#21 39.46 Progress: resolved 165, reused 0, downloaded 144, added 0
+#21 40.54 Progress: resolved 189, reused 0, downloaded 165, added 0
+#21 41.69 Progress: resolved 196, reused 0, downloaded 167, added 0
+#21 42.67 Progress: resolved 203, reused 0, downloaded 177, added 0
+#21 43.68 Progress: resolved 242, reused 0, downloaded 178, added 0
+#21 44.68 Progress: resolved 257, reused 0, downloaded 181, added 0
+#21 45.69 Progress: resolved 259, reused 0, downloaded 192, added 0
+#21 46.85 Progress: resolved 260, reused 0, downloaded 201, added 0
+#21 47.87 Progress: resolved 264, reused 0, downloaded 225, added 0
+#21 48.87 Progress: resolved 306, reused 0, downloaded 268, added 0
+#21 49.88 Progress: resolved 326, reused 0, downloaded 276, added 0
+#21 50.89 Progress: resolved 394, reused 0, downloaded 316, added 0
+#21 51.91 Progress: resolved 451, reused 0, downloaded 370, added 0
+#21 52.92 Progress: resolved 513, reused 0, downloaded 430, added 0
+#21 53.93 Progress: resolved 537, reused 0, downloaded 485, added 0
+#21 54.93 Progress: resolved 539, reused 0, downloaded 486, added 0
+#21 56.49  WARN  5 deprecated subdependencies found: @humanwhocodes/config-array@0.13.0, @humanwhocodes/object-schema@2.0.3, glob@7.2.3, inflight@1.0.6, rimraf@3.0.2
+#21 56.55 Progress: resolved 540, reused 0, downloaded 488, added 0
+#21 56.61 Packages: +485
+#21 56.61 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#21 57.55 Progress: resolved 540, reused 0, downloaded 490, added 311
+#21 58.56 Progress: resolved 540, reused 0, downloaded 490, added 404
+#21 58.89 Progress: resolved 540, reused 0, downloaded 490, added 485, done
+#21 63.44 
+#21 63.44 dependencies:
+#21 63.44 + @prisma/client 6.19.2 (7.4.2 is available)
+#21 63.44 
+#21 63.44 devDependencies:
+#21 63.44 + @playwright/mcp 0.0.68
+#21 63.44 + eslint 8.57.1 (10.0.2 is available) deprecated
+#21 63.44 + eslint-config-next 15.5.12 (16.1.6 is available)
+#21 63.44 + prisma 6.19.2 (7.4.2 is available)
+#21 63.44 + turbo 2.8.13
+#21 63.44 
+#21 63.45 Done in 58.9s
+#21 DONE 69.1s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#22 [operator build 2/9] COPY --from=deps /app/node_modules ./node_modules
+#22 ...
+
+#18 [api deps 2/2] RUN npm install
+#18 108.9 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#18 ...
+
+#22 [operator build 2/9] COPY --from=deps /app/node_modules ./node_modules
+#22 DONE 24.5s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#23 [operator build 3/9] COPY --from=deps /app/apps/operator/node_modules ./apps/operator/node_modules
+#23 DONE 1.8s
+
+#18 [api deps 2/2] RUN npm install
+#18 114.5 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+#18 ...
+
+#24 [operator build 4/9] COPY packages/sdk/ ./packages/sdk/
+#24 DONE 0.5s
+
+#25 [operator build 5/9] COPY packages/theme/ ./packages/theme/
+#25 DONE 0.8s
+
+#18 [api deps 2/2] RUN npm install
+#18 115.8 npm warn deprecated fstream@1.0.12: This package is no longer supported.
+#18 ...
+
+#26 [operator build 6/9] COPY packages/ui-system/ ./packages/ui-system/
+#26 DONE 0.6s
+
+#27 [operator build 7/9] COPY apps/operator/ ./apps/operator/
+#27 DONE 1.1s
+
+#18 [api deps 2/2] RUN npm install
+#18 ...
+
+#28 [operator build 8/9] WORKDIR /app/apps/operator
+#28 DONE 0.2s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 4.280 
+#29 4.280 > @vexel/operator@0.1.0 build /app/apps/operator
+#29 4.280 > next build
+#29 4.280 
+#29 ...
+
+#18 [api deps 2/2] RUN npm install
+#18 119.6 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+#18 121.1 npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+#18 122.2 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#18 123.4 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#18 123.9 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+#18 124.3 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#18 127.9 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 127.9 npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+#18 128.4 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 129.0 npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 129.1 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 129.1 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 129.1 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 129.4 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 129.4 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 129.6 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 ...
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 13.12    ▲ Next.js 15.5.12
+#29 13.12 
+#29 13.39    Creating an optimized production build ...
+#29 ...
+
+#18 [api deps 2/2] RUN npm install
+#18 132.1 npm warn deprecated glob@10.4.5: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#18 139.7 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#18 167.0 
+#18 167.0 added 1003 packages, and audited 1004 packages in 3m
+#18 167.0 
+#18 167.0 137 packages are looking for funding
+#18 167.0   run `npm fund` for details
+#18 167.2 
+#18 167.2 21 vulnerabilities (4 low, 7 moderate, 10 high)
+#18 167.2 
+#18 167.2 To address issues that do not require attention, run:
+#18 167.2   npm audit fix
+#18 167.2 
+#18 167.2 To address all issues (including breaking changes), run:
+#18 167.2   npm audit fix --force
+#18 167.2 
+#18 167.2 Run `npm audit` for details.
+#18 167.2 npm notice
+#18 167.2 npm notice New major version of npm available! 10.8.2 -> 11.11.0
+#18 167.2 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+#18 167.2 npm notice To update run: npm install -g npm@11.11.0
+#18 167.2 npm notice
+#18 DONE 171.0s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#30 [api build 1/4] COPY --from=deps /app/node_modules ./node_modules
+#30 DONE 14.1s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#31 [api build 2/4] COPY . .
+#31 DONE 1.4s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#32 [api build 3/4] RUN npm run prisma:generate
+#32 2.119 
+#32 2.119 > @vexel/api@0.1.0 prisma:generate
+#32 2.119 > prisma generate
+#32 2.119 
+#32 4.934 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#32 4.934 For more information, see: https://pris.ly/prisma-config
+#32 4.934 
+#32 5.399 Prisma schema loaded from prisma/schema.prisma
+#32 10.53 
+#32 10.53 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 1.85s
+#32 10.53 
+#32 10.53 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#32 10.53 
+#32 10.53 Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+#32 10.53 
+#32 10.60 npm notice
+#32 10.60 npm notice New major version of npm available! 10.8.2 -> 11.11.0
+#32 10.60 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+#32 10.60 npm notice To update run: npm install -g npm@11.11.0
+#32 10.60 npm notice
+#32 DONE 11.4s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 79.45  ✓ Compiled successfully in 57s
+#29 79.46    Linting and checking validity of types ...
+#29 ...
+
+#33 [api build 4/4] RUN npm run build
+#33 1.141 
+#33 1.141 > @vexel/api@0.1.0 build
+#33 1.141 > nest build
+#33 1.141 
+#33 ...
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 104.7 
+#29 104.7 ./src/app/(protected)/lims/encounters/[id]/page.tsx
+#29 104.7 70:6  Warning: React Hook useEffect has missing dependencies: 'fetchDocuments' and 'fetchEncounter'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+#29 104.7 81:6  Warning: React Hook useEffect has missing dependencies: 'reportDoc' and 'startPolling'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+#29 104.7 
+#29 104.7 ./src/app/(protected)/lims/encounters/[id]/publish/page.tsx
+#29 104.7 67:6  Warning: React Hook useEffect has missing dependencies: 'fetchDocument' and 'startPolling'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+#29 104.7 
+#29 104.7 ./src/app/(protected)/lims/encounters/[id]/reports/page.tsx
+#29 104.7 38:37  Warning: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 104.7 
+#29 104.7 ./src/app/(protected)/lims/encounters/[id]/verify/page.tsx
+#29 104.7 41:6  Warning: React Hook useEffect has a missing dependency: 'startPolling'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 104.7 
+#29 104.7 ./src/app/(protected)/lims/results/[orderedTestId]/page.tsx
+#29 104.7 147:9  Warning: The 'saveCurrentValues' function makes the dependencies of useCallback Hook (at line 278) change on every render. To fix this, wrap the definition of 'saveCurrentValues' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+#29 104.7 203:9  Warning: The 'handleSubmit' function makes the dependencies of useCallback Hook (at line 278) change on every render. To fix this, wrap the definition of 'handleSubmit' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+#29 104.7 228:9  Warning: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 231) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+#29 104.7 228:9  Warning: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 235) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+#29 104.7 246:6  Warning: React Hook useEffect has a missing dependency: 'localValues'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 104.7 
+#29 104.7 ./src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx
+#29 104.7 225:9  Warning: The 'saveTest' function makes the dependencies of useCallback Hook (at line 348) change on every render. To fix this, wrap the definition of 'saveTest' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+#29 104.7 256:9  Warning: The 'handleSubmit' function makes the dependencies of useCallback Hook (at line 348) change on every render. To fix this, wrap the definition of 'handleSubmit' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+#29 104.7 315:9  Warning: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 318) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+#29 104.7 
+#29 104.7 ./src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx
+#29 104.7 120:6  Warning: React Hook useEffect has a missing dependency: 'loadDetail'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 104.7 
+#29 104.7 ./src/app/(protected)/lims/verification/page.tsx
+#29 104.7 81:6  Warning: React Hook useEffect has a missing dependency: 'search'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+#29 104.7 
+#29 104.7 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+#29 122.7    Collecting page data ...
+#29 ...
+
+#33 [api build 4/4] RUN npm run build
+#33 DONE 40.2s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#34 [api runtime 3/8] COPY --from=build /app/dist ./dist
+#34 DONE 0.4s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 131.3    Generating static pages (0/31) ...
+#29 135.2    Generating static pages (7/31) 
+#29 135.6    Generating static pages (15/31) 
+#29 136.1    Generating static pages (23/31) 
+#29 136.2  ✓ Generating static pages (31/31)
+#29 137.9    Finalizing page optimization ...
+#29 137.9    Collecting build traces ...
+#29 ...
+
+#35 [api runtime 4/8] COPY --from=build /app/node_modules ./node_modules
+#35 DONE 15.8s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#36 [api runtime 5/8] COPY --from=build /app/prisma ./prisma
+#36 DONE 0.8s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#37 [api runtime 6/8] COPY --from=build /app/resources ./resources
+#37 DONE 0.1s
+
+#38 [api runtime 7/8] COPY docker-entrypoint.sh ./docker-entrypoint.sh
+#38 DONE 0.1s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#39 [api runtime 8/8] RUN chmod +x ./docker-entrypoint.sh
+#39 DONE 0.5s
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 ...
+
+#40 [api] exporting to image
+#40 exporting layers
+#40 ...
+
+#29 [operator build 9/9] RUN NEXT_TELEMETRY_DISABLED=1 pnpm run build
+#29 200.2 
+#29 200.2 Route (app)                                         Size  First Load JS
+#29 200.2 ┌ ○ /                                              161 B         102 kB
+#29 200.2 ├ ○ /_not-found                                     1 kB         103 kB
+#29 200.2 ├ ○ /encounters                                    378 B         102 kB
+#29 200.2 ├ ƒ /encounters/[id]                               161 B         102 kB
+#29 200.2 ├ ƒ /encounters/[id]/order                         161 B         102 kB
+#29 200.2 ├ ƒ /encounters/[id]/publish                       172 B         123 kB
+#29 200.2 ├ ƒ /encounters/[id]/receive                       161 B         102 kB
+#29 200.2 ├ ƒ /encounters/[id]/reports                       161 B         102 kB
+#29 200.2 ├ ƒ /encounters/[id]/results                       161 B         102 kB
+#29 200.2 ├ ƒ /encounters/[id]/sample                        161 B         102 kB
+#29 200.2 ├ ƒ /encounters/[id]/verify                        161 B         102 kB
+#29 200.2 ├ ○ /encounters/new                                161 B         102 kB
+#29 200.2 ├ ○ /lims/encounters                             1.65 kB         121 kB
+#29 200.2 ├ ƒ /lims/encounters/[id]                        6.61 kB         126 kB
+#29 200.2 ├ ƒ /lims/encounters/[id]/order                  3.09 kB         122 kB
+#29 200.2 ├ ƒ /lims/encounters/[id]/publish                  172 B         123 kB
+#29 200.2 ├ ƒ /lims/encounters/[id]/receive                4.07 kB         123 kB
+#29 200.2 ├ ƒ /lims/encounters/[id]/reports                3.74 kB         123 kB
+#29 200.2 ├ ƒ /lims/encounters/[id]/results                4.39 kB         124 kB
+#29 200.2 ├ ƒ /lims/encounters/[id]/sample                 3.21 kB         122 kB
+#29 200.2 ├ ƒ /lims/encounters/[id]/verify                 4.97 kB         124 kB
+#29 200.2 ├ ○ /lims/encounters/new                         4.45 kB         106 kB
+#29 200.2 ├ ○ /lims/patients                               3.87 kB         123 kB
+#29 200.2 ├ ○ /lims/patients/new                           4.59 kB         107 kB
+#29 200.2 ├ ○ /lims/payments                               4.35 kB         123 kB
+#29 200.2 ├ ƒ /lims/print/[id]                             5.28 kB         107 kB
+#29 200.2 ├ ○ /lims/registrations/new                      9.99 kB         126 kB
+#29 200.2 ├ ○ /lims/reports                                6.15 kB         135 kB
+#29 200.2 ├ ○ /lims/results                                1.93 kB         128 kB
+#29 200.2 ├ ƒ /lims/results/[orderedTestId]                7.19 kB         126 kB
+#29 200.2 ├ ƒ /lims/results/encounters/[encounterId]       4.96 kB         135 kB
+#29 200.2 ├ ○ /lims/sample-collection                      6.11 kB         137 kB
+#29 200.2 ├ ○ /lims/verification                           2.64 kB         129 kB
+#29 200.2 ├ ƒ /lims/verification/encounters/[encounterId]  4.89 kB         121 kB
+#29 200.2 ├ ○ /lims/worklist                               5.86 kB         122 kB
+#29 200.2 ├ ○ /login                                       5.08 kB         118 kB
+#29 200.2 ├ ƒ /opd/appointments/[id]                       3.52 kB         126 kB
+#29 200.2 ├ ○ /opd/appointments/new                        3.55 kB         126 kB
+#29 200.2 ├ ○ /opd/billing                                 1.89 kB         153 kB
+#29 200.2 ├ ƒ /opd/billing/invoices/[invoiceId]            4.11 kB         126 kB
+#29 200.2 ├ ○ /opd/billing/new                             5.27 kB         124 kB
+#29 200.2 ├ ƒ /opd/providers/[providerId]/availability     5.02 kB         124 kB
+#29 200.2 ├ ƒ /opd/visits/[visitId]                        4.87 kB         127 kB
+#29 200.2 ├ ○ /opd/visits/new                              2.08 kB         153 kB
+#29 200.2 ├ ○ /opd/worklist                                2.02 kB         153 kB
+#29 200.2 ├ ○ /patients                                      376 B         102 kB
+#29 200.2 ├ ○ /patients/new                                  161 B         102 kB
+#29 200.2 ├ ○ /registrations/new                             376 B         102 kB
+#29 200.2 ├ ○ /reports                                       374 B         102 kB
+#29 200.2 ├ ○ /results                                       374 B         102 kB
+#29 200.2 ├ ƒ /results/[orderedTestId]                       161 B         102 kB
+#29 200.2 ├ ○ /sample-collection                             372 B         102 kB
+#29 200.2 ├ ○ /verification                                  372 B         102 kB
+#29 200.2 ├ ƒ /verification/encounters/[encounterId]         161 B         102 kB
+#29 200.2 └ ○ /worklist                                      377 B         102 kB
+#29 200.2 + First Load JS shared by all                     102 kB
+#29 200.2   ├ chunks/8e6518bb-c26e82767f1faf66.js          54.2 kB
+#29 200.2   ├ chunks/9743-1cef6f4872433014.js              45.7 kB
+#29 200.2   └ other shared chunks (total)                  1.93 kB
+#29 200.2 
+#29 200.2 
+#29 200.2 ○  (Static)   prerendered as static content
+#29 200.2 ƒ  (Dynamic)  server-rendered on demand
+#29 200.2 
+#29 DONE 200.7s
+
+#40 [api] exporting to image
+#40 ...
+
+#41 [operator runtime 3/4] COPY --from=build /app/apps/operator/.next/standalone ./
+#41 DONE 1.3s
+
+#40 [api] exporting to image
+#40 ...
+
+#42 [operator runtime 4/4] COPY --from=build /app/apps/operator/.next/static ./apps/operator/.next/static
+#42 DONE 0.2s
+
+#40 [api] exporting to image
+#40 ...
+
+#43 [operator] exporting to image
+#43 exporting layers
+#43 ...
+
+#40 [api] exporting to image
+#40 exporting layers 47.1s done
+#40 exporting manifest sha256:a7f551d5980fe92c62ee4e27aa3240e989662a80721c6b7e7fd276283a000da0 0.0s done
+#40 exporting config sha256:d1dbeeeb8515e055fd0c66b9abf137c2c3d8f37514fcc5838253cdf5abea507e 0.0s done
+#40 exporting attestation manifest sha256:9ad7f680cbfb5b036b763448c2a89b93b2a63e876c8bcf91de6c288aea340f74 0.1s done
+#40 exporting manifest list sha256:ff2e0d2aae39d19dff5af011c004d28a29b3cd5e3384198fd7ffcd9eb85669a5 0.0s done
+#40 naming to docker.io/library/vexel-api:latest done
+#40 unpacking to docker.io/library/vexel-api:latest
+#40 ...
+
+#43 [operator] exporting to image
+#43 exporting layers 7.5s done
+#43 exporting manifest sha256:f72ba3dfba4795838b13677277134352ad708e15bb3b9887884f39839a78cf89 0.0s done
+#43 exporting config sha256:da150c255b0f954b30d62223017f7599ebd82ca6073f753e2cc00b5325bcae74 0.0s done
+#43 exporting attestation manifest sha256:0ca073281c47f5075b20a106c36675635d4d3d2402b2f29e175a9ff3704eb5fd 0.1s done
+#43 exporting manifest list sha256:4c5565c8f6959248c8ee9b45f70303060bcf686961b5b9b0ee795f470a774fd1
+#43 exporting manifest list sha256:4c5565c8f6959248c8ee9b45f70303060bcf686961b5b9b0ee795f470a774fd1 0.0s done
+#43 naming to docker.io/library/vexel-operator:latest done
+#43 unpacking to docker.io/library/vexel-operator:latest
+#43 unpacking to docker.io/library/vexel-operator:latest 1.9s done
+#43 DONE 9.6s
+
+#40 [api] exporting to image
+#40 ...
+
+#44 [operator] resolving provenance for metadata file
+#44 DONE 0.0s
+
+#40 [api] exporting to image
+#40 unpacking to docker.io/library/vexel-api:latest 17.8s done
+#40 DONE 65.2s
+
+#45 [api] resolving provenance for metadata file
+#45 DONE 0.0s
+
+$ docker compose up -d operator api
+
+$ docker compose ps operator api
+NAME               IMAGE            COMMAND                  SERVICE    CREATED          STATUS                                     PORTS
+vexel-api-1        vexel-api        "./docker-entrypoint…"   api        24 seconds ago   Up Less than a second (health: starting)   127.0.0.1:9021->3000/tcp
+vexel-operator-1   vexel-operator   "docker-entrypoint.s…"   operator   24 seconds ago   Up 1 second                                127.0.0.1:9024->3000/tcp
+
+$ docker images | rg "vexel-(api|operator)"
+vexel-api:latest        ff2e0d2aae39        920MB          180MB   U    
+vexel-operator:latest   4c5565c8f695        304MB         72.8MB   U    
+
+## STEP 7 PLAYWRIGHT RUNTIME DEP CHECK
+$ apt-get update && apt-get install -y libnspr4 libnss3
+Reading package lists...
+
+## STEP 7 POST-DEPLOY VERIFICATION
+$ docker compose ps api operator
+NAME               IMAGE            COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+vexel-api-1        vexel-api        "./docker-entrypoint…"   api        49 seconds ago   Up 25 seconds (healthy)   127.0.0.1:9021->3000/tcp
+vexel-operator-1   vexel-operator   "docker-entrypoint.s…"   operator   49 seconds ago   Up 25 seconds             127.0.0.1:9024->3000/tcp
+
+$ curl -sk https://vexel.alshifalab.pk/api/health
+{"status":"ok","version":"0.1.0","uptime":17.509557845,"services":{"api":"ok"}}
+
+$ curl -sk /api/me
+{
+  "email": "admin@vexel.system",
+  "tenantId": "system",
+  "isSuperAdmin": true,
+  "permissionsCount": 29
+}
+
+$ curl -sk /api/feature-flags/resolved
+{
+  "module_opd": false,
+  "lims_verification": true
+}
+
+$ curl -sk /api/catalog/tests?limit=20
+{
+  "total": 2,
+  "count": 2
+}
+
+$ curl -sk /api/catalog/parameters?limit=20
+{
+  "total": 0,
+  "count": 0
+}
+
+$ curl -skI /lims/worklist
+HTTP/2 200 
+alt-svc: h3=":443"; ma=2592000
+cache-control: s-maxage=31536000
+content-type: text/html; charset=utf-8
+date: Tue, 03 Mar 2026 22:19:01 GMT
+etag: "p9ibi3r9e98qg"
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+
+$ curl -skI /opd/worklist
+HTTP/2 200 
+alt-svc: h3=":443"; ma=2592000
+cache-control: s-maxage=31536000
+content-type: text/html; charset=utf-8
+date: Tue, 03 Mar 2026 22:19:01 GMT
+etag: "cxqzegmjzf99s"
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+
+$ curl missing-file import endpoint
+HTTP/2 404 
+access-control-allow-credentials: true
+alt-svc: h3=":443"; ma=2592000
+content-type: application/json; charset=utf-8
+date: Tue, 03 Mar 2026 22:19:01 GMT
+etag: W/"7a-NK/83VBraftTKfxuw/z/TYajCPM"
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Origin
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-correlation-id: e1429511-a3a4-4e2e-9191-873426ca4b55
+x-frame-options: SAMEORIGIN
+x-powered-by: Express
+content-length: 122
+
+{"message":"Cannot GET /api/catalog/import/workbook?validate=true&mode=UPSERT_PATCH","error":"Not Found","statusCode":404}
+## STEP 7 IMPORT MISSING FILE (POST)
+HTTP/2 400 
+access-control-allow-credentials: true
+alt-svc: h3=":443"; ma=2592000
+content-type: application/json; charset=utf-8
+date: Tue, 03 Mar 2026 22:19:08 GMT
+etag: W/"74-iY65z84SdY/o/M0pLm7UpeqcuVw"
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Origin
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-correlation-id: f525828a-ae32-462b-83c8-f0cdbf21027c
+x-frame-options: SAMEORIGIN
+x-powered-by: Express
+content-length: 116
+
+{"message":"No file uploaded. Send multipart/form-data with field \"file\".","error":"Bad Request","statusCode":400}
+## STEP 7 IMPORT WITH FILE (POST)
+HTTP/2 201 
+access-control-allow-credentials: true
+alt-svc: h3=":443"; ma=2592000
+content-type: application/json; charset=utf-8
+date: Tue, 03 Mar 2026 22:19:17 GMT
+etag: W/"fcd1-oapCNmVMvy01/sOq52y2hDJ/2D4"
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Origin
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-correlation-id: 39950bbb-7829-4b98-a6ce-50f7518384c4
+x-frame-options: SAMEORIGIN
+x-powered-by: Express
+content-length: 64721
+
+{"inserted":164,"updated":0,"skipped":0,"errors":[{"sheet":"Tests","row":2,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serumplasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":3,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'specimen' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":4,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":5,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":6,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":7,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":8,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'citrate_plasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":9,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":10,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":11,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":12,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":13,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":14,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":15,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":16,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":17,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":18,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":19,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":20,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'swab' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":21,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":22,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":23,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":24,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":25,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":26,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'csf' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":27,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":28,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":29,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":30,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":31,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":32,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serumplasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":33,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":34,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":35,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":36,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":37,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":38,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'swab' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":39,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":40,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":41,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'urine' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":42,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":43,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":44,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":45,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":46,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":47,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":48,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":49,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":50,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'specimen' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":51,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":52,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":53,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'citrate_plasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":54,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":55,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serumplasma' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":56,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'edta_whole_blood' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":57,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":58,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'specimen' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":59,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'sputum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":60,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'stool' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":61,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'specimen' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":62,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'stool' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":63,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":64,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'stool' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":65,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":66,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'tissue' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":67,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":68,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":69,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":70,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":71,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'swab' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":72,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":73,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":74,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":75,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'urine' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":76,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'urine' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":77,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":78,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'serum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":79,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'swab' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"Tests","row":80,"field":"sampleTypeExternalId","code":"INVALID_SAMPLE_TYPE","message":"SampleType externalId or userCode 'sputum' not found","suggestion":"Add SampleTypes sheet row first or fix externalId"},{"sheet":"TestParameters","row":2,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode '2hpp' not found"},{"sheet":"TestParameters","row":3,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'afre' not found"},{"sheet":"TestParameters","row":4,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'afre' not found"},{"sheet":"TestParameters","row":5,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'afre' not found"},{"sheet":"TestParameters","row":6,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'afre' not found"},{"sheet":"TestParameters","row":7,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'alb' not found"},{"sheet":"TestParameters","row":8,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'alp' not found"},{"sheet":"TestParameters","row":9,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'alt' not found"},{"sheet":"TestParameters","row":10,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'amyla' not found"},{"sheet":"TestParameters","row":11,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'aptt' not found"},{"sheet":"TestParameters","row":12,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'asici' not found"},{"sheet":"TestParameters","row":13,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'aso' not found"},{"sheet":"TestParameters","row":14,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ast' not found"},{"sheet":"TestParameters","row":15,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bfcpa' not found"},{"sheet":"TestParameters","row":16,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bfcpa' not found"},{"sheet":"TestParameters","row":17,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bg_rh' not found"},{"sheet":"TestParameters","row":18,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bg_rh' not found"},{"sheet":"TestParameters","row":19,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bhe' not found"},{"sheet":"TestParameters","row":20,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bhe' not found"},{"sheet":"TestParameters","row":21,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bhe' not found"},{"sheet":"TestParameters","row":22,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bild' not found"},{"sheet":"TestParameters","row":23,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bili' not found"},{"sheet":"TestParameters","row":24,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bilt' not found"},{"sheet":"TestParameters","row":25,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'blood_cs' not found"},{"sheet":"TestParameters","row":26,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'blood_cs' not found"},{"sheet":"TestParameters","row":27,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'blood_cs' not found"},{"sheet":"TestParameters","row":28,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'blood_cs' not found"},{"sheet":"TestParameters","row":29,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bmbh' not found"},{"sheet":"TestParameters","row":30,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bmbh' not found"},{"sheet":"TestParameters","row":31,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'bmbh' not found"},{"sheet":"TestParameters","row":32,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'c1ar' not found"},{"sheet":"TestParameters","row":33,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ca' not found"},{"sheet":"TestParameters","row":34,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":35,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":36,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":37,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":38,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":39,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":40,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":41,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":42,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":43,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":44,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":45,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":46,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":47,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":48,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":49,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":50,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":51,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":52,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":53,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":54,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":55,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":56,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":57,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cbc' not found"},{"sheet":"TestParameters","row":58,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cct' not found"},{"sheet":"TestParameters","row":59,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cct' not found"},{"sheet":"TestParameters","row":60,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'chol' not found"},{"sheet":"TestParameters","row":61,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cl' not found"},{"sheet":"TestParameters","row":62,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":63,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":64,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":65,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":66,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'cre' not found"},{"sheet":"TestParameters","row":67,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'creat' not found"},{"sheet":"TestParameters","row":68,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'crp' not found"},{"sheet":"TestParameters","row":69,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'datdc' not found"},{"sheet":"TestParameters","row":70,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'datdc' not found"},{"sheet":"TestParameters","row":71,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'esr' not found"},{"sheet":"TestParameters","row":72,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'external' not found"},{"sheet":"TestParameters","row":73,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'external' not found"},{"sheet":"TestParameters","row":74,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'fbs' not found"},{"sheet":"TestParameters","row":75,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ffnac' not found"},{"sheet":"TestParameters","row":76,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ffnac' not found"},{"sheet":"TestParameters","row":77,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ft3' not found"},{"sheet":"TestParameters","row":78,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ft4' not found"},{"sheet":"TestParameters","row":79,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ggt' not found"},{"sheet":"TestParameters","row":80,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'glob' not found"},{"sheet":"TestParameters","row":81,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'gsas' not found"},{"sheet":"TestParameters","row":82,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hba1c' not found"},{"sheet":"TestParameters","row":83,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hbsag' not found"},{"sheet":"TestParameters","row":84,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hcg' not found"},{"sheet":"TestParameters","row":85,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hcvab' not found"},{"sheet":"TestParameters","row":86,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hdl' not found"},{"sheet":"TestParameters","row":87,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'hiv12' not found"},{"sheet":"TestParameters","row":88,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'k' not found"},{"sheet":"TestParameters","row":89,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ldl' not found"},{"sheet":"TestParameters","row":90,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'lipas' not found"},{"sheet":"TestParameters","row":91,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'magne' not found"},{"sheet":"TestParameters","row":92,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pbs' not found"},{"sheet":"TestParameters","row":93,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pfre' not found"},{"sheet":"TestParameters","row":94,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pfre' not found"},{"sheet":"TestParameters","row":95,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pfre' not found"},{"sheet":"TestParameters","row":96,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pfre' not found"},{"sheet":"TestParameters","row":97,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'phos' not found"},{"sheet":"TestParameters","row":98,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pscc' not found"},{"sheet":"TestParameters","row":99,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pscc' not found"},{"sheet":"TestParameters","row":100,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pscc' not found"},{"sheet":"TestParameters","row":101,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pt_inr' not found"},{"sheet":"TestParameters","row":102,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'pt_inr' not found"},{"sheet":"TestParameters","row":103,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'rapid' not found"},{"sheet":"TestParameters","row":104,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'rbs' not found"},{"sheet":"TestParameters","row":105,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'rc' not found"},{"sheet":"TestParameters","row":106,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'rf' not found"},{"sheet":"TestParameters","row":107,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":108,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":109,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":110,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":111,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":112,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":113,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sa' not found"},{"sheet":"TestParameters","row":114,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc' not found"},{"sheet":"TestParameters","row":115,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc' not found"},{"sheet":"TestParameters","row":116,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc' not found"},{"sheet":"TestParameters","row":117,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc_2' not found"},{"sheet":"TestParameters","row":118,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc_2' not found"},{"sheet":"TestParameters","row":119,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sc_2' not found"},{"sheet":"TestParameters","row":120,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sfe' not found"},{"sheet":"TestParameters","row":121,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sfe' not found"},{"sheet":"TestParameters","row":122,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sfe' not found"},{"sheet":"TestParameters","row":123,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sfe' not found"},{"sheet":"TestParameters","row":124,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sob' not found"},{"sheet":"TestParameters","row":125,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'sod' not found"},{"sheet":"TestParameters","row":126,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":127,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":128,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":129,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":130,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":131,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":132,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":133,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'srere' not found"},{"sheet":"TestParameters","row":134,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 't_80' not found"},{"sheet":"TestParameters","row":135,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 't_80' not found"},{"sheet":"TestParameters","row":136,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 't_80' not found"},{"sheet":"TestParameters","row":137,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tccbh' not found"},{"sheet":"TestParameters","row":138,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tccbh' not found"},{"sheet":"TestParameters","row":139,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tccbh' not found"},{"sheet":"TestParameters","row":140,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tg' not found"},{"sheet":"TestParameters","row":141,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ti' not found"},{"sheet":"TestParameters","row":142,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'ti_2' not found"},{"sheet":"TestParameters","row":143,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tp' not found"},{"sheet":"TestParameters","row":144,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tsc' not found"},{"sheet":"TestParameters","row":145,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tsc' not found"},{"sheet":"TestParameters","row":146,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tsc' not found"},{"sheet":"TestParameters","row":147,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'tsh' not found"},{"sheet":"TestParameters","row":148,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urea' not found"},{"sheet":"TestParameters","row":149,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'uric' not found"},{"sheet":"TestParameters","row":150,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_cs' not found"},{"sheet":"TestParameters","row":151,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_cs' not found"},{"sheet":"TestParameters","row":152,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_cs' not found"},{"sheet":"TestParameters","row":153,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_cs' not found"},{"sheet":"TestParameters","row":154,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":155,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":156,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":157,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":158,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":159,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":160,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":161,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":162,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":163,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":164,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":165,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":166,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":167,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":168,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":169,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":170,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":171,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":172,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'urine_re' not found"},{"sheet":"TestParameters","row":173,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'vldl' not found"},{"sheet":"TestParameters","row":174,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'vr' not found"},{"sheet":"TestParameters","row":175,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'wound_cs' not found"},{"sheet":"TestParameters","row":176,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'wound_cs' not found"},{"sheet":"TestParameters","row":177,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'wound_cs' not found"},{"sheet":"TestParameters","row":178,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'wound_cs' not found"},{"sheet":"TestParameters","row":179,"field":"testExternalId","code":"NOT_FOUND","message":"Test externalId or userCode 'zn' not found"},{"sheet":"PanelTests","row":2,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bfrcpa' not found"},{"sheet":"PanelTests","row":3,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bfrcpa' not found"},{"sheet":"PanelTests","row":4,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bfrcpa' not found"},{"sheet":"PanelTests","row":5,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bfrcpa' not found"},{"sheet":"PanelTests","row":6,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bgcarc' not found"},{"sheet":"PanelTests","row":7,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bgcarc' not found"},{"sheet":"PanelTests","row":8,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bpcpm' not found"},{"sheet":"PanelTests","row":9,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bpcpm' not found"},{"sheet":"PanelTests","row":10,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_bpcpm' not found"},{"sheet":"PanelTests","row":11,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_cbc' not found"},{"sheet":"PanelTests","row":12,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_cppia' not found"},{"sheet":"PanelTests","row":13,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_cppia' not found"},{"sheet":"PanelTests","row":14,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":15,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":16,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":17,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":18,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_csc' not found"},{"sheet":"PanelTests","row":19,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_deng_2' not found"},{"sheet":"PanelTests","row":20,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_deng_2' not found"},{"sheet":"PanelTests","row":21,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_deng_2' not found"},{"sheet":"PanelTests","row":22,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_epnkc' not found"},{"sheet":"PanelTests","row":23,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_epnkc' not found"},{"sheet":"PanelTests","row":24,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_epnkc' not found"},{"sheet":"PanelTests","row":25,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_hep' not found"},{"sheet":"PanelTests","row":26,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_hep' not found"},{"sheet":"PanelTests","row":27,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":28,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":29,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":30,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":31,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":32,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":33,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":34,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":35,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":36,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lft' not found"},{"sheet":"PanelTests","row":37,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":38,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":39,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":40,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":41,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_lipid' not found"},{"sheet":"PanelTests","row":42,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_peal' not found"},{"sheet":"PanelTests","row":43,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_peal' not found"},{"sheet":"PanelTests","row":44,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":45,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":46,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":47,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":48,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_rft' not found"},{"sheet":"PanelTests","row":49,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_seb' not found"},{"sheet":"PanelTests","row":50,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_seb' not found"},{"sheet":"PanelTests","row":51,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_sugar' not found"},{"sheet":"PanelTests","row":52,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_sugar' not found"},{"sheet":"PanelTests","row":53,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_sugar' not found"},{"sheet":"PanelTests","row":54,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_thyroid' not found"},{"sheet":"PanelTests","row":55,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_thyroid' not found"},{"sheet":"PanelTests","row":56,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_thyroid' not found"},{"sheet":"PanelTests","row":57,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_tpii' not found"},{"sheet":"PanelTests","row":58,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_tpii' not found"},{"sheet":"PanelTests","row":59,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_urine' not found"},{"sheet":"PanelTests","row":60,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_vshahh' not found"},{"sheet":"PanelTests","row":61,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_vshahh' not found"},{"sheet":"PanelTests","row":62,"field":"panelExternalId","code":"NOT_FOUND","message":"Panel externalId or userCode 'p_vshahh' not found"},{"sheet":"ReferenceRanges","row":2,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0001' not found"},{"sheet":"ReferenceRanges","row":3,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0001' not found"},{"sheet":"ReferenceRanges","row":4,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0002' not found"},{"sheet":"ReferenceRanges","row":5,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0003' not found"},{"sheet":"ReferenceRanges","row":6,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0004' not found"},{"sheet":"ReferenceRanges","row":7,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0005' not found"},{"sheet":"ReferenceRanges","row":8,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0024' not found"},{"sheet":"ReferenceRanges","row":9,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0024' not found"},{"sheet":"ReferenceRanges","row":10,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0028' not found"},{"sheet":"ReferenceRanges","row":11,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0029' not found"},{"sheet":"ReferenceRanges","row":12,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0030' not found"},{"sheet":"ReferenceRanges","row":13,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0031' not found"},{"sheet":"ReferenceRanges","row":14,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0031' not found"},{"sheet":"ReferenceRanges","row":15,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0031' not found"},{"sheet":"ReferenceRanges","row":16,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0032' not found"},{"sheet":"ReferenceRanges","row":17,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0033' not found"},{"sheet":"ReferenceRanges","row":18,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0034' not found"},{"sheet":"ReferenceRanges","row":19,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0034' not found"},{"sheet":"ReferenceRanges","row":20,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0035' not found"},{"sheet":"ReferenceRanges","row":21,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0036' not found"},{"sheet":"ReferenceRanges","row":22,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0037' not found"},{"sheet":"ReferenceRanges","row":23,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0038' not found"},{"sheet":"ReferenceRanges","row":24,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0039' not found"},{"sheet":"ReferenceRanges","row":25,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0040' not found"},{"sheet":"ReferenceRanges","row":26,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0041' not found"},{"sheet":"ReferenceRanges","row":27,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0042' not found"},{"sheet":"ReferenceRanges","row":28,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0043' not found"},{"sheet":"ReferenceRanges","row":29,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0044' not found"},{"sheet":"ReferenceRanges","row":30,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0045' not found"},{"sheet":"ReferenceRanges","row":31,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0046' not found"},{"sheet":"ReferenceRanges","row":32,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0048' not found"},{"sheet":"ReferenceRanges","row":33,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0049' not found"},{"sheet":"ReferenceRanges","row":34,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0050' not found"},{"sheet":"ReferenceRanges","row":35,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0051' not found"},{"sheet":"ReferenceRanges","row":36,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0052' not found"},{"sheet":"ReferenceRanges","row":37,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0053' not found"},{"sheet":"ReferenceRanges","row":38,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0053' not found"},{"sheet":"ReferenceRanges","row":39,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0054' not found"},{"sheet":"ReferenceRanges","row":40,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0055' not found"},{"sheet":"ReferenceRanges","row":41,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0056' not found"},{"sheet":"ReferenceRanges","row":42,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0057' not found"},{"sheet":"ReferenceRanges","row":43,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0058' not found"},{"sheet":"ReferenceRanges","row":44,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0059' not found"},{"sheet":"ReferenceRanges","row":45,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0060' not found"},{"sheet":"ReferenceRanges","row":46,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0061' not found"},{"sheet":"ReferenceRanges","row":47,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0068' not found"},{"sheet":"ReferenceRanges","row":48,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0069' not found"},{"sheet":"ReferenceRanges","row":49,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0078' not found"},{"sheet":"ReferenceRanges","row":50,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0079' not found"},{"sheet":"ReferenceRanges","row":51,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0121' not found"},{"sheet":"ReferenceRanges","row":52,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0099' not found"},{"sheet":"ReferenceRanges","row":53,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0093' not found"},{"sheet":"ReferenceRanges","row":54,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0097' not found"},{"sheet":"ReferenceRanges","row":55,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0106' not found"},{"sheet":"ReferenceRanges","row":56,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0091' not found"},{"sheet":"ReferenceRanges","row":57,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0105' not found"},{"sheet":"ReferenceRanges","row":58,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0126' not found"},{"sheet":"ReferenceRanges","row":59,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0107' not found"},{"sheet":"ReferenceRanges","row":60,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0125' not found"},{"sheet":"ReferenceRanges","row":61,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0124' not found"},{"sheet":"ReferenceRanges","row":62,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0094' not found"},{"sheet":"ReferenceRanges","row":63,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0089' not found"},{"sheet":"ReferenceRanges","row":64,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0098' not found"},{"sheet":"ReferenceRanges","row":65,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0098' not found"},{"sheet":"ReferenceRanges","row":66,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0098' not found"},{"sheet":"ReferenceRanges","row":67,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0078' not found"},{"sheet":"ReferenceRanges","row":68,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0079' not found"},{"sheet":"ReferenceRanges","row":69,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0109' not found"},{"sheet":"ReferenceRanges","row":70,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0111' not found"},{"sheet":"ReferenceRanges","row":71,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0114' not found"},{"sheet":"ReferenceRanges","row":72,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0115' not found"},{"sheet":"ReferenceRanges","row":73,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0111' not found"},{"sheet":"ReferenceRanges","row":74,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0130' not found"},{"sheet":"ReferenceRanges","row":75,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0069' not found"},{"sheet":"ReferenceRanges","row":76,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0110' not found"},{"sheet":"ReferenceRanges","row":77,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0116' not found"},{"sheet":"ReferenceRanges","row":78,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0122' not found"},{"sheet":"ReferenceRanges","row":79,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0123' not found"},{"sheet":"ReferenceRanges","row":80,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0127' not found"},{"sheet":"ReferenceRanges","row":81,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0129' not found"},{"sheet":"ReferenceRanges","row":82,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0031' not found"},{"sheet":"ReferenceRanges","row":83,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0067' not found"},{"sheet":"ReferenceRanges","row":84,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0117' not found"},{"sheet":"ReferenceRanges","row":85,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0119' not found"},{"sheet":"ReferenceRanges","row":86,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0128' not found"},{"sheet":"ReferenceRanges","row":87,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0118' not found"},{"sheet":"ReferenceRanges","row":88,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0119' not found"},{"sheet":"ReferenceRanges","row":89,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0128' not found"},{"sheet":"ReferenceRanges","row":90,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0118' not found"},{"sheet":"ReferenceRanges","row":91,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0119' not found"},{"sheet":"ReferenceRanges","row":92,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0128' not found"},{"sheet":"ReferenceRanges","row":93,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0082' not found"},{"sheet":"ReferenceRanges","row":94,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0119' not found"},{"sheet":"ReferenceRanges","row":95,"field":"parameterExternalId","code":"NOT_FOUND","message":"Parameter externalId or userCode 'p0128' not found"}],"bySheet":{"SampleTypes":{"totalRows":13,"inserted":13,"updated":0,"skipped":0,"errors":0},"Parameters":{"totalRows":131,"inserted":131,"updated":0,"skipped":0,"errors":0},"Tests":{"totalRows":79,"inserted":0,"updated":0,"skipped":0,"errors":79},"TestParameters":{"totalRows":178,"inserted":0,"updated":0,"skipped":0,"errors":178},"Panels":{"totalRows":20,"inserted":20,"updated":0,"skipped":0,"errors":0},"PanelTests":{"totalRows":61,"inserted":0,"updated":0,"skipped":0,"errors":61},"ReferenceRanges":{"totalRows":94,"inserted":0,"updated":0,"skipped":0,"errors":94}}}
+## STEP 7B POST-IMPORT CATALOG COUNTS
+$ curl -sk /api/catalog/tests?limit=20 (auth)
+{
+  "total": 2,
+  "count": 2
+}
+
+$ curl -sk /api/catalog/parameters?limit=20 (auth)
+{
+  "total": 0,
+  "count": 0
+}
+
+$ curl -sk /api/catalog/panels?limit=20 (auth)
+{
+  "total": 0,
+  "count": 0
+}
+
+## STEP 7B DEPLOYED SHA/IMAGES
+$ git rev-parse HEAD
+d24bff4fdc940b7faee77b7027915c25459a7d81
+
+$ docker images vexel-api vexel-operator --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}"
+
+## STEP 7B DEPLOYED IMAGES (CORRECTED)
+$ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}" | rg "^vexel-(api|operator)\\s"
+vexel-operator   latest      4c5565c8f695   2 minutes ago
+vexel-api        latest      ff2e0d2aae39   3 minutes ago
+
+$ docker compose ps api operator
+NAME               IMAGE            COMMAND                  SERVICE    CREATED         STATUS                   PORTS
+vexel-api-1        vexel-api        "./docker-entrypoint…"   api        2 minutes ago   Up 2 minutes (healthy)   127.0.0.1:9021->3000/tcp
+vexel-operator-1   vexel-operator   "docker-entrypoint.s…"   operator   2 minutes ago   Up 2 minutes             127.0.0.1:9024->3000/tcp

@@ -7,7 +7,11 @@ export default defineConfig({
   testDir: './tests',
   timeout: 30_000,
   retries: process.env.CI ? 2 : 0,
-  reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
+  reporter: [
+    ['html', { outputFolder: 'playwright-report' }],
+    ['json', { outputFile: 'test-results/results.json' }],
+    ['list'],
+  ],
   use: {
     headless: true,
     screenshot: 'only-on-failure',
@@ -28,6 +32,10 @@ export default defineConfig({
         '**/05-operator-workflow.spec.ts',
         '**/06-document-pipeline.spec.ts',
         '**/07-tenant-isolation.spec.ts',
+        '**/08-verification-badge-refetch.spec.ts',
+        '**/09-happy-path-multi-parameter.spec.ts',
+        '**/10-invalid-transition-blocked.spec.ts',
+        '**/11-chaos-nightly.spec.ts',
       ],
     },
     {

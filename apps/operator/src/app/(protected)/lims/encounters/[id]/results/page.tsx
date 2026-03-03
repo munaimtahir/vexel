@@ -170,6 +170,7 @@ export default function ResultEntryPage() {
                     onChange={(e) => updateForm(order.id, 'value', e.target.value)}
                     className={inputCls}
                     placeholder="Enter result value"
+                    data-testid={`result-value-${order.id}`}
                   />
                 </div>
                 <div>
@@ -214,6 +215,7 @@ export default function ResultEntryPage() {
               className="flex-1"
               onClick={handleSubmitAll}
               disabled={submitting}
+              data-testid="save-results"
             >
               {submitting ? 'Submitting Results...' : 'Save All Results'}
             </Button>

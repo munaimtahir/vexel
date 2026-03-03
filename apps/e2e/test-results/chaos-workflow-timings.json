@@ -1,0 +1,38 @@
+[
+  {
+    "step": "api:create_patient",
+    "durationMs": 33
+  },
+  {
+    "step": "api:create_encounter",
+    "durationMs": 38
+  },
+  {
+    "step": "api:order_lab",
+    "durationMs": 125
+  },
+  {
+    "step": "api:collect_specimen",
+    "durationMs": 73
+  },
+  {
+    "step": "api:get_encounter",
+    "durationMs": 32
+  },
+  {
+    "step": "api:submit_result",
+    "durationMs": 72
+  },
+  {
+    "step": "api:verify",
+    "durationMs": 104
+  },
+  {
+    "step": "ui:publish_page_load",
+    "durationMs": 798
+  },
+  {
+    "step": "ui:document_published",
+    "durationMs": 76
+  }
+]

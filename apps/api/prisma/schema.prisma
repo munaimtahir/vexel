@@ -115,6 +115,7 @@ model User {
   refreshTokens    RefreshToken[]
   auditEvents      AuditEvent[]
   cashTransactions CashTransaction[]
+  opsBackupRuns    OpsBackupRun[]
 
   @@unique([tenantId, email])
   @@index([tenantId, status])
@@ -981,4 +982,85 @@ model WorkerHeartbeat {
   version     String?
 
   @@map("worker_heartbeats")
+}
+
+// ─── Ops / Backup Management ──────────────────────────────────────────────
+
+// Storage targets — where backup artifacts are stored
+model OpsStorageTarget {
+  id         String   @id @default(uuid())
+  tenantId   String?  // null = global (platform-wide)
+  type       String   // LOCAL | S3 | SSH
+  name       String
+  configJson Json?    // non-secret config: { path, bucket, endpoint, region, prefix }
+  isEnabled  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  backupRuns OpsBackupRun[]
+  schedules  OpsScheduleTarget[]
+
+  @@index([tenantId, isEnabled])
+  @@map("ops_storage_targets")
+}
+
+// Backup / restore / healthcheck run records
+model OpsBackupRun {
+  id                String    @id @default(uuid())
+  type              String    // FULL | TENANT_EXPORT | RESTORE | HEALTHCHECK
+  tenantId          String?   // set for TENANT_EXPORT; null for global operations
+  status            String    @default("QUEUED") // QUEUED | RUNNING | SUCCEEDED | FAILED | CANCELLED
+  startedAt         DateTime?
+  finishedAt        DateTime?
+  artifactPath      String?   // relative path under runtime/backups/
+  artifactSizeBytes BigInt?
+  checksumSha256    String?
+  logPath           String?   // path under runtime/data/logs/
+  initiatedByUserId String?
+  correlationId     String?   @unique
+  errorSummary      String?
+  metaJson          Json?     // type-specific: tenantId, restoreOptions, healthResults, includeFlags
+
+  storageTargetId   String?
+  storageTarget     OpsStorageTarget? @relation(fields: [storageTargetId], references: [id])
+
+  initiatedBy       User?     @relation(fields: [initiatedByUserId], references: [id])
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([type, status])
+  @@index([tenantId])
+  @@index([createdAt])
+  @@map("ops_backup_runs")
+}
+
+// Backup schedules (cron-based)
+model OpsSchedule {
+  id                  String   @id @default(uuid())
+  type                String   // FULL_BACKUP | TENANT_EXPORT
+  tenantId            String?  // required for TENANT_EXPORT
+  cronExpression      String   // e.g. "0 2 * * *"
+  isEnabled           Boolean  @default(true)
+  retentionDays       Int      @default(30)
+  retentionPolicyJson Json?    // { keepLast: N, keepDays: N, deleteOldAfter: N }
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  storageTargets OpsScheduleTarget[]
+
+  @@index([isEnabled])
+  @@map("ops_schedules")
+}
+
+// Many-to-many join: schedule ↔ storage targets
+model OpsScheduleTarget {
+  scheduleId      String
+  storageTargetId String
+
+  schedule      OpsSchedule      @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  storageTarget OpsStorageTarget @relation(fields: [storageTargetId], references: [id], onDelete: Cascade)
+
+  @@id([scheduleId, storageTargetId])
+  @@map("ops_schedule_targets")
 }

@@ -199,6 +199,86 @@ describe('DocumentsService', () => {
       expect(payload.labOrderCode).toBe('order-1');
     });
 
+    it('normalizes receipt demographics with age fallback, single-name dedupe, and missing-field fallback', async () => {
+      prisma.document.findUnique.mockResolvedValue(null);
+      prisma.encounter.findFirst.mockResolvedValue({
+        ...mockEncounter,
+        encounterCode: 'ENC-AGE-001',
+        patient: {
+          ...mockEncounter.patient,
+          firstName: 'Ali',
+          lastName: 'Ali',
+          dateOfBirth: null,
+          ageYears: 33,
+          gender: null,
+          mrn: 'MRN-AGE-001',
+          mobile: null,
+        },
+        labOrders: [{ id: 'order-age-1' }],
+      });
+
+      await service.generateDocument(
+        'tenant-1',
+        'RECEIPT',
+        { issuedAt: '2099-01-01T00:00:00.000Z', patientAge: '99Y' },
+        'enc-1',
+        'ENCOUNTER',
+        'user-1',
+        'corr-1',
+      );
+
+      const payload = prisma.document.create.mock.calls[0][0].data.payloadJson;
+      expect(payload.patientDemographics).toEqual({
+        displayName: 'Ali',
+        ageDisplay: '33Y',
+        gender: undefined,
+        mrn: 'MRN-AGE-001',
+        mobile: undefined,
+      });
+      expect(payload.patientName).toBe('Ali');
+      expect(payload.patientAge).toBe('33Y');
+      expect(payload.patientGender).toBeUndefined();
+      expect(payload.encounterCode).toBe('ENC-AGE-001');
+      expect(payload.labOrderCode).toBe('order-age-1');
+    });
+
+    it('normalizes receipt demographics when DOB and age are missing', async () => {
+      prisma.document.findUnique.mockResolvedValue(null);
+      prisma.encounter.findFirst.mockResolvedValue({
+        ...mockEncounter,
+        encounterCode: 'ENC-NO-AGE',
+        patient: {
+          ...mockEncounter.patient,
+          firstName: 'NoAge',
+          lastName: 'Patient',
+          dateOfBirth: null,
+          ageYears: null,
+          gender: null,
+        },
+      });
+
+      await service.generateDocument(
+        'tenant-1',
+        'RECEIPT',
+        { issuedAt: '2099-01-01T00:00:00.000Z' },
+        'enc-1',
+        'ENCOUNTER',
+        'user-1',
+        'corr-1',
+      );
+
+      const payload = prisma.document.create.mock.calls[0][0].data.payloadJson;
+      expect(payload.patientDemographics).toEqual({
+        displayName: 'NoAge Patient',
+        ageDisplay: '',
+        gender: undefined,
+        mrn: 'MRN-001',
+        mobile: '03001234567',
+      });
+      expect(payload.patientAge).toBeUndefined();
+      expect(payload.patientGender).toBeUndefined();
+    });
+
     it('generateFromEncounter keeps deterministic payload and idempotency on retry', async () => {
       prisma.document.findUnique
         .mockResolvedValueOnce(null)

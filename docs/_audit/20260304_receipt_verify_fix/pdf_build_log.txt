@@ -1,0 +1,91 @@
+ Image vexel-pdf Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 508B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 670B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for mcr.microsoft.com/dotnet/aspnet:8.0
+#3 DONE 0.1s
+
+#4 [internal] load metadata for mcr.microsoft.com/dotnet/sdk:8.0
+#4 DONE 0.1s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 2B done
+#5 DONE 0.1s
+
+#6 [build 1/6] FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:bfb6ed602caa605141700aea7dc7d42574b74b704368e67d683c71a002123808
+#6 resolve mcr.microsoft.com/dotnet/sdk:8.0@sha256:bfb6ed602caa605141700aea7dc7d42574b74b704368e67d683c71a002123808 0.0s done
+#6 DONE 0.0s
+
+#7 [base 1/3] FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:88c86e5469c2b69969e07343193fd3dbe4ff6936d95b994dbfa27348299af111
+#7 resolve mcr.microsoft.com/dotnet/aspnet:8.0@sha256:88c86e5469c2b69969e07343193fd3dbe4ff6936d95b994dbfa27348299af111 0.0s done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 83.90kB 0.0s done
+#8 DONE 0.0s
+
+#9 [build 3/6] COPY [vexel-pdf.csproj, .]
+#9 CACHED
+
+#10 [build 2/6] WORKDIR /src
+#10 CACHED
+
+#11 [build 4/6] RUN dotnet restore "./vexel-pdf.csproj"
+#11 CACHED
+
+#12 [build 5/6] COPY . .
+#12 DONE 1.8s
+
+#13 [build 6/6] RUN dotnet build "vexel-pdf.csproj" -c Release -o /app/build
+#13 2.593   Determining projects to restore...
+#13 6.023   Restored /src/vexel-pdf.csproj (in 1.4 sec).
+#13 28.01   vexel-pdf -> /app/build/VexelPdf.dll
+#13 28.05 
+#13 28.06 Build succeeded.
+#13 28.06     0 Warning(s)
+#13 28.07     0 Error(s)
+#13 28.12 
+#13 28.12 Time Elapsed 00:00:27.09
+#13 DONE 28.6s
+
+#14 [publish 1/1] RUN dotnet publish "vexel-pdf.csproj" -c Release -o /app/publish
+#14 3.377   Determining projects to restore...
+#14 4.952   All projects are up-to-date for restore.
+#14 8.136   vexel-pdf -> /src/bin/Release/net8.0/VexelPdf.dll
+#14 9.184   vexel-pdf -> /app/publish/
+#14 DONE 9.7s
+
+#15 [base 2/3] WORKDIR /app
+#15 CACHED
+
+#16 [base 3/3] RUN apt-get update && apt-get install -y --no-install-recommends curl libfontconfig1 libgdiplus && rm -rf /var/lib/apt/lists/*
+#16 CACHED
+
+#17 [final 1/2] WORKDIR /app
+#17 CACHED
+
+#18 [final 2/2] COPY --from=publish /app/publish .
+#18 DONE 2.4s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 20.9s done
+#19 exporting manifest sha256:896f8ff6aa74eda19b79e3cad3639a37cef0b3e9c688095ad1be80aabfa3a994 0.0s done
+#19 exporting config sha256:0424546e1c7239ad8c5bb1de362d4c2f4da1850e84e87399f5354eff268d3b3c 0.0s done
+#19 exporting attestation manifest sha256:c08091cbdadc01d94e1197829170d6d7a008a04436d296290e5628e036a5cc53
+#19 exporting attestation manifest sha256:c08091cbdadc01d94e1197829170d6d7a008a04436d296290e5628e036a5cc53 0.1s done
+#19 exporting manifest list sha256:2f8a38327266b9e4b906acf42810e1816c4e6a031402d9309146b16a359eec8b
+#19 exporting manifest list sha256:2f8a38327266b9e4b906acf42810e1816c4e6a031402d9309146b16a359eec8b 0.0s done
+#19 naming to docker.io/library/vexel-pdf:latest done
+#19 unpacking to docker.io/library/vexel-pdf:latest
+#19 unpacking to docker.io/library/vexel-pdf:latest 9.7s done
+#19 DONE 31.0s
+
+#20 resolving provenance for metadata file
+#20 DONE 0.2s
+ Image vexel-pdf Built 

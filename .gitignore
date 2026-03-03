@@ -4,3 +4,9 @@ dist/
 .turbo/
 *.env.local
 .env
+
+# Runtime state — not tracked in git
+runtime/data/
+runtime/backups/
+runtime/env/
+runtime/_evidence/

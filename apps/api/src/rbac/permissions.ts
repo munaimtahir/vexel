@@ -50,6 +50,14 @@ export enum Permission {
   DOCUMENT_GENERATE = 'document.generate',
   DOCUMENT_PUBLISH = 'document.publish',
 
+  // Ops / Backup Management
+  OPS_VIEW = 'ops.view',
+  OPS_RUN_BACKUP = 'ops.run_backup',
+  OPS_EXPORT_TENANT = 'ops.export_tenant',
+  OPS_CONFIGURE_SCHEDULES = 'ops.configure_schedules',
+  OPS_CONFIGURE_STORAGE = 'ops.configure_storage',
+  OPS_RESTORE = 'ops.restore',
+
   // Module access
   MODULE_ADMIN = 'module.admin',
   MODULE_OPERATOR = 'module.operator',

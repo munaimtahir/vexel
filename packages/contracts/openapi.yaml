@@ -2657,6 +2657,186 @@ components:
         document:
           $ref: '#/components/schemas/Document'
 
+    # ─── Ops / Backup Management ─────────────────────────────────────────────
+
+    OpsStorageTarget:
+      type: object
+      required: [id, type, name, isEnabled, createdAt, updatedAt]
+      properties:
+        id:          { type: string }
+        tenantId:    { type: string, nullable: true }
+        type:        { type: string, enum: [LOCAL, S3, SSH] }
+        name:        { type: string }
+        configJson:  { type: object, nullable: true, description: "Non-secret config: path, bucket, endpoint, region, prefix" }
+        isEnabled:   { type: boolean }
+        createdAt:   { type: string, format: date-time }
+        updatedAt:   { type: string, format: date-time }
+
+    OpsBackupRun:
+      type: object
+      required: [id, type, status, createdAt, updatedAt]
+      properties:
+        id:                { type: string }
+        type:              { type: string, enum: [FULL, TENANT_EXPORT, RESTORE, HEALTHCHECK] }
+        tenantId:          { type: string, nullable: true }
+        status:            { type: string, enum: [QUEUED, RUNNING, SUCCEEDED, FAILED, CANCELLED] }
+        startedAt:         { type: string, format: date-time, nullable: true }
+        finishedAt:        { type: string, format: date-time, nullable: true }
+        artifactPath:      { type: string, nullable: true }
+        artifactSizeBytes: { type: integer, nullable: true }
+        checksumSha256:    { type: string, nullable: true }
+        logPath:           { type: string, nullable: true }
+        initiatedByUserId: { type: string, nullable: true }
+        correlationId:     { type: string, nullable: true }
+        errorSummary:      { type: string, nullable: true }
+        metaJson:          { type: object, nullable: true }
+        storageTargetId:   { type: string, nullable: true }
+        storageTarget:     { $ref: '#/components/schemas/OpsStorageTarget', nullable: true }
+        createdAt:         { type: string, format: date-time }
+        updatedAt:         { type: string, format: date-time }
+
+    OpsSchedule:
+      type: object
+      required: [id, type, cronExpression, isEnabled, retentionDays, createdAt, updatedAt]
+      properties:
+        id:                  { type: string }
+        type:                { type: string, enum: [FULL_BACKUP, TENANT_EXPORT] }
+        tenantId:            { type: string, nullable: true }
+        cronExpression:      { type: string }
+        isEnabled:           { type: boolean }
+        retentionDays:       { type: integer }
+        retentionPolicyJson: { type: object, nullable: true }
+        storageTargets:
+          type: array
+          items: { $ref: '#/components/schemas/OpsStorageTarget' }
+        createdAt:           { type: string, format: date-time }
+        updatedAt:           { type: string, format: date-time }
+
+    OpsDashboard:
+      type: object
+      required: [lastFullBackup, recentRuns, storageTargets, diskUsage, schedules]
+      properties:
+        lastFullBackup:     { $ref: '#/components/schemas/OpsBackupRun', nullable: true }
+        lastHealthcheck:    { $ref: '#/components/schemas/OpsBackupRun', nullable: true }
+        recentRuns:
+          type: array
+          items: { $ref: '#/components/schemas/OpsBackupRun' }
+        storageTargets:
+          type: array
+          items: { $ref: '#/components/schemas/OpsStorageTarget' }
+        schedules:
+          type: array
+          items: { $ref: '#/components/schemas/OpsSchedule' }
+        diskUsage:
+          type: object
+          properties:
+            backupsDirBytes:  { type: integer }
+            backupsDirHuman:  { type: string }
+            logsDirBytes:     { type: integer }
+            logsDirHuman:     { type: string }
+
+    OpsRunListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/OpsBackupRun' }
+        pagination:
+          type: object
+          required: [total, limit, cursor]
+          properties:
+            total:      { type: integer }
+            limit:      { type: integer }
+            cursor:     { type: string, nullable: true }
+
+    OpsRunLogsResponse:
+      type: object
+      required: [runId, lines, total]
+      properties:
+        runId:   { type: string }
+        logPath: { type: string, nullable: true }
+        lines:   { type: array, items: { type: string } }
+        total:   { type: integer }
+        offset:  { type: integer }
+
+    OpsRunBackupFullRequest:
+      type: object
+      properties:
+        includeDb:          { type: boolean, default: true }
+        includeMinio:       { type: boolean, default: true }
+        includeEnv:         { type: boolean, default: true }
+        includeCaddy:       { type: boolean, default: true }
+        storageTargetId:    { type: string, nullable: true }
+        passphraseMode:     { type: string, enum: [SERVER_MANAGED, NONE], default: SERVER_MANAGED }
+
+    OpsRunTenantExportRequest:
+      type: object
+      required: [tenantId]
+      properties:
+        tenantId:        { type: string }
+        storageTargetId: { type: string, nullable: true }
+
+    OpsRunResponse:
+      type: object
+      required: [runId, status, correlationId]
+      properties:
+        runId:         { type: string }
+        status:        { type: string }
+        correlationId: { type: string }
+
+    OpsRestoreDryRunRequest:
+      type: object
+      required: [artifactPath]
+      properties:
+        artifactPath: { type: string }
+
+    OpsRestoreRunRequest:
+      type: object
+      required: [artifactPath, confirmPhrase, preSnapshotEnabled]
+      properties:
+        artifactPath:       { type: string }
+        confirmPhrase:      { type: string, description: "Must equal 'yes-restore' to confirm" }
+        preSnapshotEnabled: { type: boolean, default: true }
+        mode:               { type: string, enum: [DRY_RUN, APPLY], default: APPLY }
+
+    OpsCreateStorageTargetRequest:
+      type: object
+      required: [type, name]
+      properties:
+        type:       { type: string, enum: [LOCAL, S3, SSH] }
+        name:       { type: string }
+        configJson: { type: object, nullable: true }
+        isEnabled:  { type: boolean, default: true }
+
+    OpsCreateScheduleRequest:
+      type: object
+      required: [type, cronExpression]
+      properties:
+        type:                { type: string, enum: [FULL_BACKUP, TENANT_EXPORT] }
+        tenantId:            { type: string, nullable: true }
+        cronExpression:      { type: string }
+        isEnabled:           { type: boolean, default: true }
+        retentionDays:       { type: integer, default: 30 }
+        retentionPolicyJson: { type: object, nullable: true }
+        storageTargetIds:    { type: array, items: { type: string } }
+
+    OpsStorageTargetListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/OpsStorageTarget' }
+
+    OpsScheduleListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/OpsSchedule' }
+
 
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
@@ -8618,3 +8798,468 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  # ─── Ops / Backup Management ─────────────────────────────────────────────
+
+  /ops/dashboard:
+    get:
+      operationId: getOpsDashboard
+      summary: Ops dashboard summary
+      tags: [Ops]
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsDashboard'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/runs:
+    get:
+      operationId: listOpsRuns
+      summary: List backup/export/restore runs
+      tags: [Ops]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [FULL, TENANT_EXPORT, RESTORE, HEALTHCHECK] }
+        - name: status
+          in: query
+          schema: { type: string, enum: [QUEUED, RUNNING, SUCCEEDED, FAILED, CANCELLED] }
+        - name: tenantId
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+        - name: cursor
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Run list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsRunListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/runs/{id}:
+    get:
+      operationId: getOpsRun
+      summary: Get a specific run by ID
+      tags: [Ops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Run record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsBackupRun'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /ops/runs/{id}/logs:
+    get:
+      operationId: getOpsRunLogs
+      summary: Get logs for a run (tail / paginated)
+      tags: [Ops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 200, maximum: 1000 }
+      responses:
+        "200":
+          description: Log lines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsRunLogsResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /ops/backups/full:run:
+    post:
+      operationId: runFullBackup
+      summary: Trigger a full backup run (QUEUED → worker)
+      tags: [Ops]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpsRunBackupFullRequest'
+      responses:
+        "202":
+          description: Run queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsRunResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/backups/tenant:export:
+    post:
+      operationId: runTenantExport
+      summary: Trigger a tenant export run
+      tags: [Ops]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpsRunTenantExportRequest'
+      responses:
+        "202":
+          description: Run queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsRunResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/restores/full:dryRun:
+    post:
+      operationId: runRestoreFullDryRun
+      summary: Preview restore plan without applying changes
+      tags: [Ops]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpsRestoreDryRunRequest'
+      responses:
+        "202":
+          description: Dry run queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsRunResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/restores/full:run:
+    post:
+      operationId: runRestoreFull
+      summary: Execute full restore (requires confirmPhrase = "yes-restore")
+      tags: [Ops]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpsRestoreRunRequest'
+      responses:
+        "202":
+          description: Restore queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsRunResponse'
+        "400":
+          description: Invalid confirmation phrase
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/healthcheck:run:
+    post:
+      operationId: runHealthcheck
+      summary: Trigger a system healthcheck run
+      tags: [Ops]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "202":
+          description: Healthcheck queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsRunResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/schedules:
+    get:
+      operationId: listOpsSchedules
+      summary: List backup schedules
+      tags: [Ops]
+      responses:
+        "200":
+          description: Schedule list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsScheduleListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/schedules:create:
+    post:
+      operationId: createOpsSchedule
+      summary: Create a backup schedule
+      tags: [Ops]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpsCreateScheduleRequest'
+      responses:
+        "201":
+          description: Schedule created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsSchedule'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/schedules/{id}:update:
+    post:
+      operationId: updateOpsSchedule
+      summary: Update a schedule
+      tags: [Ops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpsCreateScheduleRequest'
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsSchedule'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /ops/schedules/{id}:toggle:
+    post:
+      operationId: toggleOpsSchedule
+      summary: Enable or disable a schedule
+      tags: [Ops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [isEnabled]
+              properties:
+                isEnabled: { type: boolean }
+      responses:
+        "200":
+          description: Toggled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsSchedule'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /ops/storage-targets:
+    get:
+      operationId: listOpsStorageTargets
+      summary: List storage targets
+      tags: [Ops]
+      responses:
+        "200":
+          description: Storage target list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsStorageTargetListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/storage-targets:create:
+    post:
+      operationId: createOpsStorageTarget
+      summary: Create a storage target
+      tags: [Ops]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpsCreateStorageTargetRequest'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsStorageTarget'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /ops/storage-targets/{id}:update:
+    post:
+      operationId: updateOpsStorageTarget
+      summary: Update a storage target
+      tags: [Ops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpsCreateStorageTargetRequest'
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsStorageTarget'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /ops/storage-targets/{id}:toggle:
+    post:
+      operationId: toggleOpsStorageTarget
+      summary: Enable or disable a storage target
+      tags: [Ops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [isEnabled]
+              properties:
+                isEnabled: { type: boolean }
+      responses:
+        "200":
+          description: Toggled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpsStorageTarget'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /ops/storage-targets/{id}:test:
+    post:
+      operationId: testOpsStorageTarget
+      summary: Test connectivity to a storage target
+      tags: [Ops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Test result
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, message]
+                properties:
+                  ok:      { type: boolean }
+                  message: { type: string }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'

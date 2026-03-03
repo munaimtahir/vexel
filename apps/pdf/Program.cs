@@ -1136,7 +1136,7 @@ class ReceiptDocument : IDocument
                     t.Span("Order Code: ").Bold().FontSize(7);
                     t.Span(orderCode).FontSize(7);
                 });
-            });
+            }
             col.Item().PaddingBottom(1).Text(t =>
             {
                 t.Span("Age/Gender: ").Bold().FontSize(7);

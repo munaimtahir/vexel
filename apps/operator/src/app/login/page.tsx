@@ -53,11 +53,11 @@ export default function LoginPage() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required autoFocus placeholder="you@example.com" />
+                <Input id="email" data-testid="login-email" type="email" value={email} onChange={e => setEmail(e.target.value)} required autoFocus placeholder="you@example.com" />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" />
+                <Input id="password" data-testid="login-password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" />
               </div>
               {error && (
                 <Alert variant="destructive">
@@ -65,7 +65,7 @@ export default function LoginPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" data-testid="login-submit" className="w-full" disabled={loading}>
                 {loading ? 'Signing in…' : 'Sign In'}
               </Button>
             </form>

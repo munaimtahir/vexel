@@ -144,7 +144,7 @@ export default function PublishPage() {
         {document && docStatus && (
           <div className="mb-6 px-4 py-3 rounded-md border border-border flex items-center gap-3">
             <span className="font-bold text-foreground">Status: </span>
-            <DocumentStatusBadge status={docStatus} />
+            <DocumentStatusBadge status={docStatus} data-testid="document-status" />
             {(docStatus === 'RENDERING' || docStatus === 'RENDERED') && <span className="text-muted-foreground text-sm">⏳ Generating PDF...</span>}
             <span className="ml-auto text-xs text-muted-foreground font-mono">{document.id?.slice(0, 8)}…</span>
           </div>
@@ -169,7 +169,7 @@ export default function PublishPage() {
           )}
           {docStatus === 'PUBLISHED' && (
             <>
-              <Button onClick={handleDownload} className="bg-primary hover:bg-primary/90">
+              <Button onClick={handleDownload} data-testid="download-pdf" className="bg-primary hover:bg-primary/90">
                 ⬇ Download PDF
               </Button>
               <Button variant="outline" onClick={() => window.print()}>

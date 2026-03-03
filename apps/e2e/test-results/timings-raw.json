@@ -1,0 +1,211 @@
+[
+  {
+    "testTitle": "setup:multi-test-encounter",
+    "entries": [
+      {
+        "step": "patient_create",
+        "startMs": 1772579146446,
+        "endMs": 1772579146476,
+        "durationMs": 30,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "encounter_create",
+        "startMs": 1772579146476,
+        "endMs": 1772579146518,
+        "durationMs": 42,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "order_tests",
+        "startMs": 1772579146518,
+        "endMs": 1772579146624,
+        "durationMs": 106,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "collect_specimen",
+        "startMs": 1772579146624,
+        "endMs": 1772579146676,
+        "durationMs": 52,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "setup_done",
+        "startMs": 1772579146676,
+        "endMs": 1772579146677,
+        "durationMs": 1,
+        "warn": false,
+        "critical": false
+      }
+    ]
+  },
+  {
+    "testTitle": "multi-param:enter-results",
+    "entries": [
+      {
+        "step": "results_page_load",
+        "startMs": 1772579147430,
+        "endMs": 1772579147491,
+        "durationMs": 61,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "results_page_loaded",
+        "startMs": 1772579147491,
+        "endMs": 1772579147525,
+        "durationMs": 34,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "results_filled",
+        "startMs": 1772579147525,
+        "endMs": 1772579147773,
+        "durationMs": 248,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "results_saved",
+        "startMs": 1772579147773,
+        "endMs": 1772579147773,
+        "durationMs": 0,
+        "warn": false,
+        "critical": false
+      }
+    ]
+  },
+  {
+    "testTitle": "setup:multi-test-encounter",
+    "entries": [
+      {
+        "step": "patient_create",
+        "startMs": 1772579149462,
+        "endMs": 1772579149487,
+        "durationMs": 25,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "encounter_create",
+        "startMs": 1772579149487,
+        "endMs": 1772579149516,
+        "durationMs": 29,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "order_tests",
+        "startMs": 1772579149516,
+        "endMs": 1772579149617,
+        "durationMs": 101,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "collect_specimen",
+        "startMs": 1772579149617,
+        "endMs": 1772579149662,
+        "durationMs": 45,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "setup_done",
+        "startMs": 1772579149662,
+        "endMs": 1772579149663,
+        "durationMs": 1,
+        "warn": false,
+        "critical": false
+      }
+    ]
+  },
+  {
+    "testTitle": "multi-param:verify-publish",
+    "entries": [
+      {
+        "step": "result_save",
+        "startMs": 1772579149686,
+        "endMs": 1772579149732,
+        "durationMs": 46,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "verify",
+        "startMs": 1772579149732,
+        "endMs": 1772579150784,
+        "durationMs": 1052,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "publish",
+        "startMs": 1772579150784,
+        "endMs": 1772579150804,
+        "durationMs": 20,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "done",
+        "startMs": 1772579150804,
+        "endMs": 1772579150804,
+        "durationMs": 0,
+        "warn": false,
+        "critical": false
+      }
+    ]
+  },
+  {
+    "testTitle": "setup:multi-test-encounter",
+    "entries": [
+      {
+        "step": "patient_create",
+        "startMs": 1772579151946,
+        "endMs": 1772579151976,
+        "durationMs": 30,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "encounter_create",
+        "startMs": 1772579151976,
+        "endMs": 1772579152011,
+        "durationMs": 35,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "order_tests",
+        "startMs": 1772579152011,
+        "endMs": 1772579152114,
+        "durationMs": 103,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "collect_specimen",
+        "startMs": 1772579152114,
+        "endMs": 1772579152180,
+        "durationMs": 66,
+        "warn": false,
+        "critical": false
+      },
+      {
+        "step": "setup_done",
+        "startMs": 1772579152180,
+        "endMs": 1772579152180,
+        "durationMs": 0,
+        "warn": false,
+        "critical": false
+      }
+    ]
+  }
+]

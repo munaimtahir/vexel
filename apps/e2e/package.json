@@ -5,7 +5,9 @@
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "e2e:lims": "LD_LIBRARY_PATH=/tmp/pw-libs/usr/lib/x86_64-linux-gnu playwright test --project=operator --grep-invert='@nightly' && node scripts/finalize-evidence.mjs",
+    "e2e:lims:nightly": "LD_LIBRARY_PATH=/tmp/pw-libs/usr/lib/x86_64-linux-gnu playwright test --project=operator && node scripts/finalize-evidence.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",

@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Users, ShieldCheck, FlaskConical, UserRound, FileText,
   Palette, ToggleLeft, ClipboardList, Briefcase, ScrollText, Activity,
-  Building2, Stethoscope, CalendarDays, type LucideIcon,
+  Building2, Stethoscope, CalendarDays, HardDrive, type LucideIcon,
 } from 'lucide-react';
 import { hasAnyPermission, type CurrentAdminUser } from '@/lib/rbac';
 
@@ -94,6 +94,24 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: 'Feature Flags',
     icon: ToggleLeft,
     requiredPermissions: ['feature_flag.read'],
+  },
+
+  // ─── Ops / Backups ───────────────────────────────────────────────────
+  {
+    href: '/ops',
+    label: 'Ops',
+    icon: HardDrive,
+    section: 'Ops',
+    requiredPermissions: ['ops.view'],
+    children: [
+      { href: '/ops',           label: 'Dashboard',       requiredPermissions: ['ops.view'] },
+      { href: '/ops/backups',   label: 'Full Backups',    requiredPermissions: ['ops.view'] },
+      { href: '/ops/tenants',   label: 'Tenant Exports',  requiredPermissions: ['ops.view'] },
+      { href: '/ops/restore',   label: 'Restore Center',  requiredPermissions: ['ops.restore'] },
+      { href: '/ops/schedules', label: 'Schedules',       requiredPermissions: ['ops.configure_schedules'] },
+      { href: '/ops/storage',   label: 'Storage Targets', requiredPermissions: ['ops.configure_storage'] },
+      { href: '/ops/logs',      label: 'Logs',            requiredPermissions: ['ops.view'] },
+    ],
   },
 
   // ─── System ──────────────────────────────────────────────────────────

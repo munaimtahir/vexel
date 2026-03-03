@@ -150,7 +150,7 @@ export default function VerifyPage() {
       )}
 
       {encounter.status === 'resulted' && !verified && (
-        <Button onClick={() => setShowModal(true)} className="bg-primary hover:bg-primary/90">
+        <Button onClick={() => setShowModal(true)} data-testid="verify-open-modal" className="bg-primary hover:bg-primary/90">
           Verify &amp; Publish
         </Button>
       )}
@@ -170,6 +170,7 @@ export default function VerifyPage() {
               <Button
                 onClick={handleVerify}
                 disabled={verifying}
+                data-testid="verify-confirm"
                 className="bg-primary hover:bg-primary/90"
               >
                 {verifying ? 'Verifying...' : 'Confirm Verify'}
