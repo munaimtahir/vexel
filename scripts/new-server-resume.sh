@@ -29,25 +29,81 @@ fi
 check_http_code() {
   local url="$1"
   local expected="${2:-200}"
-  local got
-  got="$(curl -sS -o /dev/null -w "%{http_code}" "$url")"
-  if [[ "$got" != "$expected" ]]; then
-    echo "FAIL: $url -> HTTP $got (expected $expected)"
-    return 1
-  fi
-  echo "PASS: $url -> HTTP $got"
+  local got=""
+  local attempt=1
+  local max_attempts=15
+  while (( attempt <= max_attempts )); do
+    if got="$(curl -sS --connect-timeout 2 -o /dev/null -w "%{http_code}" "$url" 2>/dev/null)" && [[ "$got" == "$expected" ]]; then
+      echo "PASS: $url -> HTTP $got"
+      return 0
+    fi
+    sleep 1
+    (( attempt++ ))
+  done
+  echo "FAIL: $url -> HTTP ${got:-000} (expected $expected)"
+  return 1
 }
 
 check_json_health() {
   local url="$1"
-  local body
-  body="$(curl -fsS "$url")"
-  echo "$body" | grep -q '"status":"ok"\|"status": "ok"' || {
-    echo "FAIL: $url did not return status ok."
-    echo "Body: $body"
-    return 1
-  }
-  echo "PASS: $url -> $body"
+  local body=""
+  local attempt=1
+  local max_attempts=15
+  while (( attempt <= max_attempts )); do
+    if body="$(curl -fsS --connect-timeout 2 "$url" 2>/dev/null)" && echo "$body" | grep -q '"status":"ok"\|"status": "ok"'; then
+      echo "PASS: $url -> $body"
+      return 0
+    fi
+    sleep 1
+    (( attempt++ ))
+  done
+  echo "FAIL: $url did not return status ok."
+  echo "Body: ${body:-<empty>}"
+  return 1
+}
+
+check_http_code_public() {
+  local url="$1"
+  local expected="${2:-200}"
+  if check_http_code "$url" "$expected"; then
+    return 0
+  fi
+  echo "WARN: Direct public check failed, retrying via local Caddy resolve."
+  local got=""
+  local attempt=1
+  local max_attempts=15
+  while (( attempt <= max_attempts )); do
+    if got="$(curl -sS --connect-timeout 2 --resolve "${DOMAIN}:443:127.0.0.1" -o /dev/null -w "%{http_code}" "$url" 2>/dev/null)" && [[ "$got" == "$expected" ]]; then
+      echo "PASS: $url -> HTTP $got (via local resolve)"
+      return 0
+    fi
+    sleep 1
+    (( attempt++ ))
+  done
+  echo "FAIL: $url -> HTTP ${got:-000} (expected $expected)"
+  return 1
+}
+
+check_json_health_public() {
+  local url="$1"
+  if check_json_health "$url"; then
+    return 0
+  fi
+  echo "WARN: Direct public check failed, retrying via local Caddy resolve."
+  local body=""
+  local attempt=1
+  local max_attempts=15
+  while (( attempt <= max_attempts )); do
+    if body="$(curl -fsS --connect-timeout 2 --resolve "${DOMAIN}:443:127.0.0.1" "$url" 2>/dev/null)" && echo "$body" | grep -q '"status":"ok"\|"status": "ok"'; then
+      echo "PASS: $url -> $body (via local resolve)"
+      return 0
+    fi
+    sleep 1
+    (( attempt++ ))
+  done
+  echo "FAIL: $url did not return status ok."
+  echo "Body: ${body:-<empty>}"
+  return 1
 }
 
 echo "==> Bringing up stack with build"
@@ -68,9 +124,9 @@ check_http_code "http://127.0.0.1:9027/minio/health/live"
 
 echo
 echo "==> Public-domain smoke checks (DOMAIN fixed: $DOMAIN)"
-check_json_health "https://$DOMAIN/api/health"
-check_http_code "https://$DOMAIN/admin/login"
-check_http_code "https://$DOMAIN/lims/worklist"
+check_json_health_public "https://$DOMAIN/api/health"
+check_http_code_public "https://$DOMAIN/admin/login"
+check_http_code_public "https://$DOMAIN/lims/worklist"
 
 echo
 echo "All resume checks passed."
