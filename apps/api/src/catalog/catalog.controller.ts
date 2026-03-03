@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Patch, Delete, Param, Body, Query, UseGuards, HttpCode, HttpStatus, Req, Headers, Res, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Param, Body, Query, UseGuards, HttpCode, HttpStatus, Req, Headers, Res, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -414,7 +414,7 @@ export class CatalogController {
   ) {
     const user = (req as any).user;
     if (!file) {
-      return { errors: [{ message: 'No file uploaded. Send multipart/form-data with field "file".' }] };
+      throw new BadRequestException('No file uploaded. Send multipart/form-data with field "file".');
     }
     return this.importExportSvc.importFromWorkbook(
       user.tenantId,
