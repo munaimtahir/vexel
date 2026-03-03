@@ -971,3 +971,14 @@ model CashTransaction {
   @@index([tenantId, createdAt])
   @@map("cash_transactions")
 }
+
+// ─── Worker Heartbeat (global singleton row per worker instance) ──────────
+
+model WorkerHeartbeat {
+  id          String   @id @default("worker-singleton")
+  lastBeatAt  DateTime @default(now())
+  startedAt   DateTime @default(now())
+  version     String?
+
+  @@map("worker_heartbeats")
+}

@@ -1,6 +1,7 @@
 import Constants from "expo-constants";
+import { API_BASE_URL } from "./env";
 
-const FALLBACK_API_BASE_URL = "https://lims.alshifalab.pk";
+const FALLBACK_API_BASE_URL = API_BASE_URL;
 
 let runtimeApiBaseUrl: string | undefined;
 

@@ -45,6 +45,7 @@ const mockTenant = { id: 'tenant-1', name: 'Test Tenant' };
 const mockEncounter = {
   id: 'enc-1',
   tenantId: 'tenant-1',
+  encounterCode: 'ENC-001',
   status: 'verified',
   createdAt: new Date('2025-01-11T10:00:00.000Z'),
   updatedAt: new Date('2025-01-11T10:00:00.000Z'),
@@ -55,9 +56,11 @@ const mockEncounter = {
     lastName: 'Doe',
     mrn: 'MRN-001',
     dateOfBirth: new Date('2000-01-10T00:00:00.000Z'),
+    ageYears: null,
     gender: 'female',
+    mobile: '03001234567',
   },
-  labOrders: [],
+  labOrders: [{ id: 'order-1' }],
 };
 
 function buildPrisma(docOverrides: Record<string, unknown> = {}) {
@@ -185,6 +188,15 @@ describe('DocumentsService', () => {
       const payload = prisma.document.create.mock.calls[0][0].data.payloadJson;
       expect(payload.issuedAt).toBe('2025-01-11T10:00:00.000Z');
       expect(payload.patientAge).toBe('25Y');
+      expect(payload.patientDemographics).toEqual({
+        displayName: 'Jane Doe',
+        ageDisplay: '25Y',
+        gender: 'female',
+        mrn: 'MRN-001',
+        mobile: '03001234567',
+      });
+      expect(payload.encounterCode).toBe('ENC-001');
+      expect(payload.labOrderCode).toBe('order-1');
     });
 
     it('generateFromEncounter keeps deterministic payload and idempotency on retry', async () => {

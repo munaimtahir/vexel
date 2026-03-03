@@ -4,6 +4,7 @@ import { S3Client, CreateBucketCommand, HeadBucketCommand } from '@aws-sdk/clien
 import { processCatalogImport } from './catalog-import.processor';
 import { processCatalogExport } from './catalog-export.processor';
 import { processDocumentRender } from './document-render.processor';
+import { getPrismaClient } from './prisma';
 
 async function ensureStorageBucket() {
   const bucket = process.env.STORAGE_BUCKET ?? 'vexel-documents';
@@ -71,7 +72,25 @@ console.log('🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-ex
 // Ensure MinIO bucket exists on startup
 ensureStorageBucket().catch((err) => console.error('Failed to ensure storage bucket:', err.message));
 
+// Worker heartbeat — upserts a singleton row every 30s so the API can detect worker liveness
+const WORKER_VERSION = process.env.npm_package_version ?? '0.1.0';
+const heartbeatPrisma = getPrismaClient();
+async function writeHeartbeat() {
+  try {
+    await heartbeatPrisma.workerHeartbeat.upsert({
+      where: { id: 'worker-singleton' },
+      update: { lastBeatAt: new Date() },
+      create: { id: 'worker-singleton', startedAt: new Date(), lastBeatAt: new Date(), version: WORKER_VERSION },
+    });
+  } catch (err: any) {
+    console.warn('[worker] heartbeat write failed:', err.message);
+  }
+}
+writeHeartbeat();
+const heartbeatTimer = setInterval(writeHeartbeat, 30_000);
+
 process.on('SIGTERM', async () => {
+  clearInterval(heartbeatTimer);
   await Promise.all([jobsWorker.close(), catalogImportWorker.close(), catalogExportWorker.close(), documentRenderWorker.close()]);
   process.exit(0);
 });

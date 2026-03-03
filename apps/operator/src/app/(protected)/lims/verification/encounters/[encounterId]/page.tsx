@@ -64,8 +64,6 @@ export default function VerificationEncounterPage() {
   const [detail, setDetail] = useState<VerificationDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [loadAll, setLoadAll] = useState(true);
-  const [selectedTest, setSelectedTest] = useState<string | null>(null);
 
   // Verify flow state
   const [verifying, setVerifying] = useState(false);
@@ -89,8 +87,6 @@ export default function VerificationEncounterPage() {
       });
       if (apiErr || !data) { setError('Failed to load encounter'); return; }
       setDetail(data as VerificationDetail);
-      const cards = (data as VerificationDetail).testCards ?? [];
-      if (cards.length > 0 && !selectedTest) setSelectedTest(cards[0].labOrderId);
     } catch {
       setError('Failed to load encounter');
     } finally {
@@ -127,8 +123,6 @@ export default function VerificationEncounterPage() {
   useEffect(() => () => { if (countdownRef.current) clearInterval(countdownRef.current); }, []);
 
   const scrollToTest = (labOrderId: string) => {
-    setSelectedTest(labOrderId);
-    if (!loadAll) return; // card is already visible in loadAll mode via id
     const el = document.getElementById(`test-card-${labOrderId}`);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -189,6 +183,7 @@ export default function VerificationEncounterPage() {
         setVerifyError('Verification failed. Please try again.');
         return;
       }
+      await loadDetail();
       setVerified(true);
 
       // Reload queue to find next patient
@@ -222,7 +217,7 @@ export default function VerificationEncounterPage() {
   const { patient: p, encounter, submittedTestsCount = 0, pendingVerificationCount = 0, testCards = [] } = detail;
   const age = p ? calcAge(p.dateOfBirth, p.ageYears) : '—';
   const sex = p?.gender ? p.gender.charAt(0).toUpperCase() : '—';
-  const visibleCards = loadAll ? testCards : testCards.filter(c => c.labOrderId === selectedTest);
+  const visibleCards = testCards;
 
   return (
     <div className="flex flex-col h-full relative">
@@ -251,14 +246,6 @@ export default function VerificationEncounterPage() {
           {/* Action buttons */}
           <div className="flex gap-2 items-center flex-wrap">
             <Button variant="outline" size="sm" onClick={() => router.push('/lims/verification')}>← Back</Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setLoadAll(v => !v)}
-              className={cn(loadAll ? "bg-muted border-border text-primary" : "")}
-            >
-              {loadAll ? 'Show one test' : 'Load all tests'}
-            </Button>
             <Button variant="outline" size="sm" onClick={() => router.push('/lims/verification')}>Skip</Button>
             {!verified && (
               <Button
@@ -318,9 +305,9 @@ export default function VerificationEncounterPage() {
             <button
               key={card.labOrderId}
               onClick={() => scrollToTest(card.labOrderId)}
-              className={cn("flex items-center gap-1.5 w-full text-left rounded-md px-2 py-1.5 text-xs mb-0.5 cursor-pointer border-none", selectedTest === card.labOrderId ? "bg-muted text-primary font-medium" : "text-muted-foreground hover:bg-muted/50")}
+              className={cn("flex items-center gap-1.5 w-full text-left rounded-md px-2 py-1.5 text-xs mb-0.5 cursor-pointer border-none text-muted-foreground hover:bg-muted/50")}
             >
-              <span className={cn("w-2 h-2 rounded-full flex-shrink-0", card.resultStatus === 'VERIFIED' ? "bg-[hsl(var(--status-success-bg))]0" : "bg-primary")} />
+              <span className={cn("w-2 h-2 rounded-full flex-shrink-0", verified || card.resultStatus === 'VERIFIED' ? "bg-[hsl(var(--status-success-fg))]" : "bg-primary")} />
               <span className="leading-snug">{card.testName}</span>
             </button>
           ))}
@@ -341,7 +328,7 @@ export default function VerificationEncounterPage() {
               <div className="flex items-center justify-between px-4 py-3 border-b">
                 <div className="font-bold text-base text-foreground">{card.testName}</div>
                 <div className="flex gap-3 items-center">
-                  {card.resultStatus === 'VERIFIED'
+                  {verified || card.resultStatus === 'VERIFIED'
                     ? <Badge className="bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] border-[hsl(var(--status-success-border))]">Verified</Badge>
                     : <Badge className="bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))] border-[hsl(var(--status-warning-border))]">Pending Verification</Badge>
                   }

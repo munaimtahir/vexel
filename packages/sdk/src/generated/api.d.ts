@@ -218,6 +218,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tenants/{tenantId}/service-health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get per-tenant service health and LIMS snapshot (admin only)
+         * @description Returns a read-only snapshot of service health probes (API, worker, PDF, DB, Redis)
+         *     and LIMS operational metrics scoped to the given tenant. No workflow state is mutated.
+         */
+        get: operations["getTenantServiceHealth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users": {
         parameters: {
             query?: never;
@@ -2700,6 +2721,55 @@ export interface components {
             /** Format: date-time */
             createdAt?: string;
         };
+        ServiceHealthBlock: {
+            ok: boolean;
+            latencyMs?: number | null;
+            error?: string | null;
+        };
+        WorkerHealthBlock: {
+            ok: boolean;
+            queues?: {
+                documentRenderDepth?: number;
+                failedJobs24h?: number;
+            };
+            /** Format: date-time */
+            lastHeartbeatAt?: string | null;
+        };
+        ApiHealthBlock: {
+            ok: boolean;
+            version: string;
+            uptimeSec: number;
+        };
+        LimsSnapshot: {
+            /** @description Encounters with ordered tests not fully resulted */
+            pendingResults: number;
+            /** @description Encounters in resulted state awaiting verification */
+            pendingVerification: number;
+            /** @description Documents with FAILED status in the last 24 hours */
+            failedDocuments24h: number;
+            /** @description Documents published today (local midnight to now) */
+            publishedToday: number;
+        };
+        TenantServiceHealthResponse: {
+            tenant: {
+                id: string;
+                name: string;
+                domains: string[];
+                /** @enum {string} */
+                status: "active" | "disabled" | "suspended" | "trial";
+                featureFlags?: {
+                    [key: string]: unknown;
+                } | null;
+            };
+            services: {
+                api: components["schemas"]["ApiHealthBlock"];
+                worker: components["schemas"]["WorkerHealthBlock"];
+                pdf: components["schemas"]["ServiceHealthBlock"];
+                db: components["schemas"]["ServiceHealthBlock"];
+                redis: components["schemas"]["ServiceHealthBlock"];
+            };
+            limsSnapshot: components["schemas"]["LimsSnapshot"];
+        };
         TenantConfig: {
             brandName?: string;
             logoUrl?: string;
@@ -3365,12 +3435,19 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
         };
+        PatientDemographics: {
+            displayName: string;
+            ageDisplay?: string | null;
+            gender?: string | null;
+            mrn?: string | null;
+            mobile?: string | null;
+        };
         ReceiptGenerateRequest: {
-            receiptNumber: string;
-            patientName: string;
-            patientMrn: string;
             /** Format: date-time */
             issuedAt: string;
+            encounterCode?: string | null;
+            labOrderCode?: string | null;
+            patientDemographics: components["schemas"]["PatientDemographics"];
             items: {
                 description: string;
                 quantity: number;
@@ -4280,6 +4357,42 @@ export interface operations {
                     };
                 };
             };
+            /** @description Tenant not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getTenantServiceHealth: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                tenantId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Service health snapshot */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantServiceHealthResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             /** @description Tenant not found */
             404: {
                 headers: {

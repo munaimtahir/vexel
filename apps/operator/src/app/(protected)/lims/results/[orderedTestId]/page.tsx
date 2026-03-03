@@ -7,7 +7,6 @@ import { getToken } from '@/lib/auth';
 import { PageHeader, SectionCard } from '@/components/app';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 import { FlagBadge as StatusFlagBadge } from '@/components/status-badge';
 import { DataTable, type DataTableColumn } from '@vexel/ui-system';
@@ -102,12 +101,8 @@ export default function ResultsEntryPage() {
   const [localFlags, setLocalFlags] = useState<Record<string, string | null>>({});
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [verifying, setVerifying] = useState(false);
   const [toast, setToast] = useState('');
-  const [verifyStatus, setVerifyStatus] = useState<'idle' | 'verifying' | 'verified' | 'published'>('idle');
-  const [publishedDoc, setPublishedDoc] = useState<any>(null);
   const [actionError, setActionError] = useState('');
-  const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRefs = useRef<Record<string, HTMLInputElement | HTMLSelectElement | null>>({});
 
   const fetchDetail = useCallback(async () => {
@@ -137,7 +132,6 @@ export default function ResultsEntryPage() {
 
   useEffect(() => {
     fetchDetail();
-    return () => { if (pollRef.current) clearTimeout(pollRef.current); };
   }, [fetchDetail]);
 
   const specimenReady = detail
@@ -228,89 +222,6 @@ export default function ResultsEntryPage() {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const pollForDocument = (encounterId: string, attempt = 0) => {
-    if (attempt >= 15) {
-      setVerifyStatus('verified');
-      return;
-    }
-    pollRef.current = setTimeout(async () => {
-      try {
-        const api = getApiClient(getToken() ?? undefined);
-        // @ts-ignore
-        const { data } = await api.GET('/documents', {
-          params: { query: { encounterId, docType: 'LAB_REPORT', status: 'PUBLISHED' } },
-        });
-        const docs = Array.isArray(data) ? data : (data as any)?.data ?? [];
-        const published = docs.find((d: any) => d.status === 'PUBLISHED' && (d.type === 'LAB_REPORT' || d.docType === 'LAB_REPORT'));
-        if (published) {
-          setPublishedDoc(published);
-          setVerifyStatus('published');
-        } else {
-          pollForDocument(encounterId, attempt + 1);
-        }
-      } catch {
-        pollForDocument(encounterId, attempt + 1);
-      }
-    }, 2000);
-  };
-
-  const handleSubmitAndVerify = async () => {
-    if (!detail || verifying) return;
-    setVerifying(true);
-    setVerifyStatus('verifying');
-    setActionError('');
-    try {
-      const saved = await saveCurrentValues({ silent: true });
-      if (!saved) { setVerifyStatus('idle'); return; }
-      const api = getApiClient(getToken() ?? undefined);
-      // @ts-ignore
-      const { data, error: apiErr } = await api.POST('/results/tests/{orderedTestId}:submit-and-verify', {
-        params: { path: { orderedTestId } },
-        body: {},
-      });
-      if (apiErr) { setActionError('Verify failed'); setVerifyStatus('idle'); return; }
-      if ((data as any)?.orderedTest) setDetail((data as any).orderedTest);
-      setVerifyStatus('verified');
-      setToast('✅ Verified. Rendering report…');
-      pollForDocument(detail.encounterId);
-    } catch {
-      setActionError('Verify failed');
-      setVerifyStatus('idle');
-    } finally {
-      setVerifying(false);
-    }
-  };
-
-  const handleOpenPdf = async (doc: any) => {
-    try {
-      const api = getApiClient(getToken() ?? undefined);
-      const res = await api.GET('/documents/{id}/download', {
-        params: { path: { id: doc.id } },
-        parseAs: 'blob',
-      });
-      if (!res.data) return;
-      const url = URL.createObjectURL(res.data);
-      window.open(url, '_blank');
-    } catch { /* ignore */ }
-  };
-
-  const handleDownloadPdf = async (doc: any) => {
-    try {
-      const api = getApiClient(getToken() ?? undefined);
-      const res = await api.GET('/documents/{id}/download', {
-        params: { path: { id: doc.id } },
-        parseAs: 'blob',
-      });
-      if (!res.data) return;
-      const url = URL.createObjectURL(res.data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `lab-report-${doc.id.slice(0, 8)}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch { /* ignore */ }
   };
 
   const patient = detail?.patient;
@@ -446,25 +357,9 @@ export default function ResultsEntryPage() {
         </div>
       )}
 
-      {/* Verify / publish status banners */}
-      {verifyStatus === 'verifying' && (
-        <div className="chip-neutral rounded-lg px-5 py-3.5 mb-4 text-muted-foreground text-sm font-medium">
-          Verifying…
-        </div>
-      )}
-      {verifyStatus === 'verified' && (
-        <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-border))] rounded-lg px-5 py-3.5 mb-4 text-[hsl(var(--status-success-fg))] text-sm font-medium">
-          ✅ Verified. Rendering report…
-        </div>
-      )}
-      {verifyStatus === 'published' && publishedDoc && (
-        <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-border))] rounded-lg px-5 py-4 mb-4">
-          <div className="font-bold text-[hsl(var(--status-success-fg))] mb-2.5">✅ Report Published</div>
-          <div className="flex gap-2.5 flex-wrap">
-            <Button onClick={() => handleOpenPdf(publishedDoc)}>Open PDF</Button>
-            <Button className="bg-primary hover:bg-primary/90" onClick={() => handleDownloadPdf(publishedDoc)}>Download PDF</Button>
-            <Button variant="outline" onClick={() => navigateAfterAction(detail.encounterId)}>Next test →</Button>
-          </div>
+      {isSubmitted && (
+        <div className="bg-[hsl(var(--status-warning-bg))] border border-[hsl(var(--status-warning-border))] rounded-lg px-5 py-3.5 mb-4 text-[hsl(var(--status-warning-fg))] text-sm font-medium">
+          Forwarded for verification. Verify this encounter from the verification queue.
         </div>
       )}
 
@@ -602,12 +497,10 @@ export default function ResultsEntryPage() {
           {submitting || saving ? 'Saving…' : 'Save & Forward'}
         </Button>
         <Button
-          onClick={handleSubmitAndVerify}
-          disabled={!specimenReady || verifying || saving || isVerified || hasIncompleteParameters}
-          title={hasIncompleteParameters ? 'Complete all unlocked parameters before verify/publish' : 'Submit, verify and publish'}
-          className="bg-primary hover:bg-primary/90"
+          variant="outline"
+          asChild
         >
-          {verifying ? 'Verifying…' : 'Verify & Publish'}
+          <Link href="/lims/verification">Open Verification Queue</Link>
         </Button>
         <span className="self-center text-xs text-muted-foreground">
           Enter: save, Ctrl+Enter: save & next

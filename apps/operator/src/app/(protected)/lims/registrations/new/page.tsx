@@ -308,10 +308,12 @@ export default function NewRegistrationPage() {
     setSaving(true); setSaveError(''); setPatientRegisteredMsg('');
     try {
       const api = getApiClient(getToken() ?? undefined);
-      const parts = patient.fullName.trim().split(/\s+/);
+      const parts = patient.fullName.trim().split(/\s+/).filter(Boolean);
+      const firstName = parts[0] || '';
+      const lastName = parts.length > 1 ? parts.slice(1).join(' ') : '';
       const body: Record<string, unknown> = {
-        firstName: parts[0] || '',
-        lastName: parts.length > 1 ? parts.slice(1).join(' ') : parts[0] || '',
+        firstName,
+        lastName,
         gender: patient.gender,
       };
       if (mobileValue.replace(/[^0-9]/g, '').length >= 4) body.mobile = mobileValue;
@@ -347,10 +349,12 @@ export default function NewRegistrationPage() {
       let patientId = existingPatient?.id;
 
       if (!patientId) {
-        const parts = patient.fullName.trim().split(/\s+/);
+        const parts = patient.fullName.trim().split(/\s+/).filter(Boolean);
+        const firstName = parts[0] || '';
+        const lastName = parts.length > 1 ? parts.slice(1).join(' ') : '';
         const body: Record<string, unknown> = {
-          firstName: parts[0] || '',
-          lastName: parts.length > 1 ? parts.slice(1).join(' ') : parts[0] || '',
+          firstName,
+          lastName,
           gender: patient.gender,
         };
         if (mobileValue.replace(/[^0-9]/g, '').length >= 4) body.mobile = mobileValue;
@@ -394,13 +398,18 @@ export default function NewRegistrationPage() {
         // @ts-ignore
         await api.POST('/documents/receipt:generate', {
           body: {
-            receiptNumber: (enc as any).encounterCode ?? encounterId,
-            patientName: patient.fullName.trim(),
-            patientMrn: existingPatient?.mrn ?? 'Auto',
             issuedAt: new Date().toISOString(),
+            encounterCode: (enc as any).encounterCode ?? encounterId,
+            patientDemographics: {
+              displayName: patient.fullName.trim(),
+              ageDisplay: patient.dateOfBirth ? `${ageFromDob(patient.dateOfBirth)}Y` : (displayAge ? `${displayAge}Y` : ''),
+              gender: patient.gender || undefined,
+              mrn: existingPatient?.mrn ?? undefined,
+              mobile: mobileValue || undefined,
+            },
             items: selectedTests.map(t => ({ description: t.name, quantity: 1, unitPrice: t.price ?? 0, total: t.price ?? 0 })),
             subtotal: total, tax: 0, grandTotal: total,
-            sourceRef: encounterId, sourceType: 'encounter',
+            sourceRef: encounterId, sourceType: 'ENCOUNTER',
           } as any,
         });
       } catch { /* best-effort */ }

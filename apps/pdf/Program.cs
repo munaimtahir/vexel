@@ -204,16 +204,27 @@ class LabReportDocument : IDocument
 
     public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
-    string Get(string key, string fallback = "\u2014")
+    string Get(string key, string fallback = "")
     {
         if (_payload.TryGetProperty(key, out var v)) return DocHelpers.ToDisplay(v, fallback);
         return fallback;
     }
 
-    static string GetFrom(JsonElement obj, string key, string fallback = "\u2014")
+    static string GetFrom(JsonElement obj, string key, string fallback = "")
     {
         if (obj.ValueKind == JsonValueKind.Object && obj.TryGetProperty(key, out var v))
             return DocHelpers.ToDisplay(v, fallback);
+        return fallback;
+    }
+
+    string GetPatientDemo(string key, string fallback = "")
+    {
+        if (_payload.TryGetProperty("patientDemographics", out var pd) &&
+            pd.ValueKind == JsonValueKind.Object &&
+            pd.TryGetProperty(key, out var value))
+        {
+            return DocHelpers.ToDisplay(value, fallback);
+        }
         return fallback;
     }
 
@@ -244,7 +255,7 @@ class LabReportDocument : IDocument
         var isVerified    = reportStatus.Equals("Verified", StringComparison.OrdinalIgnoreCase);
 
         byte[]? barcodeBytes = null;
-        if (encounterCode != "\u2014" && !string.IsNullOrWhiteSpace(encounterCode))
+        if (!string.IsNullOrWhiteSpace(encounterCode))
             barcodeBytes = DocHelpers.GenerateBarcodePng(encounterCode);
 
         container.Column(col =>
@@ -553,16 +564,27 @@ class LabReportDocumentV2 : IDocument
 
     public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
-    string Get(string key, string fallback = "\u2014")
+    string Get(string key, string fallback = "")
     {
         if (_payload.TryGetProperty(key, out var v)) return DocHelpers.ToDisplay(v, fallback);
         return fallback;
     }
 
-    static string GetFrom(JsonElement obj, string key, string fallback = "\u2014")
+    static string GetFrom(JsonElement obj, string key, string fallback = "")
     {
         if (obj.ValueKind == JsonValueKind.Object && obj.TryGetProperty(key, out var v))
             return DocHelpers.ToDisplay(v, fallback);
+        return fallback;
+    }
+
+    string GetPatientDemo(string key, string fallback = "")
+    {
+        if (_payload.TryGetProperty("patientDemographics", out var pd) &&
+            pd.ValueKind == JsonValueKind.Object &&
+            pd.TryGetProperty(key, out var value))
+        {
+            return DocHelpers.ToDisplay(value, fallback);
+        }
         return fallback;
     }
 
@@ -594,7 +616,7 @@ class LabReportDocumentV2 : IDocument
         var isVerified    = reportStatus.Equals("Verified", StringComparison.OrdinalIgnoreCase);
 
         byte[]? barcodeBytes = null;
-        if (encounterCode != "\u2014" && !string.IsNullOrWhiteSpace(encounterCode))
+        if (!string.IsNullOrWhiteSpace(encounterCode))
             barcodeBytes = DocHelpers.GenerateBarcodePng(encounterCode);
 
         container.Column(col =>
@@ -982,16 +1004,27 @@ class ReceiptDocument : IDocument
 
     public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
-    string Get(string key, string fallback = "\u2014")
+    string Get(string key, string fallback = "")
     {
         if (_payload.TryGetProperty(key, out var v)) return DocHelpers.ToDisplay(v, fallback);
         return fallback;
     }
 
-    static string GetFrom(JsonElement obj, string key, string fallback = "\u2014")
+    static string GetFrom(JsonElement obj, string key, string fallback = "")
     {
         if (obj.ValueKind == JsonValueKind.Object && obj.TryGetProperty(key, out var v))
             return DocHelpers.ToDisplay(v, fallback);
+        return fallback;
+    }
+
+    string GetPatientDemo(string key, string fallback = "")
+    {
+        if (_payload.TryGetProperty("patientDemographics", out var pd) &&
+            pd.ValueKind == JsonValueKind.Object &&
+            pd.TryGetProperty(key, out var value))
+        {
+            return DocHelpers.ToDisplay(value, fallback);
+        }
         return fallback;
     }
 
@@ -999,7 +1032,7 @@ class ReceiptDocument : IDocument
     {
         var encounterCode = Get("encounterCode");
         byte[]? barcodeBytes = null;
-        if (encounterCode != "\u2014" && !string.IsNullOrWhiteSpace(encounterCode))
+        if (!string.IsNullOrWhiteSpace(encounterCode))
             barcodeBytes = DocHelpers.GenerateBarcodePng(encounterCode);
 
         var isThermal = string.Equals(_branding.ReceiptLayout ?? "a4", "thermal", StringComparison.OrdinalIgnoreCase);
@@ -1075,22 +1108,42 @@ class ReceiptDocument : IDocument
             col.Item().PaddingBottom(4);
 
             // ── Patient Info ─────────────────────────────────────
-            var mrn     = Get("patientMrn");
-            var orderId = Get("encounterCode");
+            var displayName = GetPatientDemo("displayName", Get("patientName"));
+            var ageDisplay = GetPatientDemo("ageDisplay", Get("patientAge"));
+            var gender = GetPatientDemo("gender", Get("patientGender"));
+            var mrn = GetPatientDemo("mrn", Get("patientMrn"));
+            var encounterId = Get("encounterCode");
+            var orderCode = Get("labOrderCode");
             col.Item().PaddingBottom(1).Text(t =>
             {
-                t.Span($"MRN/Lab ID: ").Bold().FontSize(7);
-                t.Span($"{mrn} / {orderId}").FontSize(7);
+                t.Span($"MRN: ").Bold().FontSize(7);
+                t.Span(string.IsNullOrWhiteSpace(mrn) ? "N/A" : mrn).FontSize(7);
             });
             col.Item().PaddingBottom(1).Text(t =>
             {
                 t.Span("Patient: ").Bold().FontSize(7);
-                t.Span(Get("patientName")).FontSize(7);
+                t.Span(string.IsNullOrWhiteSpace(displayName) ? "N/A" : displayName).FontSize(7);
+            });
+            col.Item().PaddingBottom(1).Text(t =>
+            {
+                t.Span("Encounter: ").Bold().FontSize(7);
+                t.Span(string.IsNullOrWhiteSpace(encounterId) ? "N/A" : encounterId).FontSize(7);
+            });
+            if (!string.IsNullOrWhiteSpace(orderCode))
+            {
+                col.Item().PaddingBottom(1).Text(t =>
+                {
+                    t.Span("Order Code: ").Bold().FontSize(7);
+                    t.Span(orderCode).FontSize(7);
+                });
             });
             col.Item().PaddingBottom(1).Text(t =>
             {
                 t.Span("Age/Gender: ").Bold().FontSize(7);
-                t.Span($"{Get("patientAge")} / {Get("patientGender")}").FontSize(7);
+                var ageGender = string.IsNullOrWhiteSpace(ageDisplay)
+                    ? (string.IsNullOrWhiteSpace(gender) ? "N/A" : gender)
+                    : (string.IsNullOrWhiteSpace(gender) ? ageDisplay : $"{ageDisplay} / {gender}");
+                t.Span(ageGender).FontSize(7);
             });
             col.Item().PaddingBottom(4).Text(t =>
             {
@@ -1247,14 +1300,14 @@ class ReceiptDocument : IDocument
             {
                 table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); });
                 InfoRow(table,
-                    $"MRN: {Get("patientMrn")}",
-                    $"Order ID: {encounterCode}");
+                    $"MRN: {GetPatientDemo("mrn", Get("patientMrn", "N/A"))}",
+                    $"Encounter: {(string.IsNullOrWhiteSpace(encounterCode) ? "N/A" : encounterCode)}");
                 InfoRow(table,
-                    $"Patient: {Get("patientName")}",
+                    $"Patient: {GetPatientDemo("displayName", Get("patientName", "N/A"))}",
                     $"Date: {DocHelpers.FormatDate(Get("issuedAt"))}");
                 InfoRow(table,
-                    $"Age/Gender: {Get("patientAge")}/{Get("patientGender")}",
-                    $"Receipt No: {Get("receiptNumber")}");
+                    $"Age/Gender: {GetPatientDemo("ageDisplay", Get("patientAge", "N/A"))}/{GetPatientDemo("gender", Get("patientGender", ""))}",
+                    string.IsNullOrWhiteSpace(Get("labOrderCode")) ? "" : $"Order Code: {Get("labOrderCode")}");
             });
 
             // 6. Items table + totals

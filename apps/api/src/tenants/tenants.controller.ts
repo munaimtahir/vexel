@@ -8,6 +8,7 @@ import { PermissionsGuard } from '../rbac/permissions.guard';
 import { RequirePermissions } from '../rbac/require-permissions.decorator';
 import { Permission } from '../rbac/permissions';
 import { TenantsService } from './tenants.service';
+import { TenantServiceHealthService } from './tenant-service-health.service';
 import { FeatureFlagsService } from '../feature-flags/feature-flags.service';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request } from 'express';
@@ -20,6 +21,7 @@ export class TenantsController {
   constructor(
     private readonly svc: TenantsService,
     private readonly featureFlags: FeatureFlagsService,
+    private readonly serviceHealth: TenantServiceHealthService,
   ) {}
 
   @Get()
@@ -89,5 +91,15 @@ export class TenantsController {
     @Headers(CORRELATION_ID_HEADER) cid?: string,
   ) {
     return this.svc.enableLims(tenantId, body, (req as any).user.userId, cid);
+  }
+
+  @Get(':tenantId/service-health')
+  @RequirePermissions(Permission.TENANT_READ)
+  getTenantServiceHealth(
+    @Req() req: Request,
+    @Param('tenantId') tenantId: string,
+    @Headers(CORRELATION_ID_HEADER) cid?: string,
+  ) {
+    return this.serviceHealth.getServiceHealth(tenantId, (req as any).user.userId, cid);
   }
 }

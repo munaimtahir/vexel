@@ -195,6 +195,105 @@ components:
           type: string
           format: date-time
 
+    ServiceHealthBlock:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+        latencyMs:
+          type: number
+          nullable: true
+        error:
+          type: string
+          nullable: true
+
+    WorkerHealthBlock:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+        queues:
+          type: object
+          properties:
+            documentRenderDepth:
+              type: integer
+            failedJobs24h:
+              type: integer
+        lastHeartbeatAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    ApiHealthBlock:
+      type: object
+      required: [ok, version, uptimeSec]
+      properties:
+        ok:
+          type: boolean
+        version:
+          type: string
+        uptimeSec:
+          type: number
+
+    LimsSnapshot:
+      type: object
+      required: [pendingResults, pendingVerification, failedDocuments24h, publishedToday]
+      properties:
+        pendingResults:
+          type: integer
+          description: Encounters with ordered tests not fully resulted
+        pendingVerification:
+          type: integer
+          description: Encounters in resulted state awaiting verification
+        failedDocuments24h:
+          type: integer
+          description: Documents with FAILED status in the last 24 hours
+        publishedToday:
+          type: integer
+          description: Documents published today (local midnight to now)
+
+    TenantServiceHealthResponse:
+      type: object
+      required: [tenant, services, limsSnapshot]
+      properties:
+        tenant:
+          type: object
+          required: [id, name, domains, status]
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            domains:
+              type: array
+              items:
+                type: string
+            status:
+              type: string
+              enum: [active, disabled, suspended, trial]
+            featureFlags:
+              type: object
+              additionalProperties: true
+              nullable: true
+        services:
+          type: object
+          required: [api, worker, pdf, db, redis]
+          properties:
+            api:
+              $ref: '#/components/schemas/ApiHealthBlock'
+            worker:
+              $ref: '#/components/schemas/WorkerHealthBlock'
+            pdf:
+              $ref: '#/components/schemas/ServiceHealthBlock'
+            db:
+              $ref: '#/components/schemas/ServiceHealthBlock'
+            redis:
+              $ref: '#/components/schemas/ServiceHealthBlock'
+        limsSnapshot:
+          $ref: '#/components/schemas/LimsSnapshot'
+
     TenantConfig:
       type: object
       properties:
@@ -1599,19 +1698,40 @@ components:
           type: string
           format: date-time
 
+    PatientDemographics:
+      type: object
+      required: [displayName]
+      properties:
+        displayName:
+          type: string
+        ageDisplay:
+          type: string
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        mrn:
+          type: string
+          nullable: true
+        mobile:
+          type: string
+          nullable: true
+
     ReceiptGenerateRequest:
       type: object
-      required: [receiptNumber, patientName, patientMrn, issuedAt, items, subtotal, tax, grandTotal]
+      required: [issuedAt, patientDemographics, items, subtotal, tax, grandTotal]
       properties:
-        receiptNumber:
-          type: string
-        patientName:
-          type: string
-        patientMrn:
-          type: string
         issuedAt:
           type: string
           format: date-time
+        encounterCode:
+          type: string
+          nullable: true
+        labOrderCode:
+          type: string
+          nullable: true
+        patientDemographics:
+          $ref: '#/components/schemas/PatientDemographics'
         items:
           type: array
           items:
@@ -2950,6 +3070,41 @@ paths:
                       hash: { type: string }
                   tenant:
                     $ref: '#/components/schemas/TenantSummary'
+        "404":
+          description: Tenant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tenants/{tenantId}/service-health:
+    get:
+      operationId: getTenantServiceHealth
+      summary: Get per-tenant service health and LIMS snapshot (admin only)
+      description: |
+        Returns a read-only snapshot of service health probes (API, worker, PDF, DB, Redis)
+        and LIMS operational metrics scoped to the given tenant. No workflow state is mutated.
+      tags: [AdminTenants]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        "200":
+          description: Service health snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantServiceHealthResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
         "404":
           description: Tenant not found
           content:

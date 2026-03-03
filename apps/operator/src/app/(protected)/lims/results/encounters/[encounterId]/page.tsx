@@ -127,7 +127,6 @@ export default function EncounterResultsPage() {
   // Action state per test
   const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState<Record<string, boolean>>({});
-  const [verifying, setVerifying] = useState<Record<string, boolean>>({});
 
   // Global action state
   const [submittingAll, setSubmittingAll] = useState(false);
@@ -135,10 +134,6 @@ export default function EncounterResultsPage() {
   const [toast, setToast] = useState('');
   const [actionError, setActionError] = useState('');
 
-  // For submit-and-verify result
-  const [verifyStatus, setVerifyStatus] = useState<Record<string, 'idle' | 'verifying' | 'verified' | 'published'>>({});
-  const [publishedDocs, setPublishedDocs] = useState<Record<string, any>>({});
-  const pollRefs = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const inputRefs = useRef<Record<string, HTMLInputElement | HTMLSelectElement | null>>({});
 
   const initTestState = useCallback((detail: TestDetail) => {
@@ -150,7 +145,6 @@ export default function EncounterResultsPage() {
     }
     setLocalValues(prev => ({ ...prev, [detail.id]: vals }));
     setLocalFlags(prev => ({ ...prev, [detail.id]: flags_ }));
-    setVerifyStatus(prev => ({ ...prev, [detail.id]: 'idle' }));
   }, []);
 
   const loadEncounterTests = useCallback(async () => {
@@ -210,9 +204,6 @@ export default function EncounterResultsPage() {
 
   useEffect(() => {
     loadEncounterTests();
-    return () => {
-      Object.values(pollRefs.current).forEach(clearTimeout);
-    };
   }, [loadEncounterTests]);
 
   const refreshTest = async (testId: string) => {
@@ -289,66 +280,6 @@ export default function EncounterResultsPage() {
     }
   };
 
-  const pollForDocument = (testId: string, eid: string, attempt = 0) => {
-    if (attempt >= 15) {
-      setVerifyStatus(prev => ({ ...prev, [testId]: 'verified' }));
-      return;
-    }
-    pollRefs.current[testId] = setTimeout(async () => {
-      try {
-        const api = getApiClient(getToken() ?? undefined);
-        // @ts-ignore
-        const { data } = await api.GET('/documents', {
-          params: { query: { encounterId: eid, docType: 'LAB_REPORT', status: 'PUBLISHED' } },
-        });
-        const docs = Array.isArray(data) ? data : (data as any)?.data ?? [];
-        const published = docs.find(
-          (d: any) => d.status === 'PUBLISHED' && (d.type === 'LAB_REPORT' || d.docType === 'LAB_REPORT')
-        );
-        if (published) {
-          setPublishedDocs(prev => ({ ...prev, [testId]: published }));
-          setVerifyStatus(prev => ({ ...prev, [testId]: 'published' }));
-        } else {
-          pollForDocument(testId, eid, attempt + 1);
-        }
-      } catch {
-        pollForDocument(testId, eid, attempt + 1);
-      }
-    }, 2000);
-  };
-
-  // Submit & Verify a single test
-  const handleSubmitAndVerify = async (testId: string) => {
-    const test = tests.find(t => t.id === testId);
-    if (!test) return;
-    setVerifying(prev => ({ ...prev, [testId]: true }));
-    setVerifyStatus(prev => ({ ...prev, [testId]: 'verifying' }));
-    setActionError('');
-    try {
-      const saved = await saveTest(testId, { silent: true });
-      if (!saved) { setVerifyStatus(prev => ({ ...prev, [testId]: 'idle' })); return; }
-      const api = getApiClient(getToken() ?? undefined);
-      // @ts-ignore
-      const { data, error: apiErr } = await api.POST('/results/tests/{orderedTestId}:submit-and-verify', {
-        params: { path: { orderedTestId: testId } },
-        body: {},
-      });
-      if (apiErr) { setActionError('Verify failed'); setVerifyStatus(prev => ({ ...prev, [testId]: 'idle' })); return; }
-      if ((data as any)?.orderedTest) {
-        const updated = (data as any).orderedTest as TestDetail;
-        setTests(prev => prev.map(t => t.id === testId ? updated : t));
-      }
-      setVerifyStatus(prev => ({ ...prev, [testId]: 'verified' }));
-      setToast('✅ Verified. Rendering report…');
-      pollForDocument(testId, test.encounterId);
-    } catch {
-      setActionError('Verify failed');
-      setVerifyStatus(prev => ({ ...prev, [testId]: 'idle' }));
-    } finally {
-      setVerifying(prev => ({ ...prev, [testId]: false }));
-    }
-  };
-
   // Submit all pending tests
   const handleSubmitAll = async () => {
     setSubmittingAll(true);
@@ -366,19 +297,6 @@ export default function EncounterResultsPage() {
     } finally {
       setSubmittingAll(false);
     }
-  };
-
-  const handleOpenPdf = async (doc: any) => {
-    try {
-      const api = getApiClient(getToken() ?? undefined);
-      const res = await api.GET('/documents/{id}/download', {
-        params: { path: { id: doc.id } },
-        parseAs: 'blob',
-      });
-      if (!res.data) return;
-      const url = URL.createObjectURL(res.data);
-      window.open(url, '_blank');
-    } catch { /* ignore */ }
   };
 
   const firstTest = tests[0];
@@ -473,17 +391,15 @@ export default function EncounterResultsPage() {
           </div>
           <div className="flex gap-1.5 flex-wrap">
             {tests.map(t => {
-              const isVerif = (verifyStatus[t.id] === 'verified' || verifyStatus[t.id] === 'published') || t.resultStatus === 'SUBMITTED';
+              const isSubmitted = t.resultStatus === 'SUBMITTED';
               return (
                 <Badge
                   key={t.id}
                   variant="outline"
                   className={
-                    verifyStatus[t.id] === 'published'
-                      ? 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] border-[hsl(var(--status-success-border))] text-xs'
-                      : isVerif
-                        ? 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] border-transparent text-xs'
-                        : 'bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))] border-transparent text-xs'
+                    isSubmitted
+                      ? 'bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))] border-[hsl(var(--status-warning-border))] text-xs'
+                      : 'bg-muted text-muted-foreground border-transparent text-xs'
                   }
                 >
                   {t.testName}
@@ -516,23 +432,9 @@ export default function EncounterResultsPage() {
         </div>
       )}
 
-      {/* Verify/publish banners for active test */}
-      {verifyStatus[activeTest?.id] === 'verifying' && (
-        <div className="chip-neutral rounded-lg px-5 py-3.5 mb-4 text-muted-foreground text-sm font-medium">
-          Verifying…
-        </div>
-      )}
-      {verifyStatus[activeTest?.id] === 'verified' && (
-        <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-border))] rounded-lg px-5 py-3.5 mb-4 text-[hsl(var(--status-success-fg))] text-sm font-medium">
-          ✅ Verified. Rendering report…
-        </div>
-      )}
-      {verifyStatus[activeTest?.id] === 'published' && publishedDocs[activeTest?.id] && (
-        <div className="bg-[hsl(var(--status-success-bg))] border border-[hsl(var(--status-success-border))] rounded-lg px-5 py-4 mb-4">
-          <div className="font-bold text-[hsl(var(--status-success-fg))] mb-2.5">✅ Report Published</div>
-          <div className="flex gap-2.5 flex-wrap">
-            <Button onClick={() => handleOpenPdf(publishedDocs[activeTest.id])}>Open PDF</Button>
-          </div>
+      {isTestSubmitted && (
+        <div className="bg-[hsl(var(--status-warning-bg))] border border-[hsl(var(--status-warning-border))] rounded-lg px-5 py-3.5 mb-4 text-[hsl(var(--status-warning-fg))] text-sm font-medium">
+          This test is submitted and pending verification.
         </div>
       )}
 
@@ -541,23 +443,19 @@ export default function EncounterResultsPage() {
         <TabsList className="flex-wrap h-auto gap-1 p-1">
           {tests.map(t => {
             const isSubmit = t.resultStatus === 'SUBMITTED';
-            const isVerif = verifyStatus[t.id] === 'published';
             return (
               <TabsTrigger
                 key={t.id}
                 value={t.id}
                 className={cn(
                   'gap-1.5',
-                  isVerif && 'data-[state=active]:bg-[hsl(var(--status-success-bg))] data-[state=active]:text-[hsl(var(--status-success-fg))]',
-                  isSubmit && !isVerif && 'data-[state=active]:bg-[hsl(var(--status-success-bg))] data-[state=active]:text-[hsl(var(--status-success-fg))]'
+                  isSubmit && 'data-[state=active]:bg-[hsl(var(--status-warning-bg))] data-[state=active]:text-[hsl(var(--status-warning-fg))]'
                 )}
               >
                 {t.testName}
-                {isVerif
-                  ? <span className="ml-1 text-xs">✅</span>
-                  : isSubmit
-                    ? <span className="ml-1 text-xs text-[hsl(var(--status-success-fg))]">✓</span>
-                    : <span className="ml-1 w-1.5 h-1.5 rounded-full bg-[hsl(var(--status-warning-fg))] inline-block" />
+                {isSubmit
+                  ? <span className="ml-1 text-xs text-[hsl(var(--status-warning-fg))]">↗</span>
+                  : <span className="ml-1 w-1.5 h-1.5 rounded-full bg-muted-foreground inline-block" />
                 }
               </TabsTrigger>
             );
@@ -706,6 +604,9 @@ export default function EncounterResultsPage() {
           {submitting[activeTest.id] || saving[activeTest.id] ? 'Saving…' : 'Save & Forward'}
         </Button>
         <span className="self-center text-xs text-muted-foreground">Enter: save, Ctrl+Enter: save & next</span>
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/lims/verification">Open Verification Queue</Link>
+        </Button>
       </div>
 
       {/* Divider + bulk actions */}

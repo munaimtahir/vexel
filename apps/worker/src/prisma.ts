@@ -6,3 +6,5 @@ if (!DATABASE_URL) {
 }
 
 export const prisma = new PrismaClient();
+
+export function getPrismaClient() { return prisma; }
