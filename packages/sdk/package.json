@@ -5,7 +5,8 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "build": "tsc --noEmit"
+    "build": "tsc --noEmit",
+    "test": "jest"
   },
   "dependencies": {
     "openapi-fetch": "^0.13.4"
@@ -16,5 +17,8 @@
   },
   "peerDependencies": {
     "typescript": ">=5.0.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
   }
 }
