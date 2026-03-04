@@ -15,8 +15,8 @@ export class StorageService implements OnModuleInit {
       endpoint: process.env.STORAGE_ENDPOINT ?? 'http://minio:9000',
       region: 'us-east-1',
       credentials: {
-        accessKeyId: process.env.STORAGE_ACCESS_KEY ?? 'vexel',
-        secretAccessKey: process.env.STORAGE_SECRET_KEY ?? 'vexel_secret_2026',
+        accessKeyId: process.env.STORAGE_ACCESS_KEY,
+        secretAccessKey: process.env.STORAGE_SECRET_KEY,
       },
       forcePathStyle: true,
     });
@@ -70,8 +70,8 @@ export class StorageService implements OnModuleInit {
           endpoint: publicUrl,
           region: 'us-east-1',
           credentials: {
-            accessKeyId: process.env.STORAGE_ACCESS_KEY ?? 'vexel',
-            secretAccessKey: process.env.STORAGE_SECRET_KEY ?? 'vexel_secret_2026',
+            accessKeyId: process.env.STORAGE_ACCESS_KEY,
+            secretAccessKey: process.env.STORAGE_SECRET_KEY,
           },
           forcePathStyle: true,
         })
