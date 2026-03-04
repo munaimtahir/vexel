@@ -4,6 +4,7 @@ import path from 'node:path';
 const ROOTS = ['apps', 'packages'];
 const ALLOWLIST = new Set([
   path.normalize('packages/theme/styles/neoslate-ember.css'),
+  path.normalize('apps/mobile/src/theme/colors.ts'),
 ]);
 const IGNORE_DIRS = new Set(['node_modules', '.next', 'dist', 'build', 'coverage', '.turbo']);
 
