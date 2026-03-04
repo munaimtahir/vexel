@@ -270,28 +270,33 @@ export async function main() {
     update: {},
     create: { tenantId: 'system', externalId: 't2', name: 'Complete Blood Count', sampleType: 'Whole Blood', specimenType: 'Whole Blood', sampleTypeId: sampleType.id, isActive: true },
   });
-  const glucoseParam = await prisma.parameter.upsert({
-    where: { tenant_param_externalId: { tenantId: 'system', externalId: 'p1' } },
-    update: { name: 'Glucose', resultType: 'numeric', defaultUnit: 'mg/dL', decimals: 1, isActive: true },
-    create: { tenantId: 'system', externalId: 'p1', userCode: 'GLU', name: 'Glucose', resultType: 'numeric', defaultUnit: 'mg/dL', decimals: 1, isActive: true },
-  });
-  const wbcParam = await prisma.parameter.upsert({
-    where: { tenant_param_externalId: { tenantId: 'system', externalId: 'p2' } },
-    update: { name: 'WBC', resultType: 'numeric', defaultUnit: '10^9/L', decimals: 1, isActive: true },
-    create: { tenantId: 'system', externalId: 'p2', userCode: 'WBC', name: 'WBC', resultType: 'numeric', defaultUnit: '10^9/L', decimals: 1, isActive: true },
-  });
+
+  // Manual upsert for Parameter to avoid "no unique constraint matching ON CONFLICT" error in CI
+  const upsertParameter = async (data) => {
+    const existing = await prisma.parameter.findFirst({ where: { tenantId: data.tenantId, externalId: data.externalId } });
+    if (existing) {
+      return await prisma.parameter.update({ where: { id: existing.id }, data: { name: data.name, resultType: data.resultType, defaultUnit: data.defaultUnit, decimals: data.decimals, isActive: data.isActive } });
+    }
+    return await prisma.parameter.create({ data });
+  };
+
+  const glucoseParam = await upsertParameter({ tenantId: 'system', externalId: 'p1', userCode: 'GLU', name: 'Glucose', resultType: 'numeric', defaultUnit: 'mg/dL', decimals: 1, isActive: true });
+  const wbcParam = await upsertParameter({ tenantId: 'system', externalId: 'p2', userCode: 'WBC', name: 'WBC', resultType: 'numeric', defaultUnit: '10^9/L', decimals: 1, isActive: true });
+
   const t1 = await prisma.catalogTest.findFirstOrThrow({ where: { tenantId: 'system', externalId: 't1' } });
   const t2 = await prisma.catalogTest.findFirstOrThrow({ where: { tenantId: 'system', externalId: 't2' } });
-  await prisma.testParameterMapping.upsert({
-    where: { tenantId_testId_parameterId: { tenantId: 'system', testId: t1.id, parameterId: glucoseParam.id } },
-    update: { displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null },
-    create: { tenantId: 'system', testId: t1.id, parameterId: glucoseParam.id, displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null },
-  });
-  await prisma.testParameterMapping.upsert({
-    where: { tenantId_testId_parameterId: { tenantId: 'system', testId: t2.id, parameterId: wbcParam.id } },
-    update: { displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null },
-    create: { tenantId: 'system', testId: t2.id, parameterId: wbcParam.id, displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null },
-  });
+
+  const upsertMapping = async (data) => {
+     const existing = await prisma.testParameterMapping.findFirst({ where: { tenantId: data.tenantId, testId: data.testId, parameterId: data.parameterId } });
+     if (existing) {
+       return await prisma.testParameterMapping.update({ where: { id: existing.id }, data: { displayOrder: data.displayOrder, ordering: data.ordering, isRequired: data.isRequired, unitOverride: data.unitOverride } });
+     }
+     return await prisma.testParameterMapping.create({ data });
+  };
+
+  await upsertMapping({ tenantId: 'system', testId: t1.id, parameterId: glucoseParam.id, displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null });
+  await upsertMapping({ tenantId: 'system', testId: t2.id, parameterId: wbcParam.id, displayOrder: 1, ordering: 1, isRequired: true, unitOverride: null });
+
   await prisma.referenceRange.upsert({
     where: { id: 'seed-range-glucose-system' },
     update: { lowValue: 70, highValue: 110, unit: 'mg/dL', tenantId: 'system', parameterId: glucoseParam.id, testId: t1.id },
