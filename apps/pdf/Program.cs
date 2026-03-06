@@ -973,6 +973,10 @@ class ReceiptDocument : IDocument
     private readonly BrandingConfig _branding;
     private readonly byte[]?        _logoBytes;
 
+    // Adaptive font sizing for the items table
+    const float NormalItemFontPt = 8f;  // preferred size
+    const float MinItemFontPt    = 6f;  // minimum readable size
+
     public ReceiptDocument(JsonElement payload, BrandingConfig branding, byte[]? logoBytes)
     {
         _payload   = payload;
@@ -1017,6 +1021,17 @@ class ReceiptDocument : IDocument
         }
         else
         {
+            // ── Determine how many items fit per A4 half ─────────────────────────────
+            var allItems  = GetItemsList();
+            bool hasLogo  = HasLogoInHeader();
+            bool hasBarcode = barcodeBytes != null;
+
+            var (itemsPage1, fontSizePage1) = FitItemsForA4Half(allItems.Count, hasLogo, hasBarcode);
+            var page1Items    = allItems.Take(itemsPage1).ToList();
+            var overflowItems = allItems.Skip(itemsPage1).ToList();
+            bool hasOverflow  = overflowItems.Count > 0;
+
+            // ── Page 1 — standard two-half A4 receipt ────────────────────────────────
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
@@ -1029,12 +1044,136 @@ class ReceiptDocument : IDocument
                 page.Content().Column(col =>
                 {
                     col.Spacing(0);
-                    col.Item().Height(137, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode));
+                    col.Item().Height(137, Unit.Millimetre).Element(c =>
+                        ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode,
+                            page1Items, fontSizePage1, showTotals: !hasOverflow, hasOverflow));
                     col.Item().Height(11, Unit.Millimetre).Element(ComposeCutLine);
-                    col.Item().Height(137, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode));
+                    col.Item().Height(137, Unit.Millimetre).Element(c =>
+                        ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode,
+                            page1Items, fontSizePage1, showTotals: !hasOverflow, hasOverflow));
                 });
             });
+
+            // ── Overflow pages — continuation with remaining items ────────────────────
+            if (hasOverflow)
+            {
+                int startIdx = itemsPage1;
+                int pageNum  = 2;
+                while (startIdx < allItems.Count)
+                {
+                    var (ovFontSize, ovCount) = FitItemsForOverflowPage(allItems.Count - startIdx);
+                    var pageItems = allItems.Skip(startIdx).Take(ovCount).ToList();
+                    startIdx += ovCount;
+                    bool isLastPage = startIdx >= allItems.Count;
+                    // Capture loop variable explicitly — C# closures capture by reference,
+                    // so we must copy pageNum before it is incremented below.
+                    int  capturedPage = pageNum;
+                    container.Page(page =>
+                    {
+                        page.Size(PageSizes.A4);
+                        page.MarginVertical(0.6f, Unit.Centimetre);
+                        page.MarginHorizontal(0.8f, Unit.Centimetre);
+                        page.DefaultTextStyle(x => x.FontSize(8).FontFamily(Fonts.Arial));
+                        page.Content().Element(c =>
+                            ComposeOverflowPage(c, capturedPage, barcodeBytes, encounterCode,
+                                pageItems, ovFontSize, isLastPage));
+                    });
+                    pageNum++;
+                }
+            }
         }
+    }
+
+    // ── Item-fitting helpers ──────────────────────────────────────────────────────
+
+    // Determines whether the active header layout shows a logo image.
+    bool HasLogoInHeader() =>
+        _logoBytes != null &&
+        !string.Equals(_branding.ReceiptHeaderLayout ?? "", "minimal",
+            StringComparison.OrdinalIgnoreCase);
+
+    // Extract items array from the payload.
+    List<JsonElement> GetItemsList()
+    {
+        if (_payload.TryGetProperty("items", out var el) && el.ValueKind == JsonValueKind.Array)
+            return el.EnumerateArray().ToList();
+        return new List<JsonElement>();
+    }
+
+    // Conversion: 1 typographic point = 1/72 inch = 25.4/72 ≈ 0.3528 mm  →  1 mm ≈ 2.835 pt.
+    const float PtPerMm = 2.835f;
+
+    // Estimated height (mm) of a single data row at the given font size.
+    // Cell padding in QuestPDF: Padding(3) = 3 pt each side = 6 pt total; plus the font cap height.
+    static float ItemRowHeightMm(float fontPt) => (fontPt + 6f) / PtPerMm;
+
+    // Safety margin applied to the available items area to account for
+    // font-metric variance between our estimates and QuestPDF's actual render.
+    const float FitSafetyFactor = 0.85f;
+
+    // Estimate how many items fit in one A4 receipt half (137 mm tall).
+    // Heights derived from layout analysis of ComposeReceiptHalf.
+    static int MaxItemsInHalf(bool hasLogo, bool hasBarcode, float fontPt)
+    {
+        float headerMm = hasLogo ? 29f : 9f;   // logo row (28 mm) or text-only brand block
+        float fixedMm  = 6.5f                  // border (0.7pt×2) + 3mm padding top & bottom
+                       + 4f                    // copy label (8pt + 3pt bottom)
+                       + headerMm              // brand / logo header
+                       + 2.5f                  // divider (PaddingVertical 3pt each side + line)
+                       + 5f                    // "PAYMENT RECEIPT" title (9pt + 4pt bottom)
+                       + 14f                   // patient info (3 rows × ~4.5mm + bottom pad)
+                       + (hasBarcode ? 14f : 0f) // barcode (30pt image + label + line + pad)
+                       + 4.5f                  // footer line + text
+                       + 27f;                  // totals table (5 rows) + payment section
+        float available  = 137f - fixedMm;
+        if (available <= 0) return 0;
+        float tableHdrMm = ItemRowHeightMm(8f);    // table header row is always 8 pt
+        float dataRowMm  = ItemRowHeightMm(fontPt);
+        float usable     = (available - tableHdrMm) * FitSafetyFactor;
+        return Math.Max(0, (int)(usable / dataRowMm));
+    }
+
+    // Choose the largest font size that fits all items in one A4 half.
+    // Returns (how many items fit on page 1, chosen font size).
+    // Edge case: if even 1 item cannot fit (extreme logo/header overhead), we still return
+    // (1, MinItemFontPt) so the receipt is always renderable; QuestPDF will clip at the border.
+    (int itemsOnPage1, float fontSize) FitItemsForA4Half(int totalItems, bool hasLogo, bool hasBarcode)
+    {
+        for (float fs = NormalItemFontPt; fs >= MinItemFontPt; fs -= 1f)
+        {
+            int cap = MaxItemsInHalf(hasLogo, hasBarcode, fs);
+            if (totalItems <= cap)
+                return (totalItems, fs);  // all items fit at this font size
+        }
+        // Still can't fit all → use minimum size, overflow the rest
+        int maxAtMin = MaxItemsInHalf(hasLogo, hasBarcode, MinItemFontPt);
+        return (Math.Max(1, maxAtMin), MinItemFontPt);
+    }
+
+    // Estimate max items on a full-page continuation page (A4, single-block layout).
+    // A4 content height ≈ 285 mm (297 mm − 12 mm vertical margins).
+    // Fixed overhead ≈ 55 mm: header (30mm) + divider (3mm) + title (5mm) +
+    //   patient info (14mm) + totals+payment (27mm) + footer (5mm) − barcode omitted on non-last.
+    static int MaxItemsOnOverflowPage(float fontPt)
+    {
+        const float a4ContentMm         = 285f;
+        const float overflowFixedOverheadMm = 55f;
+        float available  = a4ContentMm - overflowFixedOverheadMm;
+        float tableHdrMm = ItemRowHeightMm(8f);
+        float dataRowMm  = ItemRowHeightMm(fontPt);
+        float usable     = (available - tableHdrMm) * FitSafetyFactor;
+        return Math.Max(1, (int)(usable / dataRowMm));
+    }
+
+    // Choose font size + item count for a continuation overflow page.
+    (float fontSize, int itemCount) FitItemsForOverflowPage(int remaining)
+    {
+        for (float fs = NormalItemFontPt; fs >= MinItemFontPt; fs -= 1f)
+        {
+            int cap = MaxItemsOnOverflowPage(fs);
+            if (remaining <= cap) return (fs, remaining);
+        }
+        return (MinItemFontPt, MaxItemsOnOverflowPage(MinItemFontPt));
     }
 
     void ComposeThermalReceipt(IContainer container, byte[]? barcodeBytes, string encounterCode)
@@ -1214,7 +1353,10 @@ class ReceiptDocument : IDocument
         });
     }
 
-    void ComposeReceiptHalf(IContainer container, string copyLabel, byte[]? barcodeBytes, string encounterCode)
+    void ComposeReceiptHalf(IContainer container, string copyLabel,
+        byte[]? barcodeBytes, string encounterCode,
+        IReadOnlyList<JsonElement> items, float itemFontSize,
+        bool showTotals, bool hasOverflow)
     {
         var brandName     = _branding.BrandName ?? "Vexel Health";
         var address       = _branding.ReportHeader ?? "";
@@ -1286,8 +1428,16 @@ class ReceiptDocument : IDocument
                     $"Receipt No: {Get("receiptNumber")}");
             });
 
-            // 6. Items table + totals
-            col.Item().Element(ComposeReceiptBodyA4);
+            // 6. Items table + optional totals
+            col.Item().Element(c => ComposeReceiptBodyA4(c, items, itemFontSize, showTotals));
+
+            // 7. "Continued on next page" note when items overflow
+            if (hasOverflow && !showTotals)
+            {
+                col.Item().PaddingTop(2).AlignCenter()
+                   .Text("▶ Continued on next page — see all tests & totals overleaf")
+                   .Italic().FontSize(7).FontColor(Colors.Grey.Darken1);
+            }
 
             // 8. Barcode
             if (barcodeBytes != null)
@@ -1327,62 +1477,63 @@ class ReceiptDocument : IDocument
         table.Cell().Padding(2).Text(right).FontSize(8);
     }
 
-    void ComposeReceiptBodyA4(IContainer container)
+    void ComposeReceiptBodyA4(IContainer container, IReadOnlyList<JsonElement> items,
+        float fontSize, bool showTotals)
     {
         container.Column(col =>
         {
-            col.Item().Element(c => ComposeReceiptItems(c, minRows: 11));
-            col.Item().PaddingTop(4).Element(ComposePaymentSection);
+            col.Item().Element(c => ComposeReceiptItems(c, items, fontSize, showTotals));
+            if (showTotals)
+                col.Item().PaddingTop(4).Element(ComposePaymentSection);
         });
     }
 
-    void ComposeReceiptItems(IContainer container, int minRows = 0)
+    void ComposeReceiptItems(IContainer container, IReadOnlyList<JsonElement> items,
+        float fontSize, bool showTotals)
     {
-        if (!_payload.TryGetProperty("items", out var lines) || lines.ValueKind != JsonValueKind.Array)
+        if (items.Count == 0)
         {
             container.Column(col =>
             {
-                col.Item().Table(table => ComposeReceiptItemsTable(table, new List<JsonElement>(), minRows));
+                col.Item().Table(table => ComposeReceiptItemsTable(table, items, fontSize));
                 col.Item().PaddingTop(4).Text("No items.").FontSize(8).FontColor(Colors.Grey.Darken1);
             });
             return;
         }
 
-        var linesList = lines.EnumerateArray().ToList();
-
-        var subtotal   = Get("subtotalAmount",  Get("subtotal",    "0"));
-        var discount   = Get("discountAmount",  Get("discount",    "0"));
-        var grandTotal = Get("grandTotal",      Get("totalAmount", Get("payableAmount", "0")));
-        var paid       = Get("paidAmount",      Get("amountPaid",  "0"));
-        var due        = Get("balanceAmount",   Get("dueAmount",   Get("balanceDue",    "0")));
-
         container.Column(col =>
         {
-            // Items table
-            col.Item().Table(table =>
-            {
-                ComposeReceiptItemsTable(table, linesList, minRows);
-            });
+            // Items table — uses adaptive font size
+            col.Item().Table(table => ComposeReceiptItemsTable(table, items, fontSize));
 
-            // Totals — right-aligned table (no width constraint)
-            col.Item().PaddingTop(4).Table(totals =>
+            // Totals — only shown on the last page of a multi-page receipt
+            if (showTotals)
             {
-                totals.ColumnsDefinition(c => { c.RelativeColumn(3); c.RelativeColumn(1); c.RelativeColumn(2); });
-                // spacer | label | value
-                TotalRow(totals, "Subtotal:",          DocHelpers.Pkr(subtotal),   false);
-                if (decimal.TryParse(discount, out var discVal) && discVal > 0)
-                    TotalRow(totals, "Discount:",      DocHelpers.Pkr(discount),   false);
-                TotalRow(totals, "Payable:",            DocHelpers.Pkr(grandTotal), true);
-                var paidDisplay = decimal.TryParse(paid, out var paidVal) && paidVal == 0 &&
-                                  decimal.TryParse(grandTotal, out var gtVal) && gtVal > 0
-                                  ? "\u2014" : DocHelpers.Pkr(paid);
-                TotalRow(totals, "Paid:",              paidDisplay,                false);
-                TotalRow(totals, "Due:",               DocHelpers.Pkr(due),        false);
-            });
+                var subtotal   = Get("subtotalAmount",  Get("subtotal",    "0"));
+                var discount   = Get("discountAmount",  Get("discount",    "0"));
+                var grandTotal = Get("grandTotal",      Get("totalAmount", Get("payableAmount", "0")));
+                var paid       = Get("paidAmount",      Get("amountPaid",  "0"));
+                var due        = Get("balanceAmount",   Get("dueAmount",   Get("balanceDue",    "0")));
+
+                col.Item().PaddingTop(4).Table(totals =>
+                {
+                    totals.ColumnsDefinition(c => { c.RelativeColumn(3); c.RelativeColumn(1); c.RelativeColumn(2); });
+                    // spacer | label | value
+                    TotalRow(totals, "Subtotal:",   DocHelpers.Pkr(subtotal),   false);
+                    if (decimal.TryParse(discount, out var discVal) && discVal > 0)
+                        TotalRow(totals, "Discount:", DocHelpers.Pkr(discount), false);
+                    TotalRow(totals, "Payable:",    DocHelpers.Pkr(grandTotal), true);
+                    var paidDisplay = decimal.TryParse(paid, out var paidVal) && paidVal == 0 &&
+                                      decimal.TryParse(grandTotal, out var gtVal) && gtVal > 0
+                                      ? "\u2014" : DocHelpers.Pkr(paid);
+                    TotalRow(totals, "Paid:", paidDisplay, false);
+                    TotalRow(totals, "Due:",  DocHelpers.Pkr(due), false);
+                });
+            }
         });
     }
 
-    void ComposeReceiptItemsTable(TableDescriptor table, List<JsonElement> linesList, int minRows)
+    void ComposeReceiptItemsTable(TableDescriptor table, IReadOnlyList<JsonElement> linesList, float fontSize)
     {
         table.ColumnsDefinition(c =>
         {
@@ -1390,6 +1541,7 @@ class ReceiptDocument : IDocument
             c.ConstantColumn(60);
         });
 
+        // Header row — always 8 pt regardless of adaptive font size
         table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
              .BorderColor(Colors.Grey.Lighten2).Padding(3)
              .Text("Test Name").Bold().FontSize(8);
@@ -1403,18 +1555,9 @@ class ReceiptDocument : IDocument
                         GetFrom(line, "testName", GetFrom(line, "name", "\u2014")));
             var price = GetFrom(line, "unitPrice", GetFrom(line, "price", "0"));
             table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                 .Padding(3).Text(desc).FontSize(8);
+                 .Padding(3).Text(desc).FontSize(fontSize);
             table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                 .Padding(3).AlignRight().Text(DocHelpers.Pkr(price)).FontSize(8);
-        }
-
-        var blanksNeeded = Math.Max(0, minRows - linesList.Count);
-        for (var i = 0; i < blanksNeeded; i++)
-        {
-            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
-                 .MinHeight(15).Padding(3).Text(" ").FontSize(8);
-            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten3)
-                 .MinHeight(15).Padding(3).AlignRight().Text(" ").FontSize(8);
+                 .Padding(3).AlignRight().Text(DocHelpers.Pkr(price)).FontSize(fontSize);
         }
     }
 
@@ -1437,6 +1580,91 @@ class ReceiptDocument : IDocument
             col.Item().Text($"Paid by: {method}").FontSize(8).FontColor(Colors.Grey.Darken1);
             if (!string.IsNullOrWhiteSpace(comments) && comments != "\u2014")
                 col.Item().Text(comments).FontSize(8).FontColor(Colors.Grey.Darken1);
+        });
+    }
+
+    // Renders a full-A4 continuation page for items that did not fit on page 1.
+    void ComposeOverflowPage(IContainer container, int pageNum,
+        byte[]? barcodeBytes, string encounterCode,
+        IReadOnlyList<JsonElement> items, float fontSize, bool isLastPage)
+    {
+        var brandName    = _branding.BrandName ?? "Vexel Health";
+        var address      = _branding.ReportHeader ?? "";
+        var footerText   = _branding.ReportFooter
+                           ?? (_branding.BrandName is { } bn ? $"Thank you for choosing {bn}" : "Thank you for choosing us");
+        bool showLogo    = HasLogoInHeader();  // use shared helper for consistent logo visibility
+
+        container.Column(col =>
+        {
+            // 1. Header — same branding as page 1
+            col.Item().PaddingBottom(3).Element(c =>
+            {
+                if (showLogo)
+                {
+                    c.Row(row =>
+                    {
+                        row.ConstantItem(40, Unit.Millimetre).Height(28).Image(_logoBytes!).FitHeight();
+                        row.RelativeItem().Column(hc =>
+                        {
+                            hc.Item().AlignCenter().Text(brandName).Bold().FontSize(13);
+                            if (!string.IsNullOrWhiteSpace(address))
+                                hc.Item().AlignRight().Text(address).FontSize(7).FontColor(Colors.Grey.Darken1);
+                        });
+                    });
+                }
+                else
+                {
+                    c.Column(hc =>
+                    {
+                        hc.Item().AlignCenter().Text(brandName).Bold().FontSize(13);
+                        if (!string.IsNullOrWhiteSpace(address))
+                            hc.Item().AlignCenter().Text(address).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    });
+                }
+            });
+
+            // 2. Divider
+            col.Item().PaddingVertical(3).LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+
+            // 3. Continuation title
+            col.Item().PaddingBottom(4).AlignCenter()
+               .Text($"PAYMENT RECEIPT (Continued — Page {pageNum})")
+               .Bold().FontSize(9).FontColor(Colors.Grey.Darken3);
+
+            // 4. Patient info block (same as page 1)
+            col.Item().PaddingBottom(4).Table(table =>
+            {
+                table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); });
+                InfoRow(table, $"MRN: {Get("patientMrn")}",       $"Order ID: {encounterCode}");
+                InfoRow(table, $"Patient: {Get("patientName")}",   $"Date: {DocHelpers.FormatDate(Get("issuedAt"))}");
+                InfoRow(table, $"Age/Gender: {Get("patientAge")}/{Get("patientGender")}", $"Receipt No: {Get("receiptNumber")}");
+            });
+
+            // 5. Divider
+            col.Item().PaddingBottom(4).LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+
+            // 6. Items (remaining) + totals on last page
+            col.Item().Element(c => ComposeReceiptItems(c, items, fontSize, isLastPage));
+            if (isLastPage)
+                col.Item().PaddingTop(4).Element(ComposePaymentSection);
+
+            // 7. Barcode — only on the last continuation page
+            if (isLastPage && barcodeBytes != null)
+            {
+                col.Item().PaddingTop(4).Column(bc =>
+                {
+                    bc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
+                    bc.Item().Height(30).AlignCenter().Image(barcodeBytes).FitHeight();
+                    bc.Item().AlignCenter().Text(encounterCode).FontSize(7).FontColor(Colors.Grey.Darken1);
+                });
+            }
+
+            // 8. Footer
+            col.Item().PaddingTop(4).Column(fc =>
+            {
+                fc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
+                fc.Item().PaddingTop(2).AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
+            });
         });
     }
 }

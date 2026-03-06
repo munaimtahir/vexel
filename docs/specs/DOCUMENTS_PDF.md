@@ -78,11 +78,41 @@ Each half is a bordered box containing:
 3. **Divider** — thin horizontal rule
 4. **Title** — "PAYMENT RECEIPT" (bold, centered)
 5. **Info block** — MRN, Order ID, Patient name, Date, Age/Gender, Receipt No.
-6. **Items table** — Test Name | Price (with minimum blank rows for visual spacing)
-7. **Totals** — Subtotal, Discount (if > 0), Payable (bold), Paid, Due
-8. **Payment method** — "Paid by: \<method\>"
-9. **Barcode** — CODE-128 barcode of the encounter code (if present)
-10. **Footer** — configurable footer text
+6. **Items table** — Test Name | Price (adaptive font size, see below)
+7. **"Continued on next page" note** — shown only when items overflow to page 2
+8. **Totals** — Subtotal, Discount (if > 0), Payable (bold), Paid, Due *(last page only)*
+9. **Payment method** — "Paid by: \<method\>" *(last page only)*
+10. **Barcode** — CODE-128 barcode of the encounter code (if present)
+11. **Footer** — configurable footer text
+
+#### Adaptive items font size
+
+The items table uses an adaptive font size to fit all ordered tests within the
+available space:
+
+| Font size | When used |
+|-----------|-----------|
+| **8 pt** (normal) | All tests fit at normal size |
+| **7 pt** | Reduces row height to fit more tests |
+| **6 pt** (minimum) | Final fallback — smallest readable size |
+
+If the test list still cannot fit at 6 pt, the receipt automatically continues
+on a second (or further) page.
+
+#### Multi-page overflow
+
+When the number of ordered tests exceeds the space available even at the minimum
+6 pt font size, the engine:
+
+1. Renders page 1 with as many tests as possible and appends a
+   "▶ Continued on next page" note.
+2. Renders additional full-A4 **continuation pages**, each containing:
+   - The same header/logo and brand block
+   - **"PAYMENT RECEIPT (Continued — Page N)"** title
+   - Patient info block (MRN, name, date, receipt no.)
+   - Remaining items table (adaptive font, down to 6 pt)
+   - Totals + payment method on the **last** continuation page only
+   - Barcode + footer on the last continuation page only
 
 #### Tear strip (dotted line)
 
