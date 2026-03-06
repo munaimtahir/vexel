@@ -1458,7 +1458,7 @@ class ReceiptDocument : IDocument
                 table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); });
                 InfoRow(table,
                     $"MRN: {GetPatientDemo("mrn", Get("patientMrn", "N/A"))}",
-                    $"Order ID: {(string.IsNullOrWhiteSpace(orderCode) ? "N/A" : orderCode)}");
+                    $"Order ID: {(string.IsNullOrWhiteSpace(encounterCode) ? "N/A" : encounterCode)}");
                 InfoRow(table,
                     $"Patient: {GetPatientDemo("displayName", Get("patientName", "N/A"))}",
                     $"Date: {DocHelpers.FormatDate(Get("issuedAt"))}");
@@ -1485,7 +1485,7 @@ class ReceiptDocument : IDocument
                 {
                     bc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
                     bc.Item().Height(30).AlignCenter().Image(barcodeBytes).FitHeight();
-                    bc.Item().AlignCenter().Text(orderCode).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    bc.Item().AlignCenter().Text(encounterCode).FontSize(7).FontColor(Colors.Grey.Darken1);
                 });
             }
 
