@@ -1,0 +1,1246 @@
+{
+  "config": {
+    "configFile": "/home/munaim/srv/apps/vexel/apps/e2e/playwright.config.ts",
+    "rootDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/munaim/srv/apps/vexel/apps/e2e/helpers/global-setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/munaim/srv/apps/vexel/apps/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "operator",
+        "name": "operator",
+        "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/01-auth.spec.ts",
+          "**/03-operator-patient.spec.ts",
+          "**/04-operator-encounter.spec.ts",
+          "**/05-operator-workflow.spec.ts",
+          "**/06-document-pipeline.spec.ts",
+          "**/07-tenant-isolation.spec.ts",
+          "**/08-verification-badge-refetch.spec.ts",
+          "**/09-happy-path-multi-parameter.spec.ts",
+          "**/10-invalid-transition-blocked.spec.ts",
+          "**/11-chaos-nightly.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/munaim/srv/apps/vexel/apps/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "admin",
+        "name": "admin",
+        "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/02-admin-crud.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "01-auth.spec.ts",
+      "file": "01-auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication",
+          "file": "01-auth.spec.ts",
+          "line": 11,
+          "column": 6,
+          "specs": [
+            {
+              "title": "operator /login page loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1448,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:29.155Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-ec119bc76f7a9a8e5e79",
+              "file": "01-auth.spec.ts",
+              "line": 12,
+              "column": 7
+            },
+            {
+              "title": "login with valid credentials redirects to worklist",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3536,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:30.872Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-9b8c28ed48cc87858f30",
+              "file": "01-auth.spec.ts",
+              "line": 18,
+              "column": 7
+            },
+            {
+              "title": "invalid credentials show error message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1343,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:34.490Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-35d75854ed795e359479",
+              "file": "01-auth.spec.ts",
+              "line": 30,
+              "column": 7
+            },
+            {
+              "title": "accessing /encounters without auth redirects to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1773,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:35.878Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-f0ecd94ebf3d091fd913",
+              "file": "01-auth.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "/lims/worklist loads after successful login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3350,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:37.725Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-df16738dc9751e09ee3f",
+              "file": "01-auth.spec.ts",
+              "line": 48,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "03-operator-patient.spec.ts",
+      "file": "03-operator-patient.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Operator — Patient management",
+          "file": "03-operator-patient.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "create patient via UI and see in list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5252,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:29.362Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d24919be6e7152a1c9ee-f9a06d45895068adff76",
+              "file": "03-operator-patient.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "patients list page loads with table headers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2711,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:35.136Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d24919be6e7152a1c9ee-c3340cde86fc7f2908c9",
+              "file": "03-operator-patient.spec.ts",
+              "line": 38,
+              "column": 7
+            },
+            {
+              "title": "duplicate MRN shows 409 error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4646,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:37.961Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d24919be6e7152a1c9ee-899553acb2b6141fc714",
+              "file": "03-operator-patient.spec.ts",
+              "line": 49,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "04-operator-encounter.spec.ts",
+      "file": "04-operator-encounter.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Operator — Encounter management",
+          "file": "04-operator-encounter.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [
+            {
+              "title": "create encounter and navigate to detail",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4337,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:41.210Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7db7bcaadd8a4835d529-600d2c08b210554495e2",
+              "file": "04-operator-encounter.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "encounter detail page shows patient identity header",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3379,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:45.697Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7db7bcaadd8a4835d529-72245213f43cd621281f",
+              "file": "04-operator-encounter.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "encounters list page loads with headers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3208,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:49.189Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7db7bcaadd8a4835d529-4209edfc7535401da87e",
+              "file": "04-operator-encounter.spec.ts",
+              "line": 76,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "05-operator-workflow.spec.ts",
+      "file": "05-operator-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Operator — Full LIMS workflow",
+          "file": "05-operator-workflow.spec.ts",
+          "line": 58,
+          "column": 6,
+          "specs": [
+            {
+              "title": "enter results and submit, status updates to resulted",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4736,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:42.708Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fbbc3f8c7effa28db4e0-a71f1cb5d6b5765e77ae",
+              "file": "05-operator-workflow.spec.ts",
+              "line": 59,
+              "column": 7
+            },
+            {
+              "title": "verify results via modal confirm, transitions to verified",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5255,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:47.516Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fbbc3f8c7effa28db4e0-fe8b5a7b157b7cf91225",
+              "file": "05-operator-workflow.spec.ts",
+              "line": 85,
+              "column": 7
+            },
+            {
+              "title": "publish page is accessible after verified status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3611,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:52.852Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fbbc3f8c7effa28db4e0-0a324ac0b9354ba40967",
+              "file": "05-operator-workflow.spec.ts",
+              "line": 124,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "06-document-pipeline.spec.ts",
+      "file": "06-document-pipeline.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Document pipeline",
+          "file": "06-document-pipeline.spec.ts",
+          "line": 50,
+          "column": 6,
+          "specs": [
+            {
+              "title": "report auto-generated on verify and downloadable from publish page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17696,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:52.503Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a87cae255acc72e236e6-94eac3b82538c6ab8c63",
+              "file": "06-document-pipeline.spec.ts",
+              "line": 51,
+              "column": 7
+            },
+            {
+              "title": "generate report twice returns same document ID (idempotency)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3017,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:10.276Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a87cae255acc72e236e6-6b8530b347b2253c4dc0",
+              "file": "06-document-pipeline.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "document status transitions: QUEUED/RENDERING → RENDERED",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3320,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:13.345Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a87cae255acc72e236e6-7d55526c31c3daec49b4",
+              "file": "06-document-pipeline.spec.ts",
+              "line": 115,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "07-tenant-isolation.spec.ts",
+      "file": "07-tenant-isolation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Tenant isolation",
+          "file": "07-tenant-isolation.spec.ts",
+          "line": 26,
+          "column": 6,
+          "specs": [
+            {
+              "title": "encounter created under system tenant is not accessible with a different tenant header",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 516,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:56.538Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1e2dd9804cdd016b9be2-7c84b17e477d67db9acf",
+              "file": "07-tenant-isolation.spec.ts",
+              "line": 27,
+              "column": 7
+            },
+            {
+              "title": "patient created under system tenant is not accessible with a spoofed tenant header",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 477,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:57.084Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1e2dd9804cdd016b9be2-35dd1bdc1842d4ff38ca",
+              "file": "07-tenant-isolation.spec.ts",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "title": "cross-tenant list endpoint does not leak records",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 485,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:57.586Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1e2dd9804cdd016b9be2-b6d8cfba4280f1ef36a6",
+              "file": "07-tenant-isolation.spec.ts",
+              "line": 74,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "08-verification-badge-refetch.spec.ts",
+      "file": "08-verification-badge-refetch.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verification badge refetch regression",
+          "file": "08-verification-badge-refetch.spec.ts",
+          "line": 36,
+          "column": 6,
+          "specs": [
+            {
+              "title": "updates from pending verification to verified immediately after verify command",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 8772,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:39:58.103Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68bfce22ded2a6cd8cd5-dfd5ebb80f7b6c8a13ca",
+              "file": "08-verification-badge-refetch.spec.ts",
+              "line": 37,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "09-happy-path-multi-parameter.spec.ts",
+      "file": "09-happy-path-multi-parameter.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Happy path — multi-parameter workflow",
+          "file": "09-happy-path-multi-parameter.spec.ts",
+          "line": 57,
+          "column": 6,
+          "specs": [
+            {
+              "title": "order two tests, enter all results, submit all",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4012,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:06.944Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9bb21db57e14c10f9588-d27948605839de675f1d",
+              "file": "09-happy-path-multi-parameter.spec.ts",
+              "line": 58,
+              "column": 7
+            },
+            {
+              "title": "multi-test: verify and document published",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3681,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:11.018Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9bb21db57e14c10f9588-090f4ab58a1d149d5cd0",
+              "file": "09-happy-path-multi-parameter.spec.ts",
+              "line": 97,
+              "column": 7
+            },
+            {
+              "title": "multi-test: idempotent publish — two generate calls return same document ID",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 929,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:14.761Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9bb21db57e14c10f9588-0612a5a7fd61b2eeade4",
+              "file": "09-happy-path-multi-parameter.spec.ts",
+              "line": 139,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "10-invalid-transition-blocked.spec.ts",
+      "file": "10-invalid-transition-blocked.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Invalid workflow transition — 409 guard",
+          "file": "10-invalid-transition-blocked.spec.ts",
+          "line": 38,
+          "column": 6,
+          "specs": [
+            {
+              "title": "collect-specimen twice must reject second call with 409",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 682,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:15.719Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-2e6030f7b391a5bda2da",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 39,
+              "column": 7
+            },
+            {
+              "title": "verify before results submitted must reject with 409",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 693,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:16.423Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-74b17df4237852ba77ed",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 50,
+              "column": 7
+            },
+            {
+              "title": "submit result after encounter already verified must reject with 409",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 889,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:17.177Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-4edd3a337ee0d6415a72",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "place second lab order on same encounter is allowed (multi-order scenario)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 730,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[10] Second order-lab returned status=200, labOrders.length=2\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:18.100Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-3af5ec3b6be7bec9a6f1",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 88,
+              "column": 7
+            },
+            {
+              "title": "UI verify page shows error when encounter is not in resulted status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2877,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-03T23:40:18.861Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-acda526a31618142e200",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 104,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-03T23:39:25.235Z",
+    "duration": 56647.21,
+    "expected": 29,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

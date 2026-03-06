@@ -203,7 +203,7 @@ export class DocumentsService {
     );
 
     // Compute hash using canonical serialiser
-    const jsonPayload = JSON.parse(JSON.stringify(normalizedPayload));
+    const jsonPayload = JSON.parse(JSON.stringify(normalizedPayload)) as any;
     const hash = payloadHash(jsonPayload);
 
     // Check idempotency
