@@ -28,8 +28,8 @@ export default function LoginPage() {
       }
 
       setTokens(data.accessToken, data.refreshToken);
-      // Use replace so the login page is not in browser history
-      router.replace('/dashboard');
+      // Let middleware resolve deterministic landing by permissions
+      router.replace('/');
     } catch (err) {
       setError('Login failed. Please try again.');
     } finally {

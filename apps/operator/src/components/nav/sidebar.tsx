@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ChevronLeft, ChevronRight, FlaskConical, LogOut } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FlaskConical, LogOut, UserCircle2 } from 'lucide-react';
 import { clearTokens } from '@/lib/auth';
 import { LIMS_NAV, OPD_NAV, FUTURE_MODULES, type NavItem } from './nav-config';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
@@ -84,6 +84,7 @@ export function Sidebar() {
   const currentModule: 'lims' | 'opd' | 'other' =
     pathname.startsWith('/lims') ? 'lims' : pathname.startsWith('/opd') ? 'opd' : 'other';
   const currentNav = currentModule === 'opd' ? visibleOpdNav : visibleNav;
+  const accountActive = pathname === '/account' || pathname.startsWith('/account/');
 
   const isNavItemActive = (item: NavItem) => (
     item.href === '/lims/registrations/new'
@@ -304,6 +305,54 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      <div style={{
+        padding: collapsed ? '8px 6px 10px' : '8px 8px 10px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2px',
+      }}>
+        {!collapsed && (
+          <div style={{ padding: '2px 8px 8px', fontSize: '9px', fontWeight: 700, color: S.sectionLabel, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+            Utility
+          </div>
+        )}
+        <Link
+          href="/account"
+          title={collapsed ? 'Account' : undefined}
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: collapsed ? '10px 0' : '9px 11px 9px 13px',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontSize: '13.5px',
+            fontWeight: accountActive ? 600 : 400,
+            color: accountActive ? S.activeText : S.inactiveText,
+            background: accountActive ? S.activeBg : 'transparent',
+            transition: 'all 0.15s ease',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+          }}
+          onMouseOver={e => { if (!accountActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'hsl(var(--sidebar-foreground) / 0.09)'; el.style.color = S.hoverText; } }}
+          onMouseOut={e => { if (!accountActive) { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = S.inactiveText; } }}
+        >
+          {accountActive && (
+            <div style={{
+              position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
+              width: '3px', height: '60%', minHeight: '18px',
+              borderRadius: '0 4px 4px 0',
+              background: S.activeBar,
+              boxShadow: S.activeBarGlow,
+            }} />
+          )}
+          <UserCircle2 size={15} className="shrink-0 transition-colors" color={accountActive ? S.iconActive : S.iconInactive} />
+          {!collapsed && <span style={{ flex: 1 }}>Account</span>}
+        </Link>
+      </div>
 
       <GlowDivider />
 

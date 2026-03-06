@@ -1,31 +1,17 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { resolveAdminLanding } from '@/lib/admin-access';
 
-type JwtPayload = {
-  exp?: number;
-  permissions?: string[];
-  isSuperAdmin?: boolean;
-};
-
-function parseJwtPayload(token: string | undefined): JwtPayload | null {
-  if (!token) return null;
+function isJwtValid(token: string | undefined): boolean {
+  if (!token) return false;
   try {
     const payloadBase64Url = token.split('.')[1];
-    if (!payloadBase64Url) return null;
+    if (!payloadBase64Url) return false;
     const payloadBase64Unpadded = payloadBase64Url.replace(/-/g, '+').replace(/_/g, '/');
     const padLength = (4 - (payloadBase64Unpadded.length % 4)) % 4;
     const payloadBase64 = payloadBase64Unpadded + '='.repeat(padLength);
     const payloadJson = atob(payloadBase64);
-    return JSON.parse(payloadJson) as JwtPayload;
-  } catch {
-    return null;
-  }
-}
-
-function isJwtValid(payload: JwtPayload | null): boolean {
-  try {
-    if (!payload || typeof payload.exp !== 'number') return false;
+    const payload = JSON.parse(payloadJson) as { exp?: number };
+    if (typeof payload.exp !== 'number') return false;
     const nowSeconds = Math.floor(Date.now() / 1000);
     return payload.exp > nowSeconds;
   } catch {
@@ -49,18 +35,12 @@ function clearAuthCookies(response: NextResponse) {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('vexel_token')?.value;
-  const payload = parseJwtPayload(token);
-  const hasValidToken = isJwtValid(payload);
-  const permissions = Array.isArray(payload?.permissions) ? payload.permissions : [];
-  const isSuperAdmin = Boolean(payload?.isSuperAdmin);
-  const landingPath = resolveAdminLanding(permissions, isSuperAdmin);
+  const hasValidToken = isJwtValid(token);
 
-  // Public path — login page
   if (pathname === '/login') {
-    // Already authenticated → skip login page, go to dashboard
     if (hasValidToken) {
       const url = request.nextUrl.clone();
-      url.pathname = landingPath;
+      url.pathname = '/';
       return NextResponse.redirect(url);
     }
     if (token && !hasValidToken) {
@@ -71,14 +51,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Root path — redirect based on auth state
-  if (pathname === '/') {
-    const url = request.nextUrl.clone();
-    url.pathname = hasValidToken ? landingPath : '/login';
-    return NextResponse.redirect(url);
-  }
-
-  // All other protected paths — require auth
   if (!hasValidToken) {
     return redirectToLogin(request);
   }
@@ -87,6 +59,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Match all paths except Next.js internals and static assets
   matcher: ['/((?!_next/static|_next/image|favicon\\.ico).*)'],
 };

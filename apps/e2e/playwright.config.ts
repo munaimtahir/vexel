@@ -36,6 +36,7 @@ export default defineConfig({
         '**/09-happy-path-multi-parameter.spec.ts',
         '**/10-invalid-transition-blocked.spec.ts',
         '**/11-chaos-nightly.spec.ts',
+        '**/12-operator-account.spec.ts',
       ],
     },
     {
@@ -44,7 +45,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         baseURL: ADMIN_BASE,
       },
-      testMatch: ['**/02-admin-crud.spec.ts'],
+      testMatch: ['**/02-admin-crud.spec.ts', '**/13-admin-account-landing.spec.ts'],
     },
   ],
 

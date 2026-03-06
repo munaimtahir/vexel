@@ -123,6 +123,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/account/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get self account profile */
+        get: operations["getMyAccountProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update self account profile (display name only) */
+        patch: operations["updateMyAccountProfile"];
+        trace?: never;
+    };
+    "/account/change-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change self password */
+        post: operations["changeMyAccountPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/navigation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get permission-aware admin navigation and landing route for current user */
+        get: operations["getAdminNavigationSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/landing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get deterministic admin landing path for current user */
+        get: operations["getAdminLanding"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tenants": {
         parameters: {
             query?: never;
@@ -3012,6 +3081,39 @@ export interface components {
             /** Format: date-time */
             createdAt?: string;
         };
+        AccountProfile: {
+            userId: string;
+            /** Format: email */
+            email: string;
+            displayName: string;
+            firstName: string;
+            lastName: string;
+            tenantId: string;
+            tenantName: string | null;
+            roles: string[];
+            permissions: string[];
+            isSuperAdmin?: boolean;
+        };
+        AccountProfileUpdateRequest: {
+            displayName: string;
+        };
+        AccountPasswordChangeRequest: {
+            currentPassword: string;
+            newPassword: string;
+        };
+        AdminNavigationItem: {
+            key: string;
+            label: string;
+            href: string;
+            allowed: boolean;
+        };
+        AdminNavigationSummary: {
+            hasAdminAppAccess: boolean;
+            hasAnyAdminPermission: boolean;
+            /** @description Deterministic first allowed admin route for this user */
+            landingPath: string;
+            sections: components["schemas"]["AdminNavigationItem"][];
+        };
         TenantSummary: {
             id: string;
             name: string;
@@ -4532,6 +4634,148 @@ export interface operations {
                     "application/json": components["schemas"]["UserSummary"];
                 };
             };
+        };
+    };
+    getMyAccountProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Self profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountProfile"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    updateMyAccountProfile: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountProfileUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated self profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountProfile"];
+                };
+            };
+            /** @description Invalid display name */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    changeMyAccountPassword: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountPasswordChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description Password changed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ok: boolean;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Validation failed or current password mismatch */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    getAdminNavigationSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Admin navigation summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminNavigationSummary"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    getAdminLanding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Admin landing route */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        landingPath: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
         };
     };
     listTenants: {

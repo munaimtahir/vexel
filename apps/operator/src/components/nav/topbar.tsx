@@ -29,6 +29,7 @@ const ROUTE_TITLES: [string, string][] = [
   ['/lims/encounters/new', 'New Encounter'],
   ['/lims/encounters', 'Encounters'],
   ['/lims/reports', 'Reports'],
+  ['/account', 'Account'],
   ['/lims', 'LIMS'],
 ];
 

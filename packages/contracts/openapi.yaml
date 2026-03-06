@@ -162,6 +162,88 @@ components:
           type: string
           format: date-time
 
+    AccountProfile:
+      type: object
+      required: [userId, email, displayName, firstName, lastName, tenantId, tenantName, roles, permissions]
+      properties:
+        userId:
+          type: string
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        tenantId:
+          type: string
+        tenantName:
+          type: string
+          nullable: true
+        roles:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        isSuperAdmin:
+          type: boolean
+
+    AccountProfileUpdateRequest:
+      type: object
+      required: [displayName]
+      properties:
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 120
+
+    AccountPasswordChangeRequest:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+          minLength: 1
+        newPassword:
+          type: string
+          minLength: 8
+          maxLength: 128
+
+    AdminNavigationItem:
+      type: object
+      required: [key, label, href, allowed]
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        href:
+          type: string
+        allowed:
+          type: boolean
+
+    AdminNavigationSummary:
+      type: object
+      required:
+        [hasAdminAppAccess, hasAnyAdminPermission, landingPath, sections]
+      properties:
+        hasAdminAppAccess:
+          type: boolean
+        hasAnyAdminPermission:
+          type: boolean
+        landingPath:
+          type: string
+          description: Deterministic first allowed admin route for this user
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminNavigationItem'
+
     TenantSummary:
       type: object
       required: [id, name, status]
@@ -2975,6 +3057,117 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserSummary'
+
+  /account/me:
+    get:
+      operationId: getMyAccountProfile
+      summary: Get self account profile
+      tags: [Account]
+      responses:
+        "200":
+          description: Self profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountProfile'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      operationId: updateMyAccountProfile
+      summary: Update self account profile (display name only)
+      tags: [Account]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountProfileUpdateRequest'
+      responses:
+        "200":
+          description: Updated self profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountProfile'
+        "400":
+          description: Invalid display name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+
+  /account/change-password:
+    post:
+      operationId: changeMyAccountPassword
+      summary: Change self password
+      tags: [Account]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountPasswordChangeRequest'
+      responses:
+        "200":
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, message]
+                properties:
+                  ok:
+                    type: boolean
+                  message:
+                    type: string
+        "400":
+          description: Validation failed or current password mismatch
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+
+  /admin/navigation:
+    get:
+      operationId: getAdminNavigationSummary
+      summary: Get permission-aware admin navigation and landing route for current user
+      tags: [Account]
+      responses:
+        "200":
+          description: Admin navigation summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminNavigationSummary'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+
+  /admin/landing:
+    get:
+      operationId: getAdminLanding
+      summary: Get deterministic admin landing path for current user
+      tags: [Account]
+      responses:
+        "200":
+          description: Admin landing route
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [landingPath]
+                properties:
+                  landingPath:
+                    type: string
+        "401":
+          $ref: '#/components/responses/Unauthorized'
 
   # ─── Tenants ──────────────────────────────────────────────────────────────
   /tenants:

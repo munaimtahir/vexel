@@ -3,10 +3,15 @@
   "private": true,
   "scripts": {
     "test": "playwright test",
+    "test:local": "playwright test",
+    "test:public": "OPERATOR_BASE=https://vexel.alshifalab.pk ADMIN_BASE=https://vexel.alshifalab.pk playwright test",
+    "test:both": "pnpm run test:local && pnpm run test:public",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "report": "playwright show-report",
     "e2e:lims": "LD_LIBRARY_PATH=/tmp/pw-libs/usr/lib/x86_64-linux-gnu playwright test --project=operator --grep-invert='@nightly' && node scripts/finalize-evidence.mjs",
+    "e2e:lims:public": "LD_LIBRARY_PATH=/tmp/pw-libs/usr/lib/x86_64-linux-gnu OPERATOR_BASE=https://vexel.alshifalab.pk ADMIN_BASE=https://vexel.alshifalab.pk playwright test --project=operator --grep-invert='@nightly' && node scripts/finalize-evidence.mjs",
+    "e2e:lims:both": "pnpm run e2e:lims && pnpm run e2e:lims:public",
     "e2e:lims:nightly": "LD_LIBRARY_PATH=/tmp/pw-libs/usr/lib/x86_64-linux-gnu playwright test --project=operator && node scripts/finalize-evidence.mjs"
   },
   "devDependencies": {

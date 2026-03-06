@@ -36,7 +36,8 @@
           "**/08-verification-badge-refetch.spec.ts",
           "**/09-happy-path-multi-parameter.spec.ts",
           "**/10-invalid-transition-blocked.spec.ts",
-          "**/11-chaos-nightly.spec.ts"
+          "**/11-chaos-nightly.spec.ts",
+          "**/12-operator-account.spec.ts"
         ],
         "timeout": 30000
       },
@@ -52,7 +53,8 @@
         "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
         "testIgnore": [],
         "testMatch": [
-          "**/02-admin-crud.spec.ts"
+          "**/02-admin-crud.spec.ts",
+          "**/13-admin-account-landing.spec.ts"
         ],
         "timeout": 30000
       }
@@ -91,25 +93,25 @@
   },
   "suites": [
     {
-      "title": "08-verification-badge-refetch.spec.ts",
-      "file": "08-verification-badge-refetch.spec.ts",
+      "title": "01-auth.spec.ts",
+      "file": "01-auth.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Verification badge refetch regression",
-          "file": "08-verification-badge-refetch.spec.ts",
-          "line": 36,
+          "title": "Authentication",
+          "file": "01-auth.spec.ts",
+          "line": 11,
           "column": 6,
           "specs": [
             {
-              "title": "updates from pending verification to verified immediately after verify command",
+              "title": "operator /login page loads",
               "ok": true,
               "tags": [],
               "tests": [
                 {
-                  "timeout": 90000,
+                  "timeout": 30000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "operator",
@@ -119,12 +121,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8687,
+                      "duration": 1183,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-03-05T22:51:25.959Z",
+                      "startTime": "2026-03-06T21:59:14.610Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -132,9 +134,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "68bfce22ded2a6cd8cd5-dfd5ebb80f7b6c8a13ca",
-              "file": "08-verification-badge-refetch.spec.ts",
-              "line": 37,
+              "id": "791b3c4e0869e77b2651-ec119bc76f7a9a8e5e79",
+              "file": "01-auth.spec.ts",
+              "line": 12,
               "column": 7
             }
           ]
@@ -144,8 +146,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-03-05T22:51:23.658Z",
-    "duration": 11360.826,
+    "startTime": "2026-03-06T21:59:12.088Z",
+    "duration": 4262.468,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,

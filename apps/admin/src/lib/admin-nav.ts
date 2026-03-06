@@ -20,10 +20,17 @@ export type AdminNavItem = {
 
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   {
+    href: '/account',
+    label: 'My Account',
+    icon: UserRound,
+    section: 'Profile',
+  },
+  {
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
     section: 'Overview',
+    requiredPermissions: ['admin.dashboard.read', 'tenant.read'],
   },
 
   // ─── Operations ─────────────────────────────────────────────────────
@@ -120,18 +127,19 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: 'Audit Log',
     icon: ScrollText,
     section: 'System',
-    requiredPermissions: ['audit.read'],
+    requiredPermissions: ['admin.audit.read', 'audit.read'],
   },
   {
     href: '/jobs',
     label: 'Jobs',
     icon: Briefcase,
-    requiredPermissions: ['job.read'],
+    requiredPermissions: ['admin.jobs.read', 'job.read'],
   },
   {
     href: '/system/health',
     label: 'System Health',
     icon: Activity,
+    requiredPermissions: ['admin.app.access', 'ops.view', 'tenant.read'],
   },
 ];
 
