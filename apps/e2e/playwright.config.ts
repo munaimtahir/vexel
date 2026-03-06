@@ -5,6 +5,7 @@ const ADMIN_BASE = process.env.ADMIN_BASE || 'http://127.0.0.1:9023';
 
 export default defineConfig({
   testDir: './tests',
+  testMatch: '**/*.spec.ts',
   timeout: 30_000,
   retries: process.env.CI ? 2 : 0,
   reporter: [
@@ -14,38 +15,37 @@ export default defineConfig({
   ],
   use: {
     headless: true,
+    trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
 
   projects: [
     {
+      // Operator project: all specs EXCEPT admin/** subdirectory and legacy flat admin files
       name: 'operator',
       use: {
         ...devices['Desktop Chrome'],
         baseURL: OPERATOR_BASE,
       },
-      testMatch: [
-        '**/01-auth.spec.ts',
-        '**/03-operator-patient.spec.ts',
-        '**/04-operator-encounter.spec.ts',
-        '**/05-operator-workflow.spec.ts',
-        '**/06-document-pipeline.spec.ts',
-        '**/07-tenant-isolation.spec.ts',
-        '**/08-verification-badge-refetch.spec.ts',
-        '**/09-happy-path-multi-parameter.spec.ts',
-        '**/10-invalid-transition-blocked.spec.ts',
-        '**/11-chaos-nightly.spec.ts',
-        '**/12-operator-account.spec.ts',
+      testIgnore: [
+        '**/tests/admin/**',
+        '**/02-admin-crud.spec.ts',
+        '**/13-admin-account-landing.spec.ts',
       ],
     },
     {
+      // Admin project: admin/** subdirectory + legacy flat admin test files
       name: 'admin',
       use: {
         ...devices['Desktop Chrome'],
         baseURL: ADMIN_BASE,
       },
-      testMatch: ['**/02-admin-crud.spec.ts', '**/13-admin-account-landing.spec.ts'],
+      testMatch: [
+        '**/tests/admin/**/*.spec.ts',
+        '**/02-admin-crud.spec.ts',
+        '**/13-admin-account-landing.spec.ts',
+      ],
     },
   ],
 

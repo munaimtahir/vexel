@@ -2,20 +2,28 @@
   "name": "@vexel/e2e",
   "private": true,
   "scripts": {
-    "test": "playwright test",
-    "test:local": "playwright test",
-    "test:public": "OPERATOR_BASE=https://vexel.alshifalab.pk ADMIN_BASE=https://vexel.alshifalab.pk playwright test",
-    "test:both": "pnpm run test:local && pnpm run test:public",
-    "test:headed": "playwright test --headed",
+    "test": "playwright test --project=operator --project=admin --grep-invert='@nightly'",
+    "test:local": "playwright test --project=operator --project=admin --grep-invert='@nightly'",
+    "test:headed": "playwright test --headed --project=operator --grep-invert='@nightly'",
     "test:ui": "playwright test --ui",
-    "report": "playwright show-report",
-    "e2e:lims": "LD_LIBRARY_PATH=/tmp/pw-libs/usr/lib/x86_64-linux-gnu playwright test --project=operator --grep-invert='@nightly' && node scripts/finalize-evidence.mjs",
-    "e2e:lims:public": "LD_LIBRARY_PATH=/tmp/pw-libs/usr/lib/x86_64-linux-gnu OPERATOR_BASE=https://vexel.alshifalab.pk ADMIN_BASE=https://vexel.alshifalab.pk playwright test --project=operator --grep-invert='@nightly' && node scripts/finalize-evidence.mjs",
-    "e2e:lims:both": "pnpm run e2e:lims && pnpm run e2e:lims:public",
-    "e2e:lims:nightly": "LD_LIBRARY_PATH=/tmp/pw-libs/usr/lib/x86_64-linux-gnu playwright test --project=operator && node scripts/finalize-evidence.mjs"
+    "test:public": "OPERATOR_BASE=https://vexel.alshifalab.pk ADMIN_BASE=https://vexel.alshifalab.pk playwright test --project=operator --grep-invert='@nightly'",
+    "e2e:smoke": "playwright test --grep='@smoke' --project=operator --project=admin",
+    "e2e:auth": "playwright test --grep='@auth' --project=operator --project=admin",
+    "e2e:admin": "playwright test --project=admin",
+    "e2e:operator": "playwright test --project=operator --grep='@operator'",
+    "e2e:lims": "playwright test --project=operator --grep='@lims'",
+    "e2e:documents": "playwright test --project=operator --grep='@documents'",
+    "e2e:tenancy": "playwright test --grep='@tenancy'",
+    "e2e:security": "playwright test --grep='@security'",
+    "e2e:nightly": "playwright test --project=operator --project=admin",
+    "e2e:headed": "playwright test --headed --grep-invert='@nightly'",
+    "e2e:debug": "PWDEBUG=1 playwright test --headed --project=operator",
+    "e2e:report": "playwright show-report",
+    "report": "playwright show-report"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
+    "@types/node": "^25.3.5",
     "typescript": "^5.0.0"
   }
 }
