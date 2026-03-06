@@ -542,7 +542,7 @@ export default function ReferenceRangesPage() {
               </p>
             )}
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => handleDelete(deleteId)} disabled={deleting} style={{ padding: '8px 16px', background: 'hsl(var(--status-destructive-fg))', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{deleting ? 'Deleting...' : 'Delete'}</button>
+              <button onClick={() => handleDelete(deleteId)} disabled={deleting} style={{ padding: '8px 16px', background: 'hsl(var(--status-destructive-fg))', color: 'hsl(var(--background))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{deleting ? 'Deleting...' : 'Delete'}</button>
               <button onClick={() => { setDeleteId(null); setDeleteTarget(null); }} style={{ padding: '8px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
             </div>
           </div>

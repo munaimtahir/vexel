@@ -113,6 +113,7 @@ export class DocumentsService {
       const labOrderCode =
         (normalized.labOrderCode as string | undefined) ??
         (normalized.primaryOrderCode as string | undefined) ??
+        encounter.labOrders?.[0]?.id ??
         normalizedEncounterCode ??
         encounter.encounterCode ??
         undefined;
