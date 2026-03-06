@@ -1061,7 +1061,10 @@ class ReceiptDocument : IDocument
                 int pageNum  = 2;
                 while (startIdx < allItems.Count)
                 {
-                    var (ovFontSize, ovCount) = FitItemsForOverflowPage(allItems.Count - startIdx);
+                    // Estimate capacity for this overflow half (hasBarcode:false = conservative,
+                    // barcode only appears on the last page; safety factor covers the difference)
+                    var (ovFontSize, ovCount) = FitItemsForOverflowPage(
+                        allItems.Count - startIdx, hasLogo, hasBarcode: false);
                     var pageItems = allItems.Skip(startIdx).Take(ovCount).ToList();
                     startIdx += ovCount;
                     bool isLastPage = startIdx >= allItems.Count;
@@ -1150,30 +1153,22 @@ class ReceiptDocument : IDocument
         return (Math.Max(1, maxAtMin), MinItemFontPt);
     }
 
-    // Estimate max items on a full-page continuation page (A4, single-block layout).
-    // A4 content height ≈ 285 mm (297 mm − 12 mm vertical margins).
-    // Fixed overhead ≈ 55 mm: header (30mm) + divider (3mm) + title (5mm) +
-    //   patient info (14mm) + totals+payment (27mm) + footer (5mm) − barcode omitted on non-last.
-    static int MaxItemsOnOverflowPage(float fontPt)
-    {
-        const float a4ContentMm         = 285f;
-        const float overflowFixedOverheadMm = 55f;
-        float available  = a4ContentMm - overflowFixedOverheadMm;
-        float tableHdrMm = ItemRowHeightMm(8f);
-        float dataRowMm  = ItemRowHeightMm(fontPt);
-        float usable     = (available - tableHdrMm) * FitSafetyFactor;
-        return Math.Max(1, (int)(usable / dataRowMm));
-    }
+    // Estimate max items on a continuation overflow page half (137 mm tall, same as page 1).
+    // Overflow pages use the same two-half A4 layout as page 1 — each half is 137 mm,
+    // so capacity is identical to a regular receipt half.  We pass hasBarcode=false because
+    // the barcode appears only on the last continuation half; the safety factor covers that last page.
+    static int MaxItemsOnOverflowPage(bool hasLogo, bool hasBarcode, float fontPt)
+        => MaxItemsInHalf(hasLogo, hasBarcode, fontPt);
 
-    // Choose font size + item count for a continuation overflow page.
-    (float fontSize, int itemCount) FitItemsForOverflowPage(int remaining)
+    // Choose font size + item count for a continuation overflow page half.
+    (float fontSize, int itemCount) FitItemsForOverflowPage(int remaining, bool hasLogo, bool hasBarcode)
     {
         for (float fs = NormalItemFontPt; fs >= MinItemFontPt; fs -= 1f)
         {
-            int cap = MaxItemsOnOverflowPage(fs);
+            int cap = MaxItemsOnOverflowPage(hasLogo, hasBarcode, fs);
             if (remaining <= cap) return (fs, remaining);
         }
-        return (MinItemFontPt, MaxItemsOnOverflowPage(MinItemFontPt));
+        return (MinItemFontPt, MaxItemsOnOverflowPage(hasLogo, hasBarcode, MinItemFontPt));
     }
 
     void ComposeThermalReceipt(IContainer container, byte[]? barcodeBytes, string encounterCode)
@@ -1356,7 +1351,8 @@ class ReceiptDocument : IDocument
     void ComposeReceiptHalf(IContainer container, string copyLabel,
         byte[]? barcodeBytes, string encounterCode,
         IReadOnlyList<JsonElement> items, float itemFontSize,
-        bool showTotals, bool hasOverflow)
+        bool showTotals, bool hasOverflow,
+        string pageTitle = "PAYMENT RECEIPT")
     {
         var brandName     = _branding.BrandName ?? "Vexel Health";
         var address       = _branding.ReportHeader ?? "";
@@ -1409,9 +1405,9 @@ class ReceiptDocument : IDocument
             // 3. Divider
             col.Item().PaddingVertical(3).LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
 
-            // 4. "PAYMENT RECEIPT" label
+            // 4. Title — "PAYMENT RECEIPT" on page 1; "PAYMENT RECEIPT (Cont. — Pg N)" on overflow
             col.Item().PaddingBottom(4).AlignCenter()
-               .Text("PAYMENT RECEIPT").Bold().FontSize(9).FontColor(Colors.Grey.Darken3);
+               .Text(pageTitle).Bold().FontSize(9).FontColor(Colors.Grey.Darken3);
 
             // 5. Info block (3 rows x 2 cols)
             col.Item().PaddingBottom(4).Table(table =>
@@ -1583,88 +1579,28 @@ class ReceiptDocument : IDocument
         });
     }
 
-    // Renders a full-A4 continuation page for items that did not fit on page 1.
+    // Renders a continuation A4 page for items that did not fit on page 1.
+    // Uses the same two-half tearable layout as page 1 (patient copy + tear strip + office copy),
+    // because every A4 receipt page must print two copies.
     void ComposeOverflowPage(IContainer container, int pageNum,
         byte[]? barcodeBytes, string encounterCode,
         IReadOnlyList<JsonElement> items, float fontSize, bool isLastPage)
     {
-        var brandName    = _branding.BrandName ?? "Vexel Health";
-        var address      = _branding.ReportHeader ?? "";
-        var footerText   = _branding.ReportFooter
-                           ?? (_branding.BrandName is { } bn ? $"Thank you for choosing {bn}" : "Thank you for choosing us");
-        bool showLogo    = HasLogoInHeader();  // use shared helper for consistent logo visibility
+        // Continuation page title — kept compact to fit within the 5mm title slot
+        var title = $"PAYMENT RECEIPT (Cont. — Pg {pageNum})";
 
         container.Column(col =>
         {
-            // 1. Header — same branding as page 1
-            col.Item().PaddingBottom(3).Element(c =>
-            {
-                if (showLogo)
-                {
-                    c.Row(row =>
-                    {
-                        row.ConstantItem(40, Unit.Millimetre).Height(28).Image(_logoBytes!).FitHeight();
-                        row.RelativeItem().Column(hc =>
-                        {
-                            hc.Item().AlignCenter().Text(brandName).Bold().FontSize(13);
-                            if (!string.IsNullOrWhiteSpace(address))
-                                hc.Item().AlignRight().Text(address).FontSize(7).FontColor(Colors.Grey.Darken1);
-                        });
-                    });
-                }
-                else
-                {
-                    c.Column(hc =>
-                    {
-                        hc.Item().AlignCenter().Text(brandName).Bold().FontSize(13);
-                        if (!string.IsNullOrWhiteSpace(address))
-                            hc.Item().AlignCenter().Text(address).FontSize(7).FontColor(Colors.Grey.Darken1);
-                    });
-                }
-            });
-
-            // 2. Divider
-            col.Item().PaddingVertical(3).LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
-
-            // 3. Continuation title
-            col.Item().PaddingBottom(4).AlignCenter()
-               .Text($"PAYMENT RECEIPT (Continued — Page {pageNum})")
-               .Bold().FontSize(9).FontColor(Colors.Grey.Darken3);
-
-            // 4. Patient info block (same as page 1)
-            col.Item().PaddingBottom(4).Table(table =>
-            {
-                table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); });
-                InfoRow(table, $"MRN: {Get("patientMrn")}",       $"Order ID: {encounterCode}");
-                InfoRow(table, $"Patient: {Get("patientName")}",   $"Date: {DocHelpers.FormatDate(Get("issuedAt"))}");
-                InfoRow(table, $"Age/Gender: {Get("patientAge")}/{Get("patientGender")}", $"Receipt No: {Get("receiptNumber")}");
-            });
-
-            // 5. Divider
-            col.Item().PaddingBottom(4).LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
-
-            // 6. Items (remaining) + totals on last page
-            col.Item().Element(c => ComposeReceiptItems(c, items, fontSize, isLastPage));
-            if (isLastPage)
-                col.Item().PaddingTop(4).Element(ComposePaymentSection);
-
-            // 7. Barcode — only on the last continuation page
-            if (isLastPage && barcodeBytes != null)
-            {
-                col.Item().PaddingTop(4).Column(bc =>
-                {
-                    bc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
-                    bc.Item().Height(30).AlignCenter().Image(barcodeBytes).FitHeight();
-                    bc.Item().AlignCenter().Text(encounterCode).FontSize(7).FontColor(Colors.Grey.Darken1);
-                });
-            }
-
-            // 8. Footer
-            col.Item().PaddingTop(4).Column(fc =>
-            {
-                fc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
-                fc.Item().PaddingTop(2).AlignCenter().Text(footerText).FontSize(7).FontColor(Colors.Grey.Darken1);
-            });
+            col.Spacing(0);
+            col.Item().Height(137, Unit.Millimetre).Element(c =>
+                ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode,
+                    items, fontSize, showTotals: isLastPage, hasOverflow: !isLastPage,
+                    pageTitle: title));
+            col.Item().Height(11, Unit.Millimetre).Element(ComposeCutLine);
+            col.Item().Height(137, Unit.Millimetre).Element(c =>
+                ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode,
+                    items, fontSize, showTotals: isLastPage, hasOverflow: !isLastPage,
+                    pageTitle: title));
         });
     }
 }
