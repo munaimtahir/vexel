@@ -1078,11 +1078,11 @@ class ReceiptDocument : IDocument
                 {
                     col.Spacing(0);
                     col.Item().Height(137, Unit.Millimetre).Element(c =>
-                        ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode,
+                        ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, orderCode,
                             page1Items, fontSizePage1, showTotals: !hasOverflow, hasOverflow));
                     col.Item().Height(11, Unit.Millimetre).Element(ComposeCutLine);
                     col.Item().Height(137, Unit.Millimetre).Element(c =>
-                        ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode,
+                        ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, orderCode,
                             page1Items, fontSizePage1, showTotals: !hasOverflow, hasOverflow));
                 });
             });
@@ -1111,7 +1111,7 @@ class ReceiptDocument : IDocument
                         page.MarginHorizontal(0.8f, Unit.Centimetre);
                         page.DefaultTextStyle(x => x.FontSize(8).FontFamily(Fonts.Arial));
                         page.Content().Element(c =>
-                            ComposeOverflowPage(c, capturedPage, barcodeBytes, encounterCode,
+                            ComposeOverflowPage(c, capturedPage, barcodeBytes, orderCode,
                                 pageItems, ovFontSize, isLastPage));
                     });
                     pageNum++;
@@ -1458,7 +1458,7 @@ class ReceiptDocument : IDocument
                 table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); });
                 InfoRow(table,
                     $"MRN: {GetPatientDemo("mrn", Get("patientMrn", "N/A"))}",
-                    $"Order ID: {(string.IsNullOrWhiteSpace(orderCode) ? "N/A" : orderCode)}");
+                    $"Order ID: {(string.IsNullOrWhiteSpace(encounterCode) ? "N/A" : encounterCode)}");
                 InfoRow(table,
                     $"Patient: {GetPatientDemo("displayName", Get("patientName", "N/A"))}",
                     $"Date: {DocHelpers.FormatDate(Get("issuedAt"))}");
@@ -1485,7 +1485,7 @@ class ReceiptDocument : IDocument
                 {
                     bc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
                     bc.Item().Height(30).AlignCenter().Image(barcodeBytes).FitHeight();
-                    bc.Item().AlignCenter().Text(orderCode).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    bc.Item().AlignCenter().Text(encounterCode).FontSize(7).FontColor(Colors.Grey.Darken1);
                 });
             }
 
