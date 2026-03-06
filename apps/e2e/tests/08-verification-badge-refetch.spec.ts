@@ -45,7 +45,7 @@ test.describe('Verification badge refetch regression', () => {
     await expect(verifyButton).toBeEnabled({ timeout: 10_000 });
     await verifyButton.click();
 
-    await expect(page.getByText('All tests verified. Report PDF rendering started.')).toBeVisible({
+    await expect(page.getByText('All tests verified. Report rendering and auto-publish started.')).toBeVisible({
       timeout: 20_000,
     });
     await page.waitForURL('**/lims/verification', { timeout: 20_000 });

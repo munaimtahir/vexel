@@ -1030,10 +1030,10 @@ class ReceiptDocument : IDocument
 
     public void Compose(IDocumentContainer container)
     {
-        var encounterCode = Get("encounterCode");
+        var orderCode = Get("labOrderCode", Get("encounterCode"));
         byte[]? barcodeBytes = null;
-        if (!string.IsNullOrWhiteSpace(encounterCode))
-            barcodeBytes = DocHelpers.GenerateBarcodePng(encounterCode);
+        if (!string.IsNullOrWhiteSpace(orderCode))
+            barcodeBytes = DocHelpers.GenerateBarcodePng(orderCode);
 
         var isThermal = string.Equals(_branding.ReceiptLayout ?? "a4", "thermal", StringComparison.OrdinalIgnoreCase);
 
@@ -1045,7 +1045,7 @@ class ReceiptDocument : IDocument
                 page.Size(80, 200, Unit.Millimetre); // width=80mm, height generous (auto-extends)
                 page.Margin(3f, Unit.Millimetre);
                 page.DefaultTextStyle(x => x.FontSize(7).FontFamily(Fonts.Arial));
-                page.Content().Element(c => ComposeThermalReceipt(c, barcodeBytes, encounterCode));
+                page.Content().Element(c => ComposeThermalReceipt(c, barcodeBytes, orderCode));
             });
         }
         else
@@ -1060,15 +1060,15 @@ class ReceiptDocument : IDocument
                 page.Content().Column(col =>
                 {
                     col.Spacing(0);
-                    col.Item().Height(139, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode));
+                    col.Item().Height(139, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, orderCode));
                     col.Item().Height(7, Unit.Millimetre).Element(ComposeCutLine);
-                    col.Item().Height(139, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode));
+                    col.Item().Height(139, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, orderCode));
                 });
             });
         }
     }
 
-    void ComposeThermalReceipt(IContainer container, byte[]? barcodeBytes, string encounterCode)
+    void ComposeThermalReceipt(IContainer container, byte[]? barcodeBytes, string orderCode)
     {
         var brandName    = _branding.BrandName ?? "Vexel Health";
         var address      = _branding.ReportHeader ?? "";
@@ -1112,8 +1112,6 @@ class ReceiptDocument : IDocument
             var ageDisplay = GetPatientDemo("ageDisplay", Get("patientAge"));
             var gender = GetPatientDemo("gender", Get("patientGender"));
             var mrn = GetPatientDemo("mrn", Get("patientMrn"));
-            var encounterId = Get("encounterCode");
-            var orderCode = Get("labOrderCode");
             col.Item().PaddingBottom(1).Text(t =>
             {
                 t.Span($"MRN: ").Bold().FontSize(7);
@@ -1126,17 +1124,9 @@ class ReceiptDocument : IDocument
             });
             col.Item().PaddingBottom(1).Text(t =>
             {
-                t.Span("Encounter: ").Bold().FontSize(7);
-                t.Span(string.IsNullOrWhiteSpace(encounterId) ? "N/A" : encounterId).FontSize(7);
+                t.Span("Order ID: ").Bold().FontSize(7);
+                t.Span(string.IsNullOrWhiteSpace(orderCode) ? "N/A" : orderCode).FontSize(7);
             });
-            if (!string.IsNullOrWhiteSpace(orderCode))
-            {
-                col.Item().PaddingBottom(1).Text(t =>
-                {
-                    t.Span("Order Code: ").Bold().FontSize(7);
-                    t.Span(orderCode).FontSize(7);
-                });
-            }
             col.Item().PaddingBottom(1).Text(t =>
             {
                 t.Span("Age/Gender: ").Bold().FontSize(7);
@@ -1221,7 +1211,7 @@ class ReceiptDocument : IDocument
                 col.Item().PaddingTop(2).Column(bc =>
                 {
                     bc.Item().AlignCenter().Height(22).Image(barcodeBytes).FitHeight();
-                    bc.Item().AlignCenter().Text(encounterCode).FontSize(6).FontColor(Colors.Grey.Darken1);
+                    bc.Item().AlignCenter().Text(orderCode).FontSize(6).FontColor(Colors.Grey.Darken1);
                 });
             }
 
@@ -1238,7 +1228,7 @@ class ReceiptDocument : IDocument
             .FontSize(9).FontColor(Colors.Grey.Lighten2);
     }
 
-    void ComposeReceiptHalf(IContainer container, string copyLabel, byte[]? barcodeBytes, string encounterCode)
+    void ComposeReceiptHalf(IContainer container, string copyLabel, byte[]? barcodeBytes, string orderCode)
     {
         var brandName     = _branding.BrandName ?? "Vexel Health";
         var address       = _branding.ReportHeader ?? "";
@@ -1301,13 +1291,13 @@ class ReceiptDocument : IDocument
                 table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); });
                 InfoRow(table,
                     $"MRN: {GetPatientDemo("mrn", Get("patientMrn", "N/A"))}",
-                    $"Encounter: {(string.IsNullOrWhiteSpace(encounterCode) ? "N/A" : encounterCode)}");
+                    $"Order ID: {(string.IsNullOrWhiteSpace(orderCode) ? "N/A" : orderCode)}");
                 InfoRow(table,
                     $"Patient: {GetPatientDemo("displayName", Get("patientName", "N/A"))}",
                     $"Date: {DocHelpers.FormatDate(Get("issuedAt"))}");
                 InfoRow(table,
                     $"Age/Gender: {GetPatientDemo("ageDisplay", Get("patientAge", "N/A"))}/{GetPatientDemo("gender", Get("patientGender", ""))}",
-                    string.IsNullOrWhiteSpace(Get("labOrderCode")) ? "" : $"Order Code: {Get("labOrderCode")}");
+                    "");
             });
 
             // 6. Items table + totals
@@ -1320,7 +1310,7 @@ class ReceiptDocument : IDocument
                 {
                     bc.Item().LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten2);
                     bc.Item().Height(30).AlignCenter().Image(barcodeBytes).FitHeight();
-                    bc.Item().AlignCenter().Text(encounterCode).FontSize(7).FontColor(Colors.Grey.Darken1);
+                    bc.Item().AlignCenter().Text(orderCode).FontSize(7).FontColor(Colors.Grey.Darken1);
                 });
             }
 

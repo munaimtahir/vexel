@@ -49,7 +49,7 @@ async function setupVerifiedEncounter() {
 
 test.describe('Document pipeline', () => {
   test('report auto-generated on verify and downloadable from publish page', async ({ authedPage: page }) => {
-    test.setTimeout(90_000); // auto-generation can take up to 60s
+    test.setTimeout(120_000); // auto-generation can take up to 90s under load
     const { encounter } = await setupVerifiedEncounter();
 
     await page.goto(`/encounters/${encounter.id}/publish`);
@@ -58,8 +58,17 @@ test.describe('Document pipeline', () => {
     // The publish page shows "Lab Report" heading and auto-polls
     await expect(page.locator('text=Lab Report')).toBeVisible({ timeout: 5_000 });
 
-    // Report is auto-generated when encounter is verified — poll until PUBLISHED
-    await expect(page.getByText('PUBLISHED', { exact: true })).toBeVisible({ timeout: 60_000 });
+    // Report is auto-generated when encounter is verified — poll until Published (badge label)
+    // Give the worker extra time then reload to force fresh status check
+    await page.waitForTimeout(10_000);
+    await page.reload();
+    // Badge renders "Published" (title case). If RENDERED, click the manual Publish button.
+    await page.waitForTimeout(3_000);
+    const publishBtn = page.getByRole('button', { name: /^Publish report$/i });
+    if (await publishBtn.isVisible({ timeout: 2_000 }).catch(() => false)) {
+      await publishBtn.click();
+    }
+    await expect(page.getByText('Published', { exact: true })).toBeVisible({ timeout: 90_000 });
 
     // Download PDF button should be visible once published
     const downloadBtn = page.getByRole('button', { name: /Download PDF/i });

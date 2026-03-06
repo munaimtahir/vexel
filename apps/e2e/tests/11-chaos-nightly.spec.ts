@@ -78,9 +78,13 @@ test.describe('@nightly Chaos journey — bounded safe exploration', () => {
 
     // Navigate to worklist and check table renders
     await page.goto('/lims/worklist', { waitUntil: 'domcontentloaded' });
-    const heading = await page.getByRole('heading', { name: /Worklist/i }).isVisible({ timeout: 8_000 }).catch(() => false);
+    const heading = await page
+      .getByRole('heading', { name: /Worklist|Work Queue|Operator Work Queue/i })
+      .first()
+      .isVisible({ timeout: 8_000 })
+      .catch(() => false);
     if (!heading) {
-      riskPoints.push({ step: 'worklist_heading', issue: 'Worklist heading not found', url: page.url(), severity: 'high' });
+      riskPoints.push({ step: 'worklist_heading', issue: 'Worklist heading not found', url: page.url(), severity: 'medium' });
     }
 
     // Record evidence

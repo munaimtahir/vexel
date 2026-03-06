@@ -270,19 +270,19 @@ export default function VerificationEncounterPage() {
       {verified && (
         <div className="mx-6 mt-4 p-4 chip-success rounded-lg">
           <div className="text-base font-semibold text-[hsl(var(--status-success-fg))] mb-1.5">
-            ✅ All tests verified. Report PDF rendering started.
+            ✅ All tests verified. Report rendering and auto-publish started.
           </div>
           <div className="text-sm text-[hsl(var(--status-success-fg))]">
-            Verification does not publish the report. Publish remains a separate command step.
+            No manual publish action is required.
           </div>
           {pollingMsg && (
             <div className="text-sm text-[hsl(var(--status-success-fg))]">{pollingMsg}</div>
           )}
           {renderedDocId && (
             <div className="mt-2 flex gap-3 items-center">
-              <span className="text-sm font-medium text-[hsl(var(--status-success-fg))]">📄 Report rendered</span>
+              <span className="text-sm font-medium text-[hsl(var(--status-success-fg))]">📄 Report ready</span>
               <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
-                <a href={`/lims/encounters/${encounterId}/publish`}>Publish report</a>
+                <a href={`/lims/print/${renderedDocId}`} target="_blank" rel="noopener noreferrer">Open report</a>
               </Button>
             </div>
           )}

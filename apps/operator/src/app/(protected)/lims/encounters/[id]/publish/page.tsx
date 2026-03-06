@@ -133,7 +133,7 @@ export default function PublishPage() {
       <div className="bg-card rounded-lg border border-border p-8">
         <h3 className="mb-2 text-lg font-bold text-foreground">Lab Report</h3>
         <p className="mb-6 text-muted-foreground text-sm">
-          Verify generates the report; publish is a separate command step.
+          Reports are auto-published after verification. Manual publish is only a fallback.
         </p>
 
         {/* Document status */}
@@ -164,7 +164,7 @@ export default function PublishPage() {
         <div className="flex flex-wrap gap-3">
           {canPublish && (
             <Button onClick={handlePublish} disabled={publishing} className="bg-primary hover:bg-primary/90">
-              {publishing ? 'Publishing…' : 'Publish report'}
+              {publishing ? 'Publishing…' : 'Force publish'}
             </Button>
           )}
           {docStatus === 'PUBLISHED' && (

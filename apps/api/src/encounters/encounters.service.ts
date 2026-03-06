@@ -180,7 +180,13 @@ export class EncountersService {
     if (!updatedEncounter.encounterCode) {
       try {
         const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
-        const prefix = tenantConfig?.orderPrefix ?? 'VX';
+        const prefix = (
+          tenantConfig?.orderPrefix ??
+          tenantId
+        )
+          .replace(/[^A-Za-z]/g, '')
+          .toUpperCase()
+          .slice(0, 3) || 'VXL';
         const now = new Date();
         const yymm = `${String(now.getFullYear()).slice(-2)}${String(now.getMonth() + 1).padStart(2, '0')}`;
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -189,7 +195,7 @@ export class EncountersService {
           where: { tenantId, createdAt: { gte: monthStart, lt: monthEnd } },
         });
         const seq = String(count).padStart(3, '0');
-        const encounterCode = `${prefix}L-${yymm}-${seq}`;
+        const encounterCode = `${prefix}-${yymm}-${seq}`;
         await this.prisma.encounter.update({
           where: { id: encounterId },
           data: { encounterCode },

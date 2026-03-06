@@ -108,10 +108,14 @@ export class DocumentsService {
       const gender = (encounter.patient.gender ?? '').trim();
       const mrn = (encounter.patient.mrn ?? '').trim();
       const mobile = (encounter.patient.mobile ?? '').trim();
+      const normalizedEncounterCode =
+        (normalized.encounterCode as string | undefined) ?? encounter.encounterCode ?? undefined;
       const labOrderCode =
         (normalized.labOrderCode as string | undefined) ??
         (normalized.primaryOrderCode as string | undefined) ??
-        encounter.labOrders?.[0]?.id;
+        normalizedEncounterCode ??
+        encounter.encounterCode ??
+        undefined;
       normalized.patientDemographics = {
         displayName,
         ageDisplay,
@@ -124,8 +128,7 @@ export class DocumentsService {
       normalized.patientMrn = mrn || undefined;
       normalized.patientAge = ageDisplay || undefined;
       normalized.patientGender = gender || undefined;
-      normalized.encounterCode =
-        (normalized.encounterCode as string | undefined) ?? encounter.encounterCode ?? undefined;
+      normalized.encounterCode = normalizedEncounterCode;
       normalized.labOrderCode = labOrderCode ?? undefined;
       return normalized;
     }

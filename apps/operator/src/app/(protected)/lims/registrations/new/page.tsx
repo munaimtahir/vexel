@@ -83,6 +83,7 @@ export default function NewRegistrationPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [savedEncounterId, setSavedEncounterId] = useState<string | null>(null);
+  const [savedOrderCode, setSavedOrderCode] = useState<string | null>(null);
   const [receiptDocId, setReceiptDocId] = useState<string | null>(null);
   const [pollingReceipt, setPollingReceipt] = useState(false);
 
@@ -371,12 +372,13 @@ export default function NewRegistrationPage() {
       const { data: enc, error: encErr } = await api.POST('/encounters', { body: { patientId } as any });
       if (encErr || !enc) { setSaveError('Failed to create encounter'); return; }
       const encounterId = (enc as any).id;
+      let encounterCode = (enc as any).encounterCode ?? null;
 
       const discountPctNum = parseFloat(discountPct) || 0;
       for (let ti = 0; ti < selectedTests.length; ti++) {
         const test = selectedTests[ti];
         // @ts-ignore
-        await api.POST('/encounters/{encounterId}:order-lab', {
+        const { data: ordered } = await api.POST('/encounters/{encounterId}:order-lab', {
           params: { path: { encounterId } },
           body: {
             testId: test.id,
@@ -391,6 +393,7 @@ export default function NewRegistrationPage() {
             } : {}),
           } as any,
         });
+        encounterCode = (ordered as any)?.encounterCode ?? encounterCode;
       }
 
       // Queue receipt
@@ -399,7 +402,8 @@ export default function NewRegistrationPage() {
         await api.POST('/documents/receipt:generate', {
           body: {
             issuedAt: new Date().toISOString(),
-            encounterCode: (enc as any).encounterCode ?? encounterId,
+            encounterCode: encounterCode ?? encounterId,
+            labOrderCode: encounterCode ?? encounterId,
             patientDemographics: {
               displayName: patient.fullName.trim(),
               ageDisplay: patient.dateOfBirth ? `${ageFromDob(patient.dateOfBirth)}Y` : (displayAge ? `${displayAge}Y` : ''),
@@ -416,6 +420,7 @@ export default function NewRegistrationPage() {
 
       // Show success screen immediately
       setSavedEncounterId(encounterId);
+      setSavedOrderCode(encounterCode ?? encounterId);
 
       // Poll for receipt PDF in background with exponential backoff
       // Stops as soon as status is RENDERED or PUBLISHED (receipts auto-publish after render)
@@ -447,7 +452,7 @@ export default function NewRegistrationPage() {
     setFieldErrors({}); setSelectedTests([]);
     setTestSearch(''); setTestResults([]); setTestDropOpen(false);
     setDiscountPKR('0'); setDiscountPct('0'); setPaid('0');
-    setSaveError(''); setSavedEncounterId(null); setReceiptDocId(null); setPollingReceipt(false);
+    setSaveError(''); setSavedEncounterId(null); setSavedOrderCode(null); setReceiptDocId(null); setPollingReceipt(false);
     setTimeout(() => mob1Ref.current?.focus(), 50);
   };
 
@@ -460,6 +465,11 @@ export default function NewRegistrationPage() {
         {registeredMRN && (
           <p className="text-muted-foreground mb-1">
             MRN: <strong className="text-foreground">{registeredMRN}</strong>
+          </p>
+        )}
+        {savedOrderCode && (
+          <p className="text-muted-foreground mb-1">
+            Order ID: <strong className="text-foreground font-mono">{savedOrderCode}</strong>
           </p>
         )}
         <div className="my-4 min-h-[40px]">
