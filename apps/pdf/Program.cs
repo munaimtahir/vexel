@@ -1020,6 +1020,8 @@ class ReceiptDocument : IDocument
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
+                // Vertical margins: 6 mm × 2 = 12 mm → content height ≈ 285 mm
+                // Layout: 48 % patient copy (137 mm) + 4 % tear strip (11 mm) + 48 % office copy (137 mm)
                 page.MarginVertical(0.6f, Unit.Centimetre);
                 page.MarginHorizontal(0.8f, Unit.Centimetre);
                 page.DefaultTextStyle(x => x.FontSize(8).FontFamily(Fonts.Arial));
@@ -1027,9 +1029,9 @@ class ReceiptDocument : IDocument
                 page.Content().Column(col =>
                 {
                     col.Spacing(0);
-                    col.Item().Height(139, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode));
-                    col.Item().Height(7, Unit.Millimetre).Element(ComposeCutLine);
-                    col.Item().Height(139, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode));
+                    col.Item().Height(137, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "PATIENT COPY", barcodeBytes, encounterCode));
+                    col.Item().Height(11, Unit.Millimetre).Element(ComposeCutLine);
+                    col.Item().Height(137, Unit.Millimetre).Element(c => ComposeReceiptHalf(c, "OFFICE COPY", barcodeBytes, encounterCode));
                 });
             });
         }
@@ -1180,9 +1182,36 @@ class ReceiptDocument : IDocument
 
     void ComposeCutLine(IContainer container)
     {
-        container.AlignMiddle().AlignCenter()
-            .Text("\u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500  \u2702  \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500")
-            .FontSize(9).FontColor(Colors.Grey.Lighten2);
+        // Dotted perforated tear strip — 11 mm tall, centred vertically.
+        // Renders:  ✂  - - - - - - - - - - TEAR HERE - - - - - - - - - -  ✂
+        const string scissors  = "\u2702"; // ✂
+        const string dash      = "\u2500"; // ─
+        const string tearLabel = "TEAR HERE";
+
+        var dashes = string.Join(" ", Enumerable.Repeat(dash, 18));
+
+        container.AlignMiddle().Row(row =>
+        {
+            // Left scissors
+            row.AutoItem().AlignMiddle()
+               .Text(scissors).FontSize(10).FontColor(Colors.Grey.Medium);
+
+            // Left dash segment
+            row.RelativeItem().AlignMiddle().AlignRight()
+               .Text(dashes).FontSize(8).FontColor(Colors.Grey.Medium);
+
+            // "TEAR HERE" label
+            row.AutoItem().PaddingHorizontal(4).AlignMiddle()
+               .Text(tearLabel).Bold().FontSize(7).FontColor(Colors.Grey.Medium);
+
+            // Right dash segment
+            row.RelativeItem().AlignMiddle().AlignLeft()
+               .Text(dashes).FontSize(8).FontColor(Colors.Grey.Medium);
+
+            // Right scissors
+            row.AutoItem().AlignMiddle()
+               .Text(scissors).FontSize(10).FontColor(Colors.Grey.Medium);
+        });
     }
 
     void ComposeReceiptHalf(IContainer container, string copyLabel, byte[]? barcodeBytes, string encounterCode)
