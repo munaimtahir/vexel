@@ -1,0 +1,144 @@
+{
+  "generatedAt": "2026-03-03T21:24:13.527Z",
+  "receipts": [
+    {
+      "caseName": "age_gender_present",
+      "encounterId": "3878b277-54fe-4102-b73c-243a11d96e81",
+      "documentId": "88ff0c7d-2b2c-469d-83b9-7fc27c678dff",
+      "status": "PUBLISHED",
+      "payload": {
+        "tax": 0,
+        "items": [
+          {
+            "total": 1000,
+            "quantity": 1,
+            "unitPrice": 1000,
+            "description": "Glucose"
+          }
+        ],
+        "issuedAt": "2026-03-03T21:24:03.004Z",
+        "subtotal": 1000,
+        "grandTotal": 1000,
+        "patientAge": "32Y",
+        "patientMrn": "EVD-MMB481DA81918",
+        "tenantName": "Vexel System",
+        "patientName": "Amina Khan",
+        "labOrderCode": "d9615c66-ea5a-488c-a0bc-ae56d41b3cd1",
+        "encounterCode": "VXL-2603-009",
+        "patientGender": "female",
+        "patientDemographics": {
+          "mrn": "EVD-MMB481DA81918",
+          "gender": "female",
+          "mobile": "0300-1234567",
+          "ageDisplay": "32Y",
+          "displayName": "Amina Khan"
+        }
+      }
+    },
+    {
+      "caseName": "age_fallback",
+      "encounterId": "367184ae-687a-4db3-8f7e-404dedad5295",
+      "documentId": "f9a91af2-0d2e-486c-bafd-8ad28712ecc7",
+      "status": "PUBLISHED",
+      "payload": {
+        "tax": 0,
+        "items": [
+          {
+            "total": 1000,
+            "quantity": 1,
+            "unitPrice": 1000,
+            "description": "Glucose"
+          }
+        ],
+        "issuedAt": "2026-03-03T21:24:05.054Z",
+        "subtotal": 1000,
+        "grandTotal": 1000,
+        "patientAge": "41Y",
+        "patientMrn": "EVD-MMB482YY96254",
+        "tenantName": "Vexel System",
+        "patientName": "Age Fallback",
+        "labOrderCode": "dca6c465-d1bb-45a4-ac4c-3fc5b0a011b9",
+        "encounterCode": "VXL-2603-010",
+        "patientGender": "male",
+        "patientDemographics": {
+          "mrn": "EVD-MMB482YY96254",
+          "gender": "male",
+          "ageDisplay": "41Y",
+          "displayName": "Age Fallback"
+        }
+      }
+    },
+    {
+      "caseName": "age_gender_missing",
+      "encounterId": "5de45f3e-6083-4a20-9112-4464e8158e50",
+      "documentId": "394a538f-a117-4901-8d6f-4c0a0901a0d0",
+      "status": "PUBLISHED",
+      "payload": {
+        "tax": 0,
+        "items": [
+          {
+            "total": 1000,
+            "quantity": 1,
+            "unitPrice": 1000,
+            "description": "Glucose"
+          }
+        ],
+        "issuedAt": "2026-03-03T21:24:06.971Z",
+        "subtotal": 1000,
+        "grandTotal": 1000,
+        "patientMrn": "EVD-MMB484GB60993",
+        "tenantName": "Vexel System",
+        "patientName": "Missing Both",
+        "labOrderCode": "b3854ac5-5101-4306-a09c-193f336b67fc",
+        "encounterCode": "VXL-2603-011",
+        "patientDemographics": {
+          "mrn": "EVD-MMB484GB60993",
+          "ageDisplay": "",
+          "displayName": "Missing Both"
+        }
+      }
+    },
+    {
+      "caseName": "single_name",
+      "encounterId": "3faa1163-51b4-4aca-a375-f56a4765f14a",
+      "documentId": "ceb6dea0-b3bd-4b1f-807b-3aafb395757f",
+      "status": "PUBLISHED",
+      "payload": {
+        "tax": 0,
+        "items": [
+          {
+            "total": 1000,
+            "quantity": 1,
+            "unitPrice": 1000,
+            "description": "Glucose"
+          }
+        ],
+        "issuedAt": "2026-03-03T21:24:08.847Z",
+        "subtotal": 1000,
+        "grandTotal": 1000,
+        "patientAge": "30Y",
+        "patientMrn": "EVD-MMB485WJ64561",
+        "tenantName": "Vexel System",
+        "patientName": "Ali",
+        "labOrderCode": "44b83f72-565f-43bb-8871-5174aca24aeb",
+        "encounterCode": "VXL-2603-012",
+        "patientGender": "male",
+        "patientDemographics": {
+          "mrn": "EVD-MMB485WJ64561",
+          "gender": "male",
+          "ageDisplay": "30Y",
+          "displayName": "Ali"
+        }
+      }
+    }
+  ],
+  "verifyFlow": {
+    "encounterId": "e7e113ef-abc9-4415-bae3-f8a0ad7da3c8",
+    "reportDocumentId": "f6432e6b-ac5b-4aaa-99e0-cba493294cec",
+    "finalStatus": "RENDERED",
+    "statusTimeline": [
+      "RENDERING",
+      "RENDERED"
+    ]
+  }
+}

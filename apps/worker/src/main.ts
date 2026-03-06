@@ -4,6 +4,8 @@ import { S3Client, CreateBucketCommand, HeadBucketCommand } from '@aws-sdk/clien
 import { processCatalogImport } from './catalog-import.processor';
 import { processCatalogExport } from './catalog-export.processor';
 import { processDocumentRender } from './document-render.processor';
+import { processOpsBackup } from './ops-backup.processor';
+import { getPrismaClient } from './prisma';
 
 async function ensureStorageBucket() {
   const bucket = process.env.STORAGE_BUCKET ?? 'vexel-documents';
@@ -57,6 +59,14 @@ const documentRenderWorker = new Worker('document-render', processDocumentRender
   concurrency: 3,
 });
 
+// Ops backup processor — concurrency=1 (serialised to prevent resource conflicts)
+const opsBackupPrisma = getPrismaClient();
+const opsBackupWorker = new Worker(
+  'ops-backup',
+  async (job) => processOpsBackup(job, opsBackupPrisma),
+  { connection, concurrency: 1 },
+);
+
 jobsWorker.on('completed', (job) => console.log(`[jobs] Job ${job.id} completed`));
 jobsWorker.on('failed', (job, err) => console.error(`[jobs] Job ${job?.id} failed: ${err.message}`));
 catalogImportWorker.on('completed', (job) => console.log(`[catalog-import] Job ${job.id} completed`));
@@ -65,13 +75,33 @@ catalogExportWorker.on('completed', (job) => console.log(`[catalog-export] Job $
 catalogExportWorker.on('failed', (job, err) => console.error(`[catalog-export] Job ${job?.id} failed: ${err.message}`));
 documentRenderWorker.on('completed', (job) => console.log(`[document-render] Job ${job.id} completed`));
 documentRenderWorker.on('failed', (job, err) => console.error(`[document-render] Job ${job?.id} failed: ${err.message}`));
+opsBackupWorker.on('completed', (job) => console.log(`[ops-backup] Job ${job.id} completed`));
+opsBackupWorker.on('failed', (job, err) => console.error(`[ops-backup] Job ${job?.id} failed: ${err.message}`));
 
-console.log('🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render');
+console.log('🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render, ops-backup');
 
 // Ensure MinIO bucket exists on startup
 ensureStorageBucket().catch((err) => console.error('Failed to ensure storage bucket:', err.message));
 
+// Worker heartbeat — upserts a singleton row every 30s so the API can detect worker liveness
+const WORKER_VERSION = process.env.npm_package_version ?? '0.1.0';
+const heartbeatPrisma = getPrismaClient();
+async function writeHeartbeat() {
+  try {
+    await heartbeatPrisma.workerHeartbeat.upsert({
+      where: { id: 'worker-singleton' },
+      update: { lastBeatAt: new Date() },
+      create: { id: 'worker-singleton', startedAt: new Date(), lastBeatAt: new Date(), version: WORKER_VERSION },
+    });
+  } catch (err: any) {
+    console.warn('[worker] heartbeat write failed:', err.message);
+  }
+}
+writeHeartbeat();
+const heartbeatTimer = setInterval(writeHeartbeat, 30_000);
+
 process.on('SIGTERM', async () => {
-  await Promise.all([jobsWorker.close(), catalogImportWorker.close(), catalogExportWorker.close(), documentRenderWorker.close()]);
+  clearInterval(heartbeatTimer);
+  await Promise.all([jobsWorker.close(), catalogImportWorker.close(), catalogExportWorker.close(), documentRenderWorker.close(), opsBackupWorker.close()]);
   process.exit(0);
 });

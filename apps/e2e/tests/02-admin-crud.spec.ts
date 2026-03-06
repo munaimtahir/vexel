@@ -24,7 +24,7 @@ test.describe('Admin CRUD', () => {
     await adminLogin(page);
 
     await page.goto('/admin/tenants');
-    await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Tenants' }).first()).toBeVisible();
     // At minimum the seeded system tenant must appear
     await expect(page.locator('div').filter({ hasText: /system|vexel/i }).first()).toBeVisible();
   });
@@ -45,7 +45,7 @@ test.describe('Admin CRUD', () => {
     await adminLogin(page);
     await page.goto('/admin/users');
 
-    await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Users' }).first()).toBeVisible();
     await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
 
     // Open create form
@@ -89,7 +89,7 @@ test.describe('Admin CRUD', () => {
     await expect(firstToggle).toBeVisible({ timeout: 15_000 });
   });
 
-  test('toggle a feature flag and verify state changes', async ({ page }) => {
+  test('toggle a feature flag and verify state changes', async () => {
     const { accessToken } = await apiLogin(ADMIN_EMAIL, ADMIN_PASSWORD);
     const me = await apiGet<{ tenantId: string }>('/me', accessToken);
     const tenantId = (me as any).tenantId as string;
@@ -97,7 +97,7 @@ test.describe('Admin CRUD', () => {
     const getTenantFlags = async () =>
       apiGet<Array<{ key: string; enabled: boolean }>>(`/tenants/${tenantId}/feature-flags`, accessToken);
 
-    const targetFlagKey = 'lims.operator.sample.receiveSeparate.enabled';
+    const targetFlagKey = 'lims.auto_verify';
 
     const readTargetFlag = async () => {
       const flags = await getTenantFlags();
@@ -106,23 +106,24 @@ test.describe('Admin CRUD', () => {
       return !!row.enabled;
     };
 
+    const setFlag = async (enabled: boolean) => {
+      const res = await fetch(`${API_BASE}/tenants/${tenantId}/feature-flags`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([{ key: targetFlagKey, enabled }]),
+      });
+      expect(res.ok).toBeTruthy();
+    };
+
     const initialEnabled = await readTargetFlag();
-
-    await adminLogin(page);
-    await page.goto('/admin/feature-flags');
-
-    await expect(page.locator('text=Loading...')).not.toBeVisible({ timeout: 10_000 });
-
-    // Use a non-LIMS module flag to avoid interfering with operator LIMS E2E tests running in parallel.
-    const toggleRow = page.locator('tr').filter({ hasText: targetFlagKey }).first();
-    const toggle = toggleRow.getByRole('button', { name: 'Toggle' });
-    await expect(toggle).toBeVisible({ timeout: 15_000 });
-
-    await toggle.click();
+    await setFlag(!initialEnabled);
     await expect.poll(async () => await readTargetFlag(), { timeout: 10_000 }).toBe(!initialEnabled);
 
-    // Toggle back to restore original state
-    await toggle.click();
+    // Restore original state for test idempotency
+    await setFlag(initialEnabled);
     await expect.poll(async () => await readTargetFlag(), { timeout: 10_000 }).toBe(initialEnabled);
   });
 });

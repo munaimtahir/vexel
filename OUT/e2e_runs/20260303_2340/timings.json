@@ -1,0 +1,456 @@
+{
+  "generated": "2026-03-03T23:40:31.889Z",
+  "thresholds": {
+    "warnMs": 5000,
+    "criticalMs": 15000
+  },
+  "testTimings": [
+    {
+      "test": "Authentication > operator /login page loads",
+      "durationMs": 1448,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Authentication > login with valid credentials redirects to worklist",
+      "durationMs": 3536,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Authentication > invalid credentials show error message",
+      "durationMs": 1343,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Authentication > accessing /encounters without auth redirects to /login",
+      "durationMs": 1773,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Authentication > /lims/worklist loads after successful login",
+      "durationMs": 3350,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Patient management > create patient via UI and see in list",
+      "durationMs": 5252,
+      "warn": true,
+      "critical": false
+    },
+    {
+      "test": "Operator — Patient management > patients list page loads with table headers",
+      "durationMs": 2711,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Patient management > duplicate MRN shows 409 error",
+      "durationMs": 4646,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Encounter management > create encounter and navigate to detail",
+      "durationMs": 4337,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Encounter management > encounter detail page shows patient identity header",
+      "durationMs": 3379,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Encounter management > encounters list page loads with headers",
+      "durationMs": 3208,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Full LIMS workflow > enter results and submit, status updates to resulted",
+      "durationMs": 4736,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Full LIMS workflow > verify results via modal confirm, transitions to verified",
+      "durationMs": 5255,
+      "warn": true,
+      "critical": false
+    },
+    {
+      "test": "Operator — Full LIMS workflow > publish page is accessible after verified status",
+      "durationMs": 3611,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Document pipeline > report auto-generated on verify and downloadable from publish page",
+      "durationMs": 17696,
+      "warn": true,
+      "critical": true
+    },
+    {
+      "test": "Document pipeline > generate report twice returns same document ID (idempotency)",
+      "durationMs": 3017,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Document pipeline > document status transitions: QUEUED/RENDERING → RENDERED",
+      "durationMs": 3320,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Tenant isolation > encounter created under system tenant is not accessible with a different tenant header",
+      "durationMs": 516,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Tenant isolation > patient created under system tenant is not accessible with a spoofed tenant header",
+      "durationMs": 477,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Tenant isolation > cross-tenant list endpoint does not leak records",
+      "durationMs": 485,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Verification badge refetch regression > updates from pending verification to verified immediately after verify command",
+      "durationMs": 8772,
+      "warn": true,
+      "critical": false
+    },
+    {
+      "test": "Happy path — multi-parameter workflow > order two tests, enter all results, submit all",
+      "durationMs": 4012,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Happy path — multi-parameter workflow > multi-test: verify and document published",
+      "durationMs": 3681,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Happy path — multi-parameter workflow > multi-test: idempotent publish — two generate calls return same document ID",
+      "durationMs": 929,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Invalid workflow transition — 409 guard > collect-specimen twice must reject second call with 409",
+      "durationMs": 682,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Invalid workflow transition — 409 guard > verify before results submitted must reject with 409",
+      "durationMs": 693,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Invalid workflow transition — 409 guard > submit result after encounter already verified must reject with 409",
+      "durationMs": 889,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Invalid workflow transition — 409 guard > place second lab order on same encounter is allowed (multi-order scenario)",
+      "durationMs": 730,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Invalid workflow transition — 409 guard > UI verify page shows error when encounter is not in resulted status",
+      "durationMs": 2877,
+      "warn": false,
+      "critical": false
+    }
+  ],
+  "worstOffenders": [
+    {
+      "test": "Document pipeline > report auto-generated on verify and downloadable from publish page",
+      "durationMs": 17696,
+      "warn": true,
+      "critical": true
+    },
+    {
+      "test": "Verification badge refetch regression > updates from pending verification to verified immediately after verify command",
+      "durationMs": 8772,
+      "warn": true,
+      "critical": false
+    },
+    {
+      "test": "Operator — Full LIMS workflow > verify results via modal confirm, transitions to verified",
+      "durationMs": 5255,
+      "warn": true,
+      "critical": false
+    },
+    {
+      "test": "Operator — Patient management > create patient via UI and see in list",
+      "durationMs": 5252,
+      "warn": true,
+      "critical": false
+    },
+    {
+      "test": "Operator — Full LIMS workflow > enter results and submit, status updates to resulted",
+      "durationMs": 4736,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Patient management > duplicate MRN shows 409 error",
+      "durationMs": 4646,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Encounter management > create encounter and navigate to detail",
+      "durationMs": 4337,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Happy path — multi-parameter workflow > order two tests, enter all results, submit all",
+      "durationMs": 4012,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Happy path — multi-parameter workflow > multi-test: verify and document published",
+      "durationMs": 3681,
+      "warn": false,
+      "critical": false
+    },
+    {
+      "test": "Operator — Full LIMS workflow > publish page is accessible after verified status",
+      "durationMs": 3611,
+      "warn": false,
+      "critical": false
+    }
+  ],
+  "stepTimings": [
+    {
+      "testTitle": "setup:multi-test-encounter",
+      "entries": [
+        {
+          "step": "patient_create",
+          "startMs": 1772581208230,
+          "endMs": 1772581208259,
+          "durationMs": 29,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "encounter_create",
+          "startMs": 1772581208259,
+          "endMs": 1772581208297,
+          "durationMs": 38,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "order_tests",
+          "startMs": 1772581208297,
+          "endMs": 1772581208413,
+          "durationMs": 116,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "collect_specimen",
+          "startMs": 1772581208413,
+          "endMs": 1772581208460,
+          "durationMs": 47,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "setup_done",
+          "startMs": 1772581208460,
+          "endMs": 1772581208461,
+          "durationMs": 1,
+          "warn": false,
+          "critical": false
+        }
+      ]
+    },
+    {
+      "testTitle": "multi-param:enter-results",
+      "entries": [
+        {
+          "step": "results_page_load",
+          "startMs": 1772581209303,
+          "endMs": 1772581210081,
+          "durationMs": 778,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "results_page_loaded",
+          "startMs": 1772581210081,
+          "endMs": 1772581210149,
+          "durationMs": 68,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "results_filled",
+          "startMs": 1772581210149,
+          "endMs": 1772581210439,
+          "durationMs": 290,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "results_saved",
+          "startMs": 1772581210439,
+          "endMs": 1772581210439,
+          "durationMs": 0,
+          "warn": false,
+          "critical": false
+        }
+      ]
+    },
+    {
+      "testTitle": "setup:multi-test-encounter",
+      "entries": [
+        {
+          "step": "patient_create",
+          "startMs": 1772581212508,
+          "endMs": 1772581212540,
+          "durationMs": 32,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "encounter_create",
+          "startMs": 1772581212540,
+          "endMs": 1772581212577,
+          "durationMs": 37,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "order_tests",
+          "startMs": 1772581212577,
+          "endMs": 1772581212700,
+          "durationMs": 123,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "collect_specimen",
+          "startMs": 1772581212700,
+          "endMs": 1772581212755,
+          "durationMs": 55,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "setup_done",
+          "startMs": 1772581212755,
+          "endMs": 1772581212755,
+          "durationMs": 0,
+          "warn": false,
+          "critical": false
+        }
+      ]
+    },
+    {
+      "testTitle": "multi-param:verify-publish",
+      "entries": [
+        {
+          "step": "result_save",
+          "startMs": 1772581212786,
+          "endMs": 1772581212846,
+          "durationMs": 60,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "verify",
+          "startMs": 1772581212846,
+          "endMs": 1772581214059,
+          "durationMs": 1213,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "publish",
+          "startMs": 1772581214059,
+          "endMs": 1772581214085,
+          "durationMs": 26,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "done",
+          "startMs": 1772581214085,
+          "endMs": 1772581214085,
+          "durationMs": 0,
+          "warn": false,
+          "critical": false
+        }
+      ]
+    },
+    {
+      "testTitle": "setup:multi-test-encounter",
+      "entries": [
+        {
+          "step": "patient_create",
+          "startMs": 1772581215170,
+          "endMs": 1772581215194,
+          "durationMs": 24,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "encounter_create",
+          "startMs": 1772581215194,
+          "endMs": 1772581215224,
+          "durationMs": 30,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "order_tests",
+          "startMs": 1772581215224,
+          "endMs": 1772581215331,
+          "durationMs": 107,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "collect_specimen",
+          "startMs": 1772581215331,
+          "endMs": 1772581215379,
+          "durationMs": 48,
+          "warn": false,
+          "critical": false
+        },
+        {
+          "step": "setup_done",
+          "startMs": 1772581215379,
+          "endMs": 1772581215379,
+          "durationMs": 0,
+          "warn": false,
+          "critical": false
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from '../prisma/prisma.service';
+import { SELF_SERVICE_PERMISSIONS } from '../rbac/permissions';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -27,9 +28,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Reject if user has been deactivated since token was issued
     if (!user || user.status !== 'active') return null;
 
-    const permissions = userRoles.flatMap((ur) =>
-      ur.role.rolePermissions.map((rp) => rp.permission),
-    );
+    const permissions = Array.from(new Set([
+      ...userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
+      ...SELF_SERVICE_PERMISSIONS,
+    ]));
 
     return {
       userId: payload.sub,

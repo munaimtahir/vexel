@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Vexel LIMS E2E — 20260303_2340</title>
+<style>body{font-family:sans-serif;max-width:900px;margin:2em auto;padding:0 1em}
+h1{color:#1a1a2e}table{border-collapse:collapse;width:100%}
+th,td{padding:8px 12px;border:1px solid #ddd;text-align:left}
+th{background:#f0f0f0}.pass{color:#166534}.fail{color:#991b1b}.skip{color:#92400e}
+</style></head><body>
+<h1>Vexel LIMS E2E Evidence — 20260303_2340</h1>
+<p><strong>Summary:</strong> ✅ 29 passed, ❌ 0 failed, ⏭ 0 skipped</p>
+<table>
+<tr><th>Test</th><th>Status</th><th>Duration</th><th>Error</th></tr>
+<tr><td>Authentication > operator /login page loads</td>
+  <td class="pass">expected</td>
+  <td>1448ms</td>
+  <td></td></tr>
+<tr><td>Authentication > login with valid credentials redirects to worklist</td>
+  <td class="pass">expected</td>
+  <td>3536ms</td>
+  <td></td></tr>
+<tr><td>Authentication > invalid credentials show error message</td>
+  <td class="pass">expected</td>
+  <td>1343ms</td>
+  <td></td></tr>
+<tr><td>Authentication > accessing /encounters without auth redirects to /login</td>
+  <td class="pass">expected</td>
+  <td>1773ms</td>
+  <td></td></tr>
+<tr><td>Authentication > /lims/worklist loads after successful login</td>
+  <td class="pass">expected</td>
+  <td>3350ms</td>
+  <td></td></tr>
+<tr><td>Operator — Patient management > create patient via UI and see in list</td>
+  <td class="pass">expected</td>
+  <td>5252ms</td>
+  <td></td></tr>
+<tr><td>Operator — Patient management > patients list page loads with table headers</td>
+  <td class="pass">expected</td>
+  <td>2711ms</td>
+  <td></td></tr>
+<tr><td>Operator — Patient management > duplicate MRN shows 409 error</td>
+  <td class="pass">expected</td>
+  <td>4646ms</td>
+  <td></td></tr>
+<tr><td>Operator — Encounter management > create encounter and navigate to detail</td>
+  <td class="pass">expected</td>
+  <td>4337ms</td>
+  <td></td></tr>
+<tr><td>Operator — Encounter management > encounter detail page shows patient identity header</td>
+  <td class="pass">expected</td>
+  <td>3379ms</td>
+  <td></td></tr>
+<tr><td>Operator — Encounter management > encounters list page loads with headers</td>
+  <td class="pass">expected</td>
+  <td>3208ms</td>
+  <td></td></tr>
+<tr><td>Operator — Full LIMS workflow > enter results and submit, status updates to resulted</td>
+  <td class="pass">expected</td>
+  <td>4736ms</td>
+  <td></td></tr>
+<tr><td>Operator — Full LIMS workflow > verify results via modal confirm, transitions to verified</td>
+  <td class="pass">expected</td>
+  <td>5255ms</td>
+  <td></td></tr>
+<tr><td>Operator — Full LIMS workflow > publish page is accessible after verified status</td>
+  <td class="pass">expected</td>
+  <td>3611ms</td>
+  <td></td></tr>
+<tr><td>Document pipeline > report auto-generated on verify and downloadable from publish page</td>
+  <td class="pass">expected</td>
+  <td>17696ms</td>
+  <td></td></tr>
+<tr><td>Document pipeline > generate report twice returns same document ID (idempotency)</td>
+  <td class="pass">expected</td>
+  <td>3017ms</td>
+  <td></td></tr>
+<tr><td>Document pipeline > document status transitions: QUEUED/RENDERING → RENDERED</td>
+  <td class="pass">expected</td>
+  <td>3320ms</td>
+  <td></td></tr>
+<tr><td>Tenant isolation > encounter created under system tenant is not accessible with a different tenant header</td>
+  <td class="pass">expected</td>
+  <td>516ms</td>
+  <td></td></tr>
+<tr><td>Tenant isolation > patient created under system tenant is not accessible with a spoofed tenant header</td>
+  <td class="pass">expected</td>
+  <td>477ms</td>
+  <td></td></tr>
+<tr><td>Tenant isolation > cross-tenant list endpoint does not leak records</td>
+  <td class="pass">expected</td>
+  <td>485ms</td>
+  <td></td></tr>
+<tr><td>Verification badge refetch regression > updates from pending verification to verified immediately after verify command</td>
+  <td class="pass">expected</td>
+  <td>8772ms</td>
+  <td></td></tr>
+<tr><td>Happy path — multi-parameter workflow > order two tests, enter all results, submit all</td>
+  <td class="pass">expected</td>
+  <td>4012ms</td>
+  <td></td></tr>
+<tr><td>Happy path — multi-parameter workflow > multi-test: verify and document published</td>
+  <td class="pass">expected</td>
+  <td>3681ms</td>
+  <td></td></tr>
+<tr><td>Happy path — multi-parameter workflow > multi-test: idempotent publish — two generate calls return same document ID</td>
+  <td class="pass">expected</td>
+  <td>929ms</td>
+  <td></td></tr>
+<tr><td>Invalid workflow transition — 409 guard > collect-specimen twice must reject second call with 409</td>
+  <td class="pass">expected</td>
+  <td>682ms</td>
+  <td></td></tr>
+<tr><td>Invalid workflow transition — 409 guard > verify before results submitted must reject with 409</td>
+  <td class="pass">expected</td>
+  <td>693ms</td>
+  <td></td></tr>
+<tr><td>Invalid workflow transition — 409 guard > submit result after encounter already verified must reject with 409</td>
+  <td class="pass">expected</td>
+  <td>889ms</td>
+  <td></td></tr>
+<tr><td>Invalid workflow transition — 409 guard > place second lab order on same encounter is allowed (multi-order scenario)</td>
+  <td class="pass">expected</td>
+  <td>730ms</td>
+  <td></td></tr>
+<tr><td>Invalid workflow transition — 409 guard > UI verify page shows error when encounter is not in resulted status</td>
+  <td class="pass">expected</td>
+  <td>2877ms</td>
+  <td></td></tr>
+</table>
+<p><em>Full HTML report: apps/e2e/playwright-report/index.html</em></p>
+</body></html>

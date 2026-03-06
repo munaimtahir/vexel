@@ -22,13 +22,20 @@ function sortKeys(value: unknown): unknown {
 // ─── Receipt Payload ──────────────────────────────────────────────────────
 
 export interface ReceiptPayload {
-  receiptNumber: string;
   issuedAt: string;        // ISO 8601
-  patientName: string;
-  patientMrn: string;
-  patientAge?: string;     // computed from DOB e.g. "32Y"
+  patientDemographics: {
+    displayName: string;
+    ageDisplay?: string;
+    gender?: string;
+    mrn?: string;
+    mobile?: string;
+  };
+  patientName?: string;
+  patientMrn?: string;
+  patientAge?: string;
   patientGender?: string;
   encounterCode?: string;  // display order/lab ID e.g. "VXL-2602-001"
+  labOrderCode?: string;
   registeredBy?: string;   // name of operator who registered
   items: {
     description: string;

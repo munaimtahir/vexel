@@ -67,8 +67,17 @@ export function getToken(): string | null {
     return getTokens().token;
 }
 
+export function isTokenExpired(token: string | null, skewSeconds = 0): boolean {
+    const payload = decodeJwt(token);
+    if (!payload || typeof payload.exp !== 'number') return true;
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    return payload.exp <= (nowSeconds + skewSeconds);
+}
+
 export function isAuthenticated(): boolean {
-    return !!getToken();
+    const token = getToken();
+    if (!token) return false;
+    return !isTokenExpired(token);
 }
 
 /**
@@ -78,7 +87,9 @@ export function decodeJwt(token: string | null): any {
     if (!token) return null;
     try {
         const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const padded = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const padLength = (4 - (padded.length % 4)) % 4;
+        const base64 = padded + '='.repeat(padLength);
         const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));

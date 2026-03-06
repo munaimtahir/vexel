@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Users, ShieldCheck, FlaskConical, UserRound, FileText,
   Palette, ToggleLeft, ClipboardList, Briefcase, ScrollText, Activity,
-  Building2, Stethoscope, CalendarDays, type LucideIcon,
+  Building2, Stethoscope, CalendarDays, HardDrive, type LucideIcon,
 } from 'lucide-react';
 import { hasAnyPermission, type CurrentAdminUser } from '@/lib/rbac';
 
@@ -20,10 +20,17 @@ export type AdminNavItem = {
 
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   {
+    href: '/account',
+    label: 'My Account',
+    icon: UserRound,
+    section: 'Profile',
+  },
+  {
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
     section: 'Overview',
+    requiredPermissions: ['admin.dashboard.read', 'tenant.read'],
   },
 
   // ─── Operations ─────────────────────────────────────────────────────
@@ -96,24 +103,43 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     requiredPermissions: ['feature_flag.read'],
   },
 
+  // ─── Ops / Backups ───────────────────────────────────────────────────
+  {
+    href: '/ops',
+    label: 'Ops',
+    icon: HardDrive,
+    section: 'Ops',
+    requiredPermissions: ['ops.view'],
+    children: [
+      { href: '/ops',           label: 'Dashboard',       requiredPermissions: ['ops.view'] },
+      { href: '/ops/backups',   label: 'Full Backups',    requiredPermissions: ['ops.view'] },
+      { href: '/ops/tenants',   label: 'Tenant Exports',  requiredPermissions: ['ops.view'] },
+      { href: '/ops/restore',   label: 'Restore Center',  requiredPermissions: ['ops.restore'] },
+      { href: '/ops/schedules', label: 'Schedules',       requiredPermissions: ['ops.configure_schedules'] },
+      { href: '/ops/storage',   label: 'Storage Targets', requiredPermissions: ['ops.configure_storage'] },
+      { href: '/ops/logs',      label: 'Logs',            requiredPermissions: ['ops.view'] },
+    ],
+  },
+
   // ─── System ──────────────────────────────────────────────────────────
   {
     href: '/audit',
     label: 'Audit Log',
     icon: ScrollText,
     section: 'System',
-    requiredPermissions: ['audit.read'],
+    requiredPermissions: ['admin.audit.read', 'audit.read'],
   },
   {
     href: '/jobs',
     label: 'Jobs',
     icon: Briefcase,
-    requiredPermissions: ['job.read'],
+    requiredPermissions: ['admin.jobs.read', 'job.read'],
   },
   {
     href: '/system/health',
     label: 'System Health',
     icon: Activity,
+    requiredPermissions: ['admin.app.access', 'ops.view', 'tenant.read'],
   },
 ];
 

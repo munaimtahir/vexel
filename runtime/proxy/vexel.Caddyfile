@@ -1,0 +1,65 @@
+# Vexel Health Platform — Caddy virtual host rules
+# Source of truth for all vexel.alshifalab.pk routing.
+# This file is imported by the shared Caddyfile via:
+#   import overrides/*.Caddyfile
+# DO NOT duplicate these blocks in the shared Caddyfile.
+#
+# Ports (all bind to 127.0.0.1):
+#   9021 = API (NestJS, prefix /api/*)
+#   9022 = PDF service (strip /pdf prefix)
+#   9023 = Admin app (Next.js basePath: /admin)
+#   9024 = Operator app (catch-all)
+#   9027 = MinIO storage (presigned URL bucket access)
+#
+# To add a new subdomain for a new tenant:
+#   1. Add a new host block below following the same pattern.
+#   2. Point reverse_proxy to the appropriate internal port.
+#   3. Run: sudo caddy reload --config /etc/caddy/Caddyfile
+
+# VEXEL MONOREPO
+vexel.alshifalab.pk {
+	encode zstd gzip
+	import std_headers
+	import std_log vexel
+
+	# API — preserve /api prefix (NestJS setGlobalPrefix('api'))
+	handle /api/* {
+		reverse_proxy 127.0.0.1:9021 {
+			import std_proxy
+		}
+	}
+
+	# PDF service — strip /pdf prefix
+	handle_path /pdf/* {
+		reverse_proxy 127.0.0.1:9022 {
+			import std_proxy
+		}
+	}
+
+	# Admin app — preserve /admin prefix (Next.js basePath: '/admin')
+	# Must match both /admin (bare) and /admin/* (all sub-paths)
+	handle /admin {
+		reverse_proxy 127.0.0.1:9023 {
+			import std_proxy
+		}
+	}
+	handle /admin/* {
+		reverse_proxy 127.0.0.1:9023 {
+			import std_proxy
+		}
+	}
+
+	# MinIO storage — bucket direct access for presigned URLs
+	handle /vexel-documents/* {
+		reverse_proxy 127.0.0.1:9027 {
+			import std_proxy
+		}
+	}
+
+	# Operator app — everything else
+	handle {
+		reverse_proxy 127.0.0.1:9024 {
+			import std_proxy
+		}
+	}
+}

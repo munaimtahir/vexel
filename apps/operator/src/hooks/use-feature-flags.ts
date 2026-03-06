@@ -4,6 +4,7 @@ import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 export interface ResolvedFlags {
+  'module.opd'?: boolean;
   'lims.verification.enabled'?: boolean;
   'lims.verification.mode'?: { mode: 'separate' | 'inline' | 'disabled' };
   'lims.operator.verificationPages.enabled'?: boolean;
@@ -13,6 +14,7 @@ export interface ResolvedFlags {
 }
 
 const DEFAULTS: ResolvedFlags = {
+  'module.opd': false,
   'lims.verification.enabled': true,
   'lims.verification.mode': { mode: 'separate' },
   'lims.operator.verificationPages.enabled': true,

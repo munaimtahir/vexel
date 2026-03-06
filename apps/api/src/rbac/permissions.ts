@@ -2,6 +2,28 @@ export enum Permission {
   // Super admin
   ADMIN_SUPER = 'admin.super',
 
+  // Account self-service
+  ACCOUNT_PROFILE_READ_SELF = 'account.profile.read-self',
+  ACCOUNT_PROFILE_UPDATE_SELF = 'account.profile.update-self',
+  ACCOUNT_PASSWORD_CHANGE_SELF = 'account.password.change-self',
+  ADMIN_APP_ACCESS = 'admin.app.access',
+
+  // Admin section permissions (platform-level)
+  ADMIN_DASHBOARD_READ = 'admin.dashboard.read',
+  ADMIN_AUDIT_READ = 'admin.audit.read',
+  ADMIN_JOBS_READ = 'admin.jobs.read',
+  ADMIN_JOBS_RETRY = 'admin.jobs.retry',
+  ADMIN_USERS_READ = 'admin.users.read',
+  ADMIN_USERS_WRITE = 'admin.users.write',
+  ADMIN_ROLES_READ = 'admin.roles.read',
+  ADMIN_ROLES_WRITE = 'admin.roles.write',
+  ADMIN_TENANTS_READ = 'admin.tenants.read',
+  ADMIN_TENANTS_WRITE = 'admin.tenants.write',
+  ADMIN_FEATURE_FLAGS_READ = 'admin.feature_flags.read',
+  ADMIN_FEATURE_FLAGS_WRITE = 'admin.feature_flags.write',
+  ADMIN_CATALOG_READ = 'admin.catalog.read',
+  ADMIN_CATALOG_WRITE = 'admin.catalog.write',
+
   // Tenant management
   TENANT_READ = 'tenant.read',
   TENANT_CREATE = 'tenant.create',
@@ -50,9 +72,23 @@ export enum Permission {
   DOCUMENT_GENERATE = 'document.generate',
   DOCUMENT_PUBLISH = 'document.publish',
 
+  // Ops / Backup Management
+  OPS_VIEW = 'ops.view',
+  OPS_RUN_BACKUP = 'ops.run_backup',
+  OPS_EXPORT_TENANT = 'ops.export_tenant',
+  OPS_CONFIGURE_SCHEDULES = 'ops.configure_schedules',
+  OPS_CONFIGURE_STORAGE = 'ops.configure_storage',
+  OPS_RESTORE = 'ops.restore',
+
   // Module access
   MODULE_ADMIN = 'module.admin',
   MODULE_OPERATOR = 'module.operator',
 }
 
 export const ALL_PERMISSIONS = Object.values(Permission);
+
+export const SELF_SERVICE_PERMISSIONS: Permission[] = [
+  Permission.ACCOUNT_PROFILE_READ_SELF,
+  Permission.ACCOUNT_PROFILE_UPDATE_SELF,
+  Permission.ACCOUNT_PASSWORD_CHANGE_SELF,
+];

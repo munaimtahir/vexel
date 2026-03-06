@@ -123,6 +123,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/account/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get self account profile */
+        get: operations["getMyAccountProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update self account profile (display name only) */
+        patch: operations["updateMyAccountProfile"];
+        trace?: never;
+    };
+    "/account/change-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change self password */
+        post: operations["changeMyAccountPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/navigation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get permission-aware admin navigation and landing route for current user */
+        get: operations["getAdminNavigationSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/landing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get deterministic admin landing path for current user */
+        get: operations["getAdminLanding"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tenants": {
         parameters: {
             query?: never;
@@ -212,6 +281,27 @@ export interface paths {
          *     returns a no-op summary.
          */
         post: operations["enableLimsForTenant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tenants/{tenantId}/service-health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get per-tenant service health and LIMS snapshot (admin only)
+         * @description Returns a read-only snapshot of service health probes (API, worker, PDF, DB, Redis)
+         *     and LIMS operational metrics scoped to the given tenant. No workflow state is mutated.
+         */
+        get: operations["getTenantServiceHealth"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2639,6 +2729,312 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/ops/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ops dashboard summary */
+        get: operations["getOpsDashboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List backup/export/restore runs */
+        get: operations["listOpsRuns"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/runs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a specific run by ID */
+        get: operations["getOpsRun"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/runs/{id}/logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get logs for a run (tail / paginated) */
+        get: operations["getOpsRunLogs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/backups/full:run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Trigger a full backup run (QUEUED → worker) */
+        post: operations["runFullBackup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/backups/tenant:export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Trigger a tenant export run */
+        post: operations["runTenantExport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/restores/full:dryRun": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview restore plan without applying changes */
+        post: operations["runRestoreFullDryRun"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/restores/full:run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Execute full restore (requires confirmPhrase = "yes-restore") */
+        post: operations["runRestoreFull"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/healthcheck:run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Trigger a system healthcheck run */
+        post: operations["runHealthcheck"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/schedules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List backup schedules */
+        get: operations["listOpsSchedules"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/schedules:create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a backup schedule */
+        post: operations["createOpsSchedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/schedules/{id}:update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Update a schedule */
+        post: operations["updateOpsSchedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/schedules/{id}:toggle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enable or disable a schedule */
+        post: operations["toggleOpsSchedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/storage-targets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List storage targets */
+        get: operations["listOpsStorageTargets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/storage-targets:create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a storage target */
+        post: operations["createOpsStorageTarget"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/storage-targets/{id}:update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Update a storage target */
+        post: operations["updateOpsStorageTarget"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/storage-targets/{id}:toggle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enable or disable a storage target */
+        post: operations["toggleOpsStorageTarget"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ops/storage-targets/{id}:test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Test connectivity to a storage target */
+        post: operations["testOpsStorageTarget"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2685,6 +3081,39 @@ export interface components {
             /** Format: date-time */
             createdAt?: string;
         };
+        AccountProfile: {
+            userId: string;
+            /** Format: email */
+            email: string;
+            displayName: string;
+            firstName: string;
+            lastName: string;
+            tenantId: string;
+            tenantName: string | null;
+            roles: string[];
+            permissions: string[];
+            isSuperAdmin?: boolean;
+        };
+        AccountProfileUpdateRequest: {
+            displayName: string;
+        };
+        AccountPasswordChangeRequest: {
+            currentPassword: string;
+            newPassword: string;
+        };
+        AdminNavigationItem: {
+            key: string;
+            label: string;
+            href: string;
+            allowed: boolean;
+        };
+        AdminNavigationSummary: {
+            hasAdminAppAccess: boolean;
+            hasAnyAdminPermission: boolean;
+            /** @description Deterministic first allowed admin route for this user */
+            landingPath: string;
+            sections: components["schemas"]["AdminNavigationItem"][];
+        };
         TenantSummary: {
             id: string;
             name: string;
@@ -2699,6 +3128,55 @@ export interface components {
             catalogSeedHash?: string | null;
             /** Format: date-time */
             createdAt?: string;
+        };
+        ServiceHealthBlock: {
+            ok: boolean;
+            latencyMs?: number | null;
+            error?: string | null;
+        };
+        WorkerHealthBlock: {
+            ok: boolean;
+            queues?: {
+                documentRenderDepth?: number;
+                failedJobs24h?: number;
+            };
+            /** Format: date-time */
+            lastHeartbeatAt?: string | null;
+        };
+        ApiHealthBlock: {
+            ok: boolean;
+            version: string;
+            uptimeSec: number;
+        };
+        LimsSnapshot: {
+            /** @description Encounters with ordered tests not fully resulted */
+            pendingResults: number;
+            /** @description Encounters in resulted state awaiting verification */
+            pendingVerification: number;
+            /** @description Documents with FAILED status in the last 24 hours */
+            failedDocuments24h: number;
+            /** @description Documents published today (local midnight to now) */
+            publishedToday: number;
+        };
+        TenantServiceHealthResponse: {
+            tenant: {
+                id: string;
+                name: string;
+                domains: string[];
+                /** @enum {string} */
+                status: "active" | "disabled" | "suspended" | "trial";
+                featureFlags?: {
+                    [key: string]: unknown;
+                } | null;
+            };
+            services: {
+                api: components["schemas"]["ApiHealthBlock"];
+                worker: components["schemas"]["WorkerHealthBlock"];
+                pdf: components["schemas"]["ServiceHealthBlock"];
+                db: components["schemas"]["ServiceHealthBlock"];
+                redis: components["schemas"]["ServiceHealthBlock"];
+            };
+            limsSnapshot: components["schemas"]["LimsSnapshot"];
         };
         TenantConfig: {
             brandName?: string;
@@ -3365,12 +3843,19 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
         };
+        PatientDemographics: {
+            displayName: string;
+            ageDisplay?: string | null;
+            gender?: string | null;
+            mrn?: string | null;
+            mobile?: string | null;
+        };
         ReceiptGenerateRequest: {
-            receiptNumber: string;
-            patientName: string;
-            patientMrn: string;
             /** Format: date-time */
             issuedAt: string;
+            encounterCode?: string | null;
+            labOrderCode?: string | null;
+            patientDemographics: components["schemas"]["PatientDemographics"];
             items: {
                 description: string;
                 quantity: number;
@@ -3774,6 +4259,155 @@ export interface components {
             invoice: components["schemas"]["OpdInvoice"];
             document: components["schemas"]["Document"];
         };
+        OpsStorageTarget: {
+            id: string;
+            tenantId?: string | null;
+            /** @enum {string} */
+            type: "LOCAL" | "S3" | "SSH";
+            name: string;
+            /** @description Non-secret config: path, bucket, endpoint, region, prefix */
+            configJson?: Record<string, never> | null;
+            isEnabled: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OpsBackupRun: {
+            id: string;
+            /** @enum {string} */
+            type: "FULL" | "TENANT_EXPORT" | "RESTORE" | "HEALTHCHECK";
+            tenantId?: string | null;
+            /** @enum {string} */
+            status: "QUEUED" | "RUNNING" | "SUCCEEDED" | "FAILED" | "CANCELLED";
+            /** Format: date-time */
+            startedAt?: string | null;
+            /** Format: date-time */
+            finishedAt?: string | null;
+            artifactPath?: string | null;
+            artifactSizeBytes?: number | null;
+            checksumSha256?: string | null;
+            logPath?: string | null;
+            initiatedByUserId?: string | null;
+            correlationId?: string | null;
+            errorSummary?: string | null;
+            metaJson?: Record<string, never> | null;
+            storageTargetId?: string | null;
+            storageTarget?: components["schemas"]["OpsStorageTarget"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OpsSchedule: {
+            id: string;
+            /** @enum {string} */
+            type: "FULL_BACKUP" | "TENANT_EXPORT";
+            tenantId?: string | null;
+            cronExpression: string;
+            isEnabled: boolean;
+            retentionDays: number;
+            retentionPolicyJson?: Record<string, never> | null;
+            storageTargets?: components["schemas"]["OpsStorageTarget"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OpsDashboard: {
+            lastFullBackup: components["schemas"]["OpsBackupRun"];
+            lastHealthcheck?: components["schemas"]["OpsBackupRun"];
+            recentRuns: components["schemas"]["OpsBackupRun"][];
+            storageTargets: components["schemas"]["OpsStorageTarget"][];
+            schedules: components["schemas"]["OpsSchedule"][];
+            diskUsage: {
+                backupsDirBytes?: number;
+                backupsDirHuman?: string;
+                logsDirBytes?: number;
+                logsDirHuman?: string;
+            };
+        };
+        OpsRunListResponse: {
+            data: components["schemas"]["OpsBackupRun"][];
+            pagination: {
+                total: number;
+                limit: number;
+                cursor: string | null;
+            };
+        };
+        OpsRunLogsResponse: {
+            runId: string;
+            logPath?: string | null;
+            lines: string[];
+            total: number;
+            offset?: number;
+        };
+        OpsRunBackupFullRequest: {
+            /** @default true */
+            includeDb: boolean;
+            /** @default true */
+            includeMinio: boolean;
+            /** @default true */
+            includeEnv: boolean;
+            /** @default true */
+            includeCaddy: boolean;
+            storageTargetId?: string | null;
+            /**
+             * @default SERVER_MANAGED
+             * @enum {string}
+             */
+            passphraseMode: "SERVER_MANAGED" | "NONE";
+        };
+        OpsRunTenantExportRequest: {
+            tenantId: string;
+            storageTargetId?: string | null;
+        };
+        OpsRunResponse: {
+            runId: string;
+            status: string;
+            correlationId: string;
+        };
+        OpsRestoreDryRunRequest: {
+            artifactPath: string;
+        };
+        OpsRestoreRunRequest: {
+            artifactPath: string;
+            /** @description Must equal 'yes-restore' to confirm */
+            confirmPhrase: string;
+            /** @default true */
+            preSnapshotEnabled: boolean;
+            /**
+             * @default APPLY
+             * @enum {string}
+             */
+            mode: "DRY_RUN" | "APPLY";
+        };
+        OpsCreateStorageTargetRequest: {
+            /** @enum {string} */
+            type: "LOCAL" | "S3" | "SSH";
+            name: string;
+            configJson?: Record<string, never> | null;
+            /** @default true */
+            isEnabled: boolean;
+        };
+        OpsCreateScheduleRequest: {
+            /** @enum {string} */
+            type: "FULL_BACKUP" | "TENANT_EXPORT";
+            tenantId?: string | null;
+            cronExpression: string;
+            /** @default true */
+            isEnabled: boolean;
+            /** @default 30 */
+            retentionDays: number;
+            retentionPolicyJson?: Record<string, never> | null;
+            storageTargetIds?: string[];
+        };
+        OpsStorageTargetListResponse: {
+            data: components["schemas"]["OpsStorageTarget"][];
+        };
+        OpsScheduleListResponse: {
+            data: components["schemas"]["OpsSchedule"][];
+        };
     };
     responses: {
         /** @description Unauthorized */
@@ -4000,6 +4634,148 @@ export interface operations {
                     "application/json": components["schemas"]["UserSummary"];
                 };
             };
+        };
+    };
+    getMyAccountProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Self profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountProfile"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    updateMyAccountProfile: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountProfileUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated self profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountProfile"];
+                };
+            };
+            /** @description Invalid display name */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    changeMyAccountPassword: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountPasswordChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description Password changed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ok: boolean;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Validation failed or current password mismatch */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    getAdminNavigationSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Admin navigation summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminNavigationSummary"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    getAdminLanding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Admin landing route */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        landingPath: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
         };
     };
     listTenants: {
@@ -4280,6 +5056,42 @@ export interface operations {
                     };
                 };
             };
+            /** @description Tenant not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getTenantServiceHealth: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                tenantId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Service health snapshot */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantServiceHealthResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             /** @description Tenant not found */
             404: {
                 headers: {
@@ -9954,6 +10766,496 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+        };
+    };
+    getOpsDashboard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Dashboard summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsDashboard"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    listOpsRuns: {
+        parameters: {
+            query?: {
+                type?: "FULL" | "TENANT_EXPORT" | "RESTORE" | "HEALTHCHECK";
+                status?: "QUEUED" | "RUNNING" | "SUCCEEDED" | "FAILED" | "CANCELLED";
+                tenantId?: string;
+                limit?: number;
+                cursor?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Run list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRunListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getOpsRun: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Run record */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsBackupRun"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getOpsRunLogs: {
+        parameters: {
+            query?: {
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Log lines */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRunLogsResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    runFullBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["OpsRunBackupFullRequest"];
+            };
+        };
+        responses: {
+            /** @description Run queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRunResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    runTenantExport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsRunTenantExportRequest"];
+            };
+        };
+        responses: {
+            /** @description Run queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRunResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    runRestoreFullDryRun: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsRestoreDryRunRequest"];
+            };
+        };
+        responses: {
+            /** @description Dry run queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRunResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    runRestoreFull: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsRestoreRunRequest"];
+            };
+        };
+        responses: {
+            /** @description Restore queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRunResponse"];
+                };
+            };
+            /** @description Invalid confirmation phrase */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    runHealthcheck: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Healthcheck queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRunResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    listOpsSchedules: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Schedule list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsScheduleListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    createOpsSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsCreateScheduleRequest"];
+            };
+        };
+        responses: {
+            /** @description Schedule created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsSchedule"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    updateOpsSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsCreateScheduleRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsSchedule"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    toggleOpsSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    isEnabled: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Toggled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsSchedule"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    listOpsStorageTargets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Storage target list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsStorageTargetListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    createOpsStorageTarget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsCreateStorageTargetRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsStorageTarget"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    updateOpsStorageTarget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsCreateStorageTargetRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsStorageTarget"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    toggleOpsStorageTarget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    isEnabled: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Toggled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsStorageTarget"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    testOpsStorageTarget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Test result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ok: boolean;
+                        message: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
         };
     };
 }

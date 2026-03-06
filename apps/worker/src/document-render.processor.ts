@@ -6,8 +6,8 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
 
-// RECEIPTs are auto-published immediately after rendering (no manual publish step needed)
-const AUTO_PUBLISH_TYPES = new Set(['RECEIPT', 'OPD_INVOICE_RECEIPT']);
+// Auto-publish after render for document types that should not require a manual publish click.
+const AUTO_PUBLISH_TYPES = new Set(['RECEIPT', 'OPD_INVOICE_RECEIPT', 'LAB_REPORT']);
 
 interface RenderJobData {
   documentId: string;
@@ -177,6 +177,29 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
         data: { status: 'PUBLISHED', publishedAt: new Date() },
       });
       await writeAudit(tenantId, 'document.auto_published', documentId, correlationId, { type: doc.type });
+
+      // Keep encounter state aligned when lab report gets auto-published post-verification.
+      if (doc.type === 'LAB_REPORT' && doc.sourceType === 'ENCOUNTER' && doc.sourceRef) {
+        await prisma.encounter.updateMany({
+          where: { id: doc.sourceRef, tenantId, status: { in: ['verified', 'published'] } as any },
+          data: { status: 'published' as any },
+        });
+        try {
+          await prisma.auditEvent.create({
+            data: {
+              tenantId,
+              action: 'encounter.auto_publish_report',
+              entityType: 'Encounter',
+              entityId: doc.sourceRef,
+              correlationId,
+              after: { status: 'published', documentId } as any,
+            },
+          });
+        } catch (err) {
+          console.error('[document-render] Failed to write encounter auto-publish audit:', (err as Error).message);
+        }
+      }
+
       console.log(`${logCtx} auto_published type=${doc.type} total_ms=${Date.now() - t0}`);
     } else {
       console.log(`${logCtx} rendered total_ms=${Date.now() - t0}`);

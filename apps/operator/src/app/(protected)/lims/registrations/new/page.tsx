@@ -83,6 +83,7 @@ export default function NewRegistrationPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [savedEncounterId, setSavedEncounterId] = useState<string | null>(null);
+  const [savedOrderCode, setSavedOrderCode] = useState<string | null>(null);
   const [receiptDocId, setReceiptDocId] = useState<string | null>(null);
   const [pollingReceipt, setPollingReceipt] = useState(false);
 
@@ -308,10 +309,12 @@ export default function NewRegistrationPage() {
     setSaving(true); setSaveError(''); setPatientRegisteredMsg('');
     try {
       const api = getApiClient(getToken() ?? undefined);
-      const parts = patient.fullName.trim().split(/\s+/);
+      const parts = patient.fullName.trim().split(/\s+/).filter(Boolean);
+      const firstName = parts[0] || '';
+      const lastName = parts.length > 1 ? parts.slice(1).join(' ') : '';
       const body: Record<string, unknown> = {
-        firstName: parts[0] || '',
-        lastName: parts.length > 1 ? parts.slice(1).join(' ') : parts[0] || '',
+        firstName,
+        lastName,
         gender: patient.gender,
       };
       if (mobileValue.replace(/[^0-9]/g, '').length >= 4) body.mobile = mobileValue;
@@ -347,10 +350,12 @@ export default function NewRegistrationPage() {
       let patientId = existingPatient?.id;
 
       if (!patientId) {
-        const parts = patient.fullName.trim().split(/\s+/);
+        const parts = patient.fullName.trim().split(/\s+/).filter(Boolean);
+        const firstName = parts[0] || '';
+        const lastName = parts.length > 1 ? parts.slice(1).join(' ') : '';
         const body: Record<string, unknown> = {
-          firstName: parts[0] || '',
-          lastName: parts.length > 1 ? parts.slice(1).join(' ') : parts[0] || '',
+          firstName,
+          lastName,
           gender: patient.gender,
         };
         if (mobileValue.replace(/[^0-9]/g, '').length >= 4) body.mobile = mobileValue;
@@ -367,12 +372,13 @@ export default function NewRegistrationPage() {
       const { data: enc, error: encErr } = await api.POST('/encounters', { body: { patientId } as any });
       if (encErr || !enc) { setSaveError('Failed to create encounter'); return; }
       const encounterId = (enc as any).id;
+      let encounterCode = (enc as any).encounterCode ?? null;
 
       const discountPctNum = parseFloat(discountPct) || 0;
       for (let ti = 0; ti < selectedTests.length; ti++) {
         const test = selectedTests[ti];
         // @ts-ignore
-        await api.POST('/encounters/{encounterId}:order-lab', {
+        const { data: ordered } = await api.POST('/encounters/{encounterId}:order-lab', {
           params: { path: { encounterId } },
           body: {
             testId: test.id,
@@ -387,6 +393,7 @@ export default function NewRegistrationPage() {
             } : {}),
           } as any,
         });
+        encounterCode = (ordered as any)?.encounterCode ?? encounterCode;
       }
 
       // Queue receipt
@@ -394,19 +401,26 @@ export default function NewRegistrationPage() {
         // @ts-ignore
         await api.POST('/documents/receipt:generate', {
           body: {
-            receiptNumber: (enc as any).encounterCode ?? encounterId,
-            patientName: patient.fullName.trim(),
-            patientMrn: existingPatient?.mrn ?? 'Auto',
             issuedAt: new Date().toISOString(),
+            encounterCode: encounterCode ?? encounterId,
+            labOrderCode: encounterCode ?? encounterId,
+            patientDemographics: {
+              displayName: patient.fullName.trim(),
+              ageDisplay: patient.dateOfBirth ? `${ageFromDob(patient.dateOfBirth)}Y` : (displayAge ? `${displayAge}Y` : ''),
+              gender: patient.gender || undefined,
+              mrn: existingPatient?.mrn ?? undefined,
+              mobile: mobileValue || undefined,
+            },
             items: selectedTests.map(t => ({ description: t.name, quantity: 1, unitPrice: t.price ?? 0, total: t.price ?? 0 })),
             subtotal: total, tax: 0, grandTotal: total,
-            sourceRef: encounterId, sourceType: 'encounter',
+            sourceRef: encounterId, sourceType: 'ENCOUNTER',
           } as any,
         });
       } catch { /* best-effort */ }
 
       // Show success screen immediately
       setSavedEncounterId(encounterId);
+      setSavedOrderCode(encounterCode ?? encounterId);
 
       // Poll for receipt PDF in background with exponential backoff
       // Stops as soon as status is RENDERED or PUBLISHED (receipts auto-publish after render)
@@ -438,7 +452,7 @@ export default function NewRegistrationPage() {
     setFieldErrors({}); setSelectedTests([]);
     setTestSearch(''); setTestResults([]); setTestDropOpen(false);
     setDiscountPKR('0'); setDiscountPct('0'); setPaid('0');
-    setSaveError(''); setSavedEncounterId(null); setReceiptDocId(null); setPollingReceipt(false);
+    setSaveError(''); setSavedEncounterId(null); setSavedOrderCode(null); setReceiptDocId(null); setPollingReceipt(false);
     setTimeout(() => mob1Ref.current?.focus(), 50);
   };
 
@@ -451,6 +465,11 @@ export default function NewRegistrationPage() {
         {registeredMRN && (
           <p className="text-muted-foreground mb-1">
             MRN: <strong className="text-foreground">{registeredMRN}</strong>
+          </p>
+        )}
+        {savedOrderCode && (
+          <p className="text-muted-foreground mb-1">
+            Order ID: <strong className="text-foreground font-mono">{savedOrderCode}</strong>
           </p>
         )}
         <div className="my-4 min-h-[40px]">

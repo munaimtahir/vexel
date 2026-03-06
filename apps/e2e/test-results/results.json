@@ -1,0 +1,156 @@
+{
+  "config": {
+    "configFile": "/home/munaim/srv/apps/vexel/apps/e2e/playwright.config.ts",
+    "rootDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/munaim/srv/apps/vexel/apps/e2e/helpers/global-setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/munaim/srv/apps/vexel/apps/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "operator",
+        "name": "operator",
+        "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/01-auth.spec.ts",
+          "**/03-operator-patient.spec.ts",
+          "**/04-operator-encounter.spec.ts",
+          "**/05-operator-workflow.spec.ts",
+          "**/06-document-pipeline.spec.ts",
+          "**/07-tenant-isolation.spec.ts",
+          "**/08-verification-badge-refetch.spec.ts",
+          "**/09-happy-path-multi-parameter.spec.ts",
+          "**/10-invalid-transition-blocked.spec.ts",
+          "**/11-chaos-nightly.spec.ts",
+          "**/12-operator-account.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/munaim/srv/apps/vexel/apps/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "admin",
+        "name": "admin",
+        "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/02-admin-crud.spec.ts",
+          "**/13-admin-account-landing.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "01-auth.spec.ts",
+      "file": "01-auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication",
+          "file": "01-auth.spec.ts",
+          "line": 11,
+          "column": 6,
+          "specs": [
+            {
+              "title": "operator /login page loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1183,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-06T21:59:14.610Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-ec119bc76f7a9a8e5e79",
+              "file": "01-auth.spec.ts",
+              "line": 12,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-06T21:59:12.088Z",
+    "duration": 4262.468,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

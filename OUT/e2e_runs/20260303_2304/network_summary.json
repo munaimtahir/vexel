@@ -1,0 +1,6 @@
+{
+  "note": "Full network traces in traces/ dir. Extract with: npx playwright show-trace <trace.zip>",
+  "totalTests": 0,
+  "passedTests": 0,
+  "failedTests": 0
+}

@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { SELF_SERVICE_PERMISSIONS } from '../rbac/permissions';
 
 export interface JwtPayload {
   sub: string;       // userId
@@ -43,7 +44,10 @@ export class AuthService {
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
     const roles = user.userRoles.map((ur) => ur.role.name);
-    const permissions = Array.from(new Set(user.userRoles.flatMap((ur) => ur.role.rolePermissions.map(rp => rp.permission))));
+    const permissions = Array.from(new Set([
+      ...user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
+      ...SELF_SERVICE_PERMISSIONS,
+    ]));
 
     const payload: JwtPayload = {
       sub: user.id,
@@ -112,7 +116,10 @@ export class AuthService {
 
     const user = matchedRecord.user;
     const roles = user.userRoles.map((ur) => ur.role.name);
-    const permissions = Array.from(new Set(user.userRoles.flatMap((ur) => ur.role.rolePermissions.map(rp => rp.permission))));
+    const permissions = Array.from(new Set([
+      ...user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
+      ...SELF_SERVICE_PERMISSIONS,
+    ]));
 
     const payload: JwtPayload = {
       sub: user.id,

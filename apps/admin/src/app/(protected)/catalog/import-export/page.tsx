@@ -195,6 +195,9 @@ export default function ImportExportPage() {
         <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
           Upload workbook (.xlsx), run validate first, then apply when validation passes.
         </p>
+        <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '12px' }}>
+          Mapping sheets are processed from full workbook uploads: <strong>TestParameters</strong> and <strong>PanelTests</strong>.
+        </p>
 
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '16px' }}>
           <div style={{ flex: 1, minWidth: '220px' }}>

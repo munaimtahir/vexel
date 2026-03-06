@@ -33,6 +33,8 @@ export function Sidebar() {
   const currentModule: 'core' | 'opd' = normalizedPath.startsWith('/opd') ? 'opd' : 'core';
   const coreNavItems = getVisibleAdminNav(user);
   const opdNavItems = getVisibleAdminOpdNav(user);
+  const userPermissions = user?.permissions ?? [];
+  const canAccessOpd = Boolean(user?.isSuperAdmin || userPermissions.includes('module.admin'));
   const navItems = currentModule === 'opd' ? opdNavItems : coreNavItems;
   const handleLogout = () => { logout(); router.push('/login'); };
 
@@ -70,7 +72,7 @@ export function Sidebar() {
         </div>
         <div style={{ display: 'flex', gap: '7px', position: 'relative', zIndex: 1, marginTop: '14px' }}>
           <Link
-            href="/dashboard"
+            href="/account"
             style={{
               display: 'flex', alignItems: 'center', gap: '5px',
               padding: '5px 12px', borderRadius: '99px',
@@ -85,22 +87,24 @@ export function Sidebar() {
               ADMIN
             </span>
           </Link>
-          <Link
-            href="/opd"
-            style={{
-              display: 'flex', alignItems: 'center', gap: '5px',
-              padding: '5px 12px', borderRadius: '99px',
-              background: currentModule === 'opd' ? 'hsl(var(--sidebar-accent))' : 'hsl(var(--sidebar-foreground) / 0.04)',
-              border: currentModule === 'opd' ? '1px solid hsl(var(--sidebar-border))' : '1px solid hsl(var(--sidebar-foreground) / 0.08)',
-              textDecoration: 'none',
-              boxShadow: currentModule === 'opd' ? '0 0 12px hsl(var(--primary) / 0.12)' : 'none',
-            }}
-          >
-            <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: currentModule === 'opd' ? 'hsl(var(--primary))' : 'hsl(var(--sidebar-muted))' }} />
-            <span style={{ fontSize: '10px', fontWeight: 700, color: currentModule === 'opd' ? 'hsl(var(--sidebar-foreground))' : 'hsl(var(--sidebar-muted))', letterSpacing: '0.07em' }}>
-              OPD
-            </span>
-          </Link>
+          {canAccessOpd && (
+            <Link
+              href="/opd"
+              style={{
+                display: 'flex', alignItems: 'center', gap: '5px',
+                padding: '5px 12px', borderRadius: '99px',
+                background: currentModule === 'opd' ? 'hsl(var(--sidebar-accent))' : 'hsl(var(--sidebar-foreground) / 0.04)',
+                border: currentModule === 'opd' ? '1px solid hsl(var(--sidebar-border))' : '1px solid hsl(var(--sidebar-foreground) / 0.08)',
+                textDecoration: 'none',
+                boxShadow: currentModule === 'opd' ? '0 0 12px hsl(var(--primary) / 0.12)' : 'none',
+              }}
+            >
+              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: currentModule === 'opd' ? 'hsl(var(--primary))' : 'hsl(var(--sidebar-muted))' }} />
+              <span style={{ fontSize: '10px', fontWeight: 700, color: currentModule === 'opd' ? 'hsl(var(--sidebar-foreground))' : 'hsl(var(--sidebar-muted))', letterSpacing: '0.07em' }}>
+                OPD
+              </span>
+            </Link>
+          )}
         </div>
       </div>
 

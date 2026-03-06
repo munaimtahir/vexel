@@ -7,7 +7,6 @@ import {
 import { LabReportPayload } from './canonical';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { StorageService } from '../storage/storage.service';
@@ -45,6 +44,26 @@ export class DocumentsService {
     return `${Math.max(0, years)}Y`;
   }
 
+  private computeAgeDisplay(
+    dateOfBirth: Date | null | undefined,
+    ageYears: number | null | undefined,
+    anchor: Date,
+  ): string {
+    const computed = this.computeAgeAt(dateOfBirth, anchor);
+    if (computed) return computed;
+    if (typeof ageYears === 'number' && Number.isFinite(ageYears)) return `${Math.max(0, ageYears)}Y`;
+    return '';
+  }
+
+  private buildPatientDisplayName(firstName?: string | null, lastName?: string | null): string {
+    const first = (firstName ?? '').trim();
+    const last = (lastName ?? '').trim();
+    if (first && last && first.toLowerCase() === last.toLowerCase()) {
+      return first;
+    }
+    return [first, last].filter(Boolean).join(' ').trim();
+  }
+
   private async normalizeDeterministicFields(
     type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT',
     payload: Record<string, unknown>,
@@ -58,13 +77,20 @@ export class DocumentsService {
       delete normalized.printedAt;
     }
 
-    if (sourceType !== 'ENCOUNTER' || !sourceRef) {
+    const normalizedSourceType = (sourceType ?? '').trim().toUpperCase();
+    if (normalizedSourceType !== 'ENCOUNTER' || !sourceRef) {
       return normalized;
     }
 
     const encounter = await this.prisma.encounter.findFirst({
       where: { id: sourceRef, tenantId },
-      include: { patient: true },
+      include: {
+        patient: true,
+        labOrders: {
+          orderBy: { createdAt: 'asc' },
+          select: { id: true },
+        },
+      },
     });
     if (!encounter) {
       return normalized;
@@ -72,10 +98,39 @@ export class DocumentsService {
 
     if (type === 'RECEIPT') {
       normalized.issuedAt = encounter.createdAt.toISOString();
-      const patientAge = this.computeAgeAt(encounter.patient.dateOfBirth, encounter.createdAt);
-      if (patientAge) {
-        normalized.patientAge = patientAge;
-      }
+      const displayName =
+        this.buildPatientDisplayName(encounter.patient.firstName, encounter.patient.lastName) || 'N/A';
+      const ageDisplay = this.computeAgeDisplay(
+        encounter.patient.dateOfBirth,
+        encounter.patient.ageYears,
+        encounter.createdAt,
+      );
+      const gender = (encounter.patient.gender ?? '').trim();
+      const mrn = (encounter.patient.mrn ?? '').trim();
+      const mobile = (encounter.patient.mobile ?? '').trim();
+      const normalizedEncounterCode =
+        (normalized.encounterCode as string | undefined) ?? encounter.encounterCode ?? undefined;
+      const labOrderCode =
+        (normalized.labOrderCode as string | undefined) ??
+        (normalized.primaryOrderCode as string | undefined) ??
+        encounter.labOrders?.[0]?.id ??
+        normalizedEncounterCode ??
+        encounter.encounterCode ??
+        undefined;
+      normalized.patientDemographics = {
+        displayName,
+        ageDisplay,
+        gender: gender || undefined,
+        mrn: mrn || undefined,
+        mobile: mobile || undefined,
+      };
+      // Backward-compatible keys for existing PDF templates.
+      normalized.patientName = displayName;
+      normalized.patientMrn = mrn || undefined;
+      normalized.patientAge = ageDisplay || undefined;
+      normalized.patientGender = gender || undefined;
+      normalized.encounterCode = normalizedEncounterCode;
+      normalized.labOrderCode = labOrderCode ?? undefined;
       return normalized;
     }
 

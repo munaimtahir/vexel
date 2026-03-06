@@ -284,24 +284,37 @@ export class CatalogImportExportService {
       bySheet: {},
     };
 
-    const sheetOrder: Array<'sample-types' | 'parameters' | 'tests' | 'test-parameters' | 'panels' | 'panel-tests' | 'reference-ranges'> = [
-      'sample-types', 'parameters', 'tests', 'test-parameters', 'panels', 'panel-tests', 'reference-ranges',
+    const sheetSpecs: Array<{
+      key: 'sample-types' | 'parameters' | 'tests' | 'test-parameters' | 'panels' | 'panel-tests' | 'reference-ranges';
+      canonicalName: string;
+      aliases: string[];
+    }> = [
+      { key: 'sample-types', canonicalName: 'SampleTypes', aliases: ['SampleTypes', 'Sample Types', 'sample-types'] },
+      { key: 'parameters', canonicalName: 'Parameters', aliases: ['Parameters', 'Parameter', 'parameter'] },
+      { key: 'tests', canonicalName: 'Tests', aliases: ['Tests', 'Test', 'CatalogTests'] },
+      {
+        key: 'test-parameters',
+        canonicalName: 'TestParameters',
+        aliases: ['TestParameters', 'Test Parameter', 'Test Parameters', 'TestParameterMapping', 'TestParameterMappings', 'Test-Parameters'],
+      },
+      { key: 'panels', canonicalName: 'Panels', aliases: ['Panels', 'Panel', 'CatalogPanels'] },
+      {
+        key: 'panel-tests',
+        canonicalName: 'PanelTests',
+        aliases: ['PanelTests', 'Panel Test', 'Panel Tests', 'PanelTestMapping', 'PanelTestMappings', 'Panel-Tests'],
+      },
+      {
+        key: 'reference-ranges',
+        canonicalName: 'ReferenceRanges',
+        aliases: ['ReferenceRanges', 'Reference Range', 'Reference Ranges', 'ReferenceRangesSheet'],
+      },
     ];
-    const sheetNameMap: Record<string, string> = {
-      'sample-types': 'SampleTypes',
-      'parameters': 'Parameters',
-      'tests': 'Tests',
-      'test-parameters': 'TestParameters',
-      'panels': 'Panels',
-      'panel-tests': 'PanelTests',
-      'reference-ranges': 'ReferenceRanges',
-    };
 
-    for (const sheet of sheetOrder) {
-      const ws = wb.getWorksheet(sheetNameMap[sheet]);
+    for (const spec of sheetSpecs) {
+      const ws = this._findWorksheetByAliases(wb, spec.aliases);
       const rows = ws ? this._extractRows(ws) : [];
       if (!ws) {
-        summary.bySheet[sheetNameMap[sheet]] = {
+        summary.bySheet[spec.canonicalName] = {
           totalRows: 0,
           inserted: 0,
           updated: 0,
@@ -310,12 +323,12 @@ export class CatalogImportExportService {
         };
         continue;
       }
-      const result = await this._importSheet(tenantId, sheet, rows, opts, actorUserId, correlationId);
+      const result = await this._importSheet(tenantId, spec.key, rows, opts, actorUserId, correlationId);
       summary.inserted += result.inserted;
       summary.updated += result.updated;
       summary.skipped += result.skipped;
-      result.errors.forEach((e) => summary.errors.push({ sheet: sheetNameMap[sheet], ...e }));
-      summary.bySheet[sheetNameMap[sheet]] = {
+      result.errors.forEach((e) => summary.errors.push({ sheet: spec.canonicalName, ...e }));
+      summary.bySheet[spec.canonicalName] = {
         totalRows: rows.length,
         inserted: result.inserted,
         updated: result.updated,
@@ -362,14 +375,19 @@ export class CatalogImportExportService {
     const aliases: Record<string, string> = {
       code: 'userCode',
       unit: 'defaultUnit',
-      dataType: 'resultType',
+      datatype: 'resultType',
       category: 'department',
       low: 'lowValue',
       high: 'highValue',
+      testcode: 'testExternalId',
+      parametercode: 'parameterExternalId',
+      panelcode: 'panelExternalId',
+      order: 'displayOrder',
     };
     const out: Record<string, string> = {};
     for (const [k, v] of Object.entries(row)) {
-      const canonical = aliases[k] ?? k;
+      const normalizedKey = k.replace(/[\s_-]/g, '').toLowerCase();
+      const canonical = aliases[normalizedKey] ?? k.trim();
       // Don't overwrite if the canonical key was also present in the row
       if (!(canonical in out)) out[canonical] = v;
     }
@@ -387,9 +405,26 @@ export class CatalogImportExportService {
     return out;
   }
 
+  private _normalizeSheetName(name: string): string {
+    return String(name ?? '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+  }
+
+  private _findWorksheetByAliases(wb: ExcelJS.Workbook, aliases: string[]): ExcelJS.Worksheet | undefined {
+    // Fast exact lookup first
+    for (const alias of aliases) {
+      const exact = wb.getWorksheet(alias);
+      if (exact) return exact;
+    }
+    // Fallback normalized lookup for spacing/case/hyphen differences.
+    const normalizedAliases = new Set(aliases.map((a) => this._normalizeSheetName(a)));
+    return wb.worksheets.find((ws) => normalizedAliases.has(this._normalizeSheetName(ws.name)));
+  }
+
   private _extractRows(ws: ExcelJS.Worksheet): Record<string, string>[] {
     const headers: string[] = [];
-    ws.getRow(1).eachCell((cell, col) => { headers[col - 1] = String(cell.value ?? ''); });
+    ws.getRow(1).eachCell((cell, col) => { headers[col - 1] = String(cell.value ?? '').trim(); });
     const rows: Record<string, string>[] = [];
     ws.eachRow((row, rowNum) => {
       if (rowNum === 1) return;

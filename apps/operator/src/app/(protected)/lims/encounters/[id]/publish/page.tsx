@@ -133,7 +133,7 @@ export default function PublishPage() {
       <div className="bg-card rounded-lg border border-border p-8">
         <h3 className="mb-2 text-lg font-bold text-foreground">Lab Report</h3>
         <p className="mb-6 text-muted-foreground text-sm">
-          Verify generates the report; publish is a separate command step.
+          Reports are auto-published after verification. Manual publish is only a fallback.
         </p>
 
         {/* Document status */}
@@ -144,7 +144,7 @@ export default function PublishPage() {
         {document && docStatus && (
           <div className="mb-6 px-4 py-3 rounded-md border border-border flex items-center gap-3">
             <span className="font-bold text-foreground">Status: </span>
-            <DocumentStatusBadge status={docStatus} />
+            <DocumentStatusBadge status={docStatus} data-testid="document-status" />
             {(docStatus === 'RENDERING' || docStatus === 'RENDERED') && <span className="text-muted-foreground text-sm">⏳ Generating PDF...</span>}
             <span className="ml-auto text-xs text-muted-foreground font-mono">{document.id?.slice(0, 8)}…</span>
           </div>
@@ -164,12 +164,12 @@ export default function PublishPage() {
         <div className="flex flex-wrap gap-3">
           {canPublish && (
             <Button onClick={handlePublish} disabled={publishing} className="bg-primary hover:bg-primary/90">
-              {publishing ? 'Publishing…' : 'Publish report'}
+              {publishing ? 'Publishing…' : 'Force publish'}
             </Button>
           )}
           {docStatus === 'PUBLISHED' && (
             <>
-              <Button onClick={handleDownload} className="bg-primary hover:bg-primary/90">
+              <Button onClick={handleDownload} data-testid="download-pdf" className="bg-primary hover:bg-primary/90">
                 ⬇ Download PDF
               </Button>
               <Button variant="outline" onClick={() => window.print()}>

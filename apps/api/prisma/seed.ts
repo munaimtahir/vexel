@@ -5,6 +5,24 @@ const prisma = new PrismaClient();
 
 const SYSTEM_PERMISSIONS = [
   'admin.super',
+  'account.profile.read-self',
+  'account.profile.update-self',
+  'account.password.change-self',
+  'admin.app.access',
+  'admin.dashboard.read',
+  'admin.audit.read',
+  'admin.jobs.read',
+  'admin.jobs.retry',
+  'admin.users.read',
+  'admin.users.write',
+  'admin.roles.read',
+  'admin.roles.write',
+  'admin.tenants.read',
+  'admin.tenants.write',
+  'admin.feature_flags.read',
+  'admin.feature_flags.write',
+  'admin.catalog.read',
+  'admin.catalog.write',
   'tenant.read', 'tenant.create', 'tenant.update',
   'user.read', 'user.create', 'user.update', 'user.disable',
   'role.read', 'role.create', 'role.update', 'role.delete',
@@ -16,6 +34,12 @@ const SYSTEM_PERMISSIONS = [
   'branding.read', 'branding.write',
   'patient.manage', 'encounter.manage', 'result.enter', 'result.verify',
   'document.generate', 'document.publish',
+];
+
+const SELF_SERVICE_PERMISSIONS = [
+  'account.profile.read-self',
+  'account.profile.update-self',
+  'account.password.change-self',
 ];
 
 const DEFAULT_FEATURE_FLAGS = [
@@ -96,6 +120,21 @@ export async function main() {
       isSystem: true,
       rolePermissions: {
         create: [
+          'admin.app.access',
+          'admin.dashboard.read',
+          'admin.audit.read',
+          'admin.jobs.read',
+          'admin.jobs.retry',
+          'admin.users.read',
+          'admin.users.write',
+          'admin.roles.read',
+          'admin.roles.write',
+          'admin.tenants.read',
+          'admin.tenants.write',
+          'admin.feature_flags.read',
+          'admin.feature_flags.write',
+          'admin.catalog.read',
+          'admin.catalog.write',
           'user.read', 'user.create', 'user.update', 'user.disable',
           'role.read', 'role.assign',
           'feature_flag.read', 'feature_flag.set',
@@ -103,6 +142,7 @@ export async function main() {
           'audit.read',
           'job.read', 'job.retry',
           'branding.read', 'branding.write',
+          ...SELF_SERVICE_PERMISSIONS,
         ].map(p => ({ permission: p })),
       },
     },
@@ -147,6 +187,7 @@ export async function main() {
         create: [
           'catalog.read', 'patient.manage', 'encounter.manage',
           'result.enter', 'document.generate',
+          ...SELF_SERVICE_PERMISSIONS,
         ].map((p) => ({ permission: p })),
       },
     },
@@ -163,6 +204,7 @@ export async function main() {
         create: [
           'catalog.read', 'encounter.manage', 'result.enter',
           'result.verify', 'document.generate', 'document.publish',
+          ...SELF_SERVICE_PERMISSIONS,
         ].map((p) => ({ permission: p })),
       },
     },
@@ -184,6 +226,7 @@ export async function main() {
           'opd.visit.manage',
           'opd.vitals.write',
           'document.generate',
+          ...SELF_SERVICE_PERMISSIONS,
         ].map((p) => ({ permission: p })),
       },
     },
@@ -207,6 +250,7 @@ export async function main() {
           'opd.clinical_note.write',
           'opd.prescription.write',
           'document.generate',
+          ...SELF_SERVICE_PERMISSIONS,
         ].map((p) => ({ permission: p })),
       },
     },
@@ -227,6 +271,7 @@ export async function main() {
           'opd.payment.manage',
           'document.generate',
           'document.publish',
+          ...SELF_SERVICE_PERMISSIONS,
         ].map((p) => ({ permission: p })),
       },
     },

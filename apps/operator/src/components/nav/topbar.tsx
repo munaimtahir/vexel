@@ -3,8 +3,8 @@ import { usePathname } from 'next/navigation';
 import { Moon, Sun, Bell } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
-import { decodeJwt, getToken } from '@/lib/auth';
+import { useMemo } from 'react';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { cn } from '@/lib/utils';
 import { Header } from '@vexel/ui-system';
 
@@ -29,6 +29,7 @@ const ROUTE_TITLES: [string, string][] = [
   ['/lims/encounters/new', 'New Encounter'],
   ['/lims/encounters', 'Encounters'],
   ['/lims/reports', 'Reports'],
+  ['/account', 'Account'],
   ['/lims', 'LIMS'],
 ];
 
@@ -51,21 +52,14 @@ export function Topbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const title = getPageTitle(pathname);
-  const [userName, setUserName] = useState<string>('');
+  const { user } = useCurrentUser();
   const today = getTodayLabel();
-
-  useEffect(() => {
-    const token = getToken();
-    if (token) {
-      try {
-        const payload = decodeJwt(token) as Record<string, unknown>;
-        const name = (payload?.name as string) || (payload?.email as string) || '';
-        setUserName(name.split('@')[0]);
-      } catch {
-        // ignore malformed token payload
-      }
-    }
-  }, []);
+  const userName = useMemo(() => {
+    if (!user) return '';
+    const full = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
+    if (full) return full;
+    return user.email.split('@')[0];
+  }, [user]);
 
   const initials = userName ? getInitials(userName) : '?';
 
