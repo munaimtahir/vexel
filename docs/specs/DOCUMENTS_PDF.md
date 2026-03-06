@@ -40,3 +40,91 @@ Unique key:
   - Marks document `PUBLISHED`. Idempotent.
 - Automatic regeneration: if lab results change before PUBLISHED, a new payloadHash is computed and a new Document record is created (previous remains in DB as historical artifact).
 
+---
+
+## Receipt PDF Layouts (receipt_v1 template)
+
+The `receipt_v1` template supports two physical layouts, selected by
+`BrandingConfig.ReceiptLayout` (`"a4"` | `"thermal"`).
+
+### Thermal (80 mm roll)
+
+- Page size: 80 mm × 200 mm (auto-height)
+- Margin: 3 mm all sides
+- Default font: 7 pt
+- Content: compact single-column — header → patient info → items → totals
+  → barcode → footer
+- Intended for thermal receipt printers (58 mm / 80 mm rolls).
+
+### A4 (standard paper) — **canonical layout**
+
+A4 page (210 × 297 mm) with 6 mm top/bottom margins and 8 mm left/right
+margins.  The printable content area is therefore **285 mm** tall.
+
+The page is divided into **three vertical bands**:
+
+| Band | Proportion | Height | Content |
+|------|-----------|--------|---------|
+| Top copy | **48 %** | ≈ 137 mm | **PATIENT COPY** — full receipt |
+| Tear strip | **4 %** | ≈ 11 mm | Dotted perforated tear line with scissors icon |
+| Bottom copy | **48 %** | ≈ 137 mm | **OFFICE COPY** — exact duplicate of patient copy |
+
+#### Patient / Office copy contents (identical)
+
+Each half is a bordered box containing:
+
+1. **Copy label** — "PATIENT COPY" or "OFFICE COPY" (bold, centered)
+2. **Header** — logo (if present) + brand name + address line
+3. **Divider** — thin horizontal rule
+4. **Title** — "PAYMENT RECEIPT" (bold, centered)
+5. **Info block** — MRN, Order ID, Patient name, Date, Age/Gender, Receipt No.
+6. **Items table** — Test Name | Price (adaptive font size, see below)
+7. **"Continued on next page" note** — shown only when items overflow to page 2
+8. **Totals** — Subtotal, Discount (if > 0), Payable (bold), Paid, Due *(last page only)*
+9. **Payment method** — "Paid by: \<method\>" *(last page only)*
+10. **Barcode** — CODE-128 barcode of the encounter code (if present)
+11. **Footer** — configurable footer text
+
+#### Adaptive items font size
+
+The items table uses an adaptive font size to fit all ordered tests within the
+available space:
+
+| Font size | When used |
+|-----------|-----------|
+| **8 pt** (normal) | All tests fit at normal size |
+| **7 pt** | Reduces row height to fit more tests |
+| **6 pt** (minimum) | Final fallback — smallest readable size |
+
+If the test list still cannot fit at 6 pt, the receipt automatically continues
+on a second (or further) page.
+
+#### Multi-page overflow
+
+When the number of ordered tests exceeds the space available even at the minimum
+6 pt font size, the engine:
+
+1. Renders page 1 with as many tests as possible and appends a
+   "▶ Continued on next page" note.
+2. Renders additional full-A4 **continuation pages**, each containing:
+   - The same header/logo and brand block
+   - **"PAYMENT RECEIPT (Continued — Page N)"** title
+   - Patient info block (MRN, name, date, receipt no.)
+   - Remaining items table (adaptive font, down to 6 pt)
+   - Totals + payment method on the **last** continuation page only
+   - Barcode + footer on the last continuation page only
+
+#### Tear strip (dotted line)
+
+The 11 mm strip between the two copies renders a dashed perforation line:
+
+```
+✂ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ TEAR HERE ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ✂
+```
+
+- Uses repeated Unicode dash characters (─ U+2500) in a horizontal row
+  layout with a centered **"TEAR HERE"** label between two scissors icons (✂ U+2702)
+- Color: `Colors.Grey.Medium`
+- The strip height (≈ 11 mm) is reserved so both copies each occupy exactly
+  48 % of the printable page height.
+
