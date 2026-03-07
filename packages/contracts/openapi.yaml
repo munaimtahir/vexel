@@ -2930,6 +2930,7 @@ components:
         - HISTOPATH_NARRATIVE
         - GRAPHICAL_SCALE_REPORT
         - IMAGE_REPORT
+        - HYBRID_TEMPLATE
 
     ResultSchemaType:
       type: string
@@ -3220,6 +3221,71 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BandValidationError'
+
+    BlockType:
+      type: string
+      enum:
+        - HEADER
+        - DEMOGRAPHICS
+        - PARAMETER_TABLE
+        - NARRATIVE_SECTION
+        - GRAPH_SCALE
+        - IMAGE_GRID
+        - SIGNATURE_BLOCK
+        - DISCLAIMER
+        - SPACER
+        - SECTION_TITLE
+
+    LayoutBlock:
+      type: object
+      required: [id, type, props]
+      properties:
+        id:
+          type: string
+        type:
+          $ref: '#/components/schemas/BlockType'
+        props:
+          type: object
+          additionalProperties: true
+
+    PageConfig:
+      type: object
+      properties:
+        size:
+          type: string
+          default: A4
+        margin:
+          type: integer
+          default: 24
+
+    HybridLayoutConfig:
+      type: object
+      required: [page, blocks]
+      properties:
+        page:
+          $ref: '#/components/schemas/PageConfig'
+        blocks:
+          type: array
+          items:
+            $ref: '#/components/schemas/LayoutBlock'
+
+    LayoutValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+
+    LayoutValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/LayoutValidationError'
 
 
 paths:
@@ -10077,6 +10143,66 @@ paths:
               schema:
                 type: string
                 format: binary
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /admin/templates/{templateId}/layout:
+    get:
+      operationId: getTemplateLayout
+      summary: Get hybrid template layout JSON
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Layout JSON or null
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HybridLayoutConfig'
+        "400":
+          description: Not a HYBRID_TEMPLATE
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: saveTemplateLayout
+      summary: Save hybrid template layout JSON (creates new draft if active)
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HybridLayoutConfig'
+      responses:
+        "200":
+          description: Updated template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateResponse'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutValidationErrorResponse'
         "401":
           $ref: '#/components/responses/Unauthorized'
         "403":

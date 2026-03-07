@@ -5,6 +5,7 @@ export const TEMPLATE_FAMILIES = [
   'HISTOPATH_NARRATIVE',
   'GRAPHICAL_SCALE_REPORT',
   'IMAGE_REPORT',
+  'HYBRID_TEMPLATE',
 ] as const;
 export type TemplateFamily = (typeof TEMPLATE_FAMILIES)[number];
 
@@ -29,10 +30,11 @@ export const FAMILY_SCHEMA_COMPATIBILITY: Record<TemplateFamily, ResultSchemaTyp
   HISTOPATH_NARRATIVE: ['HISTOPATHOLOGY'],
   GRAPHICAL_SCALE_REPORT: ['TABULAR', 'GRAPH_SERIES'],
   IMAGE_REPORT: ['IMAGE_ATTACHMENT'],
+  HYBRID_TEMPLATE: ['TABULAR', 'DESCRIPTIVE_HEMATOLOGY', 'HISTOPATHOLOGY', 'GRAPH_SERIES', 'IMAGE_ATTACHMENT', 'MIXED_STRUCTURED'],
 };
 
 // Families available for use in this phase (others are placeholders)
-export const IMPLEMENTED_FAMILIES: TemplateFamily[] = ['GENERAL_TABLE', 'TWO_COLUMN_TABLE', 'GRAPHICAL_SCALE_REPORT'];
+export const IMPLEMENTED_FAMILIES: TemplateFamily[] = ['GENERAL_TABLE', 'TWO_COLUMN_TABLE', 'GRAPHICAL_SCALE_REPORT', 'HYBRID_TEMPLATE'];
 
 export function isFamilyCompatibleWithSchema(
   family: TemplateFamily,

@@ -45,7 +45,7 @@ export class TemplatesController {
     @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
     const user = (req as any).user;
-    return this.svc.createTemplate(user.tenantId, user.userId, correlationId ?? '', body);
+    return this.svc.createTemplate(user.tenantId, user.userId, correlationId ?? '', { source: 'shell', ...body });
   }
 
   @Get(':id')
@@ -134,6 +134,26 @@ export class TemplatesController {
     res!.setHeader('Content-Disposition', 'inline; filename="template-preview.pdf"');
     res!.setHeader('Content-Length', pdfBytes.length);
     res!.send(pdfBytes);
+  }
+
+  @Get(':id/layout')
+  @RequirePermissions(Permission.TEMPLATES_READ)
+  getLayout(@Req() req: Request, @Param('id') id: string) {
+    const user = (req as any).user;
+    return this.svc.getLayout(user.tenantId, id);
+  }
+
+  @Post(':id/layout')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.TEMPLATES_WRITE)
+  saveLayout(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.saveLayout(user.tenantId, id, user.userId, correlationId ?? '', body);
   }
 }
 

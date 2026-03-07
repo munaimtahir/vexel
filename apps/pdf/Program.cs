@@ -47,6 +47,7 @@ app.MapPost("/render", async (HttpContext context) =>
             "receipt_v1"             => GenerateReceipt(payload, req?.BrandingConfig, logoBytes),
             "opd_invoice_receipt_v1" => GenerateOpdInvoiceReceipt(payload, req?.BrandingConfig),
             "graphical_scale_report_v1" => GenerateGraphicalScaleReport(payload, req?.BrandingConfig, req?.ConfigJson, logoBytes),
+            "hybrid_template_v1"        => GenerateHybridTemplateReport(payload, req?.BrandingConfig, req?.ConfigJson, logoBytes),
             _                        => GeneratePlaceholderPdf(body),
         };
     }
@@ -93,6 +94,12 @@ static byte[] GenerateOpdInvoiceReceipt(JsonElement payload, BrandingConfig? bra
 static byte[] GenerateGraphicalScaleReport(JsonElement payload, BrandingConfig? branding, JsonElement? configJson, byte[]? logoBytes)
 {
     var doc = new GraphicalScaleReportDocument(payload, branding ?? new BrandingConfig(), configJson, logoBytes);
+    return doc.GeneratePdf();
+}
+
+static byte[] GenerateHybridTemplateReport(JsonElement payload, BrandingConfig? branding, JsonElement? configJson, byte[]? logoBytes)
+{
+    var doc = new HybridTemplateDocument(payload, branding ?? new BrandingConfig(), configJson, logoBytes);
     return doc.GeneratePdf();
 }
 
@@ -2342,7 +2349,454 @@ class GraphicalScaleReportDocument : IDocument
     }
 }
 
+// ─── Hybrid Template Document ─────────────────────────────────────────────────
+
+class HybridTemplateDocument(
+    JsonElement payload,
+    BrandingConfig branding,
+    JsonElement? configJson,
+    byte[]? logoBytes) : IDocument
+{
+    // Color helpers (match GraphicalScaleReportDocument palette)
+    private static string HdrBg    => "#1a3c5e";
+    private static string HdrFg    => Colors.White;
+    private static string AccentBg => "#e8f0f7";
+    private static string TableHdr => "#2d6a9f";
+    private static string LightGrey => "#f5f5f5";
+    private static string BorderGrey => "#d0d0d0";
+
+    public DocumentMetadata GetMetadata() =>
+        DocumentMetadata.Default with { Title = "Lab Report" };
+
+    public void Compose(IDocumentContainer container)
+    {
+        var blocks = ParseBlocks();
+        container.Page(page =>
+        {
+            var marginPt = ParseMargin();
+            page.Size(PageSizes.A4);
+            page.Margin(marginPt);
+            page.Content().Column(col =>
+            {
+                col.Spacing(8);
+                foreach (var block in blocks)
+                    RenderBlock(col, block);
+            });
+            page.Footer().Element(RenderPageFooter);
+        });
+    }
+
+    private List<(string Type, JsonElement Props)> ParseBlocks()
+    {
+        var result = new List<(string, JsonElement)>();
+        if (configJson is null) return result;
+        try
+        {
+            if (configJson.Value.TryGetProperty("blocks", out var arr))
+            {
+                foreach (var b in arr.EnumerateArray())
+                {
+                    var type  = b.TryGetProperty("type",  out var t) ? t.GetString() ?? "" : "";
+                    var props = b.TryGetProperty("props", out var p) ? p : default;
+                    if (!string.IsNullOrWhiteSpace(type))
+                        result.Add((type, props));
+                }
+            }
+        }
+        catch { /* invalid config — fall through with empty block list */ }
+        return result;
+    }
+
+    private float ParseMargin()
+    {
+        if (configJson is null) return 24;
+        try
+        {
+            if (configJson.Value.TryGetProperty("page", out var pg) &&
+                pg.TryGetProperty("margin", out var m))
+                return m.GetInt32();
+        }
+        catch { }
+        return 24;
+    }
+
+    private void RenderBlock(ColumnDescriptor col, (string Type, JsonElement Props) block)
+    {
+        switch (block.Type)
+        {
+            case "HEADER":           col.Item().Element(c => RenderHeader(c, block.Props));          break;
+            case "DEMOGRAPHICS":     col.Item().Element(c => RenderDemographics(c, block.Props));    break;
+            case "PARAMETER_TABLE":  col.Item().Element(c => RenderParameterTable(c, block.Props));  break;
+            case "NARRATIVE_SECTION":col.Item().Element(c => RenderNarrative(c, block.Props));       break;
+            case "GRAPH_SCALE":      col.Item().Element(c => RenderGraphScale(c, block.Props));      break;
+            case "SIGNATURE_BLOCK":  col.Item().Element(c => RenderSignature(c, block.Props));       break;
+            case "DISCLAIMER":       col.Item().Element(c => RenderDisclaimer(c, block.Props));      break;
+            case "SPACER":           col.Item().Element(c => RenderSpacer(c, block.Props));          break;
+            case "SECTION_TITLE":    col.Item().Element(c => RenderSectionTitle(c, block.Props));    break;
+            case "IMAGE_GRID":       col.Item().Element(c => RenderImageGrid(c, block.Props));       break;
+            // Unknown block types are skipped silently
+        }
+    }
+
+    // ── HEADER ────────────────────────────────────────────────────────────────
+
+    private void RenderHeader(IContainer c, JsonElement props)
+    {
+        var showLogo  = GetBool(props, "showLogo", true);
+        var title     = GetStr(props,  "title",    "");
+        var alignment = GetStr(props,  "alignment","left");
+
+        // Use brand name if no title configured in block
+        var reportTitle = string.IsNullOrWhiteSpace(title)
+            ? (branding.BrandName ?? "Laboratory Report")
+            : title;
+
+        c.Background(HdrBg).Padding(12).Row(row =>
+        {
+            if (showLogo && logoBytes is not null)
+            {
+                row.ConstantItem(60).Height(40)
+                   .Image(logoBytes).FitArea();
+                row.ConstantItem(8);
+            }
+            row.RelativeItem().Column(col =>
+            {
+                col.Item().Text(reportTitle)
+                   .FontSize(16).Bold().FontColor(HdrFg);
+                if (!string.IsNullOrWhiteSpace(branding.ReportHeader))
+                    col.Item().Text(branding.ReportHeader)
+                       .FontSize(9).FontColor(HdrFg);
+            });
+        });
+    }
+
+    // ── DEMOGRAPHICS ──────────────────────────────────────────────────────────
+
+    private void RenderDemographics(IContainer c, JsonElement props)
+    {
+        var columns = GetInt(props, "columns", 2);
+
+        string? patientName = null, mrn = null, dob = null, gender = null,
+                refBy = null, labRef = null, collectedAt = null, reportedAt = null;
+
+        try
+        {
+            if (payload.TryGetProperty("patient", out var pt))
+            {
+                patientName = GetPayloadStr(pt, "name");
+                mrn         = GetPayloadStr(pt, "mrn");
+                dob         = GetPayloadStr(pt, "dateOfBirth");
+                gender      = GetPayloadStr(pt, "gender");
+            }
+            if (payload.TryGetProperty("encounter", out var enc))
+            {
+                refBy       = GetPayloadStr(enc, "referredBy");
+                labRef      = GetPayloadStr(enc, "encounterCode");
+                collectedAt = GetPayloadStr(enc, "collectedAt");
+                reportedAt  = GetPayloadStr(enc, "reportedAt");
+            }
+        }
+        catch { }
+
+        var leftItems  = new List<(string, string?)>();
+        var rightItems = new List<(string, string?)>();
+        leftItems.Add  (("Patient Name", patientName));
+        leftItems.Add  (("MRN",          mrn));
+        leftItems.Add  (("Date of Birth",dob));
+        leftItems.Add  (("Gender",       gender));
+        rightItems.Add (("Lab Ref #",    labRef));
+        rightItems.Add (("Referred By",  refBy));
+        rightItems.Add (("Collected",    collectedAt));
+        rightItems.Add (("Reported",     reportedAt));
+
+        c.Background(AccentBg).Border(1).BorderColor(BorderGrey).Padding(10).Row(row =>
+        {
+            row.RelativeItem().Column(col =>
+            {
+                foreach (var (lbl, val) in leftItems)
+                    if (!string.IsNullOrWhiteSpace(val))
+                        col.Item().Row(r =>
+                        {
+                            r.ConstantItem(90).Text(lbl + ":").FontSize(8).Bold();
+                            r.RelativeItem().Text(val ?? "").FontSize(8);
+                        });
+            });
+            if (columns >= 2)
+            {
+                row.ConstantItem(16);
+                row.RelativeItem().Column(col =>
+                {
+                    foreach (var (lbl, val) in rightItems)
+                        if (!string.IsNullOrWhiteSpace(val))
+                            col.Item().Row(r =>
+                            {
+                                r.ConstantItem(90).Text(lbl + ":").FontSize(8).Bold();
+                                r.RelativeItem().Text(val ?? "").FontSize(8);
+                            });
+                });
+            }
+        });
+    }
+
+    // ── PARAMETER TABLE ───────────────────────────────────────────────────────
+
+    private void RenderParameterTable(IContainer c, JsonElement props)
+    {
+        var showUnits    = GetBool(props, "showUnits",         true);
+        var showRef      = GetBool(props, "showReferenceRange",true);
+        var showFlag     = GetBool(props, "showFlag",          true);
+
+        var tests = ExtractTests();
+
+        c.Column(col =>
+        {
+            foreach (var test in tests)
+            {
+                col.Item().PaddingBottom(4).Text(test.Name).FontSize(11).Bold();
+
+                col.Item().Table(tbl =>
+                {
+                    tbl.ColumnsDefinition(cd =>
+                    {
+                        cd.RelativeColumn(3);   // parameter
+                        cd.RelativeColumn(2);   // result
+                        if (showUnits)   cd.RelativeColumn(2); // unit
+                        if (showRef)     cd.RelativeColumn(2); // ref range
+                        if (showFlag)    cd.ConstantColumn(24);// flag
+                    });
+
+                    // Header row
+                    tbl.Header(h =>
+                    {
+                        void Hdr(string text) =>
+                            h.Cell().Background(TableHdr).Padding(4)
+                             .Text(text).FontSize(8).Bold().FontColor(Colors.White);
+
+                        Hdr("Parameter");
+                        Hdr("Result");
+                        if (showUnits) Hdr("Unit");
+                        if (showRef)   Hdr("Reference Range");
+                        if (showFlag)  Hdr("F");
+                    });
+
+                    var even = false;
+                    foreach (var param in test.Parameters)
+                    {
+                        even = !even;
+                        var bg = even ? Colors.White : LightGrey;
+
+                        void Cell(string? text, bool bold = false) =>
+                            tbl.Cell().Background(bg).Padding(4)
+                               .Text(text ?? "—").FontSize(8).If(bold, t => t.Bold());
+
+                        Cell(param.ParameterName, false);
+                        Cell(param.Value, true);
+                        if (showUnits) Cell(param.Unit);
+                        if (showRef)   Cell(param.ReferenceRange);
+                        if (showFlag)  Cell(param.Flag);
+                    }
+                });
+
+                col.Item().PaddingBottom(4);
+            }
+        });
+    }
+
+    // ── NARRATIVE SECTION ─────────────────────────────────────────────────────
+
+    private void RenderNarrative(IContainer c, JsonElement props)
+    {
+        var titleText = GetStr(props, "title", "Narrative");
+        var field     = GetStr(props, "field", "interpretation");
+        string? text  = null;
+
+        try
+        {
+            if (payload.TryGetProperty(field, out var v))
+                text = v.GetString();
+        }
+        catch { }
+
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        c.Column(col =>
+        {
+            col.Item().Text(titleText).FontSize(10).Bold();
+            col.Item().Border(1).BorderColor(BorderGrey).Padding(8)
+               .Text(text).FontSize(9).LineHeight(1.5f);
+        });
+    }
+
+    // ── GRAPH SCALE ───────────────────────────────────────────────────────────
+    // This block re-uses graphical scale logic in a simplified inline form.
+    // When used inside HYBRID_TEMPLATE, the block props carry a parameterConfigKey
+    // that references a parameter definition in the outer configJson or inline bands.
+
+    private void RenderGraphScale(IContainer c, JsonElement props)
+    {
+        // Simplified: render a text notice that graph scale blocks require a
+        // dedicated graphical template or inline band config.
+        // Full integration deferred — the GRAPHICAL_SCALE_REPORT family handles full rendering.
+        var paramKey = GetStr(props, "parameterConfigKey", "");
+        c.Background(LightGrey).Padding(8)
+         .Text($"[Graph Scale: {paramKey}]").FontSize(8).Italic().FontColor("#888888");
+    }
+
+    // ── SIGNATURE BLOCK ───────────────────────────────────────────────────────
+
+    private void RenderSignature(IContainer c, JsonElement props)
+    {
+        var label      = GetStr(props, "label",      "Authorized By");
+        var showDate   = GetBool(props, "showDate",  true);
+        var showStamp  = GetBool(props, "showStamp", false);
+
+        c.Column(col =>
+        {
+            col.Item().PaddingTop(16).Row(row =>
+            {
+                row.ConstantItem(120).Column(sc =>
+                {
+                    sc.Item().BorderBottom(1).BorderColor("#333333").PaddingBottom(4);
+                    sc.Item().Text(label).FontSize(8);
+                    if (showDate)
+                        sc.Item().Text("Date: ___________").FontSize(8);
+                });
+            });
+        });
+    }
+
+    // ── DISCLAIMER ────────────────────────────────────────────────────────────
+
+    private void RenderDisclaimer(IContainer c, JsonElement props)
+    {
+        var text = GetStr(props, "text", "");
+        if (string.IsNullOrWhiteSpace(text))
+            text = branding.FooterText ?? branding.ReportFooter ?? "";
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        c.Background(LightGrey).Border(1).BorderColor(BorderGrey).Padding(8)
+         .Text(text).FontSize(7).Italic().FontColor("#555555");
+    }
+
+    // ── SPACER ────────────────────────────────────────────────────────────────
+
+    private void RenderSpacer(IContainer c, JsonElement props)
+    {
+        var height = GetInt(props, "height", 12);
+        c.Height(height);
+    }
+
+    // ── SECTION TITLE ─────────────────────────────────────────────────────────
+
+    private void RenderSectionTitle(IContainer c, JsonElement props)
+    {
+        var text      = GetStr(props, "text",      "Section");
+        var fontSize  = GetInt(props, "fontSize",  10);
+        var underline = GetBool(props, "underline", true);
+
+        var t = c.PaddingTop(4).Text(text).FontSize(fontSize).Bold();
+        // QuestPDF's Text() doesn't support chained underline but we can use BorderBottom
+        if (underline)
+            c.PaddingTop(4).BorderBottom(1).BorderColor("#333333")
+             .Text(text).FontSize(fontSize).Bold();
+    }
+
+    // ── IMAGE GRID ────────────────────────────────────────────────────────────
+
+    private void RenderImageGrid(IContainer c, JsonElement props)
+    {
+        // Image grid rendering deferred — requires MinIO asset fetching in renderer.
+        // Rendered as a placeholder notice in this phase.
+        var cols = GetInt(props, "columns", 2);
+        c.Background(LightGrey).Padding(8)
+         .Text($"[Image Grid — {cols} columns]").FontSize(8).Italic().FontColor("#888888");
+    }
+
+    // ── PAGE FOOTER ───────────────────────────────────────────────────────────
+
+    private void RenderPageFooter(IContainer c)
+    {
+        var footer = branding.FooterText ?? branding.ReportFooter ?? "";
+        c.BorderTop(1).BorderColor(BorderGrey).PaddingTop(4).Row(row =>
+        {
+            row.RelativeItem().Text(footer).FontSize(7).FontColor("#666666");
+            row.ConstantItem(60).AlignRight().Text(t =>
+            {
+                t.Span("Page ").FontSize(7).FontColor("#666666");
+                t.CurrentPageNumber().FontSize(7).FontColor("#666666");
+                t.Span(" / ").FontSize(7).FontColor("#666666");
+                t.TotalPages().FontSize(7).FontColor("#666666");
+            });
+        });
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private static bool   GetBool(JsonElement e, string key, bool def)
+    {
+        if (e.ValueKind == JsonValueKind.Undefined) return def;
+        return e.TryGetProperty(key, out var v) && v.ValueKind == JsonValueKind.True ? true
+             : e.TryGetProperty(key, out v)     && v.ValueKind == JsonValueKind.False ? false
+             : def;
+    }
+
+    private static string GetStr(JsonElement e, string key, string def)
+    {
+        if (e.ValueKind == JsonValueKind.Undefined) return def;
+        return e.TryGetProperty(key, out var v) && v.GetString() is string s && !string.IsNullOrWhiteSpace(s) ? s : def;
+    }
+
+    private static int GetInt(JsonElement e, string key, int def)
+    {
+        if (e.ValueKind == JsonValueKind.Undefined) return def;
+        return e.TryGetProperty(key, out var v) && v.TryGetInt32(out var n) ? n : def;
+    }
+
+    private static string? GetPayloadStr(JsonElement e, string key)
+    {
+        return e.TryGetProperty(key, out var v) ? v.GetString() : null;
+    }
+
+    private record TestGroup(string Name, List<ParameterRow> Parameters);
+    private record ParameterRow(string ParameterName, string? Value, string? Unit, string? ReferenceRange, string? Flag);
+
+    private List<TestGroup> ExtractTests()
+    {
+        var groups = new List<TestGroup>();
+        try
+        {
+            if (payload.TryGetProperty("tests", out var tests))
+            {
+                foreach (var test in tests.EnumerateArray())
+                {
+                    var name   = test.TryGetProperty("testName", out var tn) ? tn.GetString() ?? "Test" : "Test";
+                    var @params = new List<ParameterRow>();
+
+                    if (test.TryGetProperty("parameters", out var parameters))
+                    {
+                        foreach (var p in parameters.EnumerateArray())
+                        {
+                            @params.Add(new ParameterRow(
+                                p.TryGetProperty("parameterName", out var pn) ? pn.GetString() ?? "" : "",
+                                p.TryGetProperty("value",         out var pv) ? pv.GetString()      : null,
+                                p.TryGetProperty("unit",          out var pu) ? pu.GetString()       : null,
+                                p.TryGetProperty("referenceRange",out var pr) ? pr.GetString()       : null,
+                                p.TryGetProperty("flag",          out var pf) ? pf.GetString()       : null
+                            ));
+                        }
+                    }
+
+                    groups.Add(new TestGroup(name, @params));
+                }
+            }
+        }
+        catch { }
+        return groups;
+    }
+}
+
 // ─── Graphical Scale Config Models ────────────────────────────────────────────
 
 record InterpretationBand(string Label, double? Min, double? Max, string ColorToken);
 record ScaleParameter(string Key, string Label, string Unit, string SourceMode, string SourceMatch, bool SkipIfMissing, List<InterpretationBand> Bands);
+

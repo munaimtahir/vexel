@@ -541,6 +541,24 @@ export async function main() {
         ],
       },
     },
+    {
+      id: 'bp-hybrid-default-v1',
+      code: 'hybrid_default_v1',
+      name: 'General Report — Block Layout',
+      templateFamily: 'HYBRID_TEMPLATE',
+      schemaType: 'TABULAR',
+      isActive: true,
+      sortOrder: 4,
+      defaultConfigJson: {
+        page: { size: 'A4', margin: 24 },
+        blocks: [
+          { id: 'header1', type: 'HEADER', props: { showLogo: true, title: '' } },
+          { id: 'demo1', type: 'DEMOGRAPHICS', props: { columns: 2 } },
+          { id: 'table1', type: 'PARAMETER_TABLE', props: { source: 'test.parameters', showUnits: true, showReferenceRange: true, showFlag: true } },
+          { id: 'sig1', type: 'SIGNATURE_BLOCK', props: { label: 'Authorized By' } },
+        ],
+      },
+    },
   ];
 
   for (const bp of blueprints) {

@@ -7,6 +7,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { validateFamilySchemaCompatibility, validateGraphicalScaleConfig, TEMPLATE_FAMILIES, RESULT_SCHEMA_TYPES } from './templates-validation';
+import { validateLayout, sanitizeLayoutSecurity, HybridLayout } from './blocks';
 import { randomUUID } from 'crypto';
 
 type CreateTemplateOptions = {
@@ -568,6 +569,7 @@ export class TemplatesService {
       HISTOPATH_NARRATIVE: 'lab_report_v2',    // stub
       GRAPHICAL_SCALE_REPORT: 'graphical_scale_report_v1',
       IMAGE_REPORT: 'lab_report_v2',           // stub
+      HYBRID_TEMPLATE: 'hybrid_template_v1',
     };
     return registry[templateFamily] ?? 'lab_report_v2';
   }
@@ -637,5 +639,40 @@ export class TemplatesService {
         },
       ],
     };
+  }
+
+  // ── Layout (HYBRID_TEMPLATE) ────────────────────────────────────────────────
+
+  async getLayout(tenantId: string, id: string): Promise<HybridLayout | null> {
+    const tpl = await this.getTemplate(tenantId, id);
+    if (tpl.templateFamily !== 'HYBRID_TEMPLATE') {
+      throw new BadRequestException('getLayout is only available for HYBRID_TEMPLATE templates');
+    }
+    return (tpl.configJson as HybridLayout) ?? null;
+  }
+
+  async saveLayout(
+    tenantId: string,
+    id: string,
+    actorUserId: string,
+    correlationId: string,
+    layout: unknown,
+  ): Promise<any> {
+    // Security check
+    const security = sanitizeLayoutSecurity(layout);
+    if (!security.safe) {
+      throw new BadRequestException(security.reason);
+    }
+
+    // Structural validation
+    const validation = validateLayout(layout);
+    if (!validation.valid) {
+      throw new BadRequestException({ message: 'Invalid layout', errors: validation.errors });
+    }
+
+    // Delegate to updateTemplate (handles ACTIVE→new draft, DRAFT→in-place)
+    return this.updateTemplate(tenantId, id, actorUserId, correlationId, {
+      configJson: layout as Record<string, unknown>,
+    });
   }
 }

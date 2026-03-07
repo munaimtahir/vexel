@@ -3190,6 +3190,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/templates/{templateId}/layout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get hybrid template layout JSON */
+        get: operations["getTemplateLayout"];
+        put?: never;
+        /** Save hybrid template layout JSON (creates new draft if active) */
+        post: operations["saveTemplateLayout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/catalog/tests/{testId}/templates": {
         parameters: {
             query?: never;
@@ -4582,7 +4600,7 @@ export interface components {
             data: components["schemas"]["OpsSchedule"][];
         };
         /** @enum {string} */
-        TemplateFamily: "GENERAL_TABLE" | "TWO_COLUMN_TABLE" | "PERIPHERAL_FILM_REPORT" | "HISTOPATH_NARRATIVE" | "GRAPHICAL_SCALE_REPORT" | "IMAGE_REPORT";
+        TemplateFamily: "GENERAL_TABLE" | "TWO_COLUMN_TABLE" | "PERIPHERAL_FILM_REPORT" | "HISTOPATH_NARRATIVE" | "GRAPHICAL_SCALE_REPORT" | "IMAGE_REPORT" | "HYBRID_TEMPLATE";
         /** @enum {string} */
         ResultSchemaType: "TABULAR" | "DESCRIPTIVE_HEMATOLOGY" | "HISTOPATHOLOGY" | "GRAPH_SERIES" | "IMAGE_ATTACHMENT" | "MIXED_STRUCTURED";
         /** @enum {string} */
@@ -4768,6 +4786,33 @@ export interface components {
         GraphicalScaleValidationErrorResponse: {
             message?: string;
             errors?: components["schemas"]["BandValidationError"][];
+        };
+        /** @enum {string} */
+        BlockType: "HEADER" | "DEMOGRAPHICS" | "PARAMETER_TABLE" | "NARRATIVE_SECTION" | "GRAPH_SCALE" | "IMAGE_GRID" | "SIGNATURE_BLOCK" | "DISCLAIMER" | "SPACER" | "SECTION_TITLE";
+        LayoutBlock: {
+            id: string;
+            type: components["schemas"]["BlockType"];
+            props: {
+                [key: string]: unknown;
+            };
+        };
+        PageConfig: {
+            /** @default A4 */
+            size: string;
+            /** @default 24 */
+            margin: number;
+        };
+        HybridLayoutConfig: {
+            page: components["schemas"]["PageConfig"];
+            blocks: components["schemas"]["LayoutBlock"][];
+        };
+        LayoutValidationError: {
+            field?: string;
+            message?: string;
+        };
+        LayoutValidationErrorResponse: {
+            message?: string;
+            errors?: components["schemas"]["LayoutValidationError"][];
         };
     };
     responses: {
@@ -11983,6 +12028,81 @@ export interface operations {
                 };
                 content: {
                     "application/pdf": string;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTemplateLayout: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Layout JSON or null */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HybridLayoutConfig"];
+                };
+            };
+            /** @description Not a HYBRID_TEMPLATE */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    saveTemplateLayout: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HybridLayoutConfig"];
+            };
+        };
+        responses: {
+            /** @description Updated template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LayoutValidationErrorResponse"];
                 };
             };
             401: components["responses"]["Unauthorized"];

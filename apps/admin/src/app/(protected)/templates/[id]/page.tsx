@@ -462,6 +462,7 @@ export default function TemplateEditorPage() {
 
   const isReadOnly = tpl.status === 'ARCHIVED';
   const isGraphical = tpl.templateFamily === 'GRAPHICAL_SCALE_REPORT';
+  const isHybrid    = tpl.templateFamily === 'HYBRID_TEMPLATE';
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -562,7 +563,22 @@ export default function TemplateEditorPage() {
         </section>
 
         {/* Family-specific config editor */}
-        {isGraphical ? (
+        {isHybrid ? (
+          <div className="rounded-lg border p-6 text-center">
+            <div className="text-3xl mb-3">🎨</div>
+            <h3 className="font-semibold text-lg mb-1">Hybrid Block Layout Template</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              This template uses the visual block-based layout editor (Template Studio).
+              Click below to open the drag-and-drop designer.
+            </p>
+            <Link
+              href={`/templates/studio/${tpl.id}`}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium"
+            >
+              🎨 Open Template Studio
+            </Link>
+          </div>
+        ) : isGraphical ? (
           <GraphicalScaleEditor
             config={config as GraphicalScaleConfig}
             onChange={setConfig}
