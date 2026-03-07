@@ -17,6 +17,8 @@ test.describe('Operator Account Settings', () => {
 
     await expect(page.getByRole('heading', { name: 'Account' })).toBeVisible();
     const displayName = page.getByLabel('Display name');
+    // Wait for profile to load (form is hidden during loading state)
+    await expect(displayName).toBeVisible({ timeout: 15_000 });
     const current = (await displayName.inputValue()).trim();
     const next = current.endsWith('QA') ? current.replace(/\s*QA$/, '') : `${current} QA`;
     await displayName.fill(next);

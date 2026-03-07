@@ -56,7 +56,7 @@ test.describe('@operator @smoke Operator — Navigation', () => {
     await injectAuth(page, page.url());
     await page.goto('/lims/worklist');
     await expect(
-      page.locator('nav, [role=navigation]').getByText(/results/i).first(),
+      page.locator('nav, [role=navigation]').getByText(/result/i).first(),
     ).toBeVisible({ timeout: 8_000 });
   });
 

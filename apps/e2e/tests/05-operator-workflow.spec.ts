@@ -129,14 +129,21 @@ test.describe('Operator — Full LIMS workflow', () => {
       `/encounters/${encounter.id}`,
       accessToken,
     );
+
+    // Must have at least one lab order for workflow to proceed
+    expect(enc.labOrders?.length ?? 0).toBeGreaterThan(0);
+
     for (const order of enc.labOrders ?? []) {
-      await apiPost(
+      const { status: resultStatus } = await apiPost(
         `/encounters/${encounter.id}:result`,
         { labOrderId: order.id, value: '5.4', flag: 'normal' },
         accessToken,
       );
+      expect(resultStatus).toBeLessThan(300);
     }
-    await apiPostRaw(`/encounters/${encounter.id}:verify`, {}, accessToken);
+
+    const verifyRes = await apiPostRaw(`/encounters/${encounter.id}:verify`, {}, accessToken);
+    expect(verifyRes.status).toBeLessThan(300);
 
     await page.goto(`/encounters/${encounter.id}/publish`);
     await expect(page.locator('text=Loading encounter...')).not.toBeVisible({ timeout: 10_000 });

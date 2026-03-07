@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getApiClient } from '@/lib/api-client';
-import { setTokens } from '@/lib/auth';
+import { setTokens, decodeJwt } from '@/lib/auth';
+import { resolveAdminLanding } from '@/lib/admin-access';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,8 +29,13 @@ export default function LoginPage() {
       }
 
       setTokens(data.accessToken, data.refreshToken);
-      // Let middleware resolve deterministic landing by permissions
-      router.replace('/');
+      // Decode the JWT to determine landing page based on role/permissions.
+      // This is safe client-side — the JWT is already in the browser after login.
+      const jwtPayload = decodeJwt(data.accessToken);
+      const permissions: string[] = Array.isArray(jwtPayload?.permissions) ? jwtPayload.permissions : [];
+      const isSuperAdmin: boolean = Boolean(jwtPayload?.isSuperAdmin);
+      const landingPath = resolveAdminLanding(permissions, isSuperAdmin);
+      router.replace(landingPath);
     } catch (err) {
       setError('Login failed. Please try again.');
     } finally {
