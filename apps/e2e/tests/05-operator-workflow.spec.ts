@@ -155,7 +155,9 @@ test.describe('Operator — Full LIMS workflow', () => {
     const statusOrWaiting = page.locator('text=Waiting for report').or(page.locator('text=RENDERED')).or(page.locator('text=PUBLISHED')).or(page.locator('text=RENDERING'));
     await expect(statusOrWaiting.first()).toBeVisible({ timeout: 10_000 });
 
-    // Encounter status badge on identity header shows "Verified"
-    await expect(page.getByText('Verified', { exact: true }).first()).toBeVisible();
+    // Encounter status badge shows "Verified" or "Published" (auto-publish may have already run)
+    await expect(
+      page.getByText('Verified', { exact: true }).or(page.getByText('Published', { exact: true })).first()
+    ).toBeVisible({ timeout: 10_000 });
   });
 });

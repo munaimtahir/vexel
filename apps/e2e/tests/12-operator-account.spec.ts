@@ -15,7 +15,7 @@ test.describe('Operator Account Settings', () => {
     await page.getByRole('link', { name: 'Account' }).click();
     await page.waitForURL('**/account', { timeout: 10_000 });
 
-    await expect(page.getByRole('heading', { name: 'Account' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Account' }).first()).toBeVisible();
     const displayName = page.getByLabel('Display name');
     // Wait for profile to load (form is hidden during loading state)
     await expect(displayName).toBeVisible({ timeout: 15_000 });
