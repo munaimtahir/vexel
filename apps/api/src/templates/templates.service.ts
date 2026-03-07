@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import { validateFamilySchemaCompatibility, TEMPLATE_FAMILIES, RESULT_SCHEMA_TYPES } from './templates-validation';
+import { validateFamilySchemaCompatibility, validateGraphicalScaleConfig, TEMPLATE_FAMILIES, RESULT_SCHEMA_TYPES } from './templates-validation';
 import { randomUUID } from 'crypto';
 
 type CreateTemplateOptions = {
@@ -232,6 +232,14 @@ export class TemplatesService {
 
     if (tpl.status === 'ARCHIVED') {
       throw new ConflictException('Cannot edit an archived template');
+    }
+
+    // Validate graphical scale config if family is GRAPHICAL_SCALE_REPORT and config is provided
+    if (tpl.templateFamily === 'GRAPHICAL_SCALE_REPORT' && body.configJson !== undefined && body.configJson !== null) {
+      const validation = validateGraphicalScaleConfig(body.configJson);
+      if (!validation.valid) {
+        throw new BadRequestException({ message: 'Invalid graphical scale configuration', errors: validation.errors });
+      }
     }
 
     if (tpl.status === 'ACTIVE') {
@@ -555,17 +563,17 @@ export class TemplatesService {
     // Renderer registry: maps TemplateFamily to PDF service template key
     const registry: Record<string, string> = {
       GENERAL_TABLE: 'lab_report_v2',
-      TWO_COLUMN_TABLE: 'lab_report_v2', // shares renderer for now; config drives column layout
-      PERIPHERAL_FILM_REPORT: 'lab_report_v2', // stub — uses general until specialized renderer added
+      TWO_COLUMN_TABLE: 'lab_report_v2', // shares renderer; config drives column layout
+      PERIPHERAL_FILM_REPORT: 'lab_report_v2', // stub — specialized renderer deferred
       HISTOPATH_NARRATIVE: 'lab_report_v2',    // stub
-      GRAPHICAL_SCALE_REPORT: 'lab_report_v2', // stub
+      GRAPHICAL_SCALE_REPORT: 'graphical_scale_report_v1',
       IMAGE_REPORT: 'lab_report_v2',           // stub
     };
     return registry[templateFamily] ?? 'lab_report_v2';
   }
 
   private buildSamplePayload(tpl: any, tenantConfig: any, tenant: any): Record<string, unknown> {
-    return {
+    const base = {
       reportNumber: 'PREVIEW-001',
       issuedAt: new Date().toISOString(),
       patientName: 'Sample Patient',
@@ -580,6 +588,34 @@ export class TemplatesService {
       templateCode: tpl.code,
       templateVersion: tpl.templateVersion,
       templateFamily: tpl.templateFamily,
+      verifiedBy: 'Dr. Sample',
+      verifiedAt: new Date().toISOString(),
+      tenantName: tenantConfig?.brandName ?? tenant?.name ?? 'Preview Lab',
+    };
+
+    if (tpl.templateFamily === 'GRAPHICAL_SCALE_REPORT') {
+      return {
+        ...base,
+        tests: [
+          {
+            testCode: 'LIPID',
+            testName: 'Lipid Profile',
+            department: 'Clinical Chemistry',
+            parameters: [
+              { parameterCode: 'TCHOL', parameterName: 'Total Cholesterol', value: '215', unit: 'mg/dL', referenceRange: '<200', flag: 'H' },
+              { parameterCode: 'LDL',   parameterName: 'LDL', value: '145', unit: 'mg/dL', referenceRange: '<130', flag: 'H' },
+              { parameterCode: 'HDL',   parameterName: 'HDL', value: '52', unit: 'mg/dL', referenceRange: '>40', flag: 'N' },
+              { parameterCode: 'TRIG',  parameterName: 'Triglycerides', value: '175', unit: 'mg/dL', referenceRange: '<150', flag: 'H' },
+              { parameterCode: 'NHDL',  parameterName: 'Non-HDL', value: '163', unit: 'mg/dL', referenceRange: '<160', flag: 'H' },
+              { parameterCode: 'RATIO', parameterName: 'TC/HDL', value: '4.1', unit: 'ratio', referenceRange: '<5', flag: 'N' },
+            ],
+          },
+        ],
+      };
+    }
+
+    return {
+      ...base,
       tests: [
         {
           testCode: 'GLU',
@@ -600,9 +636,6 @@ export class TemplatesService {
           ],
         },
       ],
-      verifiedBy: 'Dr. Sample',
-      verifiedAt: new Date().toISOString(),
-      tenantName: tenantConfig?.brandName ?? tenant?.name ?? 'Preview Lab',
     };
   }
 }

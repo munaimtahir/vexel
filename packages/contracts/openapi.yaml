@@ -3108,6 +3108,119 @@ components:
           type: boolean
           default: false
 
+    # ─── Graphical Scale Config ───────────────────────────────────────────────
+
+    ScaleStyle:
+      type: string
+      enum: [BAND_HIGHLIGHT, VALUE_MARKER]
+      description: Visual style for the scale display. BAND_HIGHLIGHT fills the matched band. VALUE_MARKER places a pointer on the continuous scale.
+
+    ColorToken:
+      type: string
+      enum: [GOOD, CAUTION, BAD, INFO, NEUTRAL]
+      description: Semantic color token for band coloring. Renderer maps tokens to actual colors.
+
+    SourceMode:
+      type: string
+      enum: [parameter_name_match, parameter_normalized_match]
+      description: How the template parameter matches result data. parameter_name_match uses exact name; parameter_normalized_match uses lowercase/trimmed comparison.
+
+    InterpretationBand:
+      type: object
+      required: [label, colorToken]
+      properties:
+        label:
+          type: string
+          description: Display label for this band (e.g. "Optimal", "High")
+        min:
+          type: number
+          nullable: true
+          description: Lower bound (inclusive). Null means open-ended (negative infinity).
+        max:
+          type: number
+          nullable: true
+          description: Upper bound (exclusive, last band inclusive). Null means open-ended (positive infinity).
+        colorToken:
+          $ref: '#/components/schemas/ColorToken'
+
+    ScaleParameter:
+      type: object
+      required: [key, label, unit, sourceMode, sourceMatch, bands]
+      properties:
+        key:
+          type: string
+          description: Unique key for this parameter within the template
+        label:
+          type: string
+          description: Display label shown on the report
+        unit:
+          type: string
+          description: Unit string (e.g. mg/dL)
+        sourceMode:
+          $ref: '#/components/schemas/SourceMode'
+        sourceMatch:
+          type: string
+          description: Value used to match against result parameter names
+        skipIfMissing:
+          type: boolean
+          default: false
+          description: When true, silently omit this parameter if not found in results. When false (default), show as missing.
+        bands:
+          type: array
+          minItems: 2
+          items:
+            $ref: '#/components/schemas/InterpretationBand'
+
+    GraphicalScaleConfig:
+      type: object
+      required: [parameters]
+      properties:
+        title:
+          type: string
+          description: Report section title
+        subtitle:
+          type: string
+          description: Optional subtitle shown below title
+        showDemographics:
+          type: boolean
+          default: true
+        showInterpretationSummary:
+          type: boolean
+          default: true
+          description: Show compact summary table at the end
+        scaleStyle:
+          $ref: '#/components/schemas/ScaleStyle'
+        parameters:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ScaleParameter'
+
+    BandValidationError:
+      type: object
+      required: [parameterKey, message]
+      properties:
+        parameterKey:
+          type: string
+        bandIndex:
+          type: integer
+          nullable: true
+        field:
+          type: string
+          nullable: true
+        message:
+          type: string
+
+    GraphicalScaleValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BandValidationError'
+
 
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────

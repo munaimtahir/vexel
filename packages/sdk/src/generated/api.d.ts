@@ -4703,6 +4703,72 @@ export interface components {
             /** @default false */
             overwriteExisting: boolean;
         };
+        /**
+         * @description Visual style for the scale display. BAND_HIGHLIGHT fills the matched band. VALUE_MARKER places a pointer on the continuous scale.
+         * @enum {string}
+         */
+        ScaleStyle: "BAND_HIGHLIGHT" | "VALUE_MARKER";
+        /**
+         * @description Semantic color token for band coloring. Renderer maps tokens to actual colors.
+         * @enum {string}
+         */
+        ColorToken: "GOOD" | "CAUTION" | "BAD" | "INFO" | "NEUTRAL";
+        /**
+         * @description How the template parameter matches result data. parameter_name_match uses exact name; parameter_normalized_match uses lowercase/trimmed comparison.
+         * @enum {string}
+         */
+        SourceMode: "parameter_name_match" | "parameter_normalized_match";
+        InterpretationBand: {
+            /** @description Display label for this band (e.g. "Optimal", "High") */
+            label: string;
+            /** @description Lower bound (inclusive). Null means open-ended (negative infinity). */
+            min?: number | null;
+            /** @description Upper bound (exclusive, last band inclusive). Null means open-ended (positive infinity). */
+            max?: number | null;
+            colorToken: components["schemas"]["ColorToken"];
+        };
+        ScaleParameter: {
+            /** @description Unique key for this parameter within the template */
+            key: string;
+            /** @description Display label shown on the report */
+            label: string;
+            /** @description Unit string (e.g. mg/dL) */
+            unit: string;
+            sourceMode: components["schemas"]["SourceMode"];
+            /** @description Value used to match against result parameter names */
+            sourceMatch: string;
+            /**
+             * @description When true, silently omit this parameter if not found in results. When false (default), show as missing.
+             * @default false
+             */
+            skipIfMissing: boolean;
+            bands: components["schemas"]["InterpretationBand"][];
+        };
+        GraphicalScaleConfig: {
+            /** @description Report section title */
+            title?: string;
+            /** @description Optional subtitle shown below title */
+            subtitle?: string;
+            /** @default true */
+            showDemographics: boolean;
+            /**
+             * @description Show compact summary table at the end
+             * @default true
+             */
+            showInterpretationSummary: boolean;
+            scaleStyle?: components["schemas"]["ScaleStyle"];
+            parameters: components["schemas"]["ScaleParameter"][];
+        };
+        BandValidationError: {
+            parameterKey: string;
+            bandIndex?: number | null;
+            field?: string | null;
+            message: string;
+        };
+        GraphicalScaleValidationErrorResponse: {
+            message?: string;
+            errors?: components["schemas"]["BandValidationError"][];
+        };
     };
     responses: {
         /** @description Unauthorized */

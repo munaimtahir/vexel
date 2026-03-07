@@ -5,6 +5,8 @@ import {
   IMPLEMENTED_FAMILIES,
   TEMPLATE_FAMILIES,
   RESULT_SCHEMA_TYPES,
+  validateGraphicalScaleConfig,
+  resolveInterpretationBand,
 } from '../templates-validation';
 
 describe('templates-validation', () => {
@@ -98,5 +100,221 @@ describe('templates-validation', () => {
         expect(TEMPLATE_FAMILIES).toContain(f);
       }
     });
+  });
+});
+
+// ─── GraphicalScaleConfig validation ─────────────────────────────────────────
+
+const VALID_LIPID_CONFIG = {
+  title: 'Lipid Profile',
+  subtitle: 'CV Risk Panel',
+  showDemographics: true,
+  showInterpretationSummary: true,
+  scaleStyle: 'BAND_HIGHLIGHT',
+  parameters: [
+    {
+      key: 'total_cholesterol',
+      label: 'Total Cholesterol',
+      unit: 'mg/dL',
+      sourceMode: 'parameter_name_match',
+      sourceMatch: 'Total Cholesterol',
+      bands: [
+        { label: 'Desirable', min: null, max: 200, colorToken: 'GOOD' },
+        { label: 'Borderline', min: 200, max: 240, colorToken: 'CAUTION' },
+        { label: 'High', min: 240, max: null, colorToken: 'BAD' },
+      ],
+    },
+    {
+      key: 'hdl',
+      label: 'HDL',
+      unit: 'mg/dL',
+      sourceMode: 'parameter_name_match',
+      sourceMatch: 'HDL',
+      bands: [
+        { label: 'Low', min: null, max: 40, colorToken: 'BAD' },
+        { label: 'Normal', min: 40, max: 60, colorToken: 'CAUTION' },
+        { label: 'Optimal', min: 60, max: null, colorToken: 'GOOD' },
+      ],
+    },
+  ],
+};
+
+describe('validateGraphicalScaleConfig', () => {
+  it('returns valid for a well-formed config', () => {
+    const result = validateGraphicalScaleConfig(VALID_LIPID_CONFIG as any);
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+  });
+
+  it('rejects empty parameters array', () => {
+    const cfg = { ...VALID_LIPID_CONFIG, parameters: [] };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /parameters/.test(e.message))).toBe(true);
+  });
+
+  it('rejects duplicate parameter keys', () => {
+    const cfg = {
+      ...VALID_LIPID_CONFIG,
+      parameters: [
+        VALID_LIPID_CONFIG.parameters[0],
+        { ...VALID_LIPID_CONFIG.parameters[1], key: 'total_cholesterol' },
+      ],
+    };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /duplicate/i.test(e.message))).toBe(true);
+  });
+
+  it('rejects parameter with too few bands', () => {
+    const cfg = {
+      ...VALID_LIPID_CONFIG,
+      parameters: [
+        { ...VALID_LIPID_CONFIG.parameters[0], bands: [{ label: 'Only', min: null, max: null, colorToken: 'GOOD' }] },
+        VALID_LIPID_CONFIG.parameters[1],
+      ],
+    };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /band/i.test(e.message))).toBe(true);
+  });
+
+  it('rejects invalid colorToken', () => {
+    const cfg = {
+      ...VALID_LIPID_CONFIG,
+      parameters: [
+        {
+          ...VALID_LIPID_CONFIG.parameters[0],
+          bands: [
+            { label: 'A', min: null, max: 100, colorToken: 'PURPLE' },
+            { label: 'B', min: 100, max: null, colorToken: 'GOOD' },
+          ],
+        },
+        VALID_LIPID_CONFIG.parameters[1],
+      ],
+    };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /colorToken/i.test(e.message))).toBe(true);
+  });
+
+  it('rejects invalid scaleStyle', () => {
+    const cfg = { ...VALID_LIPID_CONFIG, scaleStyle: 'RADAR_CHART' };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /scaleStyle/i.test(e.message))).toBe(true);
+  });
+
+  it('rejects overlapping finite bands', () => {
+    const cfg = {
+      ...VALID_LIPID_CONFIG,
+      parameters: [
+        {
+          ...VALID_LIPID_CONFIG.parameters[0],
+          bands: [
+            { label: 'A', min: 0, max: 150, colorToken: 'GOOD' },
+            { label: 'B', min: 100, max: 300, colorToken: 'BAD' }, // overlaps A
+          ],
+        },
+        VALID_LIPID_CONFIG.parameters[1],
+      ],
+    };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /overlap/i.test(e.message))).toBe(true);
+  });
+
+  it('rejects multiple open-low bands in one parameter', () => {
+    const cfg = {
+      ...VALID_LIPID_CONFIG,
+      parameters: [
+        {
+          ...VALID_LIPID_CONFIG.parameters[0],
+          bands: [
+            { label: 'A', min: null, max: 100, colorToken: 'GOOD' },
+            { label: 'B', min: null, max: 200, colorToken: 'CAUTION' },
+            { label: 'C', min: 200, max: null, colorToken: 'BAD' },
+          ],
+        },
+        VALID_LIPID_CONFIG.parameters[1],
+      ],
+    };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+  });
+
+  it('rejects missing title', () => {
+    const cfg = { ...VALID_LIPID_CONFIG, title: '' };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /title/i.test(e.message))).toBe(true);
+  });
+
+  it('rejects missing parameter key', () => {
+    const cfg = {
+      ...VALID_LIPID_CONFIG,
+      parameters: [
+        { ...VALID_LIPID_CONFIG.parameters[0], key: '' },
+        VALID_LIPID_CONFIG.parameters[1],
+      ],
+    };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+  });
+
+  it('rejects missing sourceMatch', () => {
+    const cfg = {
+      ...VALID_LIPID_CONFIG,
+      parameters: [
+        { ...VALID_LIPID_CONFIG.parameters[0], sourceMatch: '' },
+        VALID_LIPID_CONFIG.parameters[1],
+      ],
+    };
+    const result = validateGraphicalScaleConfig(cfg as any);
+    expect(result.valid).toBe(false);
+  });
+});
+
+describe('resolveInterpretationBand', () => {
+  const bands = [
+    { label: 'Desirable', min: null, max: 200, colorToken: 'GOOD' as const },
+    { label: 'Borderline', min: 200, max: 240, colorToken: 'CAUTION' as const },
+    { label: 'High', min: 240, max: null, colorToken: 'BAD' as const },
+  ];
+
+  it('resolves value in open-low band', () => {
+    const result = resolveInterpretationBand(150, bands);
+    expect(result?.band.label).toBe('Desirable');
+  });
+
+  it('resolves value at lower boundary of middle band', () => {
+    const result = resolveInterpretationBand(200, bands);
+    expect(result?.band.label).toBe('Borderline');
+  });
+
+  it('resolves value in open-high band', () => {
+    const result = resolveInterpretationBand(300, bands);
+    expect(result?.band.label).toBe('High');
+  });
+
+  it('returns null for empty band list', () => {
+    expect(resolveInterpretationBand(150, [])).toBeNull();
+  });
+
+  it('resolves exact upper boundary of last band when it equals max', () => {
+    const tightBands = [
+      { label: 'Low', min: null, max: 100, colorToken: 'BAD' as const },
+      { label: 'Normal', min: 100, max: 200, colorToken: 'GOOD' as const },
+    ];
+    // value exactly at max of last band should resolve to last band
+    expect(resolveInterpretationBand(200, tightBands)?.band.label).toBe('Normal');
+  });
+
+  it('returns null for value below all bands with closed-low first band', () => {
+    const closedBands = [
+      { label: 'Mid', min: 50, max: 100, colorToken: 'GOOD' as const },
+      { label: 'High', min: 100, max: null, colorToken: 'BAD' as const },
+    ];
+    expect(resolveInterpretationBand(20, closedBands)).toBeNull();
   });
 });

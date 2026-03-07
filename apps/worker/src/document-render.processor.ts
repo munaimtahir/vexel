@@ -143,10 +143,27 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
   // Fetch tenant config for branding
   const tenantConfig = await prisma.tenantConfig.findUnique({ where: { tenantId } });
 
+  // For graphical-family templates, fetch the PrintTemplate configJson
+  let printTemplateConfigJson: Record<string, unknown> | null = null;
+  const payload = doc.payloadJson as Record<string, unknown> | null;
+  if (payload?.templateFamily === 'GRAPHICAL_SCALE_REPORT' && payload?.templateCode && payload?.templateVersion !== undefined) {
+    const printTpl = await (prisma as any).printTemplate.findFirst({
+      where: {
+        tenantId,
+        code: payload.templateCode as string,
+        templateVersion: Number(payload.templateVersion),
+      },
+    });
+    if (printTpl?.configJson) {
+      printTemplateConfigJson = printTpl.configJson as Record<string, unknown>;
+    }
+  }
+
   const renderBody = JSON.stringify({
     templateKey: doc.template.templateKey,
     payloadJson: doc.payloadJson,
     brandingConfig: tenantConfig ?? {},
+    ...(printTemplateConfigJson ? { configJson: printTemplateConfigJson } : {}),
   });
 
   try {

@@ -46,6 +46,7 @@ app.MapPost("/render", async (HttpContext context) =>
             "lab_report_v2"          => GenerateLabReportV2(payload, req?.BrandingConfig, logoBytes, footerImageBytes),
             "receipt_v1"             => GenerateReceipt(payload, req?.BrandingConfig, logoBytes),
             "opd_invoice_receipt_v1" => GenerateOpdInvoiceReceipt(payload, req?.BrandingConfig),
+            "graphical_scale_report_v1" => GenerateGraphicalScaleReport(payload, req?.BrandingConfig, req?.ConfigJson, logoBytes),
             _                        => GeneratePlaceholderPdf(body),
         };
     }
@@ -89,6 +90,12 @@ static byte[] GenerateOpdInvoiceReceipt(JsonElement payload, BrandingConfig? bra
     return doc.GeneratePdf();
 }
 
+static byte[] GenerateGraphicalScaleReport(JsonElement payload, BrandingConfig? branding, JsonElement? configJson, byte[]? logoBytes)
+{
+    var doc = new GraphicalScaleReportDocument(payload, branding ?? new BrandingConfig(), configJson, logoBytes);
+    return doc.GeneratePdf();
+}
+
 static byte[] GeneratePlaceholderPdf(string jsonBody)
 {
     var placeholder = "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
@@ -115,7 +122,8 @@ static async Task<byte[]?> FetchImageBytesAsync(string? url)
 record RenderRequest(
     string?       TemplateKey,
     JsonElement?  PayloadJson,
-    BrandingConfig? BrandingConfig
+    BrandingConfig? BrandingConfig,
+    JsonElement?  ConfigJson
 );
 
 record BrandingConfig
@@ -1852,3 +1860,489 @@ class OpdInvoiceReceiptDocument : IDocument
             _                       => value.ToString()
         };
 }
+
+// ─── GraphicalScaleReportDocument ─────────────────────────────────────────────
+
+class GraphicalScaleReportDocument : IDocument
+{
+    private readonly JsonElement         _payload;
+    private readonly BrandingConfig      _branding;
+    private readonly JsonElement?        _configJson;
+    private readonly byte[]?             _logoBytes;
+
+    // Color token → QuestPDF Color
+    private static readonly Dictionary<string, QuestPDF.Infrastructure.Color> TokenColors = new()
+    {
+        ["GOOD"]    = QuestPDF.Infrastructure.Color.FromHex("#22C55E"),  // green-500
+        ["CAUTION"] = QuestPDF.Infrastructure.Color.FromHex("#F59E0B"),  // amber-500
+        ["BAD"]     = QuestPDF.Infrastructure.Color.FromHex("#EF4444"),  // red-500
+        ["INFO"]    = QuestPDF.Infrastructure.Color.FromHex("#3B82F6"),  // blue-500
+        ["NEUTRAL"] = QuestPDF.Infrastructure.Color.FromHex("#9CA3AF"),  // gray-400
+    };
+
+    private static readonly QuestPDF.Infrastructure.Color LightGray   = QuestPDF.Infrastructure.Color.FromHex("#F3F4F6");
+    private static readonly QuestPDF.Infrastructure.Color MediumGray  = QuestPDF.Infrastructure.Color.FromHex("#9CA3AF");
+    private static readonly QuestPDF.Infrastructure.Color DarkGray    = QuestPDF.Infrastructure.Color.FromHex("#374151");
+    private static readonly QuestPDF.Infrastructure.Color TextPrimary = QuestPDF.Infrastructure.Color.FromHex("#111827");
+
+    public GraphicalScaleReportDocument(JsonElement payload, BrandingConfig branding, JsonElement? configJson, byte[]? logoBytes)
+    {
+        _payload    = payload;
+        _branding   = branding;
+        _configJson = configJson;
+        _logoBytes  = logoBytes;
+    }
+
+    public DocumentMetadata GetMetadata() => new()
+    {
+        Title = GetConfigString("title", "Graphical Scale Report"),
+    };
+
+    public void Compose(IDocumentContainer container)
+    {
+        container.Page(page =>
+        {
+            page.Size(PageSizes.A4);
+            page.Margin(30, Unit.Point);
+            page.DefaultTextStyle(t => t.FontSize(9).FontColor(TextPrimary));
+
+            page.Header().Element(ComposeHeader);
+            page.Content().Element(ComposeContent);
+            page.Footer().Element(ComposeFooter);
+        });
+    }
+
+    // ── Header ──────────────────────────────────────────────────────────────
+
+    void ComposeHeader(IContainer container)
+    {
+        container.Column(col =>
+        {
+            col.Item().Row(row =>
+            {
+                // Logo
+                if (_logoBytes != null)
+                {
+                    row.ConstantItem(60).Padding(2).Image(_logoBytes).FitArea();
+                }
+
+                row.RelativeItem().Column(inner =>
+                {
+                    inner.Item().Text(_branding.BrandName ?? "Laboratory")
+                        .Bold().FontSize(14).FontColor(TextPrimary);
+                    if (!string.IsNullOrEmpty(_branding.ReportHeader))
+                        inner.Item().Text(_branding.ReportHeader).FontSize(8).FontColor(MediumGray);
+                });
+
+                row.ConstantItem(120).Column(inner =>
+                {
+                    var title = GetConfigString("title", "Graphical Report");
+                    var subtitle = GetConfigString("subtitle", "");
+                    inner.Item().AlignRight().Text(title).Bold().FontSize(11).FontColor(TextPrimary);
+                    if (!string.IsNullOrEmpty(subtitle))
+                        inner.Item().AlignRight().Text(subtitle).FontSize(8).FontColor(MediumGray);
+                });
+            });
+
+            col.Item().PaddingTop(4).LineHorizontal(1.5f).LineColor(DarkGray);
+        });
+    }
+
+    // ── Content ─────────────────────────────────────────────────────────────
+
+    void ComposeContent(IContainer container)
+    {
+        container.PaddingTop(8).Column(col =>
+        {
+            // Demographics block
+            if (GetConfigBool("showDemographics", true))
+            {
+                col.Item().Element(ComposeDemographics);
+                col.Item().PaddingVertical(6).LineHorizontal(0.5f).LineColor(MediumGray);
+            }
+
+            // Collect all parameter values from payload
+            var paramValues = CollectParameterValues();
+
+            // Get configured parameters
+            var parameters = GetConfigParameters();
+
+            if (parameters.Count == 0)
+            {
+                col.Item().Padding(10).Text("No parameters configured for this template.").FontColor(MediumGray);
+                return;
+            }
+
+            // Render each parameter section
+            foreach (var param in parameters)
+            {
+                col.Item().PaddingVertical(4).Element(c => ComposeParameterScale(c, param, paramValues));
+            }
+
+            // Interpretation summary table
+            if (GetConfigBool("showInterpretationSummary", true))
+            {
+                col.Item().PaddingTop(10).Element(c => ComposeSummaryTable(c, parameters, paramValues));
+            }
+        });
+    }
+
+    void ComposeDemographics(IContainer container)
+    {
+        var patientName = Str("patientName");
+        var mrn         = Str("patientMrn");
+        var age         = Str("patientAge");
+        var gender      = Str("patientGender");
+        var dob         = Str("patientDob");
+        var encCode     = Str("encounterCode");
+        var reportNo    = Str("reportNumber");
+        var issuedAt    = Str("issuedAt");
+
+        container.Table(table =>
+        {
+            table.ColumnsDefinition(c =>
+            {
+                c.RelativeColumn(1);
+                c.RelativeColumn(1);
+                c.RelativeColumn(1);
+                c.RelativeColumn(1);
+            });
+
+            DemoCell(table, "Patient", patientName);
+            DemoCell(table, "MRN", mrn);
+            DemoCell(table, "Age / Gender", $"{age} / {gender}");
+            DemoCell(table, "Report No.", reportNo);
+            DemoCell(table, "Date of Birth", dob);
+            DemoCell(table, "Encounter", encCode);
+            DemoCell(table, "Issued", FormatDate(issuedAt));
+            DemoCell(table, "Status", Str("reportStatus"));
+        });
+    }
+
+    static void DemoCell(TableDescriptor table, string label, string value)
+    {
+        table.Cell().Padding(2).Column(c =>
+        {
+            c.Item().Text(label).FontSize(7).FontColor(MediumGray);
+            c.Item().Text(value).FontSize(9).Bold();
+        });
+    }
+
+    void ComposeParameterScale(IContainer container, ScaleParameter param, Dictionary<string, string?> paramValues)
+    {
+        var rawValue = ResolveParamValue(param, paramValues);
+
+        container.Background(LightGray).Padding(6).Column(col =>
+        {
+            // Row 1: label + value
+            col.Item().Row(row =>
+            {
+                row.RelativeItem().Text(param.Label).Bold().FontSize(10);
+                if (rawValue != null)
+                {
+                    if (double.TryParse(rawValue, System.Globalization.NumberStyles.Any,
+                            System.Globalization.CultureInfo.InvariantCulture, out var numVal))
+                    {
+                        var matchedBand = ResolveBand(param.Bands, numVal);
+                        var valueColor = matchedBand != null
+                            ? TokenColors.GetValueOrDefault(matchedBand.ColorToken, MediumGray)
+                            : MediumGray;
+                        row.AutoItem().Text($"{rawValue} {param.Unit}").Bold().FontSize(11).FontColor(valueColor);
+                    }
+                    else
+                    {
+                        row.AutoItem().Text($"{rawValue} {param.Unit}").Bold().FontSize(11);
+                    }
+                }
+                else
+                {
+                    row.AutoItem().Text("—").FontSize(11).FontColor(MediumGray);
+                }
+            });
+
+            col.Item().PaddingTop(4).Element(c => ComposeBandScale(c, param.Bands, rawValue));
+        });
+    }
+
+    void ComposeBandScale(IContainer container, List<InterpretationBand> bands, string? rawValue)
+    {
+        double? numericValue = null;
+        if (rawValue != null && double.TryParse(rawValue, System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out var p))
+            numericValue = p;
+
+        var matchedBandIdx = -1;
+        if (numericValue.HasValue)
+        {
+            for (int i = 0; i < bands.Count; i++)
+            {
+                if (BandContains(bands[i], numericValue.Value))
+                { matchedBandIdx = i; break; }
+            }
+        }
+
+        // Total visible width split equally across bands
+        container.Row(row =>
+        {
+            for (int i = 0; i < bands.Count; i++)
+            {
+                var band = bands[i];
+                var isMatch = (i == matchedBandIdx);
+                var bandColor = TokenColors.GetValueOrDefault(band.ColorToken, MediumGray);
+                var bgColor   = isMatch ? bandColor : QuestPDF.Infrastructure.Color.FromHex("#E5E7EB");
+
+                int idx = i;
+                row.RelativeItem().Element(cell =>
+                {
+                    cell.Background(bgColor).Padding(3).Column(c =>
+                    {
+                        c.Item().AlignCenter()
+                            .Text(band.Label)
+                            .FontSize(7)
+                            .FontColor(isMatch ? Colors.White : DarkGray);
+                        c.Item().AlignCenter()
+                            .Text(BandRangeLabel(band))
+                            .FontSize(6)
+                            .FontColor(isMatch ? Colors.White : MediumGray);
+                    });
+                });
+            }
+        });
+    }
+
+    void ComposeSummaryTable(IContainer container, List<ScaleParameter> parameters, Dictionary<string, string?> paramValues)
+    {
+        container.Column(col =>
+        {
+            col.Item().Text("Interpretation Summary").Bold().FontSize(10);
+            col.Item().PaddingTop(4).Table(table =>
+            {
+                table.ColumnsDefinition(c =>
+                {
+                    c.RelativeColumn(3);
+                    c.RelativeColumn(2);
+                    c.RelativeColumn(1);
+                    c.RelativeColumn(3);
+                });
+
+                // Header
+                SumCell(table, "Parameter", true);
+                SumCell(table, "Result", true);
+                SumCell(table, "Unit", true);
+                SumCell(table, "Category", true);
+
+                foreach (var param in parameters)
+                {
+                    var rawValue = ResolveParamValue(param, paramValues);
+                    string category = "—";
+                    QuestPDF.Infrastructure.Color catColor = MediumGray;
+
+                    if (rawValue != null && double.TryParse(rawValue,
+                            System.Globalization.NumberStyles.Any,
+                            System.Globalization.CultureInfo.InvariantCulture, out var numVal))
+                    {
+                        var band = ResolveBand(param.Bands, numVal);
+                        if (band != null)
+                        {
+                            category = band.Label;
+                            catColor = TokenColors.GetValueOrDefault(band.ColorToken, MediumGray);
+                        }
+                    }
+
+                    SumCell(table, param.Label);
+                    SumCell(table, rawValue ?? "—");
+                    SumCell(table, param.Unit);
+                    table.Cell().Padding(3)
+                        .Text(category).FontSize(8).Bold().FontColor(catColor);
+                }
+            });
+        });
+    }
+
+    static void SumCell(TableDescriptor table, string text, bool isHeader = false)
+    {
+        var cell = table.Cell().Padding(3).Text(text).FontSize(8);
+        if (isHeader) cell.Bold();
+    }
+
+    // ── Footer ──────────────────────────────────────────────────────────────
+
+    void ComposeFooter(IContainer container)
+    {
+        container.Column(col =>
+        {
+            col.Item().LineHorizontal(0.5f).LineColor(MediumGray);
+            col.Item().PaddingTop(4).Row(row =>
+            {
+                var disclaimer = _branding.FooterText ?? _branding.ReportFooter ?? "Results are for clinical use only.";
+                row.RelativeItem().Text(disclaimer).FontSize(7).FontColor(MediumGray);
+
+                var verifiedBy = _payload.ValueKind == JsonValueKind.Object &&
+                    _payload.TryGetProperty("verifiedBy", out var vb) ? vb.GetString() : null;
+                if (!string.IsNullOrEmpty(verifiedBy))
+                    row.AutoItem().Text($"Verified by: {verifiedBy}").FontSize(7).FontColor(MediumGray);
+            });
+        });
+    }
+
+    // ── Config helpers ───────────────────────────────────────────────────────
+
+    string GetConfigString(string key, string fallback = "")
+    {
+        if (_configJson == null) return fallback;
+        var cfg = _configJson.Value;
+        if (cfg.ValueKind == JsonValueKind.Object && cfg.TryGetProperty(key, out var val) && val.ValueKind == JsonValueKind.String)
+            return val.GetString() ?? fallback;
+        return fallback;
+    }
+
+    bool GetConfigBool(string key, bool fallback = true)
+    {
+        if (_configJson == null) return fallback;
+        var cfg = _configJson.Value;
+        if (cfg.ValueKind != JsonValueKind.Object) return fallback;
+        if (!cfg.TryGetProperty(key, out var val)) return fallback;
+        return val.ValueKind switch
+        {
+            JsonValueKind.True  => true,
+            JsonValueKind.False => false,
+            _                   => fallback,
+        };
+    }
+
+    List<ScaleParameter> GetConfigParameters()
+    {
+        var result = new List<ScaleParameter>();
+        if (_configJson == null) return result;
+        var cfg = _configJson.Value;
+        if (cfg.ValueKind != JsonValueKind.Object) return result;
+        if (!cfg.TryGetProperty("parameters", out var paramsEl)) return result;
+        if (paramsEl.ValueKind != JsonValueKind.Array) return result;
+
+        foreach (var p in paramsEl.EnumerateArray())
+        {
+            if (p.ValueKind != JsonValueKind.Object) continue;
+            var key          = p.TryGetProperty("key", out var k) ? k.GetString() ?? "" : "";
+            var label        = p.TryGetProperty("label", out var l) ? l.GetString() ?? "" : key;
+            var unit         = p.TryGetProperty("unit", out var u) ? u.GetString() ?? "" : "";
+            var sourceMode   = p.TryGetProperty("sourceMode", out var sm) ? sm.GetString() ?? "parameter_name_match" : "parameter_name_match";
+            var sourceMatch  = p.TryGetProperty("sourceMatch", out var sc) ? sc.GetString() ?? label : label;
+            var skipIfMissing = p.TryGetProperty("skipIfMissing", out var skip) && skip.ValueKind == JsonValueKind.True;
+
+            var bands = new List<InterpretationBand>();
+            if (p.TryGetProperty("bands", out var bandsEl) && bandsEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var b in bandsEl.EnumerateArray())
+                {
+                    if (b.ValueKind != JsonValueKind.Object) continue;
+                    var bLabel = b.TryGetProperty("label", out var bl) ? bl.GetString() ?? "" : "";
+                    double? bMin = null;
+                    double? bMax = null;
+                    if (b.TryGetProperty("min", out var bMinEl) && bMinEl.ValueKind == JsonValueKind.Number)
+                        bMin = bMinEl.GetDouble();
+                    if (b.TryGetProperty("max", out var bMaxEl) && bMaxEl.ValueKind == JsonValueKind.Number)
+                        bMax = bMaxEl.GetDouble();
+                    var bColor = b.TryGetProperty("colorToken", out var bc) ? bc.GetString() ?? "NEUTRAL" : "NEUTRAL";
+                    bands.Add(new InterpretationBand(bLabel, bMin, bMax, bColor));
+                }
+            }
+
+            if (bands.Count == 0) continue;
+            result.Add(new ScaleParameter(key, label, unit, sourceMode, sourceMatch, skipIfMissing, bands));
+        }
+
+        return result;
+    }
+
+    // ── Parameter value resolution ───────────────────────────────────────────
+
+    Dictionary<string, string?> CollectParameterValues()
+    {
+        var dict = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+        if (_payload.ValueKind != JsonValueKind.Object) return dict;
+        if (!_payload.TryGetProperty("tests", out var tests)) return dict;
+        if (tests.ValueKind != JsonValueKind.Array) return dict;
+
+        foreach (var test in tests.EnumerateArray())
+        {
+            if (!test.TryGetProperty("parameters", out var parms)) continue;
+            if (parms.ValueKind != JsonValueKind.Array) continue;
+            foreach (var param in parms.EnumerateArray())
+            {
+                var name = param.TryGetProperty("parameterName", out var pn) ? pn.GetString() : null;
+                var val  = param.TryGetProperty("value", out var pv) ? pv.GetString() : null;
+                if (!string.IsNullOrEmpty(name))
+                    dict[name!] = val;
+            }
+        }
+
+        return dict;
+    }
+
+    static string? ResolveParamValue(ScaleParameter param, Dictionary<string, string?> paramValues)
+    {
+        // Exact match first
+        if (paramValues.TryGetValue(param.SourceMatch, out var val)) return val;
+        // Case-insensitive fallback
+        foreach (var kv in paramValues)
+        {
+            if (string.Equals(kv.Key, param.SourceMatch, StringComparison.OrdinalIgnoreCase))
+                return kv.Value;
+            if (string.Equals(kv.Key, param.Label, StringComparison.OrdinalIgnoreCase))
+                return kv.Value;
+        }
+        return null;
+    }
+
+    // ── Band helpers ─────────────────────────────────────────────────────────
+
+    static bool BandContains(InterpretationBand band, double value)
+    {
+        var lo = band.Min ?? double.NegativeInfinity;
+        var hi = band.Max ?? double.PositiveInfinity;
+        return value >= lo && value < hi;
+    }
+
+    static InterpretationBand? ResolveBand(List<InterpretationBand> bands, double value)
+    {
+        foreach (var b in bands)
+            if (BandContains(b, value)) return b;
+        // If value equals the max of the last band (upper-inclusive for final band)
+        if (bands.Count > 0)
+        {
+            var last = bands[^1];
+            if (last.Max.HasValue && Math.Abs(value - last.Max.Value) < 1e-9)
+                return last;
+        }
+        return null;
+    }
+
+    static string BandRangeLabel(InterpretationBand band)
+    {
+        if (band.Min == null && band.Max != null)  return $"< {band.Max}";
+        if (band.Min != null && band.Max == null)  return $"≥ {band.Min}";
+        if (band.Min != null && band.Max != null)  return $"{band.Min}–{band.Max}";
+        return "all";
+    }
+
+    // ── Payload string helper ────────────────────────────────────────────────
+
+    string Str(string key, string fallback = "—")
+    {
+        if (_payload.ValueKind == JsonValueKind.Object && _payload.TryGetProperty(key, out var val))
+            return val.ValueKind == JsonValueKind.String ? val.GetString() ?? fallback : fallback;
+        return fallback;
+    }
+
+    static string FormatDate(string iso)
+    {
+        if (DateTime.TryParse(iso, out var dt))
+            return dt.ToString("dd MMM yyyy");
+        return iso;
+    }
+}
+
+// ─── Graphical Scale Config Models ────────────────────────────────────────────
+
+record InterpretationBand(string Label, double? Min, double? Max, string ColorToken);
+record ScaleParameter(string Key, string Label, string Unit, string SourceMode, string SourceMatch, bool SkipIfMissing, List<InterpretationBand> Bands);
