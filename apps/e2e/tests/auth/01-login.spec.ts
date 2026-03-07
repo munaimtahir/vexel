@@ -38,22 +38,15 @@ test.describe('@auth @smoke Authentication — Login', () => {
   });
 
   test('stale / cleared token on protected page redirects to /login', async ({ page, context }) => {
-    // Inject valid tokens first
+    // Inject valid tokens first (both cookies and localStorage for full auth)
     const { accessToken, refreshToken } = await apiLogin(ADMIN_EMAIL, ADMIN_PASSWORD);
-    await page.goto('/');
-    await page.evaluate(
-      ({ at, rt }) => {
-        localStorage.setItem('vexel_token', at);
-        localStorage.setItem('vexel_refresh', rt);
-      },
-      { at: accessToken, rt: refreshToken },
-    );
+    await context.addCookies([
+      { name: 'vexel_token', value: accessToken, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+      { name: 'vexel_refresh', value: refreshToken, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+    ]);
 
-    // Now clear them to simulate stale / expired session
-    await page.evaluate(() => {
-      localStorage.removeItem('vexel_token');
-      localStorage.removeItem('vexel_refresh');
-    });
+    // Now clear all tokens to simulate stale / expired session
+    await context.clearCookies();
 
     // Navigate to protected route — should redirect to /login
     await page.goto('/lims/worklist');

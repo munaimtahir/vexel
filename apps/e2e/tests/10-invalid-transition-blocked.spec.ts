@@ -106,13 +106,12 @@ test.describe('Invalid workflow transition — 409 guard', () => {
     const { encounter, accessToken } = await setupOrderedEncounter();
     await apiPostRaw(`/encounters/${encounter.id}:collect-specimen`, {}, accessToken);
 
-    // Login via UI (or inject token)
+    // Inject auth via cookies (server-side middleware reads cookies, not localStorage)
     const { accessToken: at, refreshToken: rt } = await apiLogin(EMAIL, PASSWORD);
-    await page.goto(`http://127.0.0.1:9024`);
-    await page.evaluate(({ at, rt }) => {
-      localStorage.setItem('vexel_token', at);
-      localStorage.setItem('vexel_refresh', rt);
-    }, { at: accessToken, rt: '' });
+    await page.context().addCookies([
+      { name: 'vexel_token', value: at, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+      { name: 'vexel_refresh', value: rt, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+    ]);
 
     await page.goto(`http://127.0.0.1:9024/lims/encounters/${encounter.id}/verify`);
     await page.waitForLoadState('networkidle');

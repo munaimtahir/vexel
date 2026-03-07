@@ -43,7 +43,9 @@ test.describe('@auth Logout', () => {
     await page.getByRole('button', { name: /sign in/i }).click();
     await page.waitForURL('**/lims/worklist', { timeout: 15_000 });
 
-    // Clear tokens to simulate logout (covers cases where logout clears localStorage)
+    // Clear tokens to simulate logout — must clear both cookies and localStorage
+    // since middleware reads cookies
+    await page.context().clearCookies();
     await page.evaluate(() => {
       localStorage.removeItem('vexel_token');
       localStorage.removeItem('vexel_refresh');

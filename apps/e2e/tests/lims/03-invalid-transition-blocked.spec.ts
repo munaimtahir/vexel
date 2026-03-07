@@ -146,16 +146,12 @@ test.describe('@lims Invalid Transition Blocked', () => {
     await apiPost(`/encounters/${encounter.id}:order-lab`, { tests: [{ code: 't1' }] }, accessToken);
     await apiPostRaw(`/encounters/${encounter.id}:collect-specimen`, {}, accessToken);
 
-    // Inject auth tokens for UI
+    // Inject auth tokens for UI — cookies for server-side middleware, localStorage for client reads
     const { accessToken: at, refreshToken: rt } = await apiLogin(EMAIL, PASSWORD);
-    await page.goto('/');
-    await page.evaluate(
-      ({ at: a, rt: r }) => {
-        localStorage.setItem('vexel_token', a);
-        localStorage.setItem('vexel_refresh', r);
-      },
-      { at, rt },
-    );
+    await page.context().addCookies([
+      { name: 'vexel_token', value: at, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+      { name: 'vexel_refresh', value: rt, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+    ]);
 
     // Navigate to verify page
     await page.goto(`/lims/encounters/${encounter.id}/verify`);

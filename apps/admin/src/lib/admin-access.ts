@@ -57,6 +57,9 @@ export function resolveAdminLanding(permissions: string[] = [], isSuperAdmin = f
     || hasLegacyAdminAccess;
   if (!hasAdminAppAccess) return '/account';
 
+  // Super-admin always lands on dashboard regardless of explicit capability permissions
+  if (isSuperAdmin) return '/dashboard';
+
   const priority = ['/dashboard', '/catalog', '/audit', '/jobs', '/users', '/roles', '/tenants', '/feature-flags'];
   for (const href of priority) {
     const capability = ADMIN_CAPABILITIES.find((item) => item.href === href);

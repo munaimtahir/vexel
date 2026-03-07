@@ -9,17 +9,16 @@ import { apiLogin } from '../../helpers/api-client';
 const EMAIL = process.env.OPERATOR_EMAIL || 'admin@vexel.system';
 const PASSWORD = process.env.OPERATOR_PASSWORD || 'Admin@vexel123!';
 
-/** Inject tokens into localStorage to skip UI login. */
-async function injectAuth(page: import('@playwright/test').Page, baseURL: string) {
+/** Inject tokens via context cookies (middleware-readable) + localStorage (client-readable). */
+async function injectAuth(page: import('@playwright/test').Page, _baseURL: string) {
   const { accessToken, refreshToken } = await apiLogin(EMAIL, PASSWORD);
-  await page.goto('/');
-  await page.evaluate(
-    ({ at, rt }) => {
-      localStorage.setItem('vexel_token', at);
-      localStorage.setItem('vexel_refresh', rt);
-    },
-    { at: accessToken, rt: refreshToken },
-  );
+
+  // Set cookies so server-side middleware passes auth check.
+  // Cookies are the only mechanism the Next.js middleware reads — localStorage alone is not enough.
+  await page.context().addCookies([
+    { name: 'vexel_token', value: accessToken, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+    { name: 'vexel_refresh', value: refreshToken, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+  ]);
 }
 
 test.describe('@operator @smoke Operator — Navigation', () => {

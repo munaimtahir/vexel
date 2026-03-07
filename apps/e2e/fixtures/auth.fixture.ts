@@ -20,8 +20,9 @@ const OPERATOR_EMAIL = process.env.OPERATOR_EMAIL || 'admin@vexel.system';
 const OPERATOR_PASSWORD = process.env.OPERATOR_PASSWORD || 'Admin@vexel123!';
 
 /**
- * Injects accessToken + refreshToken into localStorage so the Next.js app
- * considers the user logged in without going through the login UI.
+ * Injects accessToken + refreshToken into browser context:
+ *  1. Via context.addCookies() so Next.js server-side middleware (which reads cookies) passes auth.
+ *  2. Via localStorage so client-side SDK reads also succeed.
  */
 async function injectTokens(
   context: BrowserContext,
@@ -29,15 +30,35 @@ async function injectTokens(
   accessToken: string,
   refreshToken: string,
 ) {
-  // Navigate to a blank page on the same origin to set localStorage
+  const hostname = new URL(baseURL).hostname;
+
+  // Set cookies so server-side middleware (request.cookies.get('vexel_token')) passes auth check
+  await context.addCookies([
+    {
+      name: 'vexel_token',
+      value: accessToken,
+      domain: hostname,
+      path: '/',
+      httpOnly: false,
+      secure: false,
+      sameSite: 'Lax',
+    },
+    {
+      name: 'vexel_refresh',
+      value: refreshToken,
+      domain: hostname,
+      path: '/',
+      httpOnly: false,
+      secure: false,
+      sameSite: 'Lax',
+    },
+  ]);
+
+  // Also set localStorage for client-side SDK reads
   const page = await context.newPage();
   await page.goto(baseURL);
   await page.evaluate(
     ({ at, rt }) => {
-      // Operator app keys
-      localStorage.setItem('vexel_token', at);
-      localStorage.setItem('vexel_refresh', rt);
-      // Admin app keys
       localStorage.setItem('vexel_token', at);
       localStorage.setItem('vexel_refresh', rt);
     },
