@@ -32,7 +32,7 @@ export function DataTable<T>({
 
   return (
     <div className={cn('overflow-hidden rounded-lg border bg-card', className)}>
-      <div className="max-h-[70vh] overflow-auto">
+      <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead className="sticky top-0 z-10 bg-muted/60 backdrop-blur">
             <tr>

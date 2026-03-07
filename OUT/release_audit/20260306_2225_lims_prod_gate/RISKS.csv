@@ -1,0 +1,13 @@
+id,category,description,likelihood,impact,mitigated_by
+R01,security,JWT secret exposed via env leak or git history,Medium,Critical,Rotate immediately and add startup assertion
+R02,security,Swagger docs expose full API to unauthenticated internet,High,High,Fix NODE_ENV=production
+R03,ops,Worker crash invisible to monitoring (fake health),Medium,High,Implement real health probe
+R04,ops,PDF service crash invisible via API health proxy,Medium,High,Implement real health proxy
+R05,security,Postgres brute-force if server is compromised,Low,Critical,Rotate to strong random password
+R06,ops,Backup jobs use wrong path on any server except original dev machine,High,High,Set VEXEL_ROOT in docker-compose worker env
+R07,security,MinIO credentials in version-controlled compose file,Medium,High,Externalize to secrets management
+R08,architecture,Worker direct encounter status mutation bypasses command-endpoint rule,Low,Medium,Route through service or formally document exception
+R09,ops,E2E Playwright tests not runnable in prod-adjacent environment,Medium,Medium,Install system browser dependencies on CI/test host
+R10,tenancy,Cross-tenant isolation not live-tested (single tenant in DB),Low,Critical,Add second tenant and run cross-tenant smoke test
+R11,ops,CORS allows 127.0.0.1 dev addresses in production policy,Low,Low,Remove dev origins from production CORS config
+R12,ops,Worker and Next.js containers have no docker healthcheck,Low,Medium,Add healthchecks or use liveness probes in orchestrator

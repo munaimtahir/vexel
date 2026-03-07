@@ -2919,6 +2919,195 @@ components:
           type: array
           items: { $ref: '#/components/schemas/OpsSchedule' }
 
+    # ─── Template Registry / Studio ──────────────────────────────────────────
+
+    TemplateFamily:
+      type: string
+      enum:
+        - GENERAL_TABLE
+        - TWO_COLUMN_TABLE
+        - PERIPHERAL_FILM_REPORT
+        - HISTOPATH_NARRATIVE
+        - GRAPHICAL_SCALE_REPORT
+        - IMAGE_REPORT
+
+    ResultSchemaType:
+      type: string
+      enum:
+        - TABULAR
+        - DESCRIPTIVE_HEMATOLOGY
+        - HISTOPATHOLOGY
+        - GRAPH_SERIES
+        - IMAGE_ATTACHMENT
+        - MIXED_STRUCTURED
+
+    TemplateStatus:
+      type: string
+      enum:
+        - DRAFT
+        - ACTIVE
+        - ARCHIVED
+
+    TemplateBlueprintResponse:
+      type: object
+      required: [id, code, name, templateFamily, schemaType, isActive, sortOrder, createdAt, updatedAt]
+      properties:
+        id:                { type: string }
+        code:              { type: string }
+        name:              { type: string }
+        templateFamily:    { $ref: '#/components/schemas/TemplateFamily' }
+        schemaType:        { $ref: '#/components/schemas/ResultSchemaType' }
+        defaultConfigJson: { type: object, nullable: true }
+        isActive:          { type: boolean }
+        sortOrder:         { type: integer }
+        createdAt:         { type: string, format: date-time }
+        updatedAt:         { type: string, format: date-time }
+
+    PrintTemplateResponse:
+      type: object
+      required: [id, tenantId, code, name, schemaType, templateFamily, templateVersion, status, isSystemProvisioned, createdAt, updatedAt]
+      properties:
+        id:                   { type: string }
+        tenantId:             { type: string }
+        sourceBlueprintId:    { type: string, nullable: true }
+        code:                 { type: string }
+        name:                 { type: string }
+        schemaType:           { $ref: '#/components/schemas/ResultSchemaType' }
+        templateFamily:       { $ref: '#/components/schemas/TemplateFamily' }
+        templateVersion:      { type: integer }
+        status:               { $ref: '#/components/schemas/TemplateStatus' }
+        configJson:           { type: object, nullable: true }
+        isSystemProvisioned:  { type: boolean }
+        createdByUserId:      { type: string, nullable: true }
+        supersedesTemplateId: { type: string, nullable: true }
+        createdAt:            { type: string, format: date-time }
+        updatedAt:            { type: string, format: date-time }
+
+    PrintTemplateListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/PrintTemplateResponse' }
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    CreatePrintTemplateRequest:
+      type: object
+      required: [source]
+      properties:
+        source:
+          type: string
+          enum: [blueprint, clone, shell]
+          description: "blueprint=from blueprint, clone=clone existing, shell=empty family shell"
+        sourceBlueprintId:
+          type: string
+          nullable: true
+          description: Required when source=blueprint
+        sourceTemplateId:
+          type: string
+          nullable: true
+          description: Required when source=clone
+        templateFamily:
+          $ref: '#/components/schemas/TemplateFamily'
+          description: Required when source=shell
+        schemaType:
+          $ref: '#/components/schemas/ResultSchemaType'
+          description: Required when source=shell
+        name:
+          type: string
+        code:
+          type: string
+          description: Unique code within tenant. Auto-generated if omitted.
+
+    UpdatePrintTemplateRequest:
+      type: object
+      properties:
+        name:       { type: string }
+        configJson: { type: object, nullable: true }
+
+    CloneTemplateRequest:
+      type: object
+      properties:
+        name: { type: string, description: Name for the cloned template }
+        code: { type: string, description: Code for the cloned template. Auto-generated if omitted. }
+
+    TestTemplateMappingResponse:
+      type: object
+      required: [id, tenantId, testId, templateId, isDefault, sortOrder, isEnabled, createdAt, updatedAt]
+      properties:
+        id:         { type: string }
+        tenantId:   { type: string }
+        testId:     { type: string }
+        templateId: { type: string }
+        isDefault:  { type: boolean }
+        sortOrder:  { type: integer }
+        isEnabled:  { type: boolean }
+        template:   { $ref: '#/components/schemas/PrintTemplateResponse' }
+        createdAt:  { type: string, format: date-time }
+        updatedAt:  { type: string, format: date-time }
+
+    TestTemplateMappingListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/TestTemplateMappingResponse' }
+        testSchemaType:       { type: string }
+        allowTemplateOverride: { type: boolean }
+        defaultTemplateId:    { type: string, nullable: true }
+
+    SetTestTemplateMappingRequest:
+      type: object
+      required: [mappings]
+      properties:
+        mappings:
+          type: array
+          items:
+            type: object
+            required: [templateId, isDefault]
+            properties:
+              templateId: { type: string }
+              isDefault:  { type: boolean }
+              sortOrder:  { type: integer, default: 0 }
+              isEnabled:  { type: boolean, default: true }
+        allowTemplateOverride:
+          type: boolean
+          description: Update test.allowTemplateOverride flag
+
+    TemplatePreviewRequest:
+      type: object
+      properties:
+        samplePayload: { type: object, description: Optional sample payload. Platform default used if omitted. }
+
+    TemplatePreviewResponse:
+      type: object
+      required: [previewUrl]
+      properties:
+        previewUrl: { type: string, description: Temporary signed URL to the preview PDF }
+        expiresAt:  { type: string, format: date-time }
+
+    TemplateBlueprintListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/TemplateBlueprintResponse' }
+
+    ProvisionDefaultsRequest:
+      type: object
+      properties:
+        blueprintCodes:
+          type: array
+          items: { type: string }
+          description: Specific blueprint codes to provision. All active blueprints used if omitted.
+        overwriteExisting:
+          type: boolean
+          default: false
+
 
 paths:
   # ─── Health ───────────────────────────────────────────────────────────────
@@ -9450,6 +9639,391 @@ paths:
                 properties:
                   ok:      { type: boolean }
                   message: { type: string }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Template Registry / Studio ───────────────────────────────────────────
+
+  /admin/template-blueprints:
+    get:
+      operationId: listTemplateBlueprints
+      summary: List all active system template blueprints
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        "200":
+          description: Blueprint list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateBlueprintListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/template-blueprints/provision-defaults:
+    post:
+      operationId: provisionDefaultTemplates
+      summary: Provision starter templates from blueprints into tenant space
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProvisionDefaultsRequest'
+      responses:
+        "200":
+          description: Provisioned templates
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [provisioned, skipped]
+                properties:
+                  provisioned: { type: integer }
+                  skipped:     { type: integer }
+                  templates:
+                    type: array
+                    items: { $ref: '#/components/schemas/PrintTemplateResponse' }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/templates:
+    get:
+      operationId: listPrintTemplates
+      summary: List tenant print templates
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/TemplateStatus'
+        - name: schemaType
+          in: query
+          schema:
+            $ref: '#/components/schemas/ResultSchemaType'
+        - name: templateFamily
+          in: query
+          schema:
+            $ref: '#/components/schemas/TemplateFamily'
+      responses:
+        "200":
+          description: Template list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+    post:
+      operationId: createPrintTemplate
+      summary: Create a new tenant print template
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePrintTemplateRequest'
+      responses:
+        "201":
+          description: Template created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateResponse'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        "409":
+          description: Conflict - code already in use
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/templates/{templateId}:
+    get:
+      operationId: getPrintTemplate
+      summary: Get a single tenant print template
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Template detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updatePrintTemplate
+      summary: Update a print template
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePrintTemplateRequest'
+      responses:
+        "200":
+          description: Updated template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /admin/templates/{templateId}/clone:
+    post:
+      operationId: clonePrintTemplate
+      summary: Clone an existing template
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloneTemplateRequest'
+      responses:
+        "201":
+          description: Cloned template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /admin/templates/{templateId}/new-version:
+    post:
+      operationId: createTemplateNewVersion
+      summary: Create a new draft version of an active template
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: New draft version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateResponse'
+        "409":
+          description: Cannot create new version
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /admin/templates/{templateId}/activate:
+    post:
+      operationId: activatePrintTemplate
+      summary: Activate a draft template version
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Activated template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateResponse'
+        "409":
+          description: Cannot activate
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /admin/templates/{templateId}/archive:
+    post:
+      operationId: archivePrintTemplate
+      summary: Archive a template
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Archived template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintTemplateResponse'
+        "409":
+          description: Cannot archive
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /admin/templates/{templateId}/preview:
+    post:
+      operationId: previewPrintTemplate
+      summary: Generate a preview PDF for a template using sample data
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: templateId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplatePreviewRequest'
+      responses:
+        "200":
+          description: Preview PDF bytes
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /admin/catalog/tests/{testId}/templates:
+    get:
+      operationId: getTestTemplateMappings
+      summary: List template mappings for a catalog test
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: testId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Test template mappings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestTemplateMappingListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      operationId: setTestTemplateMappings
+      summary: Set template mappings for a catalog test
+      tags: [Templates]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: testId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetTestTemplateMappingRequest'
+      responses:
+        "200":
+          description: Updated mappings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestTemplateMappingListResponse'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
         "401":
           $ref: '#/components/responses/Unauthorized'
         "403":

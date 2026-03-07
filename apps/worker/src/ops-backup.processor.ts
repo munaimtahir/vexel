@@ -15,7 +15,7 @@
 
 import { Job } from 'bullmq';
 import { PrismaClient } from '@prisma/client';
-import { execSync, spawnSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
@@ -26,6 +26,7 @@ const LOGS_DIR      = path.join(VEXEL_RUNTIME, 'data', 'logs');
 const BACKUPS_FULL  = path.join(VEXEL_RUNTIME, 'backups', 'full');
 const BACKUPS_TENANT = path.join(VEXEL_RUNTIME, 'backups', 'tenants');
 const OPS_DIR       = path.join(VEXEL_ROOT, 'ops');
+const RETENTION_DAYS = Number(process.env.OPS_BACKUP_RETENTION_DAYS ?? '30');
 
 function ensureDir(d: string) { if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true }); }
 
@@ -138,14 +139,8 @@ async function runFullBackup(runId: string, meta: any, logStream: fs.WriteStream
 
   log(logStream, `Running full backup via ${script}`);
 
-  const env = {
-    ...process.env,
-    // Never pass plaintext passphrase to logs; use server-managed mode
-    BACKUP_PASSPHRASE: process.env.BACKUP_PASSPHRASE ?? `vexel-server-managed-${Date.now()}`,
-  };
-
   const result = spawnSync('bash', [script], {
-    env,
+    env: process.env,
     cwd: VEXEL_ROOT,
     timeout: 600_000, // 10 min
     encoding: 'utf8',
@@ -182,6 +177,7 @@ async function runFullBackup(runId: string, meta: any, logStream: fs.WriteStream
     });
 
     log(logStream, `Artifact: ${artifactAbsPath} (${stat.size} bytes, sha256=${sha})`);
+    await cleanupExpiredArtifacts(prisma, 'FULL', runId, logStream);
   }
 }
 
@@ -231,6 +227,7 @@ async function runTenantExport(runId: string, tenantId: string, logStream: fs.Wr
     });
 
     log(logStream, `Artifact: ${artifactAbsPath} (${stat.size} bytes)`);
+    await cleanupExpiredArtifacts(prisma, 'TENANT_EXPORT', runId, logStream);
   }
 }
 
@@ -278,19 +275,57 @@ async function runRestoreDryRun(runId: string, artifactPath: string, logStream: 
 
     log(logStream, `Dry run complete. Plan: ${JSON.stringify(restorePlan, null, 2)}`);
   } finally {
-    try { execSync(`rm -rf ${tmpDir}`); } catch { /* ignore */ }
+    try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
   }
 }
 
 async function runRestoreApply(runId: string, artifactPath: string, preSnapshotEnabled: boolean, logStream: fs.WriteStream, prisma: PrismaClient) {
+  if (process.env.VEXEL_ALLOW_RESTORE !== 'true') {
+    throw new Error('Restore is disabled by environment policy (set VEXEL_ALLOW_RESTORE=true)');
+  }
+
   const resolved = validateArtifactPath(artifactPath);
   log(logStream, `[APPLY] Full restore from: ${resolved}`);
 
   // Pre-snapshot
   if (preSnapshotEnabled) {
     log(logStream, `Pre-snapshot enabled — taking snapshot before restore...`);
-    await runFullBackup(runId + '-pre-snap', null, logStream, prisma);
-    log(logStream, `Pre-snapshot complete.`);
+    const { preSnapshotRunId } = await createRestorePreSnapshotRun(prisma, runId);
+
+    await prisma.opsBackupRun.update({
+      where: { id: preSnapshotRunId },
+      data: { status: 'RUNNING', startedAt: new Date() },
+    });
+    try {
+      await runFullBackup(preSnapshotRunId, null, logStream, prisma);
+      await prisma.opsBackupRun.update({
+        where: { id: preSnapshotRunId },
+        data: { status: 'SUCCEEDED', finishedAt: new Date() },
+      });
+    } catch (error: any) {
+      await prisma.opsBackupRun.update({
+        where: { id: preSnapshotRunId },
+        data: {
+          status: 'FAILED',
+          finishedAt: new Date(),
+          errorSummary: String(error?.message ?? error).slice(0, 500),
+        },
+      });
+      throw error;
+    }
+    await prisma.opsBackupRun.update({
+      where: { id: runId },
+      data: {
+        metaJson: {
+          parentRestoreRunId: runId,
+          preSnapshotRunId,
+          artifactPath: resolved,
+          mode: 'APPLY',
+          preSnapshotEnabled: true,
+        } as any,
+      },
+    });
+    log(logStream, `Pre-snapshot complete. runId=${preSnapshotRunId}`);
   }
 
   const script = path.join(OPS_DIR, 'restore_full.sh');
@@ -313,10 +348,43 @@ async function runRestoreApply(runId: string, artifactPath: string, preSnapshotE
   log(logStream, 'Restore applied. Running healthcheck...');
 
   // Post-restore healthcheck
-  await runHealthcheck(runId + '-post-restore', logStream, prisma);
+  await runHealthcheck(undefined, logStream, prisma);
 }
 
-async function runHealthcheck(runId: string, logStream: fs.WriteStream, prisma: PrismaClient) {
+export async function createRestorePreSnapshotRun(prisma: PrismaClient, parentRestoreRunId: string) {
+  const preSnapshotRunId = crypto.randomUUID();
+  const preSnapshotCorrelationId = `restore-presnap-${parentRestoreRunId}`;
+
+  await prisma.opsBackupRun.create({
+    data: {
+      id: preSnapshotRunId,
+      type: 'FULL',
+      status: 'QUEUED',
+      correlationId: preSnapshotCorrelationId,
+      initiatedByUserId: null,
+      metaJson: {
+        source: 'restore-pre-snapshot',
+        parentRestoreRunId,
+      } as any,
+    },
+  });
+
+  await prisma.auditEvent.create({
+    data: {
+      tenantId: 'system',
+      actorUserId: null,
+      action: 'ops.restore.pre_snapshot.queued',
+      entityType: 'OpsBackupRun',
+      entityId: preSnapshotRunId,
+      correlationId: preSnapshotCorrelationId,
+      metadata: { parentRestoreRunId } as any,
+    },
+  });
+
+  return { preSnapshotRunId, preSnapshotCorrelationId };
+}
+
+async function runHealthcheck(runId: string | undefined, logStream: fs.WriteStream, prisma: PrismaClient) {
   log(logStream, 'Running healthcheck...');
 
   const checks: Record<string, { ok: boolean; msg: string }> = {};
@@ -356,14 +424,100 @@ async function runHealthcheck(runId: string, logStream: fs.WriteStream, prisma: 
 
   log(logStream, `Healthcheck: ${passed}/${total} passed`);
 
-  // Store results in the run (find latest HEALTHCHECK run with this correlationId pattern)
-  await prisma.opsBackupRun.updateMany({
-    where: { id: runId },
-    data: { metaJson: { checks, passed, total, allOk } as any },
-  });
+  if (runId) {
+    await prisma.opsBackupRun.updateMany({
+      where: { id: runId },
+      data: { metaJson: { checks, passed, total, allOk } as any },
+    });
+  }
 
   if (!allOk) {
     throw new Error(`Healthcheck failed: ${passed}/${total} passed`);
+  }
+}
+
+export async function cleanupExpiredArtifacts(
+  prisma: PrismaClient,
+  type: 'FULL' | 'TENANT_EXPORT',
+  currentRunId: string,
+  logStream: fs.WriteStream,
+) {
+  if (!Number.isFinite(RETENTION_DAYS) || RETENTION_DAYS <= 0) {
+    log(logStream, `Retention cleanup skipped: OPS_BACKUP_RETENTION_DAYS=${process.env.OPS_BACKUP_RETENTION_DAYS ?? 'unset'}`);
+    return;
+  }
+
+  const cutoff = new Date(Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000);
+  const oldRuns = await prisma.opsBackupRun.findMany({
+    where: {
+      type,
+      status: 'SUCCEEDED',
+      artifactPath: { not: null },
+      finishedAt: { lt: cutoff },
+      id: { not: currentRunId },
+    },
+    select: {
+      id: true,
+      tenantId: true,
+      correlationId: true,
+      artifactPath: true,
+      metaJson: true,
+    },
+  });
+
+  if (oldRuns.length === 0) return;
+
+  for (const run of oldRuns) {
+    const artifactPath = run.artifactPath as string;
+    const resolved = path.resolve(artifactPath);
+    const runtimeResolved = path.resolve(VEXEL_RUNTIME);
+    if (!resolved.startsWith(runtimeResolved)) {
+      log(logStream, `Retention skipped for run ${run.id}: artifact outside runtime (${resolved})`);
+      continue;
+    }
+
+    if (fs.existsSync(resolved)) {
+      try {
+        fs.unlinkSync(resolved);
+      } catch (e: any) {
+        log(logStream, `Retention failed to delete ${resolved}: ${e?.message ?? e}`);
+        continue;
+      }
+    }
+
+    await prisma.opsBackupRun.update({
+      where: { id: run.id },
+      data: {
+        artifactPath: null,
+        artifactSizeBytes: null,
+        checksumSha256: null,
+        metaJson: {
+          ...(typeof run.metaJson === 'object' && run.metaJson ? run.metaJson as Record<string, any> : {}),
+          retentionCleanup: {
+            cleanedAt: new Date().toISOString(),
+            retentionDays: RETENTION_DAYS,
+            deletedArtifactPath: resolved,
+          },
+        } as any,
+      },
+    });
+
+    await prisma.auditEvent.create({
+      data: {
+        tenantId: run.tenantId ?? 'system',
+        actorUserId: null,
+        action: 'ops.artifact.retention_purged',
+        entityType: 'OpsBackupRun',
+        entityId: run.id,
+        correlationId: run.correlationId ?? null,
+        metadata: {
+          deletedArtifactPath: resolved,
+          retentionDays: RETENTION_DAYS,
+        } as any,
+      },
+    });
+
+    log(logStream, `Retention purged artifact for run ${run.id}: ${resolved}`);
   }
 }
 

@@ -124,7 +124,8 @@ export default function RestorePage() {
         <p className="text-red-700 font-bold text-sm">⚠ DANGER ZONE — RESTORE CENTER</p>
         <p className="text-red-600 text-xs mt-1">
           Applying a restore will overwrite the current database and object storage. A pre-restore
-          snapshot will be taken automatically unless disabled.
+          snapshot will be taken automatically unless disabled. Restore remains blocked unless the
+          server is explicitly started with <span className="font-mono">VEXEL_ALLOW_RESTORE=true</span>.
         </p>
       </div>
 

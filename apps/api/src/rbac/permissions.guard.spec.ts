@@ -50,4 +50,18 @@ describe('PermissionsGuard', () => {
     const ctx = makeContext(null, [Permission.USER_READ]);
     expect(() => guard.canActivate(ctx)).toThrow(ForbiddenException);
   });
+
+  it('enforces OPS permissions explicitly', () => {
+    const deny = makeContext(
+      { userId: '1', isSuperAdmin: false, permissions: [Permission.OPS_VIEW] },
+      [Permission.OPS_RUN_BACKUP],
+    );
+    expect(() => guard.canActivate(deny)).toThrow(ForbiddenException);
+
+    const allow = makeContext(
+      { userId: '1', isSuperAdmin: false, permissions: [Permission.OPS_RUN_BACKUP] },
+      [Permission.OPS_RUN_BACKUP],
+    );
+    expect(guard.canActivate(allow)).toBe(true);
+  });
 });

@@ -17,5 +17,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "exclude": ["node_modules", "dist", "**/__tests__/**", "**/*.spec.ts", "**/*.e2e-spec.ts"]
 }

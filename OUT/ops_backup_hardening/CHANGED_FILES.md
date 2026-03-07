@@ -1,0 +1,22 @@
+# Changed Files
+
+- `.env.example`
+- `docker-compose.yml`
+- `apps/worker/Dockerfile`
+- `apps/worker/src/ops-backup.processor.ts`
+- `apps/api/src/ops/ops.service.ts`
+- `apps/api/prisma/seed.ts`
+- `apps/api/src/ops/__tests__/ops.service.spec.ts`
+- `apps/api/src/ops/__tests__/ops-backup.processor.spec.ts` (new)
+- `apps/api/src/ops/__tests__/ops-backup.retention.spec.ts` (new)
+- `apps/api/src/rbac/permissions.guard.spec.ts`
+- `ops/backup_full.sh`
+- `ops/backup_tenant.sh`
+- `ops/restore_full.sh`
+- `ops/healthcheck.sh`
+- `apps/admin/src/app/(protected)/ops/schedules/page.tsx`
+- `apps/admin/src/app/(protected)/ops/restore/page.tsx`
+- `docs/ops/BACKUPS.md` (new)
+- `docs/ops/BACKUPS_UI.md`
+- `docs/ops/BACKUP_POSTURE.md`
+- `docs/ops/DISASTER_RECOVERY.md`

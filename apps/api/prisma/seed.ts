@@ -34,6 +34,12 @@ const SYSTEM_PERMISSIONS = [
   'branding.read', 'branding.write',
   'patient.manage', 'encounter.manage', 'result.enter', 'result.verify',
   'document.generate', 'document.publish',
+  'ops.view',
+  'ops.run_backup',
+  'ops.export_tenant',
+  'ops.configure_schedules',
+  'ops.configure_storage',
+  'templates.read', 'templates.write', 'templates.provision',
 ];
 
 const SELF_SERVICE_PERMISSIONS = [
@@ -142,6 +148,7 @@ export async function main() {
           'audit.read',
           'job.read', 'job.retry',
           'branding.read', 'branding.write',
+          'templates.read', 'templates.write', 'templates.provision',
           ...SELF_SERVICE_PERMISSIONS,
         ].map(p => ({ permission: p })),
       },
@@ -404,6 +411,70 @@ export async function main() {
     update: {},
   });
   console.log('✅ Default DocumentTemplates seeded');
+
+  // ─── Template Blueprints ───────────────────────────────────────────────────
+  const blueprints = [
+    {
+      id: 'bp-general-table-v1',
+      code: 'general_table_v1',
+      name: 'Standard General Report',
+      templateFamily: 'GENERAL_TABLE',
+      schemaType: 'TABULAR',
+      isActive: true,
+      sortOrder: 1,
+      defaultConfigJson: {
+        headerOptions: { showLogo: true, showBrandName: true, showReportHeader: true },
+        demographicsBlock: { showMrn: true, showAge: true, showGender: true, showDob: false },
+        resultsBlock: { showReferenceRange: true, showFlag: true, showUnit: true },
+        footerOptions: { showDisclaimer: true, showSignature: true, showVerifiedBy: true },
+        sectionOrder: ['header', 'demographics', 'results', 'footer'],
+      },
+    },
+    {
+      id: 'bp-two-column-table-v1',
+      code: 'two_column_table_v1',
+      name: 'Compact Two Column Report',
+      templateFamily: 'TWO_COLUMN_TABLE',
+      schemaType: 'TABULAR',
+      isActive: true,
+      sortOrder: 2,
+      defaultConfigJson: {
+        headerOptions: { showLogo: true, showBrandName: true, showReportHeader: true },
+        demographicsBlock: { showMrn: true, showAge: true, showGender: true, showDob: false },
+        resultsBlock: { showReferenceRange: true, showFlag: true, showUnit: true, columns: 2 },
+        footerOptions: { showDisclaimer: true, showSignature: true, showVerifiedBy: true },
+        sectionOrder: ['header', 'demographics', 'results', 'footer'],
+      },
+    },
+  ];
+
+  for (const bp of blueprints) {
+    await (prisma as any).templateBlueprint.upsert({
+      where: { code: bp.code },
+      update: { name: bp.name, isActive: bp.isActive, sortOrder: bp.sortOrder, defaultConfigJson: bp.defaultConfigJson },
+      create: bp,
+    });
+  }
+  console.log('✅ Template blueprints seeded');
+
+  // ─── System tenant PrintTemplate (GENERAL_TABLE default) ──────────────────
+  await (prisma as any).printTemplate.upsert({
+    where: { tenant_template_code_version: { tenantId: systemTenant.id, code: 'general_table_v1', templateVersion: 1 } },
+    update: {},
+    create: {
+      tenantId: systemTenant.id,
+      sourceBlueprintId: 'bp-general-table-v1',
+      code: 'general_table_v1',
+      name: 'Standard General Report',
+      schemaType: 'TABULAR',
+      templateFamily: 'GENERAL_TABLE',
+      templateVersion: 1,
+      status: 'ACTIVE',
+      isSystemProvisioned: true,
+      configJson: blueprints[0].defaultConfigJson,
+    },
+  });
+  console.log('✅ System tenant PrintTemplate seeded');
 
   console.log('');
   console.log('🎉 Seed complete');

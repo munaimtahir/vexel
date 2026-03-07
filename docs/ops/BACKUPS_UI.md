@@ -47,6 +47,8 @@ Export a single tenant's data:
 ### Restore Center (`/ops/restore`)
 
 > ⛔ **DANGER ZONE** — Restore is destructive and will overwrite current database state.
+>  
+> Restore is environment-guarded and blocked unless `VEXEL_ALLOW_RESTORE=true`.
 
 **Steps:**
 1. Select a succeeded full backup artifact from the list
@@ -66,14 +68,14 @@ Export a single tenant's data:
 - Reloads Caddy
 
 ### Schedules (`/ops/schedules`)
-Configure recurring backup jobs:
+Configure backup policy records:
 - Type: `FULL_BACKUP` or `TENANT_EXPORT`
 - Cron expression (e.g., `0 2 * * *` = every day at 2am)
 - Toggle enable/disable
 - Retention policy (JSON)
 
-> ⚠️ **Note:** Scheduled jobs run via BullMQ worker. The worker must be running for schedules to execute.
-> Current implementation: schedules are stored in DB but the cron trigger (e.g., cron job calling the API) must be wired separately.
+> ⚠️ **Current behavior:** schedule execution is external/manual in this release.
+> The page stores schedule/retention policy, but execution must be done by external scheduler (cron/systemd/GitHub Actions) or manual API trigger.
 
 ### Storage Targets (`/ops/storage`)
 Configure where backup artifacts are stored:

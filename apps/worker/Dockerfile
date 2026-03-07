@@ -15,6 +15,7 @@ RUN npm run build
 
 FROM node:20-alpine AS runtime
 WORKDIR /app
+RUN apk add --no-cache bash curl docker-cli openssl postgresql-client
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 CMD ["node", "dist/main.js"]

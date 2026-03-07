@@ -99,6 +99,11 @@ export default function SchedulesPage() {
         </button>
       </div>
 
+      <div className="rounded border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        Scheduled execution is external in this release. Creating schedules stores policy/retention only.
+        Trigger runs manually from Ops Dashboard or via external automation calling the Ops API.
+      </div>
+
       {loading ? (
         <p className="text-muted-foreground">Loading…</p>
       ) : !schedules.length ? (

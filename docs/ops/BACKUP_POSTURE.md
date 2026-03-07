@@ -1,11 +1,18 @@
 # Backup Posture (MVP)
 
-## MVP rule
-- Daily Postgres dump + retention (7 daily, 4 weekly, 12 monthly)
-- Document storage backup (LOCAL folder) aligned with DB backup
+## Current posture
+- In-app Ops backups are available for full backups and tenant exports.
+- Artifacts are stored on local persistent runtime storage.
+- Retention is enforced via `OPS_BACKUP_RETENTION_DAYS` (default: 30).
+- Restore remains disabled by default and requires explicit env enablement.
 
-## Why
-- “Destruction-proof” posture is required from day one.
+## Guardrails
+- `BACKUP_PASSPHRASE` is required in production.
+- `VEXEL_ALLOW_RESTORE` must remain `false` in ordinary environments.
+- `ops.restore` permission is intentionally not seeded by default.
 
-## Later
-- Move documents to S3/MinIO and rely on object storage lifecycle policies.
+## Operational note
+- Schedule records exist, but schedule execution is external in this release.
+
+## Detailed runbook
+- See [`docs/ops/BACKUPS.md`](./BACKUPS.md).

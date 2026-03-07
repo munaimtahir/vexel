@@ -3035,6 +3035,179 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/template-blueprints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all active system template blueprints */
+        get: operations["listTemplateBlueprints"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/template-blueprints/provision-defaults": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Provision starter templates from blueprints into tenant space */
+        post: operations["provisionDefaultTemplates"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List tenant print templates */
+        get: operations["listPrintTemplates"];
+        put?: never;
+        /** Create a new tenant print template */
+        post: operations["createPrintTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/templates/{templateId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a single tenant print template */
+        get: operations["getPrintTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update a print template */
+        patch: operations["updatePrintTemplate"];
+        trace?: never;
+    };
+    "/admin/templates/{templateId}/clone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Clone an existing template */
+        post: operations["clonePrintTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/templates/{templateId}/new-version": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new draft version of an active template */
+        post: operations["createTemplateNewVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/templates/{templateId}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Activate a draft template version */
+        post: operations["activatePrintTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/templates/{templateId}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Archive a template */
+        post: operations["archivePrintTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/templates/{templateId}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate a preview PDF for a template using sample data */
+        post: operations["previewPrintTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/tests/{testId}/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List template mappings for a catalog test */
+        get: operations["getTestTemplateMappings"];
+        /** Set template mappings for a catalog test */
+        put: operations["setTestTemplateMappings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -4407,6 +4580,128 @@ export interface components {
         };
         OpsScheduleListResponse: {
             data: components["schemas"]["OpsSchedule"][];
+        };
+        /** @enum {string} */
+        TemplateFamily: "GENERAL_TABLE" | "TWO_COLUMN_TABLE" | "PERIPHERAL_FILM_REPORT" | "HISTOPATH_NARRATIVE" | "GRAPHICAL_SCALE_REPORT" | "IMAGE_REPORT";
+        /** @enum {string} */
+        ResultSchemaType: "TABULAR" | "DESCRIPTIVE_HEMATOLOGY" | "HISTOPATHOLOGY" | "GRAPH_SERIES" | "IMAGE_ATTACHMENT" | "MIXED_STRUCTURED";
+        /** @enum {string} */
+        TemplateStatus: "DRAFT" | "ACTIVE" | "ARCHIVED";
+        TemplateBlueprintResponse: {
+            id: string;
+            code: string;
+            name: string;
+            templateFamily: components["schemas"]["TemplateFamily"];
+            schemaType: components["schemas"]["ResultSchemaType"];
+            defaultConfigJson?: Record<string, never> | null;
+            isActive: boolean;
+            sortOrder: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        PrintTemplateResponse: {
+            id: string;
+            tenantId: string;
+            sourceBlueprintId?: string | null;
+            code: string;
+            name: string;
+            schemaType: components["schemas"]["ResultSchemaType"];
+            templateFamily: components["schemas"]["TemplateFamily"];
+            templateVersion: number;
+            status: components["schemas"]["TemplateStatus"];
+            configJson?: Record<string, never> | null;
+            isSystemProvisioned: boolean;
+            createdByUserId?: string | null;
+            supersedesTemplateId?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        PrintTemplateListResponse: {
+            data: components["schemas"]["PrintTemplateResponse"][];
+            pagination: components["schemas"]["Pagination"];
+        };
+        CreatePrintTemplateRequest: {
+            /**
+             * @description blueprint=from blueprint, clone=clone existing, shell=empty family shell
+             * @enum {string}
+             */
+            source: "blueprint" | "clone" | "shell";
+            /** @description Required when source=blueprint */
+            sourceBlueprintId?: string | null;
+            /** @description Required when source=clone */
+            sourceTemplateId?: string | null;
+            /** @description Required when source=shell */
+            templateFamily?: components["schemas"]["TemplateFamily"];
+            /** @description Required when source=shell */
+            schemaType?: components["schemas"]["ResultSchemaType"];
+            name?: string;
+            /** @description Unique code within tenant. Auto-generated if omitted. */
+            code?: string;
+        };
+        UpdatePrintTemplateRequest: {
+            name?: string;
+            configJson?: Record<string, never> | null;
+        };
+        CloneTemplateRequest: {
+            /** @description Name for the cloned template */
+            name?: string;
+            /** @description Code for the cloned template. Auto-generated if omitted. */
+            code?: string;
+        };
+        TestTemplateMappingResponse: {
+            id: string;
+            tenantId: string;
+            testId: string;
+            templateId: string;
+            isDefault: boolean;
+            sortOrder: number;
+            isEnabled: boolean;
+            template?: components["schemas"]["PrintTemplateResponse"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        TestTemplateMappingListResponse: {
+            data: components["schemas"]["TestTemplateMappingResponse"][];
+            testSchemaType?: string;
+            allowTemplateOverride?: boolean;
+            defaultTemplateId?: string | null;
+        };
+        SetTestTemplateMappingRequest: {
+            mappings: {
+                templateId: string;
+                isDefault: boolean;
+                /** @default 0 */
+                sortOrder: number;
+                /** @default true */
+                isEnabled: boolean;
+            }[];
+            /** @description Update test.allowTemplateOverride flag */
+            allowTemplateOverride?: boolean;
+        };
+        TemplatePreviewRequest: {
+            /** @description Optional sample payload. Platform default used if omitted. */
+            samplePayload?: Record<string, never>;
+        };
+        TemplatePreviewResponse: {
+            /** @description Temporary signed URL to the preview PDF */
+            previewUrl: string;
+            /** Format: date-time */
+            expiresAt?: string;
+        };
+        TemplateBlueprintListResponse: {
+            data: components["schemas"]["TemplateBlueprintResponse"][];
+        };
+        ProvisionDefaultsRequest: {
+            /** @description Specific blueprint codes to provision. All active blueprints used if omitted. */
+            blueprintCodes?: string[];
+            /** @default false */
+            overwriteExisting: boolean;
         };
     };
     responses: {
@@ -11251,6 +11546,446 @@ export interface operations {
                         ok: boolean;
                         message: string;
                     };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    listTemplateBlueprints: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Blueprint list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateBlueprintListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    provisionDefaultTemplates: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ProvisionDefaultsRequest"];
+            };
+        };
+        responses: {
+            /** @description Provisioned templates */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        provisioned: number;
+                        skipped: number;
+                        templates?: components["schemas"]["PrintTemplateResponse"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    listPrintTemplates: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                status?: components["schemas"]["TemplateStatus"];
+                schemaType?: components["schemas"]["ResultSchemaType"];
+                templateFamily?: components["schemas"]["TemplateFamily"];
+            };
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Template list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    createPrintTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePrintTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description Template created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description Conflict - code already in use */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getPrintTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Template detail */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    updatePrintTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePrintTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    clonePrintTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CloneTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description Cloned template */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    createTemplateNewVersion: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description New draft version */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Cannot create new version */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    activatePrintTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Activated template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Cannot activate */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    archivePrintTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Archived template */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintTemplateResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Cannot archive */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    previewPrintTemplate: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["TemplatePreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Preview PDF bytes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getTestTemplateMappings: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Test template mappings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestTemplateMappingListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    setTestTemplateMappings: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-supplied correlation ID. If not provided, server generates one. */
+                "X-Correlation-ID"?: components["parameters"]["CorrelationId"];
+            };
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetTestTemplateMappingRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated mappings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestTemplateMappingListResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
             401: components["responses"]["Unauthorized"];

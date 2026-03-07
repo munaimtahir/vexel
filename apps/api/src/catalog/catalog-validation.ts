@@ -31,7 +31,11 @@ export function normalizeUnit(value?: string | null): string | null | undefined 
 
 export function parseReferenceRangeExpression(input?: string | null): ParsedReferenceRange | null {
   if (!input) return null;
-  const normalized = input.replace(/\s+/g, '').replace('≤', '<=').replace('≥', '>=');
+  const normalized = input
+    .replace(/\s+/g, '')
+    .replace(/[–—−]/g, '-')
+    .replace('≤', '<=')
+    .replace('≥', '>=');
   const between = normalized.match(/^(-?\d+(?:\.\d+)?)-(-?\d+(?:\.\d+)?)$/);
   if (between) return { kind: 'between', low: Number(between[1]), high: Number(between[2]) };
   const lt = normalized.match(/^<(-?\d+(?:\.\d+)?)$/);

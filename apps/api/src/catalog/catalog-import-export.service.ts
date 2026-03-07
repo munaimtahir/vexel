@@ -374,7 +374,6 @@ export class CatalogImportExportService {
   private _normalizeRow(row: Record<string, string>): Record<string, string> {
     const aliases: Record<string, string> = {
       code: 'userCode',
-      unit: 'defaultUnit',
       datatype: 'resultType',
       category: 'department',
       low: 'lowValue',
@@ -384,10 +383,46 @@ export class CatalogImportExportService {
       panelcode: 'panelExternalId',
       order: 'displayOrder',
     };
+    const canonicalByNormalized: Record<string, string> = {
+      externalid: 'externalId',
+      usercode: 'userCode',
+      name: 'name',
+      description: 'description',
+      isactive: 'isActive',
+      resulttype: 'resultType',
+      unit: 'unit',
+      defaultunit: 'defaultUnit',
+      decimals: 'decimals',
+      allowedvalues: 'allowedValues',
+      loinccode: 'loincCode',
+      defaultvalue: 'defaultValue',
+      department: 'department',
+      sampletypeexternalid: 'sampleTypeExternalId',
+      specimentype: 'specimenType',
+      method: 'method',
+      price: 'price',
+      testexternalid: 'testExternalId',
+      parameterexternalid: 'parameterExternalId',
+      panelexternalid: 'panelExternalId',
+      displayorder: 'displayOrder',
+      isrequired: 'isRequired',
+      unitoverride: 'unitOverride',
+      gender: 'gender',
+      ageminyears: 'ageMinYears',
+      agemaxyears: 'ageMaxYears',
+      agemindays: 'ageMinDays',
+      agemaxdays: 'ageMaxDays',
+      rangeexpression: 'rangeExpression',
+      lowvalue: 'lowValue',
+      highvalue: 'highValue',
+      criticallow: 'criticalLow',
+      criticalhigh: 'criticalHigh',
+      notes: 'notes',
+    };
     const out: Record<string, string> = {};
     for (const [k, v] of Object.entries(row)) {
       const normalizedKey = k.replace(/[\s_-]/g, '').toLowerCase();
-      const canonical = aliases[normalizedKey] ?? k.trim();
+      const canonical = aliases[normalizedKey] ?? canonicalByNormalized[normalizedKey] ?? k.trim();
       // Don't overwrite if the canonical key was also present in the row
       if (!(canonical in out)) out[canonical] = v;
     }
@@ -593,7 +628,8 @@ export class CatalogImportExportService {
         const userCode = this._valOrNull(row, 'userCode'); if (userCode !== undefined) data.userCode = userCode;
         const loincCode = this._valOrNull(row, 'loincCode'); if (loincCode !== undefined) data.loincCode = loincCode;
         const resultType = this._val(row, 'resultType'); if (resultType !== undefined) data.resultType = resultType;
-        const defaultUnit = this._valOrNull(row, 'defaultUnit'); if (defaultUnit !== undefined) data.defaultUnit = normalizeUnit(defaultUnit);
+        const defaultUnit = this._valOrNull(row, 'defaultUnit') ?? this._valOrNull(row, 'unit');
+        if (defaultUnit !== undefined) data.defaultUnit = normalizeUnit(defaultUnit);
         const decimals = this._val(row, 'decimals'); if (decimals !== undefined) data.decimals = decimals ? parseInt(decimals, 10) : null;
         const allowedValues = this._valOrNull(row, 'allowedValues'); if (allowedValues !== undefined) data.allowedValues = allowedValues;
         const defaultValue = this._valOrNull(row, 'defaultValue'); if (defaultValue !== undefined) data.defaultValue = defaultValue;
@@ -616,7 +652,7 @@ export class CatalogImportExportService {
             userCode: this._valOrNull(row, 'userCode') ?? undefined,
             loincCode: this._valOrNull(row, 'loincCode') ?? undefined,
             resultType: this._val(row, 'resultType') ?? 'numeric',
-            defaultUnit: normalizeUnit(this._valOrNull(row, 'defaultUnit') ?? undefined),
+            defaultUnit: normalizeUnit(this._valOrNull(row, 'defaultUnit') ?? this._valOrNull(row, 'unit') ?? undefined),
             decimals: this._val(row, 'decimals') ? parseInt(this._val(row, 'decimals')!, 10) : 2,
             allowedValues: this._valOrNull(row, 'allowedValues') ?? undefined,
             defaultValue: this._valOrNull(row, 'defaultValue') ?? undefined,

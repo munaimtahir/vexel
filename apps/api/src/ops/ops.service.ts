@@ -144,12 +144,18 @@ export class OpsService {
     actorUserId: string,
     correlationId: string,
   ) {
+    const normalizedCorrelationId = this.normalizeCorrelationId(correlationId);
+    const existing = await this.getExistingRunForCorrelation(normalizedCorrelationId, 'FULL');
+    if (existing) {
+      return this.toTriggerResponse(existing, normalizedCorrelationId);
+    }
+
     const run = await this.prisma.opsBackupRun.create({
       data: {
         id: uuidv4(),
         type: 'FULL',
         status: 'QUEUED',
-        correlationId,
+        correlationId: normalizedCorrelationId,
         initiatedByUserId: actorUserId,
         storageTargetId: body.storageTargetId ?? null,
         metaJson: {
@@ -168,14 +174,14 @@ export class OpsService {
       action: 'ops.full_backup.queued',
       entityType: 'OpsBackupRun',
       entityId: run.id,
-      correlationId,
+      correlationId: normalizedCorrelationId,
     });
 
     await this.queue.add('ops.full_backup.run', { runId: run.id }, {
       jobId: `ops-full-${run.id}`,
     });
 
-    return { runId: run.id, status: run.status, correlationId };
+    return this.toTriggerResponse(run, normalizedCorrelationId);
   }
 
   async triggerTenantExport(
@@ -183,6 +189,12 @@ export class OpsService {
     actorUserId: string,
     correlationId: string,
   ) {
+    const normalizedCorrelationId = this.normalizeCorrelationId(correlationId);
+    const existing = await this.getExistingRunForCorrelation(normalizedCorrelationId, 'TENANT_EXPORT');
+    if (existing) {
+      return this.toTriggerResponse(existing, normalizedCorrelationId);
+    }
+
     // Validate tenant exists
     const tenant = await this.prisma.tenant.findUnique({ where: { id: body.tenantId } });
     if (!tenant) throw new BadRequestException(`Tenant '${body.tenantId}' not found`);
@@ -193,7 +205,7 @@ export class OpsService {
         type: 'TENANT_EXPORT',
         status: 'QUEUED',
         tenantId: body.tenantId,
-        correlationId,
+        correlationId: normalizedCorrelationId,
         initiatedByUserId: actorUserId,
         storageTargetId: body.storageTargetId ?? null,
         metaJson: { tenantId: body.tenantId } as any,
@@ -206,14 +218,14 @@ export class OpsService {
       action: 'ops.tenant_export.queued',
       entityType: 'OpsBackupRun',
       entityId: run.id,
-      correlationId,
+      correlationId: normalizedCorrelationId,
     });
 
     await this.queue.add('ops.tenant_export.run', { runId: run.id, tenantId: body.tenantId }, {
       jobId: `ops-tenant-${run.id}`,
     });
 
-    return { runId: run.id, status: run.status, correlationId };
+    return this.toTriggerResponse(run, normalizedCorrelationId);
   }
 
   async triggerRestoreDryRun(
@@ -221,12 +233,19 @@ export class OpsService {
     actorUserId: string,
     correlationId: string,
   ) {
+    await this.ensureRestoreEnabled(actorUserId, correlationId, 'dry_run');
+    const normalizedCorrelationId = this.normalizeCorrelationId(correlationId);
+    const existing = await this.getExistingRunForCorrelation(normalizedCorrelationId, 'RESTORE');
+    if (existing) {
+      return this.toTriggerResponse(existing, normalizedCorrelationId);
+    }
+
     const run = await this.prisma.opsBackupRun.create({
       data: {
         id: uuidv4(),
         type: 'RESTORE',
         status: 'QUEUED',
-        correlationId,
+        correlationId: normalizedCorrelationId,
         initiatedByUserId: actorUserId,
         metaJson: { artifactPath: body.artifactPath, mode: 'DRY_RUN' } as any,
       },
@@ -238,14 +257,14 @@ export class OpsService {
       action: 'ops.restore.dry_run.queued',
       entityType: 'OpsBackupRun',
       entityId: run.id,
-      correlationId,
+      correlationId: normalizedCorrelationId,
     });
 
     await this.queue.add('ops.restore_full.dry_run', { runId: run.id, artifactPath: body.artifactPath }, {
       jobId: `ops-restore-dry-${run.id}`,
     });
 
-    return { runId: run.id, status: run.status, correlationId };
+    return this.toTriggerResponse(run, normalizedCorrelationId);
   }
 
   async triggerRestoreRun(
@@ -253,6 +272,13 @@ export class OpsService {
     actorUserId: string,
     correlationId: string,
   ) {
+    await this.ensureRestoreEnabled(actorUserId, correlationId, 'apply');
+    const normalizedCorrelationId = this.normalizeCorrelationId(correlationId);
+    const existing = await this.getExistingRunForCorrelation(normalizedCorrelationId, 'RESTORE');
+    if (existing) {
+      return this.toTriggerResponse(existing, normalizedCorrelationId);
+    }
+
     if (body.confirmPhrase !== CONFIRM_PHRASE) {
       throw new BadRequestException(`Confirmation phrase must be "${CONFIRM_PHRASE}"`);
     }
@@ -262,7 +288,7 @@ export class OpsService {
         id: uuidv4(),
         type: 'RESTORE',
         status: 'QUEUED',
-        correlationId,
+        correlationId: normalizedCorrelationId,
         initiatedByUserId: actorUserId,
         metaJson: {
           artifactPath:       body.artifactPath,
@@ -279,7 +305,7 @@ export class OpsService {
       action: 'ops.restore.apply.queued',
       entityType: 'OpsBackupRun',
       entityId: run.id,
-      correlationId,
+      correlationId: normalizedCorrelationId,
       metadata: { preSnapshotEnabled: body.preSnapshotEnabled ?? true },
     });
 
@@ -289,16 +315,22 @@ export class OpsService {
       preSnapshotEnabled: body.preSnapshotEnabled ?? true,
     }, { jobId: `ops-restore-apply-${run.id}` });
 
-    return { runId: run.id, status: run.status, correlationId };
+    return this.toTriggerResponse(run, normalizedCorrelationId);
   }
 
   async triggerHealthcheck(actorUserId: string, correlationId: string) {
+    const normalizedCorrelationId = this.normalizeCorrelationId(correlationId);
+    const existing = await this.getExistingRunForCorrelation(normalizedCorrelationId, 'HEALTHCHECK');
+    if (existing) {
+      return this.toTriggerResponse(existing, normalizedCorrelationId);
+    }
+
     const run = await this.prisma.opsBackupRun.create({
       data: {
         id: uuidv4(),
         type: 'HEALTHCHECK',
         status: 'QUEUED',
-        correlationId,
+        correlationId: normalizedCorrelationId,
         initiatedByUserId: actorUserId,
       },
     });
@@ -309,14 +341,14 @@ export class OpsService {
       action: 'ops.healthcheck.queued',
       entityType: 'OpsBackupRun',
       entityId: run.id,
-      correlationId,
+      correlationId: normalizedCorrelationId,
     });
 
     await this.queue.add('ops.healthcheck.run', { runId: run.id }, {
       jobId: `ops-hc-${run.id}`,
     });
 
-    return { runId: run.id, status: run.status, correlationId };
+    return this.toTriggerResponse(run, normalizedCorrelationId);
   }
 
   // ─── Schedules ────────────────────────────────────────────────────────────
@@ -563,5 +595,40 @@ export class OpsService {
       ...schedule,
       storageTargets: schedule.storageTargets?.map((st: any) => st.storageTarget) ?? [],
     };
+  }
+
+  private normalizeCorrelationId(correlationId?: string | null): string {
+    return correlationId?.trim() || uuidv4();
+  }
+
+  private toTriggerResponse(run: { id: string; status: string }, correlationId: string) {
+    return { runId: run.id, status: run.status, correlationId };
+  }
+
+  private async getExistingRunForCorrelation(correlationId: string, expectedType: string) {
+    const existing = await this.prisma.opsBackupRun.findUnique({ where: { correlationId } });
+    if (!existing) return null;
+    if (existing.type !== expectedType) {
+      throw new ConflictException(
+        `Correlation ID already used for ${existing.type} run (${existing.id}); expected ${expectedType}`,
+      );
+    }
+    return existing;
+  }
+
+  private async ensureRestoreEnabled(actorUserId: string, correlationId: string, mode: 'dry_run' | 'apply') {
+    if (process.env.VEXEL_ALLOW_RESTORE === 'true') return;
+
+    const normalizedCorrelationId = this.normalizeCorrelationId(correlationId);
+    await this.audit.log({
+      tenantId: 'system',
+      actorUserId,
+      action: `ops.restore.${mode}.blocked`,
+      entityType: 'OpsBackupRun',
+      correlationId: normalizedCorrelationId,
+      metadata: { reason: 'VEXEL_ALLOW_RESTORE is not true' },
+    });
+
+    throw new ConflictException('Restore is disabled by environment policy (set VEXEL_ALLOW_RESTORE=true).');
   }
 }

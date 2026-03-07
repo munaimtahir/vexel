@@ -10,34 +10,24 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "/home/munaim/srv/apps/vexel/apps/e2e/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "operator",
         "name": "operator",
         "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
-        "testIgnore": [],
+        "testIgnore": [
+          "**/tests/admin/**",
+          "**/02-admin-crud.spec.ts",
+          "**/13-admin-account-landing.spec.ts"
+        ],
         "testMatch": [
-          "**/01-auth.spec.ts",
-          "**/03-operator-patient.spec.ts",
-          "**/04-operator-encounter.spec.ts",
-          "**/05-operator-workflow.spec.ts",
-          "**/06-document-pipeline.spec.ts",
-          "**/07-tenant-isolation.spec.ts",
-          "**/08-verification-badge-refetch.spec.ts",
-          "**/09-happy-path-multi-parameter.spec.ts",
-          "**/10-invalid-transition-blocked.spec.ts",
-          "**/11-chaos-nightly.spec.ts",
-          "**/12-operator-account.spec.ts"
+          "**/*.spec.ts"
         ],
         "timeout": 30000
       },
@@ -45,14 +35,13 @@
         "outputDir": "/home/munaim/srv/apps/vexel/apps/e2e/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "admin",
         "name": "admin",
         "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
         "testIgnore": [],
         "testMatch": [
+          "**/tests/admin/**/*.spec.ts",
           "**/02-admin-crud.spec.ts",
           "**/13-admin-account-landing.spec.ts"
         ],
@@ -116,27 +105,3188 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1183,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-03-06T21:59:14.610Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "791b3c4e0869e77b2651-ec119bc76f7a9a8e5e79",
               "file": "01-auth.spec.ts",
               "line": 12,
+              "column": 7
+            },
+            {
+              "title": "login with valid credentials redirects to worklist",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-9b8c28ed48cc87858f30",
+              "file": "01-auth.spec.ts",
+              "line": 18,
+              "column": 7
+            },
+            {
+              "title": "invalid credentials show error message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-35d75854ed795e359479",
+              "file": "01-auth.spec.ts",
+              "line": 30,
+              "column": 7
+            },
+            {
+              "title": "accessing /encounters without auth redirects to /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-f0ecd94ebf3d091fd913",
+              "file": "01-auth.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "/lims/worklist loads after successful login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "791b3c4e0869e77b2651-df16738dc9751e09ee3f",
+              "file": "01-auth.spec.ts",
+              "line": 48,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "03-operator-patient.spec.ts",
+      "file": "03-operator-patient.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Operator — Patient management",
+          "file": "03-operator-patient.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "create patient via UI and see in list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d24919be6e7152a1c9ee-f9a06d45895068adff76",
+              "file": "03-operator-patient.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "patients list page loads with table headers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d24919be6e7152a1c9ee-c3340cde86fc7f2908c9",
+              "file": "03-operator-patient.spec.ts",
+              "line": 38,
+              "column": 7
+            },
+            {
+              "title": "duplicate MRN shows 409 error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d24919be6e7152a1c9ee-899553acb2b6141fc714",
+              "file": "03-operator-patient.spec.ts",
+              "line": 49,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "04-operator-encounter.spec.ts",
+      "file": "04-operator-encounter.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Operator — Encounter management",
+          "file": "04-operator-encounter.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [
+            {
+              "title": "create encounter and navigate to detail",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7db7bcaadd8a4835d529-600d2c08b210554495e2",
+              "file": "04-operator-encounter.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "encounter detail page shows patient identity header",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7db7bcaadd8a4835d529-72245213f43cd621281f",
+              "file": "04-operator-encounter.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "encounters list page loads with headers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7db7bcaadd8a4835d529-4209edfc7535401da87e",
+              "file": "04-operator-encounter.spec.ts",
+              "line": 76,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "05-operator-workflow.spec.ts",
+      "file": "05-operator-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Operator — Full LIMS workflow",
+          "file": "05-operator-workflow.spec.ts",
+          "line": 58,
+          "column": 6,
+          "specs": [
+            {
+              "title": "enter results and submit, status updates to resulted",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fbbc3f8c7effa28db4e0-a71f1cb5d6b5765e77ae",
+              "file": "05-operator-workflow.spec.ts",
+              "line": 59,
+              "column": 7
+            },
+            {
+              "title": "verify results via modal confirm, transitions to verified",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fbbc3f8c7effa28db4e0-fe8b5a7b157b7cf91225",
+              "file": "05-operator-workflow.spec.ts",
+              "line": 85,
+              "column": 7
+            },
+            {
+              "title": "publish page is accessible after verified status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fbbc3f8c7effa28db4e0-0a324ac0b9354ba40967",
+              "file": "05-operator-workflow.spec.ts",
+              "line": 124,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "06-document-pipeline.spec.ts",
+      "file": "06-document-pipeline.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Document pipeline",
+          "file": "06-document-pipeline.spec.ts",
+          "line": 50,
+          "column": 6,
+          "specs": [
+            {
+              "title": "report auto-generated on verify and downloadable from publish page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a87cae255acc72e236e6-94eac3b82538c6ab8c63",
+              "file": "06-document-pipeline.spec.ts",
+              "line": 51,
+              "column": 7
+            },
+            {
+              "title": "generate report twice returns same document ID (idempotency)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a87cae255acc72e236e6-6b8530b347b2253c4dc0",
+              "file": "06-document-pipeline.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "document status transitions: QUEUED/RENDERING → RENDERED",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a87cae255acc72e236e6-7d55526c31c3daec49b4",
+              "file": "06-document-pipeline.spec.ts",
+              "line": 115,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "07-tenant-isolation.spec.ts",
+      "file": "07-tenant-isolation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Tenant isolation",
+          "file": "07-tenant-isolation.spec.ts",
+          "line": 26,
+          "column": 6,
+          "specs": [
+            {
+              "title": "encounter created under system tenant is not accessible with a different tenant header",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1e2dd9804cdd016b9be2-7c84b17e477d67db9acf",
+              "file": "07-tenant-isolation.spec.ts",
+              "line": 27,
+              "column": 7
+            },
+            {
+              "title": "patient created under system tenant is not accessible with a spoofed tenant header",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1e2dd9804cdd016b9be2-35dd1bdc1842d4ff38ca",
+              "file": "07-tenant-isolation.spec.ts",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "title": "cross-tenant list endpoint does not leak records",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1e2dd9804cdd016b9be2-b6d8cfba4280f1ef36a6",
+              "file": "07-tenant-isolation.spec.ts",
+              "line": 74,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "08-verification-badge-refetch.spec.ts",
+      "file": "08-verification-badge-refetch.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verification badge refetch regression",
+          "file": "08-verification-badge-refetch.spec.ts",
+          "line": 36,
+          "column": 6,
+          "specs": [
+            {
+              "title": "updates from pending verification to verified immediately after verify command",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "68bfce22ded2a6cd8cd5-dfd5ebb80f7b6c8a13ca",
+              "file": "08-verification-badge-refetch.spec.ts",
+              "line": 37,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "09-happy-path-multi-parameter.spec.ts",
+      "file": "09-happy-path-multi-parameter.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Happy path — multi-parameter workflow",
+          "file": "09-happy-path-multi-parameter.spec.ts",
+          "line": 57,
+          "column": 6,
+          "specs": [
+            {
+              "title": "order two tests, enter all results, submit all",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9bb21db57e14c10f9588-d27948605839de675f1d",
+              "file": "09-happy-path-multi-parameter.spec.ts",
+              "line": 58,
+              "column": 7
+            },
+            {
+              "title": "multi-test: verify and document published",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9bb21db57e14c10f9588-090f4ab58a1d149d5cd0",
+              "file": "09-happy-path-multi-parameter.spec.ts",
+              "line": 97,
+              "column": 7
+            },
+            {
+              "title": "multi-test: idempotent publish — two generate calls return same document ID",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9bb21db57e14c10f9588-0612a5a7fd61b2eeade4",
+              "file": "09-happy-path-multi-parameter.spec.ts",
+              "line": 139,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "10-invalid-transition-blocked.spec.ts",
+      "file": "10-invalid-transition-blocked.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Invalid workflow transition — 409 guard",
+          "file": "10-invalid-transition-blocked.spec.ts",
+          "line": 38,
+          "column": 6,
+          "specs": [
+            {
+              "title": "collect-specimen twice must reject second call with 409",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-2e6030f7b391a5bda2da",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 39,
+              "column": 7
+            },
+            {
+              "title": "verify before results submitted must reject with 409",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-74b17df4237852ba77ed",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 50,
+              "column": 7
+            },
+            {
+              "title": "submit result after encounter already verified must reject with 409",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-4edd3a337ee0d6415a72",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "place second lab order on same encounter is allowed (multi-order scenario)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-3af5ec3b6be7bec9a6f1",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 88,
+              "column": 7
+            },
+            {
+              "title": "UI verify page shows error when encounter is not in resulted status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "04b596abfcbf4145b009-acda526a31618142e200",
+              "file": "10-invalid-transition-blocked.spec.ts",
+              "line": 104,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "11-chaos-nightly.spec.ts",
+      "file": "11-chaos-nightly.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@nightly Chaos journey — bounded safe exploration",
+          "file": "11-chaos-nightly.spec.ts",
+          "line": 43,
+          "column": 6,
+          "specs": [
+            {
+              "title": "@nightly random page navigation produces no console errors",
+              "ok": true,
+              "tags": [
+                "nightly",
+                "nightly"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "af7e86950ee9ce498de8-f68a8d2a8e5ca9e08e76",
+              "file": "11-chaos-nightly.spec.ts",
+              "line": 44,
+              "column": 7
+            },
+            {
+              "title": "@nightly full workflow smoke with timing capture",
+              "ok": true,
+              "tags": [
+                "nightly",
+                "nightly"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "af7e86950ee9ce498de8-2d8d8cc7d45a7be7f2a9",
+              "file": "11-chaos-nightly.spec.ts",
+              "line": 104,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "12-operator-account.spec.ts",
+      "file": "12-operator-account.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Operator Account Settings",
+          "file": "12-operator-account.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "authenticated user sees Account in sidebar and can update display name",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8155346c87eb7e615cc-7064c40b85a451b1b8be",
+              "file": "12-operator-account.spec.ts",
+              "line": 7,
+              "column": 7
+            },
+            {
+              "title": "open admin panel action is visible for authenticated user",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8155346c87eb7e615cc-b2dd350d5bcf10219626",
+              "file": "12-operator-account.spec.ts",
+              "line": 29,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/01-login.spec.ts",
+      "file": "auth/01-login.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@auth @smoke Authentication — Login",
+          "file": "auth/01-login.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "login page loads with heading and sign-in button",
+              "ok": true,
+              "tags": [
+                "auth",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5350e4e4eb63f605944f-502db76a13d1369b8620",
+              "file": "auth/01-login.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "valid credentials redirect to /lims/worklist",
+              "ok": true,
+              "tags": [
+                "auth",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5350e4e4eb63f605944f-082f52ff7d3f8cae232a",
+              "file": "auth/01-login.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "invalid credentials show error message",
+              "ok": true,
+              "tags": [
+                "auth",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5350e4e4eb63f605944f-a8ae4f4cf8f025c8750d",
+              "file": "auth/01-login.spec.ts",
+              "line": 30,
+              "column": 7
+            },
+            {
+              "title": "stale / cleared token on protected page redirects to /login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5350e4e4eb63f605944f-a81c288be186f5b2db2e",
+              "file": "auth/01-login.spec.ts",
+              "line": 40,
+              "column": 7
+            },
+            {
+              "title": "super-admin login works",
+              "ok": true,
+              "tags": [
+                "auth",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5350e4e4eb63f605944f-9ed1a35b5ff2ddde7088",
+              "file": "auth/01-login.spec.ts",
+              "line": 57,
+              "column": 7
+            },
+            {
+              "title": "operator role login works",
+              "ok": true,
+              "tags": [
+                "auth",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5350e4e4eb63f605944f-45120bce5da7936c5227",
+              "file": "auth/01-login.spec.ts",
+              "line": 66,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/02-logout.spec.ts",
+      "file": "auth/02-logout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@auth Logout",
+          "file": "auth/02-logout.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [
+            {
+              "title": "login then logout button click redirects to /login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "110c7d49bc27d8a8bcb5-72049d257a07c6af6b48",
+              "file": "auth/02-logout.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "after logout /lims/worklist requires re-login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "110c7d49bc27d8a8bcb5-a7c5e4e17ff7931c8c26",
+              "file": "auth/02-logout.spec.ts",
+              "line": 38,
+              "column": 7
+            },
+            {
+              "title": "API: POST /api/auth/logout returns 204 with valid token",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "110c7d49bc27d8a8bcb5-9684ce0b2f6d213c9f06",
+              "file": "auth/02-logout.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "API: after logout, refreshToken is revoked (refresh endpoint rejects it)",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "110c7d49bc27d8a8bcb5-b28ff5286c1f080f4302",
+              "file": "auth/02-logout.spec.ts",
+              "line": 73,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "documents/01-generate-render-publish.spec.ts",
+      "file": "documents/01-generate-render-publish.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@documents @smoke Documents — Generate, Render, Publish",
+          "file": "documents/01-generate-render-publish.spec.ts",
+          "line": 53,
+          "column": 6,
+          "specs": [
+            {
+              "title": "after verify, document is generated and reaches PUBLISHED status",
+              "ok": true,
+              "tags": [
+                "documents",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "705043c0c71b88bb9bd2-743d237d420ff9243337",
+              "file": "documents/01-generate-render-publish.spec.ts",
+              "line": 54,
+              "column": 7
+            },
+            {
+              "title": "after verify, UI shows lab report heading and published indicator",
+              "ok": true,
+              "tags": [
+                "documents",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "705043c0c71b88bb9bd2-690a4b8ebc3406b7f7ae",
+              "file": "documents/01-generate-render-publish.spec.ts",
+              "line": 86,
+              "column": 7
+            },
+            {
+              "title": "download PDF button is visible when document is published",
+              "ok": true,
+              "tags": [
+                "documents",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "705043c0c71b88bb9bd2-cab0182124afdfc32a79",
+              "file": "documents/01-generate-render-publish.spec.ts",
+              "line": 108,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "documents/02-publish-idempotent.spec.ts",
+      "file": "documents/02-publish-idempotent.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@documents Documents — Idempotency",
+          "file": "documents/02-publish-idempotent.spec.ts",
+          "line": 51,
+          "column": 6,
+          "specs": [
+            {
+              "title": "same encounter verify generates same document (no duplicate)",
+              "ok": true,
+              "tags": [
+                "documents"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e7b63a44658d7c58b1b4-830cae7b20b1d855a8f0",
+              "file": "documents/02-publish-idempotent.spec.ts",
+              "line": 52,
+              "column": 7
+            },
+            {
+              "title": "explicitly re-triggering document generation for same encounter returns same ID or created:false",
+              "ok": true,
+              "tags": [
+                "documents"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e7b63a44658d7c58b1b4-debd7a109bcf703251c4",
+              "file": "documents/02-publish-idempotent.spec.ts",
+              "line": 83,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "documents/03-render-failure-retry.spec.ts",
+      "file": "documents/03-render-failure-retry.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@documents Documents — Render Failure & Retry",
+          "file": "documents/03-render-failure-retry.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [
+            {
+              "title": "PDF render failure results in FAILED document status",
+              "ok": true,
+              "tags": [
+                "documents"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "\n    Render failure simulation requires injecting PDF_SERVICE_URL=http://invalid-host:9999\n    at the Docker container level so the PDF worker fails to render.\n\n    To enable this test:\n    1. Stop the pdf service container\n    2. Update docker-compose.yml: PDF_SERVICE_URL=http://invalid-host:9999 in the api/worker env\n    3. Trigger document generation\n    4. Verify document status reaches FAILED\n    5. Restart pdf service and verify FAILED → retried → RENDERED\n\n    Once infrastructure hooks are wired, re-enable this test and implement:\n      - Trigger verification (creates QUEUED document)\n      - Poll until document reaches FAILED status\n      - Restart PDF service via API or infrastructure hook\n      - Re-queue document (POST /documents/{id}:retry if implemented)\n      - Poll until document reaches RENDERED or PUBLISHED\n    ",
+                      "location": {
+                        "file": "/home/munaim/srv/apps/vexel/apps/e2e/tests/documents/03-render-failure-retry.spec.ts",
+                        "line": 13,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fc93644ab43801a4f553-f05c571a657c2fa6f22b",
+              "file": "documents/03-render-failure-retry.spec.ts",
+              "line": 35,
+              "column": 7
+            },
+            {
+              "title": "Retry on FAILED document re-queues and eventually renders",
+              "ok": true,
+              "tags": [
+                "documents"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "\n    Render failure simulation requires injecting PDF_SERVICE_URL=http://invalid-host:9999\n    at the Docker container level so the PDF worker fails to render.\n\n    To enable this test:\n    1. Stop the pdf service container\n    2. Update docker-compose.yml: PDF_SERVICE_URL=http://invalid-host:9999 in the api/worker env\n    3. Trigger document generation\n    4. Verify document status reaches FAILED\n    5. Restart pdf service and verify FAILED → retried → RENDERED\n\n    Once infrastructure hooks are wired, re-enable this test and implement:\n      - Trigger verification (creates QUEUED document)\n      - Poll until document reaches FAILED status\n      - Restart PDF service via API or infrastructure hook\n      - Re-queue document (POST /documents/{id}:retry if implemented)\n      - Poll until document reaches RENDERED or PUBLISHED\n    ",
+                      "location": {
+                        "file": "/home/munaim/srv/apps/vexel/apps/e2e/tests/documents/03-render-failure-retry.spec.ts",
+                        "line": 13,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fc93644ab43801a4f553-40e07dcec9f9e5c91cfb",
+              "file": "documents/03-render-failure-retry.spec.ts",
+              "line": 40,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "lims/01-happy-path-single-test.spec.ts",
+      "file": "lims/01-happy-path-single-test.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@lims @smoke LIMS — Happy Path Single Test",
+          "file": "lims/01-happy-path-single-test.spec.ts",
+          "line": 43,
+          "column": 6,
+          "specs": [
+            {
+              "title": "full workflow: order → collect → result → verify → published",
+              "ok": true,
+              "tags": [
+                "lims",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c70e335b4e700f1c7ba6-65e4e9ee26735aed856c",
+              "file": "lims/01-happy-path-single-test.spec.ts",
+              "line": 44,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "lims/02-happy-path-multi-parameter.spec.ts",
+      "file": "lims/02-happy-path-multi-parameter.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@lims LIMS — Happy Path Multi-Parameter",
+          "file": "lims/02-happy-path-multi-parameter.spec.ts",
+          "line": 67,
+          "column": 6,
+          "specs": [
+            {
+              "title": "full workflow: two-test order → collect → result all → verify → published",
+              "ok": true,
+              "tags": [
+                "lims"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad00fb0aac2cdc7ce8e5-6075a8505fd267df0ca7",
+              "file": "lims/02-happy-path-multi-parameter.spec.ts",
+              "line": 68,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "lims/03-invalid-transition-blocked.spec.ts",
+      "file": "lims/03-invalid-transition-blocked.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@lims Invalid Transition Blocked",
+          "file": "lims/03-invalid-transition-blocked.spec.ts",
+          "line": 43,
+          "column": 6,
+          "specs": [
+            {
+              "title": "collect specimen twice returns 409",
+              "ok": true,
+              "tags": [
+                "lims"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dbfcf73d841fa5cc18ef-67e6d5411a0d3cc7e4dc",
+              "file": "lims/03-invalid-transition-blocked.spec.ts",
+              "line": 44,
+              "column": 7
+            },
+            {
+              "title": "verify before results are entered returns 409",
+              "ok": true,
+              "tags": [
+                "lims"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dbfcf73d841fa5cc18ef-0ffee95ffec74290a658",
+              "file": "lims/03-invalid-transition-blocked.spec.ts",
+              "line": 56,
+              "column": 7
+            },
+            {
+              "title": "submit result after encounter is verified returns 409",
+              "ok": true,
+              "tags": [
+                "lims"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dbfcf73d841fa5cc18ef-35ae2f792daa4f0a8987",
+              "file": "lims/03-invalid-transition-blocked.spec.ts",
+              "line": 84,
+              "column": 7
+            },
+            {
+              "title": "UI: verify button on encounter with no results shows error after confirm",
+              "ok": true,
+              "tags": [
+                "lims"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dbfcf73d841fa5cc18ef-9d6837ca4b7b82ea01b2",
+              "file": "lims/03-invalid-transition-blocked.spec.ts",
+              "line": 130,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "lims/04-result-entry-validation.spec.ts",
+      "file": "lims/04-result-entry-validation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@lims Result Entry Validation",
+          "file": "lims/04-result-entry-validation.spec.ts",
+          "line": 42,
+          "column": 6,
+          "specs": [
+            {
+              "title": "empty result value and submit shows form validation error",
+              "ok": true,
+              "tags": [
+                "lims"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6dae90ed6b3bcb9967da-f84df97c089025d504b2",
+              "file": "lims/04-result-entry-validation.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "result with high flag renders flag indicator in UI",
+              "ok": true,
+              "tags": [
+                "lims"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6dae90ed6b3bcb9967da-0cbd9615e7a7b8fd599c",
+              "file": "lims/04-result-entry-validation.spec.ts",
+              "line": 78,
+              "column": 7
+            },
+            {
+              "title": "API: result submission on encounter not in collected state returns 409",
+              "ok": true,
+              "tags": [
+                "lims"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6dae90ed6b3bcb9967da-c229a6953a283b07828c",
+              "file": "lims/04-result-entry-validation.spec.ts",
+              "line": 124,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "operator/01-navigation.spec.ts",
+      "file": "operator/01-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@operator @smoke Operator — Navigation",
+          "file": "operator/01-navigation.spec.ts",
+          "line": 24,
+          "column": 6,
+          "specs": [
+            {
+              "title": "app boots and loads login page at /login",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-92feb109f9af2e1f084f",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 25,
+              "column": 7
+            },
+            {
+              "title": "sidebar shows Worklist link after login",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-30bfd97847d1c59bd8ec",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 30,
+              "column": 7
+            },
+            {
+              "title": "sidebar shows Registrations link after login",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-238b3fce87b248189aba",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 39,
+              "column": 7
+            },
+            {
+              "title": "sidebar shows Sample Collection link after login",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-33f9666d8de8c0f60922",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 47,
+              "column": 7
+            },
+            {
+              "title": "sidebar shows Results link after login",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-edae0c8ba2d8dd804f94",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "title": "sidebar shows Verification link after login",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-ba32dbb42eeeaa68c6ac",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 63,
+              "column": 7
+            },
+            {
+              "title": "sidebar shows Reports link after login",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-763e25e9dedec63c84f0",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 71,
+              "column": 7
+            },
+            {
+              "title": "clicking Worklist nav link loads worklist page",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-fcdd0c31ac34e8840568",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 79,
+              "column": 7
+            },
+            {
+              "title": "clicking Sample Collection nav link loads sample collection page",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-8359d7ccaab92665ef9c",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 89,
+              "column": 7
+            },
+            {
+              "title": "mobile viewport (375x667): hamburger or sidebar accessible",
+              "ok": true,
+              "tags": [
+                "operator",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d4ce209aa0abbbb334d5-01e5fe606758ebb2ebf9",
+              "file": "operator/01-navigation.spec.ts",
+              "line": 99,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "security/01-protected-route-redirect.spec.ts",
+      "file": "security/01-protected-route-redirect.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@security @smoke Protected Route Redirect",
+          "file": "security/01-protected-route-redirect.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "unauthenticated: /lims/worklist redirects to /login",
+              "ok": true,
+              "tags": [
+                "security",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "73b6679531bac27009cc-f34ece3e30ad7ad3dad6",
+              "file": "security/01-protected-route-redirect.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "unauthenticated: /lims/results redirects to /login",
+              "ok": true,
+              "tags": [
+                "security",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "73b6679531bac27009cc-254aec1185bc26a653f5",
+              "file": "security/01-protected-route-redirect.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "unauthenticated: /lims/verification redirects to /login",
+              "ok": true,
+              "tags": [
+                "security",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "73b6679531bac27009cc-e43b320596eb64ff66a9",
+              "file": "security/01-protected-route-redirect.spec.ts",
+              "line": 32,
+              "column": 7
+            },
+            {
+              "title": "unauthenticated: /lims/sample-collection redirects to /login",
+              "ok": true,
+              "tags": [
+                "security",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "73b6679531bac27009cc-54367f83c82b93f1d950",
+              "file": "security/01-protected-route-redirect.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "unauthenticated: /lims/reports redirects to /login",
+              "ok": true,
+              "tags": [
+                "security",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "73b6679531bac27009cc-ee6cc94d2a76049af385",
+              "file": "security/01-protected-route-redirect.spec.ts",
+              "line": 54,
+              "column": 7
+            },
+            {
+              "title": "no tokens in localStorage: direct navigation to protected page redirects to login",
+              "ok": true,
+              "tags": [
+                "security",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "73b6679531bac27009cc-4b7235982707c153075d",
+              "file": "security/01-protected-route-redirect.spec.ts",
+              "line": 65,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "smoke/01-release-gate.spec.ts",
+      "file": "smoke/01-release-gate.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@smoke Release Gate",
+          "file": "smoke/01-release-gate.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "app boots: operator /login loads",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b67f9422b9fb3ec20532-c0cccd35fd3f2bb61f2c",
+              "file": "smoke/01-release-gate.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "login: valid credentials redirect to /lims/worklist",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b67f9422b9fb3ec20532-363aeb3650ecdffc50a5",
+              "file": "smoke/01-release-gate.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "protected route: unauthenticated /lims/worklist redirects to /login",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b67f9422b9fb3ec20532-a248d61dfc28821fc4bf",
+              "file": "smoke/01-release-gate.spec.ts",
+              "line": 29,
+              "column": 7
+            },
+            {
+              "title": "one LIMS mini-flow: create patient+encounter, order, collect, result, verify",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b67f9422b9fb3ec20532-794ca0a2772c2608efcd",
+              "file": "smoke/01-release-gate.spec.ts",
+              "line": 40,
+              "column": 7
+            },
+            {
+              "title": "document: after verify, encounter has at least one document",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b67f9422b9fb3ec20532-0d871d3f468f9053bc90",
+              "file": "smoke/01-release-gate.spec.ts",
+              "line": 90,
+              "column": 7
+            },
+            {
+              "title": "tenancy: cross-tenant access blocked (403 or 404)",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b67f9422b9fb3ec20532-ccbe89392f5ea314e3c9",
+              "file": "smoke/01-release-gate.spec.ts",
+              "line": 133,
+              "column": 7
+            },
+            {
+              "title": "API health endpoint returns ok",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b67f9422b9fb3ec20532-7dfd6de1d7bbee45f5c0",
+              "file": "smoke/01-release-gate.spec.ts",
+              "line": 157,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "tenancy/01-cross-tenant-blocked.spec.ts",
+      "file": "tenancy/01-cross-tenant-blocked.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@tenancy @smoke Tenant Isolation",
+          "file": "tenancy/01-cross-tenant-blocked.spec.ts",
+          "line": 23,
+          "column": 6,
+          "specs": [
+            {
+              "title": "encounter created under system tenant is not accessible with spoofed tenant header",
+              "ok": true,
+              "tags": [
+                "tenancy",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f290d1dd94163b8bd8a2-863552c1793a1f1dc9c5",
+              "file": "tenancy/01-cross-tenant-blocked.spec.ts",
+              "line": 24,
+              "column": 7
+            },
+            {
+              "title": "patient list with spoofed tenant does not leak system tenant records",
+              "ok": true,
+              "tags": [
+                "tenancy",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f290d1dd94163b8bd8a2-240861211ab9d97a2d17",
+              "file": "tenancy/01-cross-tenant-blocked.spec.ts",
+              "line": 45,
+              "column": 7
+            },
+            {
+              "title": "encounter list with spoofed tenant header does not leak records",
+              "ok": true,
+              "tags": [
+                "tenancy",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f290d1dd94163b8bd8a2-a8a6747713d5d314456b",
+              "file": "tenancy/01-cross-tenant-blocked.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "direct GET of specific encounter ID with spoofed tenant returns 403 or 404",
+              "ok": true,
+              "tags": [
+                "tenancy",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "operator",
+                  "projectName": "operator",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f290d1dd94163b8bd8a2-f9a17894db0c739c0824",
+              "file": "tenancy/01-cross-tenant-blocked.spec.ts",
+              "line": 114,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "02-admin-crud.spec.ts",
+      "file": "02-admin-crud.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Admin CRUD",
+          "file": "02-admin-crud.spec.ts",
+          "line": 22,
+          "column": 6,
+          "specs": [
+            {
+              "title": "admin login and navigate to /admin/tenants",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9888e8e8b07733fe0491-17de8e1af25788ab824c",
+              "file": "02-admin-crud.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "tenant list displays at least one tenant",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9888e8e8b07733fe0491-a759772b177b9dd07811",
+              "file": "02-admin-crud.spec.ts",
+              "line": 32,
+              "column": 7
+            },
+            {
+              "title": "create a new test user via UI and verify in list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9888e8e8b07733fe0491-a7a90fac2542860d2b1e",
+              "file": "02-admin-crud.spec.ts",
+              "line": 44,
+              "column": 7
+            },
+            {
+              "title": "feature flags page loads with toggles",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9888e8e8b07733fe0491-f48451c27e4c49e69d92",
+              "file": "02-admin-crud.spec.ts",
+              "line": 76,
+              "column": 7
+            },
+            {
+              "title": "toggle a feature flag and verify state changes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9888e8e8b07733fe0491-40bcdc089553261742c5",
+              "file": "02-admin-crud.spec.ts",
+              "line": 92,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "13-admin-account-landing.spec.ts",
+      "file": "13-admin-account-landing.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Admin Landing and Navigation",
+          "file": "13-admin-account-landing.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "limited user (catalog.read) lands on /admin/catalog and sees no admin-only sections",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ff5fff398592a46d983-574fe11afe8612657037",
+              "file": "13-admin-account-landing.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "admin user sees dashboard section links in sidebar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ff5fff398592a46d983-e9f931f166881bc4cdca",
+              "file": "13-admin-account-landing.spec.ts",
+              "line": 20,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "admin/01-dashboard.spec.ts",
+      "file": "admin/01-dashboard.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@admin @smoke Admin — Dashboard",
+          "file": "admin/01-dashboard.spec.ts",
+          "line": 11,
+          "column": 6,
+          "specs": [
+            {
+              "title": "admin login page loads",
+              "ok": true,
+              "tags": [
+                "admin",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18a730538f15b014f7cf-c7b9e391b273319b98e4",
+              "file": "admin/01-dashboard.spec.ts",
+              "line": 12,
+              "column": 7
+            },
+            {
+              "title": "valid admin login redirects to /admin/dashboard",
+              "ok": true,
+              "tags": [
+                "admin",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18a730538f15b014f7cf-58c60695fc4904260125",
+              "file": "admin/01-dashboard.spec.ts",
+              "line": 18,
+              "column": 7
+            },
+            {
+              "title": "dashboard renders stat cards or summary content",
+              "ok": true,
+              "tags": [
+                "admin",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18a730538f15b014f7cf-abab1f6824513b9bd13e",
+              "file": "admin/01-dashboard.spec.ts",
+              "line": 27,
+              "column": 7
+            },
+            {
+              "title": "admin sidebar navigation links are visible after login",
+              "ok": true,
+              "tags": [
+                "admin",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18a730538f15b014f7cf-e2fe498e35261316483d",
+              "file": "admin/01-dashboard.spec.ts",
+              "line": 41,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "admin/02-tenants.spec.ts",
+      "file": "admin/02-tenants.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@admin Tenants",
+          "file": "admin/02-tenants.spec.ts",
+          "line": 21,
+          "column": 6,
+          "specs": [
+            {
+              "title": "tenants page loads",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fa44a46311055018755e-cf48c5d189fa293fbd49",
+              "file": "admin/02-tenants.spec.ts",
+              "line": 22,
+              "column": 7
+            },
+            {
+              "title": "system tenant appears in tenant list",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fa44a46311055018755e-d00c643e2bce1ad910ce",
+              "file": "admin/02-tenants.spec.ts",
+              "line": 30,
+              "column": 7
+            },
+            {
+              "title": "tenant detail shows feature flags or LIMS config",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fa44a46311055018755e-7e73ec3bf3e21d5d303b",
+              "file": "admin/02-tenants.spec.ts",
+              "line": 39,
+              "column": 7
+            },
+            {
+              "title": "create new tenant via UI (admin-only backend operation)",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/home/munaim/srv/apps/vexel/apps/e2e/tests/admin/02-tenants.spec.ts",
+                        "line": 60,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fa44a46311055018755e-02ea6de4164b0fc81e74",
+              "file": "admin/02-tenants.spec.ts",
+              "line": 60,
+              "column": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "admin/03-users-roles.spec.ts",
+      "file": "admin/03-users-roles.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@admin Users & Roles",
+          "file": "admin/03-users-roles.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "users page loads",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f7e5f0e1b8b9e5a47513-f92ad57fc8eefb627be1",
+              "file": "admin/03-users-roles.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "seeded users appear in users list",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f7e5f0e1b8b9e5a47513-2dd5817ad5de5bba0dc1",
+              "file": "admin/03-users-roles.spec.ts",
+              "line": 28,
+              "column": 7
+            },
+            {
+              "title": "user created via API appears in admin users list",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f7e5f0e1b8b9e5a47513-92d20b52b996b5bcec83",
+              "file": "admin/03-users-roles.spec.ts",
+              "line": 39,
+              "column": 7
+            },
+            {
+              "title": "roles page loads with seeded roles",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f7e5f0e1b8b9e5a47513-dc5697e1499826de9ef6",
+              "file": "admin/03-users-roles.spec.ts",
+              "line": 67,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "admin/04-feature-flags.spec.ts",
+      "file": "admin/04-feature-flags.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@admin Feature Flags",
+          "file": "admin/04-feature-flags.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "feature flags page loads with module sections",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "004391042f293e048219-d6e986effeb54348bd0e",
+              "file": "admin/04-feature-flags.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "feature flags page shows at least one toggle or flag entry",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "004391042f293e048219-6a9b3a2261e5b55bd266",
+              "file": "admin/04-feature-flags.spec.ts",
+              "line": 31,
+              "column": 7
+            },
+            {
+              "title": "API: lims.auto_verify flag can be toggled and restored",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "004391042f293e048219-c5e2c6d2293c0dbb1cdb",
+              "file": "admin/04-feature-flags.spec.ts",
+              "line": 47,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "admin/05-catalog.spec.ts",
+      "file": "admin/05-catalog.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@admin Catalog",
+          "file": "admin/05-catalog.spec.ts",
+          "line": 19,
+          "column": 6,
+          "specs": [
+            {
+              "title": "catalog navigation link in admin sidebar is visible",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ba23811021fd0874fb7-5f9ce6dc885f988f2368",
+              "file": "admin/05-catalog.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "catalog tests list page loads",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ba23811021fd0874fb7-8df44a00631c29dd820c",
+              "file": "admin/05-catalog.spec.ts",
+              "line": 27,
+              "column": 7
+            },
+            {
+              "title": "catalog tests list shows at least one test (Glucose / t1)",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ba23811021fd0874fb7-a33a47a80fc220552ce5",
+              "file": "admin/05-catalog.spec.ts",
+              "line": 37,
+              "column": 7
+            },
+            {
+              "title": "catalog parameters list page loads",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ba23811021fd0874fb7-8c8a67ada30634060dad",
+              "file": "admin/05-catalog.spec.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "catalog reference ranges page loads",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ba23811021fd0874fb7-a7566ffc4794b1aa2901",
+              "file": "admin/05-catalog.spec.ts",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "title": "catalog test detail shows panels or parameters count",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ba23811021fd0874fb7-9e8e6ca4c79e9ce50353",
+              "file": "admin/05-catalog.spec.ts",
+              "line": 66,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "admin/06-audit-explorer.spec.ts",
+      "file": "admin/06-audit-explorer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@admin Audit Explorer",
+          "file": "admin/06-audit-explorer.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "audit page loads at /admin/audit",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e2cd3cf50a0be53b0807-058592f64fac28f14a04",
+              "file": "admin/06-audit-explorer.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "audit page does not show error state",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e2cd3cf50a0be53b0807-f7121c756e5e4d53dcbc",
+              "file": "admin/06-audit-explorer.spec.ts",
+              "line": 28,
+              "column": 7
+            },
+            {
+              "title": "after performing an API action, audit entries exist",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e2cd3cf50a0be53b0807-12683da7ce8198f6a90f",
+              "file": "admin/06-audit-explorer.spec.ts",
+              "line": 37,
+              "column": 7
+            },
+            {
+              "title": "audit page filter controls are visible if implemented",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e2cd3cf50a0be53b0807-aad5dd6eebc67b897666",
+              "file": "admin/06-audit-explorer.spec.ts",
+              "line": 63,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "admin/07-jobs-failures.spec.ts",
+      "file": "admin/07-jobs-failures.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "@admin Jobs & Failures",
+          "file": "admin/07-jobs-failures.spec.ts",
+          "line": 19,
+          "column": 6,
+          "specs": [
+            {
+              "title": "jobs page loads at /admin/jobs",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ab210778a72b4deebd20-5ea67619c2f797379fdd",
+              "file": "admin/07-jobs-failures.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "jobs page shows queue stats or empty state without error",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ab210778a72b4deebd20-28649c0e670b6a8d978a",
+              "file": "admin/07-jobs-failures.spec.ts",
+              "line": 27,
+              "column": 7
+            },
+            {
+              "title": "failed documents section is accessible",
+              "ok": true,
+              "tags": [
+                "admin"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "admin",
+                  "projectName": "admin",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ab210778a72b4deebd20-ed0dbbe76b3a4219ee80",
+              "file": "admin/07-jobs-failures.spec.ts",
+              "line": 54,
               "column": 7
             }
           ]
@@ -146,10 +3296,10 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-03-06T21:59:12.088Z",
-    "duration": 4262.468,
-    "expected": 1,
-    "skipped": 0,
+    "startTime": "2026-03-07T04:25:07.880Z",
+    "duration": 188.41000000000008,
+    "expected": 0,
+    "skipped": 121,
     "unexpected": 0,
     "flaky": 0
   }

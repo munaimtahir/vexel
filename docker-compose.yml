@@ -96,6 +96,17 @@ services:
       STORAGE_ACCESS_KEY: vexel
       STORAGE_SECRET_KEY: vexel_secret_2026
       STORAGE_BUCKET: vexel-documents
+      VEXEL_ROOT: /home/munaim/srv/apps/vexel
+      VEXEL_RUNTIME_DIR: /home/munaim/srv/apps/vexel/runtime
+      BACKUP_PASSPHRASE: ${BACKUP_PASSPHRASE:-}
+      VEXEL_ALLOW_RESTORE: ${VEXEL_ALLOW_RESTORE:-false}
+      OPS_BACKUP_RETENTION_DAYS: ${OPS_BACKUP_RETENTION_DAYS:-30}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./runtime:/home/munaim/srv/apps/vexel/runtime
+      - ./ops:/home/munaim/srv/apps/vexel/ops:ro
+      - ./docker-compose.yml:/home/munaim/srv/apps/vexel/docker-compose.yml:ro
+      - ./.env:/home/munaim/srv/apps/vexel/.env:ro
 
   pdf:
     build:

@@ -7,12 +7,12 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VEXEL_ROOT="/home/munaim/srv/apps/vexel"
+VEXEL_ROOT="${VEXEL_ROOT:-/home/munaim/srv/apps/vexel}"
 LOG_DIR="$VEXEL_ROOT/runtime/data/logs"
 BACKUP_DIR="$VEXEL_ROOT/runtime/backups/full"
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 PKG_NAME="vexel-full-${TIMESTAMP}"
-WORK_DIR="/tmp/${PKG_NAME}"
+WORK_DIR="$VEXEL_ROOT/runtime/tmp/${PKG_NAME}"
 
 mkdir -p "$LOG_DIR" "$BACKUP_DIR"
 LOG_FILE="$LOG_DIR/backup_full_${TIMESTAMP}.log"
@@ -50,8 +50,11 @@ mkdir -p "$WORK_DIR/env"
 if [ -f "$VEXEL_ROOT/.env" ]; then
   PASSPHRASE="${BACKUP_PASSPHRASE:-}"
   if [ -z "$PASSPHRASE" ]; then
-    echo "[$(date -Iseconds)] WARN: BACKUP_PASSPHRASE not set — using machine hostname as passphrase (set BACKUP_PASSPHRASE env var for stronger encryption)"
-    PASSPHRASE="$(hostname)-vexel-backup"
+    if [ "${NODE_ENV:-development}" = "production" ]; then
+      error_exit "BACKUP_PASSPHRASE is required in production"
+    fi
+    echo "[$(date -Iseconds)] WARN: BACKUP_PASSPHRASE not set — using dev fallback"
+    PASSPHRASE="dev-only-vexel-backup-passphrase"
   fi
   openssl enc -aes-256-cbc -pbkdf2 -iter 100000 \
     -pass "pass:$PASSPHRASE" \
@@ -102,7 +105,7 @@ EOF
 
 # --- 7. Package -----------------------------------------------------------
 echo "[$(date -Iseconds)] Creating final archive..."
-tar czf "$BACKUP_DIR/${PKG_NAME}.tar.gz" -C /tmp "$PKG_NAME"
+tar czf "$BACKUP_DIR/${PKG_NAME}.tar.gz" -C "$VEXEL_ROOT/runtime/tmp" "$PKG_NAME"
 FINAL_SIZE=$(du -sh "$BACKUP_DIR/${PKG_NAME}.tar.gz" | cut -f1)
 
 echo "[$(date -Iseconds)] ===== Backup COMPLETE ====="

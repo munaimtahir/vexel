@@ -25,7 +25,7 @@ if [ -z "$TENANT_ID" ]; then
   exit 1
 fi
 
-VEXEL_ROOT="/home/munaim/srv/apps/vexel"
+VEXEL_ROOT="${VEXEL_ROOT:-/home/munaim/srv/apps/vexel}"
 LOG_DIR="$VEXEL_ROOT/runtime/data/logs"
 BACKUP_DIR="$VEXEL_ROOT/runtime/backups/tenants"
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"

@@ -29,7 +29,7 @@ const prismaMock = {
   opsBackupRun: {
     create: jest.fn().mockResolvedValue(mockRun),
     findMany: jest.fn().mockResolvedValue([mockRun]),
-    findUnique: jest.fn().mockResolvedValue(mockRun),
+    findUnique: jest.fn().mockResolvedValue(null),
     findFirst: jest.fn().mockResolvedValue(mockRun),
     count: jest.fn().mockResolvedValue(1),
     updateMany: jest.fn().mockResolvedValue({ count: 1 }),
@@ -85,6 +85,7 @@ describe('OpsService', () => {
     service = module.get<OpsService>(OpsService);
     jest.clearAllMocks();
     prismaMock.opsBackupRun.create.mockResolvedValue(mockRun);
+    prismaMock.opsBackupRun.findUnique.mockResolvedValue(null);
   });
 
   // ─── Run creation ─────────────────────────────────────────────────────────
@@ -114,6 +115,23 @@ describe('OpsService', () => {
         expect.objectContaining({ runId: mockRun.id }),
         expect.any(Object),
       );
+    });
+
+    it('returns existing run for same correlationId retry', async () => {
+      prismaMock.opsBackupRun.findUnique.mockResolvedValueOnce({
+        ...mockRun,
+        type: 'FULL',
+        status: 'RUNNING',
+      });
+
+      const result = await service.triggerFullBackup({}, 'user-1', 'corr-1');
+      expect(prismaMock.opsBackupRun.create).not.toHaveBeenCalled();
+      expect(mockQueueAdd).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        runId: mockRun.id,
+        status: 'RUNNING',
+        correlationId: 'corr-1',
+      });
     });
   });
 
@@ -147,18 +165,40 @@ describe('OpsService', () => {
   // ─── Restore safety rails ─────────────────────────────────────────────────
 
   describe('triggerRestoreRun', () => {
+    const originalRestoreFlag = process.env.VEXEL_ALLOW_RESTORE;
+
+    afterEach(() => {
+      process.env.VEXEL_ALLOW_RESTORE = originalRestoreFlag;
+    });
+
     it('requires confirmation phrase "yes-restore"', async () => {
+      process.env.VEXEL_ALLOW_RESTORE = 'true';
       await expect(
         service.triggerRestoreRun({ artifactPath: '/some/path.tar.gz', confirmPhrase: 'wrong' }, 'user-1', 'corr-1'),
       ).rejects.toThrow(/confirm/i);
     });
 
     it('accepts the correct phrase', async () => {
+      process.env.VEXEL_ALLOW_RESTORE = 'true';
       const result = await service.triggerRestoreRun(
         { artifactPath: '/some/path.tar.gz', confirmPhrase: 'yes-restore', preSnapshotEnabled: true },
         'user-1', 'corr-1',
       );
       expect(result).toHaveProperty('runId');
+    });
+
+    it('blocks restore by default when env guard is off', async () => {
+      process.env.VEXEL_ALLOW_RESTORE = 'false';
+      await expect(
+        service.triggerRestoreRun(
+          { artifactPath: '/some/path.tar.gz', confirmPhrase: 'yes-restore', preSnapshotEnabled: true },
+          'user-1',
+          'corr-1',
+        ),
+      ).rejects.toThrow(/disabled by environment policy/i);
+      expect(auditMock.log).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'ops.restore.apply.blocked' }),
+      );
     });
   });
 

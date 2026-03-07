@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Users, ShieldCheck, FlaskConical, UserRound, FileText,
   Palette, ToggleLeft, ClipboardList, Briefcase, ScrollText, Activity,
-  Building2, Stethoscope, CalendarDays, HardDrive, type LucideIcon,
+  Building2, Stethoscope, CalendarDays, HardDrive, LayoutTemplate, type LucideIcon,
 } from 'lucide-react';
 import { hasAnyPermission, type CurrentAdminUser } from '@/lib/rbac';
 
@@ -70,6 +70,15 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
       { href: '/catalog/reference-ranges', label: 'Reference Ranges',  requiredPermissions: ['catalog.read', 'catalog.manage', 'catalog.write'] },
       { href: '/catalog/import-export',    label: 'Import / Export',   requiredPermissions: ['catalog.read', 'catalog.manage'] },
     ],
+  },
+
+  // ─── Templates ───────────────────────────────────────────────────────
+  {
+    href: '/templates',
+    label: 'Templates',
+    icon: LayoutTemplate,
+    section: 'LIMS',
+    requiredPermissions: ['templates.read'],
   },
 
   // ─── Settings ────────────────────────────────────────────────────────

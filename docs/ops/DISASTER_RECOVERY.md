@@ -35,6 +35,7 @@ scp backup-file.tar.gz <user>@<new-vps>:/home/munaim/srv/apps/vexel/runtime/back
 ### Step 3 — Run the restore script
 ```bash
 cd /home/munaim/srv/apps/vexel
+export VEXEL_ALLOW_RESTORE=true
 ./ops/restore_full.sh runtime/backups/restore_inbox/backup-file.tar.gz
 ```
 
@@ -131,3 +132,4 @@ Improve RPO by configuring daily or hourly scheduled backups in Admin → Ops �
 - The passphrase used in server-managed mode is stored in the runtime environment (never in the backup itself)
 - Never email or share backup archives in plaintext channels
 - Limit `ops.restore` permission to trusted senior administrators only
+- Keep `VEXEL_ALLOW_RESTORE=false` by default; enable only for controlled restore windows

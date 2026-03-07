@@ -19,6 +19,9 @@ export default function PanelsPage() {
   const [form, setForm] = useState<ReturnType<typeof emptyForm>>(emptyForm());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [deleting, setDeleting] = useState(false);
   // Selected panel for test assignments
   const [selectedPanel, setSelectedPanel] = useState<any | null>(null);
   const [panelTests, setPanelTests] = useState<any[]>([]);
@@ -33,7 +36,7 @@ export default function PanelsPage() {
     const api = getApiClient(getToken() ?? undefined);
     const res = await api.GET('/catalog/panels' as any, { params: { query: { search: s || undefined, page: p, limit: LIMIT } } });
     setPanels((res.data as any)?.data ?? []);
-    setTotal((res.data as any)?.total ?? 0);
+    setTotal((res.data as any)?.pagination?.total ?? (res.data as any)?.total ?? 0);
     setLoading(false);
   }, [page, search]);
 
@@ -92,6 +95,25 @@ export default function PanelsPage() {
     }
     if (res.error) { setError(res.error?.message ?? 'Failed'); setSaving(false); return; }
     setDrawerOpen(false); setSaving(false);
+    await load(page, search);
+  }
+
+  async function handleDelete(id: string) {
+    setDeleting(true);
+    const api = getApiClient(getToken() ?? undefined);
+    const res = await api.DELETE('/catalog/panels/{id}' as any, { params: { path: { id } } });
+    if (res.error) {
+      setError((res.error as any)?.message ?? 'Failed to delete panel');
+      setDeleting(false);
+      return;
+    }
+    if (selectedPanel?.id === id) {
+      setSelectedPanel(null);
+      setPanelTests([]);
+    }
+    setDeleting(false);
+    setDeleteId(null);
+    setDeleteTarget(null);
     await load(page, search);
   }
 
@@ -160,15 +182,27 @@ export default function PanelsPage() {
       key: 'actions',
       header: '',
       cell: (p: any) => (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            openEdit(p);
-          }}
-          style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Edit
-        </button>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              openEdit(p);
+            }}
+            style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            Edit
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteId(p.id);
+              setDeleteTarget(p);
+            }}
+            style={{ padding: '4px 10px', fontSize: '12px', background: 'hsl(var(--status-destructive-bg))', color: 'hsl(var(--status-destructive-fg))', border: '1px solid hsl(var(--status-destructive-border))', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            Delete
+          </button>
+        </div>
       ),
     },
   ];
@@ -232,6 +266,26 @@ export default function PanelsPage() {
             </div>
           </form>
         </div>
+      )}
+      {deleteId && (
+        <>
+          <div style={{ position: 'fixed', inset: 0, background: 'hsl(var(--foreground) / 0.3)', zIndex: 45 }} onClick={() => { if (!deleting) { setDeleteId(null); setDeleteTarget(null); } }} />
+          <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '420px', maxWidth: '90vw', background: 'hsl(var(--card))', borderRadius: '8px', zIndex: 55, boxShadow: 'var(--shadow-lg)', padding: '20px' }}>
+            <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Delete Panel</h3>
+            <p style={{ marginTop: '10px', fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>
+              This will deactivate the panel and remove it from active selection lists.
+            </p>
+            {deleteTarget ? (
+              <div style={{ marginTop: '8px', fontSize: '12px', background: 'hsl(var(--muted))', padding: '8px 10px', borderRadius: '6px', color: 'hsl(var(--foreground))' }}>
+                {deleteTarget.name}{deleteTarget.userCode ? ` (${deleteTarget.userCode})` : ''}
+              </div>
+            ) : null}
+            <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button onClick={() => { setDeleteId(null); setDeleteTarget(null); }} disabled={deleting} style={{ padding: '8px 16px', background: 'hsl(var(--muted))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
+              <button onClick={() => handleDelete(deleteId!)} disabled={deleting} style={{ padding: '8px 16px', background: 'hsl(var(--status-destructive-fg))', color: 'hsl(var(--background))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>{deleting ? 'Deleting...' : 'Delete'}</button>
+            </div>
+          </div>
+        </>
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>

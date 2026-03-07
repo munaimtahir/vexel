@@ -95,6 +95,12 @@ function buildPrisma(docOverrides: Record<string, unknown> = {}) {
     user: {
       findFirst: jest.fn().mockResolvedValue({ firstName: 'Verifier', lastName: 'User' }),
     },
+    testTemplateMap: {
+      findFirst: jest.fn().mockResolvedValue(null),
+    },
+    printTemplate: {
+      findFirst: jest.fn().mockResolvedValue(null),
+    },
     auditEvent: {
       create: jest.fn().mockResolvedValue({}),
       findFirst: jest.fn().mockResolvedValue({

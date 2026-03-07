@@ -12,6 +12,7 @@ describe('catalog-validation', () => {
 
   it('parses supported range expressions', () => {
     expect(parseReferenceRangeExpression('70-110')).toEqual({ kind: 'between', low: 70, high: 110 });
+    expect(parseReferenceRangeExpression('70–110')).toEqual({ kind: 'between', low: 70, high: 110 });
     expect(parseReferenceRangeExpression('<5')).toEqual({ kind: 'lt', value: 5 });
     expect(parseReferenceRangeExpression('≥3.2')).toEqual({ kind: 'gte', value: 3.2 });
   });

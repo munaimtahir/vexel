@@ -6,7 +6,7 @@
 # =============================================================================
 set -euo pipefail
 
-VEXEL_ROOT="/home/munaim/srv/apps/vexel"
+VEXEL_ROOT="${VEXEL_ROOT:-/home/munaim/srv/apps/vexel}"
 LOG_DIR="$VEXEL_ROOT/runtime/data/logs"
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$LOG_DIR"

@@ -23,10 +23,10 @@ if [ ! -f "$BACKUP_PKG" ]; then
   exit 1
 fi
 
-VEXEL_ROOT="/home/munaim/srv/apps/vexel"
+VEXEL_ROOT="${VEXEL_ROOT:-/home/munaim/srv/apps/vexel}"
 LOG_DIR="$VEXEL_ROOT/runtime/data/logs"
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
-WORK_DIR="/tmp/vexel-restore-${TIMESTAMP}"
+WORK_DIR="$VEXEL_ROOT/runtime/tmp/vexel-restore-${TIMESTAMP}"
 
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/restore_full_${TIMESTAMP}.log"
@@ -43,6 +43,10 @@ error_exit() {
   echo "[$(date -Iseconds)] Rollback: The database has NOT been touched if the error occurred before the DROP step." >&2
   exit 1
 }
+
+if [ "${VEXEL_ALLOW_RESTORE:-false}" != "true" ]; then
+  error_exit "Restore is disabled. Set VEXEL_ALLOW_RESTORE=true to enable."
+fi
 
 # Safety prompt
 if [ "$CONFIRM" != "--confirm" ]; then

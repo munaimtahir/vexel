@@ -83,6 +83,11 @@ export enum Permission {
   // Module access
   MODULE_ADMIN = 'module.admin',
   MODULE_OPERATOR = 'module.operator',
+
+  // Template Registry / Studio
+  TEMPLATES_READ = 'templates.read',
+  TEMPLATES_WRITE = 'templates.write',
+  TEMPLATES_PROVISION = 'templates.provision',
 }
 
 export const ALL_PERMISSIONS = Object.values(Permission);

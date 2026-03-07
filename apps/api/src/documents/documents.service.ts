@@ -442,6 +442,10 @@ export class DocumentsService {
     });
 
     const issuedAt = (verifyAudit?.createdAt ?? encounter.createdAt).toISOString();
+
+    // Resolve print template for deterministic identity inclusion
+    const printTemplate = await this.resolvePrintTemplate(tenantId, encounter.labOrders[0]?.testId);
+
     const payload: LabReportPayload = {
       reportNumber: `RPT-${encounterId.slice(0, 8).toUpperCase()}`,
       issuedAt,
@@ -456,6 +460,12 @@ export class DocumentsService {
       sampleReceivedAt: (firstSpecimen as any)?.collectedAt?.toISOString() ?? firstSpecimen?.createdAt?.toISOString(),
       reportStatus: encounter.status === 'verified' ? 'Verified' : encounter.status === 'published' ? 'Verified' : 'Provisional',
       reportHeaderLayout: (tenantConfig as any)?.reportHeaderLayout ?? 'default',
+      // Template identity fields — included so payloadHash changes when template changes
+      ...(printTemplate ? {
+        templateCode: printTemplate.templateCode,
+        templateVersion: printTemplate.templateVersion,
+        templateFamily: printTemplate.templateFamily,
+      } : {}),
       tests: [...encounter.labOrders]
         // Deterministic test ordering: by test name (stable)
         .sort((a, b) => {
@@ -513,5 +523,44 @@ export class DocumentsService {
       actorUserId,
       correlationId,
     );
+  }
+
+  /**
+   * Resolves print template identity for LAB_REPORT generation.
+   * Returns null if no template is configured (backward compat).
+   */
+  private async resolvePrintTemplate(
+    tenantId: string,
+    testId?: string,
+  ): Promise<{ templateCode: string; templateVersion: number; templateFamily: string } | null> {
+    // Try test-specific default mapping first
+    if (testId) {
+      const mapping = await (this.prisma as any).testTemplateMap.findFirst({
+        where: { tenantId, testId, isDefault: true, isEnabled: true },
+        include: { template: true },
+      });
+      if (mapping?.template && mapping.template.status !== 'ARCHIVED') {
+        return {
+          templateCode: mapping.template.code,
+          templateVersion: mapping.template.templateVersion,
+          templateFamily: mapping.template.templateFamily,
+        };
+      }
+    }
+
+    // Fall back to any active GENERAL_TABLE template for this tenant
+    const defaultTpl = await (this.prisma as any).printTemplate.findFirst({
+      where: { tenantId, templateFamily: 'GENERAL_TABLE', status: 'ACTIVE' },
+      orderBy: { templateVersion: 'desc' },
+    });
+    if (defaultTpl) {
+      return {
+        templateCode: defaultTpl.code,
+        templateVersion: defaultTpl.templateVersion,
+        templateFamily: defaultTpl.templateFamily,
+      };
+    }
+
+    return null;
   }
 }

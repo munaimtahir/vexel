@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-03-07T00:11:01.739Z",
+  "services": {
+    "api": {
+      "url": "http://127.0.0.1:9021/api/health",
+      "ok": true
+    },
+    "operator": {
+      "url": "http://127.0.0.1:9024",
+      "ok": true,
+      "status": 200
+    },
+    "admin": {
+      "url": "http://127.0.0.1:9023/admin",
+      "ok": true,
+      "status": 200
+    }
+  }
+}

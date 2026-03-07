@@ -1,0 +1,12 @@
+id,phase,severity,category,title,detail,status,file_evidence
+BLOCKER-01,security,critical,secrets,JWT secret is CI test token in production,"JWT_SECRET=ci-test-jwt-secret-not-for-production-use-only in .env; confirmed in running container. Forged tokens possible.",open,.env
+BLOCKER-02,config,critical,config,API NODE_ENV=development in production,"docker-compose.yml sets NODE_ENV:development for api service. Swagger UI exposed at /api/docs unauthenticated.",open,docker-compose.yml
+BLOCKER-03,health,major,observability,Fake/stub health endpoints for Worker and PDF,"GET /api/health/worker always returns ok with TODO comment. Worker crash is invisible to monitoring.",open,apps/api/src/health/health.controller.ts
+BLOCKER-04,security,major,secrets,Hardcoded fallback secrets in source code,"JWT and S3 fallback secrets hardcoded in auth.module.ts / jwt.strategy.ts / storage.service.ts / worker main.ts",open,apps/api/src/auth/auth.module.ts
+BLOCKER-05,config,major,portability,Hardcoded personal server path in worker,"VEXEL_ROOT defaults to /home/munaim/srv/apps/vexel. Not set in docker-compose. Backup jobs broken on any other server.",open,apps/worker/src/ops-backup.processor.ts
+BLOCKER-06,security,major,credentials,Weak Postgres and MinIO passwords in version-controlled compose,"POSTGRES_PASSWORD=vexel; MINIO_ROOT_PASSWORD=vexel_secret_2026; committed in docker-compose.yml",open,docker-compose.yml
+BLOCKER-07,architecture,major,workflow,Worker directly mutates encounter status via raw Prisma (bypasses command endpoint),"prisma.encounter.updateMany({data:{status:'published'}}) in document-render.processor.ts bypasses service-layer state machine guard",open,apps/worker/src/document-render.processor.ts
+RISK-01,ops,minor,backup,"Backup scripts not verified executable","ops/backup_full.sh referenced but not smoke-tested",unverified,ops/
+RISK-02,testing,minor,e2e,"E2E Playwright tests cannot run in this environment","Missing libatk-1.0.so.0 system library; historical CI pass claimed but not reproduced in this audit run",unverified,apps/e2e/
+RISK-03,tenancy,minor,isolation,"Only one tenant in production; cross-tenant isolation not live-tested","Schema and service-layer isolation confirmed correct by code review; live cross-tenant test not possible",unverified,apps/api/src/
+RISK-04,ops,cosmetic,monitoring,"Admin and Operator containers show unhealthy in docker compose ps","healthcheck: disable: true for Next.js containers; they serve correctly but monitoring shows unhealthy",open,docker-compose.yml

@@ -57,6 +57,8 @@ model Tenant {
   invoices             Invoice[]
   invoiceLines         InvoiceLine[]
   payments             Payment[]
+  printTemplates       PrintTemplate[]
+  testTemplateMaps     TestTemplateMap[]
 
   @@map("tenants")
 }
@@ -116,6 +118,7 @@ model User {
   auditEvents      AuditEvent[]
   cashTransactions CashTransaction[]
   opsBackupRuns    OpsBackupRun[]
+  createdTemplates PrintTemplate[]  @relation("TemplateCreatedBy")
 
   @@unique([tenantId, email])
   @@index([tenantId, status])
@@ -201,32 +204,35 @@ model TenantFeature {
 // ─── Catalog ──────────────────────────────────────────────────────────────
 
 model CatalogTest {
-  id              String   @id @default(uuid())
-  tenantId        String
-  sampleTypeId    String?
-  name            String
-  description     String?
-  sampleType      String?  // legacy field kept for compat
-  specimenType    String?  // exact specimen type e.g. "EDTA Blood", "Clot Blood", "Urine"
-  price           Decimal? @db.Decimal(10,2) // price in PKR
-  turnaroundHours Int?
-  isActive        Boolean  @default(true)
-  externalId      String?
-  userCode        String?
-  loincCode       String?
-  department      String?
-  method          String?
-  printAlone      Boolean  @default(false) // if true, test prints on its own page in lab report
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  tenantId             String
+  sampleTypeId         String?
+  name                 String
+  description          String?
+  sampleType           String?  // legacy field kept for compat
+  specimenType         String?  // exact specimen type e.g. "EDTA Blood", "Clot Blood", "Urine"
+  price                Decimal? @db.Decimal(10,2) // price in PKR
+  turnaroundHours      Int?
+  isActive             Boolean  @default(true)
+  externalId           String?
+  userCode             String?
+  loincCode            String?
+  department           String?
+  method               String?
+  printAlone           Boolean  @default(false) // if true, test prints on its own page in lab report
+  resultSchemaType     String   @default("TABULAR") // TABULAR | DESCRIPTIVE_HEMATOLOGY | HISTOPATHOLOGY | GRAPH_SERIES | IMAGE_ATTACHMENT | MIXED_STRUCTURED
+  allowTemplateOverride Boolean @default(false) // if true, operator can select template at publish time
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
-  tenant          Tenant      @relation(fields: [tenantId], references: [id])
-  sampleTypeRef   SampleType? @relation(fields: [sampleTypeId], references: [id])
-  labOrders       LabOrder[]
+  tenant            Tenant      @relation(fields: [tenantId], references: [id])
+  sampleTypeRef     SampleType? @relation(fields: [sampleTypeId], references: [id])
+  labOrders         LabOrder[]
   parameterMappings TestParameterMapping[]
   panelMappings     PanelTestMapping[]
   referenceRanges   ReferenceRange[]
   topTests          TenantTopTest[]
+  testTemplateMaps  TestTemplateMap[]
 
   @@unique([tenantId, externalId], name: "tenant_test_externalId")
   @@index([tenantId, isActive])
@@ -946,6 +952,80 @@ model Document {
   @@index([tenantId, sourceRef, sourceType])
   @@index([tenantId, createdAt])
   @@map("documents")
+}
+
+// ─── Template Registry ────────────────────────────────────────────────────
+
+// Platform-owned starter blueprints — global, no tenantId
+model TemplateBlueprint {
+  id                String   @id @default(uuid())
+  code              String   @unique  // e.g. "general_table_v1"
+  name              String
+  templateFamily    String   // GENERAL_TABLE | TWO_COLUMN_TABLE | PERIPHERAL_FILM_REPORT | HISTOPATH_NARRATIVE | GRAPHICAL_SCALE_REPORT | IMAGE_REPORT
+  schemaType        String   // TABULAR | DESCRIPTIVE_HEMATOLOGY | HISTOPATHOLOGY | GRAPH_SERIES | IMAGE_ATTACHMENT | MIXED_STRUCTURED
+  defaultConfigJson Json?    // default configJson for templates provisioned from this blueprint
+  isActive          Boolean  @default(true)
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  printTemplates PrintTemplate[]
+
+  @@map("template_blueprints")
+}
+
+// Tenant-owned print templates
+model PrintTemplate {
+  id                   String   @id @default(uuid())
+  tenantId             String
+  sourceBlueprintId    String?  // nullable — null for custom/shell templates
+  code                 String   // unique per tenant (enforced by compound unique below)
+  name                 String
+  schemaType           String   // must match test.resultSchemaType for mapping
+  templateFamily       String   // drives PDF renderer selection
+  templateVersion      Int      @default(1)
+  status               String   @default("DRAFT") // DRAFT | ACTIVE | ARCHIVED
+  configJson           Json?    // structured layout config (labels, section order, flags)
+  isSystemProvisioned  Boolean  @default(false)   // provisioned from blueprint at onboarding
+  createdByUserId      String?
+  supersedesTemplateId String?  // points to previous active version if created as new-version
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  tenant            Tenant             @relation(fields: [tenantId], references: [id])
+  sourceBlueprint   TemplateBlueprint? @relation(fields: [sourceBlueprintId], references: [id])
+  createdBy         User?              @relation("TemplateCreatedBy", fields: [createdByUserId], references: [id])
+  supersedes        PrintTemplate?     @relation("TemplateVersioning", fields: [supersedesTemplateId], references: [id])
+  newerVersions     PrintTemplate[]    @relation("TemplateVersioning")
+  testMappings      TestTemplateMap[]
+
+  @@unique([tenantId, code, templateVersion], name: "tenant_template_code_version")
+  @@index([tenantId, status])
+  @@index([tenantId, schemaType])
+  @@index([tenantId, templateFamily])
+  @@map("print_templates")
+}
+
+// Tenant-scoped many-to-many: test ↔ allowed templates
+model TestTemplateMap {
+  id         String   @id @default(uuid())
+  tenantId   String
+  testId     String
+  templateId String
+  isDefault  Boolean  @default(false)  // only one active default per test
+  sortOrder  Int      @default(0)
+  isEnabled  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant   Tenant        @relation(fields: [tenantId], references: [id])
+  test     CatalogTest   @relation(fields: [testId], references: [id])
+  template PrintTemplate @relation(fields: [templateId], references: [id])
+
+  @@unique([tenantId, testId, templateId], name: "tenant_test_template")
+  @@index([tenantId, testId])
+  @@index([tenantId, templateId])
+  @@map("test_template_maps")
 }
 
 // Cash transaction log — immutable append-only ledger
