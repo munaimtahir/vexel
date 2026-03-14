@@ -230,4 +230,15 @@ describe('Encounter State Machine', () => {
     expect(second.document.status).toBe('PUBLISHED');
     expect(docsMock.publishDocument).toHaveBeenCalledTimes(1);
   });
+
+  it('Test 8: command fails visibly when mandatory audit write fails', async () => {
+    prisma.encounter.findFirst.mockResolvedValue(makeEncounter('lab_ordered'));
+    prisma.encounter.update.mockResolvedValueOnce(makeEncounter('specimen_collected'));
+    prisma.$transaction.mockImplementationOnce(async (arr: any[]) => Promise.all(arr));
+    audit.log.mockRejectedValueOnce(new Error('audit-db-down'));
+
+    await expect(
+      service.collectSpecimen('tenant-a', 'enc-1', { labOrderId: 'lo-1', barcode: 'BC-1', type: 'blood' }, 'user-1'),
+    ).rejects.toThrow('audit-db-down');
+  });
 });

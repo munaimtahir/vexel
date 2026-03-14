@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface AuditEventInput {
@@ -26,17 +26,37 @@ export interface AuditListFilters {
   limit?: number;
 }
 
+export type AuditLogMode = 'required' | 'best-effort';
+
+export interface AuditLogOptions {
+  mode?: AuditLogMode;
+}
+
 @Injectable()
 export class AuditService {
+  private readonly logger = new Logger(AuditService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
-  async log(event: AuditEventInput): Promise<void> {
+  async log(event: AuditEventInput, options: AuditLogOptions = {}): Promise<void> {
+    const mode = options.mode ?? 'required';
     try {
       await this.prisma.auditEvent.create({ data: event });
     } catch (err) {
-      // Never let audit failure crash the main flow
-      console.error('[AuditService] Failed to write audit event:', err);
+      if (mode === 'best-effort') {
+        this.logger.error('Best-effort audit write failed', err as Error);
+        return;
+      }
+      throw new InternalServerErrorException('Required audit event write failed');
     }
+  }
+
+  async logRequired(event: AuditEventInput): Promise<void> {
+    return this.log(event, { mode: 'required' });
+  }
+
+  async logBestEffort(event: AuditEventInput): Promise<void> {
+    return this.log(event, { mode: 'best-effort' });
   }
 
   async list(filters: AuditListFilters) {

@@ -67,13 +67,12 @@ Expected:
 - login returns access token
 - `/api/me` returns authenticated user payload
 
-### Document pipeline smoke (verify → render → publish → download)
+### Document pipeline smoke (verify → render/auto-publish → download)
 
 1. Verify encounter from Operator verification flow.
-2. Confirm a LAB_REPORT document reaches `RENDERED` (not auto-published).
-3. Open `/lims/encounters/{encounterId}/publish` and click **Publish report**.
-4. Confirm document status becomes `PUBLISHED` and encounter status becomes `published`.
-5. Download PDF from publish page (API endpoint `GET /api/documents/{id}/download` returns PDF bytes).
+2. Confirm a LAB_REPORT document is rendered and auto-published by worker (`status = PUBLISHED`).
+3. Confirm encounter status is moved to `published`.
+4. Download PDF from reports/publish flow (API endpoint `GET /api/documents/{id}/download` returns PDF bytes).
 
 API check example:
 
@@ -83,5 +82,5 @@ curl -fsS "http://127.0.0.1:9021/api/documents?encounterId=<encounterId>&docType
 ```
 
 Expected:
-- first status `RENDERED`, after publish command status `PUBLISHED`
+- LAB_REPORT reaches `PUBLISHED` without manual publish click
 - download opens/saves a valid PDF

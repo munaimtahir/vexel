@@ -48,7 +48,7 @@ export class TenantServiceHealthService {
       ]);
 
     // 3. Emit audit event
-    await this.audit.log({
+    await this.audit.logBestEffort({
       tenantId,
       actorUserId,
       action: 'admin.tenant.service_health.read',

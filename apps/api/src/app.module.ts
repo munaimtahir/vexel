@@ -20,7 +20,6 @@ import { StorageModule } from './storage/storage.module';
 import { ResultsModule } from './results/results.module';
 import { SampleCollectionModule } from './sample-collection/sample-collection.module';
 import { VerificationModule } from './verification/verification.module';
-import { CashModule } from './cash/cash.module';
 import { OpdModule } from './opd/opd.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { BillingModule } from './billing/billing.module';
@@ -49,7 +48,6 @@ import { TemplatesModule } from './templates/templates.module';
     ResultsModule,
     SampleCollectionModule,
     VerificationModule,
-    CashModule,
     OpdModule,
     AppointmentsModule,
     BillingModule,

@@ -47,20 +47,16 @@ async function writeAudit(
   correlationId: string,
   extra?: Record<string, unknown>,
 ) {
-  try {
-    await prisma.auditEvent.create({
-      data: {
-        tenantId,
-        action,
-        entityType: 'Document',
-        entityId: documentId,
-        correlationId,
-        after: (extra ?? null) as any,
-      },
-    });
-  } catch (err) {
-    console.error('[document-render] Failed to write audit event:', (err as Error).message);
-  }
+  await prisma.auditEvent.create({
+    data: {
+      tenantId,
+      action,
+      entityType: 'Document',
+      entityId: documentId,
+      correlationId,
+      after: (extra ?? null) as any,
+    },
+  });
 }
 
 function postJson(
@@ -201,20 +197,16 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
           where: { id: doc.sourceRef, tenantId, status: { in: ['verified', 'published'] } as any },
           data: { status: 'published' as any },
         });
-        try {
-          await prisma.auditEvent.create({
-            data: {
-              tenantId,
-              action: 'encounter.auto_publish_report',
-              entityType: 'Encounter',
-              entityId: doc.sourceRef,
-              correlationId,
-              after: { status: 'published', documentId } as any,
-            },
-          });
-        } catch (err) {
-          console.error('[document-render] Failed to write encounter auto-publish audit:', (err as Error).message);
-        }
+        await prisma.auditEvent.create({
+          data: {
+            tenantId,
+            action: 'encounter.auto_publish_report',
+            entityType: 'Encounter',
+            entityId: doc.sourceRef,
+            correlationId,
+            after: { status: 'published', documentId } as any,
+          },
+        });
       }
 
       console.log(`${logCtx} auto_published type=${doc.type} total_ms=${Date.now() - t0}`);

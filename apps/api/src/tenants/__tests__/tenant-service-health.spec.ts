@@ -14,7 +14,10 @@ import { NotFoundException } from '@nestjs/common';
 
 // ─── Mock deps ───────────────────────────────────────────────────────────────
 
-const mockAudit = { log: jest.fn().mockResolvedValue(undefined) };
+const mockAudit = {
+  log: jest.fn().mockResolvedValue(undefined),
+  logBestEffort: jest.fn().mockResolvedValue(undefined),
+};
 const mockFeatureFlags = {
   listForTenant: jest.fn().mockResolvedValue([{ key: 'module.lims', enabled: true }]),
 };
@@ -141,7 +144,7 @@ describe('TenantServiceHealthService', () => {
   it('emits audit event with correct action and entityId', async () => {
     await service.getServiceHealth(TENANT_A, 'actor-user-1', 'corr-xyz');
 
-    expect(mockAudit.log).toHaveBeenCalledWith(
+    expect(mockAudit.logBestEffort).toHaveBeenCalledWith(
       expect.objectContaining({
         action: 'admin.tenant.service_health.read',
         entityType: 'Tenant',

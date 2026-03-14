@@ -522,19 +522,15 @@ export async function cleanupExpiredArtifacts(
 }
 
 async function writeAuditEvent(prisma: PrismaClient, run: any, outcome: 'succeeded' | 'failed', error?: string) {
-  try {
-    await prisma.auditEvent.create({
-      data: {
-        tenantId:     run.tenantId ?? 'system',
-        actorUserId:  run.initiatedByUserId ?? null,
-        action:       `ops.${run.type.toLowerCase()}.${outcome}`,
-        entityType:   'OpsBackupRun',
-        entityId:     run.id,
-        correlationId: run.correlationId,
-        ...(error ? { metadata: { error: error.slice(0, 500) } as any } : {}),
-      },
-    });
-  } catch (e) {
-    console.warn('[ops-processor] Failed to write audit event:', e);
-  }
+  await prisma.auditEvent.create({
+    data: {
+      tenantId: run.tenantId ?? 'system',
+      actorUserId: run.initiatedByUserId ?? null,
+      action: `ops.${run.type.toLowerCase()}.${outcome}`,
+      entityType: 'OpsBackupRun',
+      entityId: run.id,
+      correlationId: run.correlationId,
+      ...(error ? { metadata: { error: error.slice(0, 500) } as any } : {}),
+    },
+  });
 }
