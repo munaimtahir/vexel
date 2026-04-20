@@ -1,5 +1,6 @@
 import {
   Controller,
+  Body,
   Get,
   Post,
   Param,
@@ -64,6 +65,25 @@ export class VerificationController {
       this.resolveTenantId(req),
       user.userId,
       encounterId,
+      correlationId,
+    );
+  }
+
+  @Post('encounters/:encounterId\\:return-for-correction')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.RESULT_VERIFY)
+  returnForCorrection(
+    @Req() req: Request,
+    @Param('encounterId') encounterId: string,
+    @Body() body: { reason?: string },
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.returnForCorrection(
+      this.resolveTenantId(req),
+      user.userId,
+      encounterId,
+      body?.reason,
       correlationId,
     );
   }

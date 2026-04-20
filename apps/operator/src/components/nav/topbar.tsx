@@ -9,6 +9,9 @@ import { cn } from '@/lib/utils';
 import { Header } from '@vexel/ui-system';
 
 const ROUTE_TITLES: [string, string][] = [
+  ['/opd/encounters/new', 'New OPD Registration'],
+  ['/opd/encounters', 'OPD Encounters'],
+  ['/opd/encounters/', 'OPD Encounter'],
   ['/opd/billing/invoices', 'OPD Invoice'],
   ['/opd/billing/new', 'New OPD Invoice'],
   ['/opd/billing', 'OPD Billing'],
@@ -22,7 +25,7 @@ const ROUTE_TITLES: [string, string][] = [
   ['/lims/registrations/new', 'New Registration'],
   ['/lims/payments', 'Payments'],
   ['/lims/sample-collection', 'Sample Collection'],
-  ['/lims/results', 'Results'],
+  ['/lims/results', 'Result Entry Board'],
   ['/lims/verification', 'Verification'],
   ['/lims/patients/new', 'New Patient'],
   ['/lims/patients', 'Patients'],

@@ -167,6 +167,12 @@ export const ADMIN_OPD_NAV_ITEMS: AdminNavItem[] = [
     requiredPermissions: ['module.admin'],
   },
   {
+    href: '/opd/doctors',
+    label: 'Doctors',
+    icon: UserRound,
+    requiredPermissions: ['module.admin'],
+  },
+  {
     href: '/opd/schedules',
     label: 'Schedules',
     icon: CalendarDays,

@@ -1719,7 +1719,7 @@ components:
           type: string
         type:
           type: string
-          enum: [RECEIPT, LAB_REPORT]
+          enum: [RECEIPT, LAB_REPORT, OPD_INVOICE_RECEIPT, OPD_PRESCRIPTION]
         templateId:
           type: string
         payloadHash:
@@ -1763,7 +1763,7 @@ components:
           type: string
         type:
           type: string
-          enum: [RECEIPT, LAB_REPORT]
+          enum: [RECEIPT, LAB_REPORT, OPD_INVOICE_RECEIPT, OPD_PRESCRIPTION]
         templateKey:
           type: string
         version:
@@ -2738,6 +2738,228 @@ components:
           $ref: '#/components/schemas/OpdInvoice'
         document:
           $ref: '#/components/schemas/Document'
+
+    OpdDoctor:
+      type: object
+      required: [id, tenantId, code, displayName, specialtyName, consultationFee, currency, isActive, sortOrder, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        code: { type: string }
+        displayName: { type: string }
+        specialtyName: { type: string }
+        consultationFee: { type: number, minimum: 0 }
+        currency: { type: string }
+        isActive: { type: boolean }
+        sortOrder: { type: integer }
+        designation: { type: string, nullable: true }
+        degrees: { type: string, nullable: true }
+        pmdcNumber: { type: string, nullable: true }
+        phcNumber: { type: string, nullable: true }
+        clinicName: { type: string, nullable: true }
+        clinicAddress: { type: string, nullable: true }
+        clinicPhone: { type: string, nullable: true }
+        signatureLabel: { type: string, nullable: true }
+        signatureUrl: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    OpdDoctorCreateRequest:
+      type: object
+      required: [code, displayName, specialtyName, consultationFee]
+      properties:
+        code: { type: string }
+        displayName: { type: string }
+        specialtyName: { type: string }
+        consultationFee: { type: number, minimum: 0 }
+        currency: { type: string, default: PKR }
+        isActive: { type: boolean, default: true }
+        sortOrder: { type: integer, default: 0 }
+        designation: { type: string, nullable: true }
+        degrees: { type: string, nullable: true }
+        pmdcNumber: { type: string, nullable: true }
+        phcNumber: { type: string, nullable: true }
+        clinicName: { type: string, nullable: true }
+        clinicAddress: { type: string, nullable: true }
+        clinicPhone: { type: string, nullable: true }
+        signatureLabel: { type: string, nullable: true }
+        signatureUrl: { type: string, nullable: true }
+
+    OpdDoctorUpdateRequest:
+      type: object
+      properties:
+        code: { type: string }
+        displayName: { type: string }
+        specialtyName: { type: string }
+        consultationFee: { type: number, minimum: 0 }
+        currency: { type: string }
+        isActive: { type: boolean }
+        sortOrder: { type: integer }
+        designation: { type: string, nullable: true }
+        degrees: { type: string, nullable: true }
+        pmdcNumber: { type: string, nullable: true }
+        phcNumber: { type: string, nullable: true }
+        clinicName: { type: string, nullable: true }
+        clinicAddress: { type: string, nullable: true }
+        clinicPhone: { type: string, nullable: true }
+        signatureLabel: { type: string, nullable: true }
+        signatureUrl: { type: string, nullable: true }
+
+    OpdDoctorListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/OpdDoctor' }
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    OpdEncounterKmvp:
+      type: object
+      required: [id, tenantId, patientId, encounterId, doctorId, status, visitCode, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        patientId: { type: string }
+        encounterId: { type: string }
+        doctorId: { type: string }
+        status:
+          type: string
+          enum: [DRAFT, READY_FOR_PRINT, COMPLETED, CANCELLED]
+        visitCode: { type: string }
+        chiefComplaint: { type: string, nullable: true }
+        diagnosis: { type: string, nullable: true }
+        advice: { type: string, nullable: true }
+        followUp: { type: string, nullable: true }
+        investigations: { type: string, nullable: true }
+        remarks: { type: string, nullable: true }
+        paymentStatus: { type: string, enum: [UNPAID, PARTIALLY_PAID, PAID], nullable: true }
+        cancelledAt: { type: string, format: date-time, nullable: true }
+        cancelledReason: { type: string, nullable: true }
+        completedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+        publishedAt: { type: string, format: date-time, nullable: true }
+        updatedAt: { type: string, format: date-time }
+
+    OpdEncounterKmvpListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/OpdEncounterKmvp' }
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    CreateOpdRegistrationRequest:
+      type: object
+      required: [patientId, doctorId]
+      properties:
+        patientId: { type: string }
+        doctorId: { type: string }
+        idempotencyKey: { type: string }
+        immediatePaymentAmount: { type: number, minimum: 0, nullable: true }
+        immediatePaymentMethod: { type: string, enum: [CASH], nullable: true }
+        immediatePaymentReferenceNo: { type: string, nullable: true }
+        immediatePaymentNotes: { type: string, nullable: true }
+
+    CreateOpdRegistrationResponse:
+      type: object
+      required: [opdEncounter, invoiceId]
+      properties:
+        opdEncounter:
+          $ref: '#/components/schemas/OpdEncounterKmvp'
+        invoiceId:
+          type: string
+
+    RecordOpdIntakeRequest:
+      type: object
+      required: [opdEncounterId, chiefComplaint]
+      properties:
+        opdEncounterId: { type: string }
+        idempotencyKey: { type: string }
+        chiefComplaint: { type: string }
+        bpSystolic: { type: integer, nullable: true }
+        bpDiastolic: { type: integer, nullable: true }
+        pulse: { type: integer, nullable: true }
+        temperatureC: { type: number, nullable: true }
+        respRate: { type: integer, nullable: true }
+        spo2: { type: integer, nullable: true }
+        weightKg: { type: number, nullable: true }
+        heightCm: { type: number, nullable: true }
+        diagnosis: { type: string, nullable: true }
+        advice: { type: string, nullable: true }
+        followUp: { type: string, nullable: true }
+        investigations: { type: string, nullable: true }
+        remarks: { type: string, nullable: true }
+
+    PublishOpdPrescriptionRequest:
+      type: object
+      required: [opdEncounterId, historyNotes, examNotes, assessment, plan, advice, prescriptionItems]
+      properties:
+        opdEncounterId: { type: string }
+        idempotencyKey: { type: string }
+        historyNotes: { type: string }
+        examNotes: { type: string }
+        assessment: { type: string }
+        plan: { type: string }
+        advice: { type: string }
+        diagnosis: { type: string, nullable: true }
+        followUp: { type: string, nullable: true }
+        investigations: { type: string, nullable: true }
+        remarks: { type: string, nullable: true }
+        prescriptionItems:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [drugName]
+            properties:
+              drugName: { type: string }
+              genericName: { type: string, nullable: true }
+              strength: { type: string, nullable: true }
+              dose: { type: string, nullable: true }
+              frequency: { type: string, nullable: true }
+              duration: { type: string, nullable: true }
+              route: { type: string, nullable: true }
+              instructions: { type: string, nullable: true }
+
+    PublishOpdPrescriptionResponse:
+      type: object
+      required: [opdEncounter, documentId]
+      properties:
+        opdEncounter:
+          $ref: '#/components/schemas/OpdEncounterKmvp'
+        documentId:
+          type: string
+
+    FinalizeOpdEncounterRequest:
+      type: object
+      required: [opdEncounterId]
+      properties:
+        opdEncounterId: { type: string }
+        idempotencyKey: { type: string }
+        diagnosis: { type: string, nullable: true }
+        advice: { type: string, nullable: true }
+        followUp: { type: string, nullable: true }
+        investigations: { type: string, nullable: true }
+        remarks: { type: string, nullable: true }
+
+    CancelOpdEncounterRequest:
+      type: object
+      required: [opdEncounterId, reason]
+      properties:
+        opdEncounterId: { type: string }
+        idempotencyKey: { type: string }
+        reason: { type: string }
+
+    GenerateOpdReceiptRequest:
+      type: object
+      required: [opdEncounterId]
+      properties:
+        opdEncounterId: { type: string }
+        idempotencyKey: { type: string }
 
     # ─── Ops / Backup Management ─────────────────────────────────────────────
 
@@ -7860,6 +8082,54 @@ paths:
         "404":
           $ref: '#/components/responses/NotFound'
 
+  /verification/encounters/{encounterId}:return-for-correction:
+    post:
+      operationId: returnEncounterForCorrection
+      summary: Return submitted tests to result-entry queue for correction
+      tags: [Verification]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Encounter returned for correction
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [encounterId, status, correctedTestsCount]
+                properties:
+                  encounterId:
+                    type: string
+                  status:
+                    type: string
+                  correctedTestsCount:
+                    type: integer
+        "409":
+          description: No submitted tests available for correction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
   # ─── OPD Admin Config (Providers / Schedules) ────────────────────────────
 
   /opd/providers:
@@ -7919,12 +8189,113 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /opd/doctors:
+    get:
+      operationId: listOpdDoctors
+      summary: List OPD doctors for registration dropdown and admin master
+      tags: [OPD Doctors]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: isActive
+          in: query
+          schema: { type: boolean }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Doctor list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdDoctorListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+    post:
+      operationId: createOpdDoctor
+      summary: Create OPD doctor master row
+      tags: [OPD Doctors]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdDoctorCreateRequest'
+      responses:
+        "201":
+          description: Doctor created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdDoctor'
         "401":
           $ref: '#/components/responses/Unauthorized'
         "403":
           $ref: '#/components/responses/Forbidden'
         "409":
-          description: Provider code conflict (tenant-scoped uniqueness)
+          description: Duplicate doctor code in tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/doctors/{doctorId}:
+    get:
+      operationId: getOpdDoctor
+      summary: Get OPD doctor detail
+      tags: [OPD Doctors]
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Doctor detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdDoctor'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateOpdDoctor
+      summary: Update OPD doctor master row
+      tags: [OPD Doctors]
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpdDoctorUpdateRequest'
+      responses:
+        "200":
+          description: Doctor updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdDoctor'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Duplicate doctor code in tenant
           content:
             application/json:
               schema:
@@ -9359,6 +9730,332 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /opd/encounters:
+    get:
+      operationId: listOpdEncountersKmvp
+      summary: List OPD KMVP encounters
+      tags: [OPD Encounters]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [DRAFT, READY_FOR_PRINT, COMPLETED, CANCELLED]
+        - name: patientId
+          in: query
+          schema: { type: string }
+        - name: doctorId
+          in: query
+          schema: { type: string }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: OPD encounter list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdEncounterKmvpListResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /opd/encounters/{encounterId}:
+    get:
+      operationId: getOpdEncounterKmvp
+      summary: Get OPD KMVP encounter detail
+      tags: [OPD Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OPD encounter detail
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/commands/createRegistration:
+    post:
+      operationId: createOpdRegistrationCommand
+      summary: Create OPD registration and initialize consult invoice line
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOpdRegistrationRequest'
+      responses:
+        "201":
+          description: OPD registration created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOpdRegistrationResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: domain_error for invalid workflow or duplicate state mutation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/commands/recordIntake:
+    post:
+      operationId: recordOpdIntakeCommand
+      summary: Record intake and transition DRAFT -> READY_FOR_PRINT
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordOpdIntakeRequest'
+      responses:
+        "200":
+          description: Intake recorded
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: domain_error for invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/commands/publishPrescription:
+    post:
+      operationId: publishOpdPrescriptionCommand
+      summary: Publish prescription and transition READY_FOR_PRINT -> COMPLETED
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishOpdPrescriptionRequest'
+      responses:
+        "200":
+          description: Prescription published and document generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishOpdPrescriptionResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: domain_error for invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/commands/finalizeEncounter:
+    post:
+      operationId: finalizeOpdEncounterCommand
+      summary: Finalize OPD encounter and transition READY_FOR_PRINT -> COMPLETED
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinalizeOpdEncounterRequest'
+      responses:
+        "200":
+          description: Encounter finalized
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: domain_error for invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/commands/cancelEncounter:
+    post:
+      operationId: cancelOpdEncounterCommand
+      summary: Cancel OPD encounter and transition DRAFT/READY_FOR_PRINT -> CANCELLED
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelOpdEncounterRequest'
+      responses:
+        "200":
+          description: Encounter cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: domain_error for invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/commands/generateReceipt:
+    post:
+      operationId: generateOpdEncounterReceiptCommand
+      summary: Generate deterministic OPD consultation receipt document for encounter
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateOpdReceiptRequest'
+      responses:
+        "200":
+          description: Receipt generation queued or idempotent document returned
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/encounters/{encounterId}/prescription:
+    get:
+      operationId: getOpdEncounterPrescriptionDocument
+      summary: Get published OPD prescription document metadata
+      tags: [OPD Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Published prescription document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/encounters/{encounterId}/prescription/file:
+    get:
+      operationId: downloadOpdEncounterPrescriptionFile
+      summary: Download/open published OPD prescription PDF bytes
+      tags: [OPD Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: PDF bytes
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/encounters/{encounterId}/receipt:
+    get:
+      operationId: getOpdEncounterReceiptDocument
+      summary: Get OPD encounter receipt document metadata
+      tags: [OPD Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OPD receipt document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /opd/encounters/{encounterId}/receipt/file:
+    get:
+      operationId: downloadOpdEncounterReceiptFile
+      summary: Download/open OPD receipt PDF bytes
+      tags: [OPD Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: PDF bytes
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
 
   # ─── Ops / Backup Management ─────────────────────────────────────────────
 

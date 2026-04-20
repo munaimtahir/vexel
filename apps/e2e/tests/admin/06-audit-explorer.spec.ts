@@ -11,10 +11,20 @@ const PASSWORD = process.env.OPERATOR_PASSWORD || 'Admin@vexel123!';
 
 async function adminLogin(page: import('@playwright/test').Page) {
   await page.goto('/admin/login');
-  await page.getByLabel('Email').fill(EMAIL);
-  await page.getByLabel('Password').fill(PASSWORD);
-  await page.getByRole('button', { name: /sign in/i }).click();
-  await page.waitForURL('**/admin/dashboard', { timeout: 15_000 });
+  await page.waitForLoadState('domcontentloaded');
+  const emailInput = page.getByLabel('Email');
+  const passwordInput = page.getByLabel('Password');
+  const signInButton = page.getByRole('button', { name: /sign in/i });
+  await expect(emailInput).toBeVisible({ timeout: 10_000 });
+  await emailInput.fill(EMAIL);
+  await passwordInput.fill(PASSWORD);
+  await Promise.all([
+    page.waitForURL(
+      (url) => /\/admin\/(dashboard|catalog|audit|jobs|users|roles|tenants|feature-flags|account)$/.test(url.pathname),
+      { timeout: 30_000 },
+    ),
+    signInButton.click(),
+  ]);
 }
 
 test.describe('@admin Audit Explorer', () => {

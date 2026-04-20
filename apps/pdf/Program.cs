@@ -31,35 +31,69 @@ app.MapPost("/render", async (HttpContext context) =>
     var body = await reader.ReadToEndAsync();
 
     RenderRequest? req = null;
-    try { req = JsonSerializer.Deserialize<RenderRequest>(body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }); }
-    catch { }
-
-    byte[] pdfBytes;
-    if (req?.PayloadJson is JsonElement payload)
+    try
     {
-        var logoBytes        = await FetchImageBytesAsync(req?.BrandingConfig?.LogoUrl);
-        var footerImageBytes = await FetchImageBytesAsync(req?.BrandingConfig?.ReportFooterImageUrl);
-        var templateKey = (req?.TemplateKey ?? string.Empty).Trim().ToLowerInvariant();
-        pdfBytes = templateKey switch
+        req = JsonSerializer.Deserialize<RenderRequest>(
+            body,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+        );
+    }
+    catch (JsonException ex)
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsJsonAsync(new
         {
-            "lab_report_v1"          => GenerateLabReport(payload, req?.BrandingConfig, logoBytes, footerImageBytes),
-            "lab_report_v2"          => GenerateLabReportV2(payload, req?.BrandingConfig, logoBytes, footerImageBytes),
-            "receipt_v1"             => GenerateReceipt(payload, req?.BrandingConfig, logoBytes),
-            "opd_invoice_receipt_v1" => GenerateOpdInvoiceReceipt(payload, req?.BrandingConfig),
-            "graphical_scale_report_v1" => GenerateGraphicalScaleReport(payload, req?.BrandingConfig, req?.ConfigJson, logoBytes),
-            "hybrid_template_v1"        => GenerateHybridTemplateReport(payload, req?.BrandingConfig, req?.ConfigJson, logoBytes),
-            _                        => GeneratePlaceholderPdf(body),
-        };
+            error = "INVALID_RENDER_REQUEST_JSON",
+            message = ex.Message,
+        });
+        return Results.Empty;
     }
-    else
+
+    if (req == null || req.PayloadJson is not JsonElement payload)
     {
-        pdfBytes = GeneratePlaceholderPdf(body);
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsJsonAsync(new
+        {
+            error = "MISSING_RENDER_PAYLOAD",
+            message = "payloadJson is required.",
+        });
+        return Results.Empty;
     }
+
+    var templateKey = (req.TemplateKey ?? string.Empty).Trim().ToLowerInvariant();
+    if (!IsSupportedTemplateKey(templateKey))
+    {
+        context.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+        await context.Response.WriteAsJsonAsync(new
+        {
+            error = "UNSUPPORTED_TEMPLATE_KEY",
+            templateKey,
+        });
+        return Results.Empty;
+    }
+
+    var logoBytes        = await FetchImageBytesAsync(req.BrandingConfig?.LogoUrl);
+    var footerImageBytes = await FetchImageBytesAsync(req.BrandingConfig?.ReportFooterImageUrl);
+    byte[] pdfBytes = templateKey switch
+    {
+        "lab_report_v1"             => GenerateLabReport(payload, req.BrandingConfig, logoBytes, footerImageBytes),
+        "lab_report_v2"             => GenerateLabReportV2(payload, req.BrandingConfig, logoBytes, footerImageBytes),
+        "lab_report_v3"             => GenerateLabReportV2(payload, req.BrandingConfig, logoBytes, footerImageBytes),
+        "receipt_v1"                => GenerateReceipt(payload, req.BrandingConfig, logoBytes),
+        "opd_invoice_receipt_v1"    => GenerateOpdInvoiceReceipt(payload, req.BrandingConfig),
+        "opd_invoice_receipt_v2"    => GenerateOpdInvoiceReceipt(payload, req.BrandingConfig),
+        "opd_prescription_a4_v1"    => GenerateOpdPrescription(payload, req.BrandingConfig),
+        "opd_prescription_consultants_place_v2" => GenerateOpdPrescription(payload, req.BrandingConfig),
+        "graphical_scale_report_v1" => GenerateGraphicalScaleReport(payload, req.BrandingConfig, req.ConfigJson, logoBytes),
+        "hybrid_template_v1"        => GenerateHybridTemplateReport(payload, req.BrandingConfig, req.ConfigJson, logoBytes),
+        _                           => throw new InvalidOperationException("Unsupported template key reached guarded path.")
+    };
 
     var hash = Convert.ToHexString(SHA256.HashData(pdfBytes)).ToLower();
     context.Response.Headers["X-Pdf-Hash"] = hash;
     context.Response.ContentType = "application/pdf";
     await context.Response.Body.WriteAsync(pdfBytes);
+    return Results.Empty;
 })
 .WithName("RenderPdf").WithTags("Render");
 
@@ -91,6 +125,12 @@ static byte[] GenerateOpdInvoiceReceipt(JsonElement payload, BrandingConfig? bra
     return doc.GeneratePdf();
 }
 
+static byte[] GenerateOpdPrescription(JsonElement payload, BrandingConfig? branding)
+{
+    var doc = new OpdPrescriptionDocument(payload, branding ?? new BrandingConfig());
+    return doc.GeneratePdf();
+}
+
 static byte[] GenerateGraphicalScaleReport(JsonElement payload, BrandingConfig? branding, JsonElement? configJson, byte[]? logoBytes)
 {
     var doc = new GraphicalScaleReportDocument(payload, branding ?? new BrandingConfig(), configJson, logoBytes);
@@ -103,15 +143,21 @@ static byte[] GenerateHybridTemplateReport(JsonElement payload, BrandingConfig? 
     return doc.GeneratePdf();
 }
 
-static byte[] GeneratePlaceholderPdf(string jsonBody)
-{
-    var placeholder = "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
-        + "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
-        + "3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\n"
-        + "xref\n0 4\n0000000000 65535 f\n"
-        + "trailer<</Size 4/Root 1 0 R>>\nstartxref\n%%EOF";
-    return System.Text.Encoding.ASCII.GetBytes(placeholder);
-}
+static bool IsSupportedTemplateKey(string templateKey) =>
+    templateKey switch
+    {
+        "lab_report_v1" => true,
+        "lab_report_v2" => true,
+        "lab_report_v3" => true,
+        "receipt_v1" => true,
+        "opd_invoice_receipt_v1" => true,
+        "opd_invoice_receipt_v2" => true,
+        "opd_prescription_a4_v1" => true,
+        "opd_prescription_consultants_place_v2" => true,
+        "graphical_scale_report_v1" => true,
+        "hybrid_template_v1" => true,
+        _ => false,
+    };
 
 static async Task<byte[]?> FetchImageBytesAsync(string? url)
 {
@@ -564,6 +610,7 @@ class LabReportDocument : IDocument
 
 class LabReportDocumentV2 : IDocument
 {
+    private const float ReadabilityBumpPt = 1f;
     private readonly JsonElement    _payload;
     private readonly BrandingConfig _branding;
     private readonly byte[]?        _logoBytes;
@@ -609,7 +656,7 @@ class LabReportDocumentV2 : IDocument
         {
             page.Size(PageSizes.A4);
             page.Margin(1.5f, Unit.Centimetre);
-            page.DefaultTextStyle(x => x.FontSize(9).FontFamily(Fonts.Arial));
+            page.DefaultTextStyle(x => x.FontSize(9 + ReadabilityBumpPt).FontFamily(Fonts.Arial));
 
             page.Header().Element(c => ComposeReportHeader(c, _logoBytes));
             page.Content().Element(ComposeReportContent);
@@ -703,14 +750,14 @@ class LabReportDocumentV2 : IDocument
             PiRow(table, "Patient Name",   Get("patientName"),                    "Sample Received", DocHelpers.FormatDate(Get("sampleReceivedAt")));
             PiRow(table, "Age / Gender",   $"{Get("patientAge")} / {Get("patientGender")}", "Issued Date",  DocHelpers.FormatDate(Get("issuedAt")));
 
-            table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
-                 .BorderColor(Colors.Grey.Lighten2).Padding(3)
-                 .Text("Referring Physician").Bold().FontSize(8);
-            table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                 .Padding(3).Text(Get("orderedBy", "\u2014")).FontSize(8);
-            table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
-                 .BorderColor(Colors.Grey.Lighten2).Padding(3)
-                 .Text("Report Status").Bold().FontSize(8);
+             table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+                  .BorderColor(Colors.Grey.Lighten2).Padding(3)
+                  .Text("Referring Physician").Bold().FontSize(8 + ReadabilityBumpPt);
+             table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                  .Padding(3).Text(Get("orderedBy", "\u2014")).FontSize(8 + ReadabilityBumpPt);
+             table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+                  .BorderColor(Colors.Grey.Lighten2).Padding(3)
+                  .Text("Report Status").Bold().FontSize(8 + ReadabilityBumpPt);
             table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(3)
                  .Text(t => t.Span(reportStatus).Bold()
                              .FontColor(isVerified ? Colors.Green.Darken2 : Colors.Orange.Darken2));
@@ -719,14 +766,14 @@ class LabReportDocumentV2 : IDocument
 
     void PiRow(TableDescriptor table, string l1, string v1, string l2, string v2)
     {
-        table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
-             .BorderColor(Colors.Grey.Lighten2).Padding(3).Text(l1).Bold().FontSize(8);
-        table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-             .Padding(3).Text(v1).FontSize(8);
-        table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
-             .BorderColor(Colors.Grey.Lighten2).Padding(3).Text(l2).Bold().FontSize(8);
-        table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-             .Padding(3).Text(v2).FontSize(8);
+         table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+              .BorderColor(Colors.Grey.Lighten2).Padding(3).Text(l1).Bold().FontSize(8 + ReadabilityBumpPt);
+         table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+              .Padding(3).Text(v1).FontSize(8 + ReadabilityBumpPt);
+         table.Cell().Background(Colors.Grey.Lighten4).BorderBottom(0.5f)
+              .BorderColor(Colors.Grey.Lighten2).Padding(3).Text(l2).Bold().FontSize(8 + ReadabilityBumpPt);
+         table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+              .Padding(3).Text(v2).FontSize(8 + ReadabilityBumpPt);
     }
 
     // ── Content ──────────────────────────────────────────────────────────────
@@ -827,27 +874,27 @@ class LabReportDocumentV2 : IDocument
                 col.Item().PaddingVertical(2).Row(row =>
                 {
                     // Parameter name
-                    row.ConstantItem(145).Text(pName + ":").Bold().FontSize(9).FontColor(Colors.Grey.Darken3);
+                     row.ConstantItem(145).Text(pName + ":").Bold().FontSize(9 + ReadabilityBumpPt).FontColor(Colors.Grey.Darken3);
 
                     // Value (colored when flagged)
                     var valItem = row.ConstantItem(65);
                     if (isCrit)
-                        valItem.Text(pValue).Bold().FontSize(9).FontColor(Colors.Red.Darken2);
+                        valItem.Text(pValue).Bold().FontSize(9 + ReadabilityBumpPt).FontColor(Colors.Red.Darken2);
                     else if (isHigh)
-                        valItem.Text(pValue + " \u2191").Bold().FontSize(9).FontColor(Colors.Red.Medium);
+                        valItem.Text(pValue + " \u2191").Bold().FontSize(9 + ReadabilityBumpPt).FontColor(Colors.Red.Medium);
                     else if (isLow)
-                        valItem.Text(pValue + " \u2193").Bold().FontSize(9).FontColor(Colors.Blue.Medium);
+                        valItem.Text(pValue + " \u2193").Bold().FontSize(9 + ReadabilityBumpPt).FontColor(Colors.Blue.Medium);
                     else
-                        valItem.Text(pValue).Bold().FontSize(9);
+                        valItem.Text(pValue).Bold().FontSize(9 + ReadabilityBumpPt);
 
                     // Unit
                     var unitStr = (pUnit == "\u2014" || string.IsNullOrWhiteSpace(pUnit)) ? "" : pUnit;
-                    row.ConstantItem(45).Text(unitStr).FontSize(8).FontColor(Colors.Grey.Darken1);
+                    row.ConstantItem(45).Text(unitStr).FontSize(8 + ReadabilityBumpPt).FontColor(Colors.Grey.Darken1);
 
                     // Reference range
                     var rangeStr = (pRange == "\u2014" || string.IsNullOrWhiteSpace(pRange))
                         ? "" : $"Ref: {pRange}";
-                    row.RelativeItem().Text(rangeStr).FontSize(8).FontColor(Colors.Grey.Medium);
+                    row.RelativeItem().Text(rangeStr).FontSize(8 + ReadabilityBumpPt).FontColor(Colors.Grey.Medium);
 
                     // Flag badge (critical only; H/L already encoded in value arrows)
                     if (isCrit)
@@ -886,7 +933,7 @@ class LabReportDocumentV2 : IDocument
 
                     // Header row
                     foreach (var h in new[] { "Parameter", "Result", "Unit", "Reference Range", "" })
-                        table.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text(h).Bold().FontSize(8);
+                        table.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text(h).Bold().FontSize(8 + ReadabilityBumpPt);
 
                     int rowIdx = 0;
                     foreach (var param in paramsEl.EnumerateArray())
@@ -905,27 +952,27 @@ class LabReportDocumentV2 : IDocument
 
                         // Parameter name
                         table.Cell().Background(rowBg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                             .Padding(3).Text(pName).FontSize(8);
+                             .Padding(3).Text(pName).FontSize(8 + ReadabilityBumpPt);
 
                         // Result (colored if flagged)
                         var valCell = table.Cell().Background(rowBg).BorderBottom(0.5f)
                                           .BorderColor(Colors.Grey.Lighten2).Padding(3);
                         if (isCrit)
-                            valCell.Text(pValue).Bold().FontSize(8).FontColor(Colors.Red.Darken2);
+                            valCell.Text(pValue).Bold().FontSize(8 + ReadabilityBumpPt).FontColor(Colors.Red.Darken2);
                         else if (isHigh)
-                            valCell.Text(pValue + " \u2191").Bold().FontSize(8).FontColor(Colors.Red.Medium);
+                            valCell.Text(pValue + " \u2191").Bold().FontSize(8 + ReadabilityBumpPt).FontColor(Colors.Red.Medium);
                         else if (isLow)
-                            valCell.Text(pValue + " \u2193").Bold().FontSize(8).FontColor(Colors.Blue.Medium);
+                            valCell.Text(pValue + " \u2193").Bold().FontSize(8 + ReadabilityBumpPt).FontColor(Colors.Blue.Medium);
                         else
-                            valCell.Text(pValue).FontSize(8);
+                            valCell.Text(pValue).FontSize(8 + ReadabilityBumpPt);
 
                         // Unit
                         table.Cell().Background(rowBg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                             .Padding(3).Text(pUnit == "\u2014" ? "" : pUnit).FontSize(8).FontColor(Colors.Grey.Darken1);
+                             .Padding(3).Text(pUnit == "\u2014" ? "" : pUnit).FontSize(8 + ReadabilityBumpPt).FontColor(Colors.Grey.Darken1);
 
                         // Reference range
                         table.Cell().Background(rowBg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                             .Padding(3).Text(pRange).FontSize(8);
+                             .Padding(3).Text(pRange).FontSize(8 + ReadabilityBumpPt);
 
                         // Flag badge
                         var flagCell = table.Cell().Background(rowBg).BorderBottom(0.5f)
@@ -1868,6 +1915,117 @@ class OpdInvoiceReceiptDocument : IDocument
         };
 }
 
+class OpdPrescriptionDocument : IDocument
+{
+    private readonly JsonElement _payload;
+    private readonly BrandingConfig _branding;
+
+    public OpdPrescriptionDocument(JsonElement payload, BrandingConfig branding)
+    {
+        _payload = payload;
+        _branding = branding;
+    }
+
+    public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+
+    public void Compose(IDocumentContainer container)
+    {
+        container.Page(page =>
+        {
+            page.Size(PageSizes.A4);
+            page.Margin(1.5f, Unit.Centimetre);
+            page.DefaultTextStyle(x => x.FontSize(10).FontFamily(Fonts.Arial));
+            page.Content().Column(col =>
+            {
+                col.Spacing(4);
+                if (_payload.TryGetProperty("doctor", out var doctor))
+                {
+                    col.Item().Text(Get(doctor, "fullName", Get(doctor, "name", "Doctor"))).Bold().FontSize(14);
+                    var degrees = Get(doctor, "degrees", "");
+                    if (!string.IsNullOrWhiteSpace(degrees) && degrees != "—") col.Item().Text(degrees).FontSize(10);
+                    var designation = Get(doctor, "designation", "");
+                    if (!string.IsNullOrWhiteSpace(designation) && designation != "—") col.Item().Text(designation).FontSize(10);
+                    var pmdc = Get(doctor, "pmdcNumber", "");
+                    var phc = Get(doctor, "phcNumber", "");
+                    if ((!string.IsNullOrWhiteSpace(pmdc) && pmdc != "—") || (!string.IsNullOrWhiteSpace(phc) && phc != "—"))
+                        col.Item().Text($"PMDC {pmdc} | PHC {phc}").FontSize(9);
+                    var clinicName = Get(doctor, "clinicName", "");
+                    if (!string.IsNullOrWhiteSpace(clinicName) && clinicName != "—") col.Item().Text(clinicName).FontSize(10);
+                    var clinicAddress = Get(doctor, "clinicAddress", "");
+                    if (!string.IsNullOrWhiteSpace(clinicAddress) && clinicAddress != "—") col.Item().Text(clinicAddress).FontSize(9);
+                }
+                col.Item().Text("Prescription").Bold().FontSize(13);
+                col.Item().LineHorizontal(1);
+
+                if (_payload.TryGetProperty("patient", out var patient))
+                {
+                    col.Item().Text($"Date: {Get("visitDateTime")}    MR No.: {Get(patient, "mrn")}").FontSize(10);
+                    col.Item().Text($"Patient Name: {Get(patient, "firstName", "")} {Get(patient, "lastName", "")}".Trim()).FontSize(10);
+                    col.Item().Text($"Age / Sex: {Get(patient, "dateOfBirth")} / {Get(patient, "gender")}").FontSize(10);
+                    var weight = _payload.TryGetProperty("vitals", out var vitalsObj) ? Get(vitalsObj, "weightKg", "") : "";
+                    var bp = _payload.TryGetProperty("vitals", out vitalsObj) ? $"{Get(vitalsObj, "bpSystolic", "")}/{Get(vitalsObj, "bpDiastolic", "")}" : "";
+                    col.Item().Text($"Weight / BP: {weight} / {bp}").FontSize(10);
+                    col.Item().Text($"Contact: {Get(patient, "mobile", "")}").FontSize(10);
+                }
+
+                col.Item().PaddingTop(2).Text($"Presenting complaints / Diagnosis: {Get("majorComplaint")} {Get("diagnosis", "")}".Trim()).FontSize(10);
+                col.Item().PaddingTop(2).Text("Rx").Bold().FontSize(11);
+                if (_payload.TryGetProperty("prescriptionItems", out var items) && items.ValueKind == JsonValueKind.Array)
+                {
+                    int idx = 1;
+                    foreach (var item in items.EnumerateArray())
+                    {
+                        col.Item().Text($"{idx}. {Get(item, "drugName")} {Get(item, "strength", "")} | {Get(item, "dose", "")} {Get(item, "frequency", "")} x {Get(item, "duration", "")} {Get(item, "route", "")}".Trim()).FontSize(10);
+                        var instructions = Get(item, "instructions", "");
+                        if (!string.IsNullOrWhiteSpace(instructions) && instructions != "\u2014")
+                            col.Item().PaddingLeft(10).Text(instructions).FontSize(9);
+                        idx++;
+                    }
+                }
+                if (_payload.TryGetProperty("notes", out var notes))
+                {
+                    col.Item().PaddingTop(2).Text($"Advice / Instructions: {Get(notes, "advice")}").FontSize(10);
+                    col.Item().Text($"Follow-up: {Get(notes, "followUp")}").FontSize(10);
+                    col.Item().Text($"Investigations / Remarks: {Get(notes, "investigations")} {Get(notes, "remarks", "")}".Trim()).FontSize(10);
+                }
+                col.Item().PaddingTop(6).Text("Doctor Signature / Stamp: ____________________").FontSize(9);
+                if (_payload.TryGetProperty("doctor", out var d2))
+                {
+                    col.Item().PaddingTop(4).Text($"{Get(d2, "fullName", Get(d2, "name", ""))}").Bold().FontSize(9);
+                    col.Item().Text($"{Get(d2, "designation", "")}").FontSize(8);
+                    col.Item().Text($"{Get(d2, "clinicName", "")} - {Get(d2, "clinicAddress", "")}".Trim(' ', '-')).FontSize(8);
+                }
+            });
+        });
+    }
+
+    string Get(string key, string fallback = "\u2014")
+    {
+        if (_payload.TryGetProperty(key, out var value))
+            return ToDisplay(value, fallback);
+        return fallback;
+    }
+
+    static string Get(JsonElement obj, string key, string fallback = "\u2014")
+    {
+        if (obj.ValueKind == JsonValueKind.Object && obj.TryGetProperty(key, out var value))
+            return ToDisplay(value, fallback);
+        return fallback;
+    }
+
+    static string ToDisplay(JsonElement value, string fallback = "\u2014") =>
+        value.ValueKind switch
+        {
+            JsonValueKind.String    => value.GetString() ?? fallback,
+            JsonValueKind.Number    => value.ToString(),
+            JsonValueKind.True      => "true",
+            JsonValueKind.False     => "false",
+            JsonValueKind.Null      => fallback,
+            JsonValueKind.Undefined => fallback,
+            _                       => value.ToString()
+        };
+}
+
 // ─── GraphicalScaleReportDocument ─────────────────────────────────────────────
 
 class GraphicalScaleReportDocument : IDocument
@@ -2365,8 +2523,10 @@ class HybridTemplateDocument(
     private static string LightGrey => "#f5f5f5";
     private static string BorderGrey => "#d0d0d0";
 
-    public DocumentMetadata GetMetadata() =>
-        DocumentMetadata.Default with { Title = "Lab Report" };
+    public DocumentMetadata GetMetadata() => new()
+    {
+        Title = "Lab Report",
+    };
 
     public void Compose(IDocumentContainer container)
     {
@@ -2583,11 +2743,14 @@ class HybridTemplateDocument(
                     foreach (var param in test.Parameters)
                     {
                         even = !even;
-                        var bg = even ? Colors.White : LightGrey;
+                        string bg = even ? Colors.White : LightGrey;
 
-                        void Cell(string? text, bool bold = false) =>
-                            tbl.Cell().Background(bg).Padding(4)
-                               .Text(text ?? "—").FontSize(8).If(bold, t => t.Bold());
+                        void Cell(string? text, bool bold = false)
+                        {
+                            var t = tbl.Cell().Background(bg).Padding(4).Text(text ?? "—").FontSize(8);
+                            if (bold)
+                                t.Bold();
+                        }
 
                         Cell(param.ParameterName, false);
                         Cell(param.Value, true);
@@ -2799,4 +2962,3 @@ class HybridTemplateDocument(
 
 record InterpretationBand(string Label, double? Min, double? Max, string ColorToken);
 record ScaleParameter(string Key, string Label, string Unit, string SourceMode, string SourceMatch, bool SkipIfMissing, List<InterpretationBand> Bands);
-

@@ -1,0 +1,11 @@
+docker compose up -d --no-build
+docker compose ps
+curl -fsS http://127.0.0.1:9021/api/health
+curl -fsS http://127.0.0.1:9022/health/pdf
+pnpm ui:color-lint
+pnpm check:admin-openapi-parity
+pnpm sdk:generate
+pnpm --filter @vexel/api build
+pnpm --filter @vexel/worker build
+pnpm --filter @vexel/api test -- --runInBand
+pnpm --filter @vexel/e2e test

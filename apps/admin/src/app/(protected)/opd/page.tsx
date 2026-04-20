@@ -4,6 +4,11 @@ import Link from 'next/link';
 
 const cards = [
   {
+    title: 'Doctors',
+    href: '/opd/doctors',
+    description: 'Manage OPD doctor master data (display name, specialty, consultation fee, active state).',
+  },
+  {
     title: 'Providers',
     href: '/opd/providers',
     description: 'Manage OPD provider master data (code, specialty, fee, active state).',

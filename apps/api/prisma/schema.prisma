@@ -59,6 +59,13 @@ model Tenant {
   payments             Payment[]
   printTemplates       PrintTemplate[]
   testTemplateMaps     TestTemplateMap[]
+  opdDoctors           OpdDoctor[]
+  opdEncountersKmvp    OpdEncounter[]
+  opdVitalsKmvp        OpdVital[]
+  opdNotesKmvp         OpdNote[]
+  opdPrescriptionsKmvp OpdEncounterPrescription[]
+  opdPrescriptionItemsKmvp OpdPrescriptionItemKmvp[]
+  opdCommandLogs       OpdCommandLog[]
 
   @@map("tenants")
 }
@@ -452,6 +459,7 @@ model Patient {
   encounters   Encounter[]
   appointments Appointment[]
   opdVisits    OPDVisit[]
+  opdEncounters OpdEncounter[]
   invoices     Invoice[]
 
   @@unique([tenantId, mrn])
@@ -478,6 +486,7 @@ model Encounter {
   specimenItems    SpecimenItem[]
   cashTransactions CashTransaction[]
   opdVisits        OPDVisit[]
+  opdEncountersKmvp OpdEncounter[]
   invoices         Invoice[]
 
   @@unique([tenantId, encounterCode])
@@ -902,6 +911,182 @@ model Payment {
   @@index([tenantId, status])
   @@index([tenantId, correlationId])
   @@map("payments")
+}
+
+model OpdDoctor {
+  id              String   @id @default(uuid())
+  tenantId        String
+  code            String
+  displayName     String
+  specialtyName   String
+  consultationFee Decimal  @db.Decimal(10,2)
+  currency        String   @default("PKR")
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  designation     String?
+  degrees         String?
+  pmdcNumber      String?
+  phcNumber       String?
+  clinicName      String?
+  clinicAddress   String?
+  clinicPhone     String?
+  signatureLabel  String?
+  signatureUrl    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant        Tenant          @relation(fields: [tenantId], references: [id])
+  opdEncounters OpdEncounter[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, isActive, sortOrder])
+  @@index([tenantId, displayName])
+  @@map("opd_doctors")
+}
+
+model OpdEncounter {
+  id             String    @id @default(uuid())
+  tenantId       String
+  patientId      String
+  encounterId    String
+  doctorId       String
+  status         String    @default("DRAFT") // DRAFT | READY_FOR_PRINT | COMPLETED | CANCELLED
+  visitCode      String
+  chiefComplaint String?
+  diagnosis      String?
+  advice         String?
+  followUp       String?
+  investigations String?
+  remarks        String?
+  paymentStatus  String    @default("UNPAID") // UNPAID | PARTIALLY_PAID | PAID
+  cancelledAt    DateTime?
+  cancelledReason String?
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  publishedAt    DateTime?
+  updatedAt      DateTime  @updatedAt
+
+  tenant          Tenant                     @relation(fields: [tenantId], references: [id])
+  patient         Patient                    @relation(fields: [patientId], references: [id])
+  encounter       Encounter                  @relation(fields: [encounterId], references: [id])
+  doctor          OpdDoctor                  @relation(fields: [doctorId], references: [id])
+  vitals          OpdVital[]
+  notes           OpdNote[]
+  prescriptions   OpdEncounterPrescription[]
+
+  @@unique([tenantId, visitCode])
+  @@unique([tenantId, encounterId])
+  @@index([tenantId, patientId, createdAt])
+  @@index([tenantId, doctorId, createdAt])
+  @@index([tenantId, status])
+  @@map("opd_encounters")
+}
+
+model OpdVital {
+  id             String    @id @default(uuid())
+  tenantId       String
+  opdEncounterId String
+  bpSystolic     Int?
+  bpDiastolic    Int?
+  pulse          Int?
+  temperatureC   Decimal?  @db.Decimal(4,1)
+  respRate       Int?
+  spo2           Int?
+  weightKg       Decimal?  @db.Decimal(5,2)
+  heightCm       Decimal?  @db.Decimal(5,2)
+  bmi            Decimal?  @db.Decimal(5,2)
+  enteredBy      String?
+  enteredAt      DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  tenant        Tenant       @relation(fields: [tenantId], references: [id])
+  opdEncounter  OpdEncounter @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, opdEncounterId, enteredAt])
+  @@map("opd_vitals_kmvp")
+}
+
+model OpdNote {
+  id             String    @id @default(uuid())
+  tenantId       String
+  opdEncounterId String
+  historyNotes   String?
+  examNotes      String?
+  assessment     String?
+  plan           String?
+  advice         String?
+  diagnosis      String?
+  followUp       String?
+  investigations String?
+  remarks        String?
+  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime  @default(now())
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id])
+  opdEncounter OpdEncounter @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, opdEncounterId])
+  @@index([tenantId, updatedAt])
+  @@map("opd_notes")
+}
+
+model OpdEncounterPrescription {
+  id                  String   @id @default(uuid())
+  tenantId            String
+  opdEncounterId      String
+  publishedDocumentId String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id])
+  opdEncounter OpdEncounter @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
+  items        OpdPrescriptionItemKmvp[]
+
+  @@unique([tenantId, opdEncounterId])
+  @@index([tenantId, createdAt])
+  @@map("opd_prescriptions_kmvp")
+}
+
+model OpdPrescriptionItemKmvp {
+  id                String   @id @default(uuid())
+  tenantId          String
+  opdPrescriptionId String
+  drugName          String
+  genericName       String?
+  strength          String?
+  dose              String?
+  frequency         String?
+  duration          String?
+  route             String?
+  instructions      String?
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  tenant          Tenant                   @relation(fields: [tenantId], references: [id])
+  opdPrescription OpdEncounterPrescription @relation(fields: [opdPrescriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, opdPrescriptionId, sortOrder])
+  @@index([tenantId, opdPrescriptionId])
+  @@map("opd_prescription_items_kmvp")
+}
+
+model OpdCommandLog {
+  id             String   @id @default(uuid())
+  tenantId       String
+  commandName    String
+  idempotencyKey String
+  requestJson    Json?
+  responseJson   Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, commandName, idempotencyKey])
+  @@index([tenantId, createdAt])
+  @@map("opd_command_logs")
 }
 
 // ─── Documents ────────────────────────────────────────────────────────────

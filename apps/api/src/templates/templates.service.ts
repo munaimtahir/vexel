@@ -563,15 +563,15 @@ export class TemplatesService {
   resolveTemplateKey(templateFamily: string): string {
     // Renderer registry: maps TemplateFamily to PDF service template key
     const registry: Record<string, string> = {
-      GENERAL_TABLE: 'lab_report_v2',
-      TWO_COLUMN_TABLE: 'lab_report_v2', // shares renderer; config drives column layout
-      PERIPHERAL_FILM_REPORT: 'lab_report_v2', // stub — specialized renderer deferred
-      HISTOPATH_NARRATIVE: 'lab_report_v2',    // stub
+      GENERAL_TABLE: 'lab_report_v3',
+      TWO_COLUMN_TABLE: 'lab_report_v3', // shares renderer; config drives column layout
+      PERIPHERAL_FILM_REPORT: 'lab_report_v3', // stub — specialized renderer deferred
+      HISTOPATH_NARRATIVE: 'lab_report_v3',    // stub
       GRAPHICAL_SCALE_REPORT: 'graphical_scale_report_v1',
-      IMAGE_REPORT: 'lab_report_v2',           // stub
+      IMAGE_REPORT: 'lab_report_v3',           // stub
       HYBRID_TEMPLATE: 'hybrid_template_v1',
     };
-    return registry[templateFamily] ?? 'lab_report_v2';
+    return registry[templateFamily] ?? 'lab_report_v3';
   }
 
   private buildSamplePayload(tpl: any, tenantConfig: any, tenant: any): Record<string, unknown> {

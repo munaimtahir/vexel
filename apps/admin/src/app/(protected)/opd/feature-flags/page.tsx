@@ -64,7 +64,7 @@ export default function OpdFeatureFlagsPage() {
 
   const opdFlags = useMemo(() => {
     return flags
-      .filter((f) => f.key === 'module.opd' || f.key.startsWith('opd.'))
+      .filter((f) => f.key === 'module.opd' || f.key.startsWith('module.opd.') || f.key.startsWith('opd.'))
       .sort((a, b) => a.key.localeCompare(b.key));
   }, [flags]);
 

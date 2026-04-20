@@ -10,14 +10,18 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {},
+    "metadata": {
+      "actualWorkers": 2
+    },
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "/home/munaim/srv/apps/vexel/apps/e2e/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 2
+        },
         "id": "operator",
         "name": "operator",
         "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
@@ -35,7 +39,9 @@
         "outputDir": "/home/munaim/srv/apps/vexel/apps/e2e/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 2
+        },
         "id": "admin",
         "name": "admin",
         "testDir": "/home/munaim/srv/apps/vexel/apps/e2e/tests",
@@ -105,8 +111,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1448,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:07.593Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "791b3c4e0869e77b2651-ec119bc76f7a9a8e5e79",
@@ -125,8 +145,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3464,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:09.451Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "791b3c4e0869e77b2651-9b8c28ed48cc87858f30",
@@ -145,8 +179,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1873,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:12.959Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "791b3c4e0869e77b2651-35d75854ed795e359479",
@@ -165,8 +213,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1516,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:14.868Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "791b3c4e0869e77b2651-f0ecd94ebf3d091fd913",
@@ -185,8 +247,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3852,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:16.433Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "791b3c4e0869e77b2651-df16738dc9751e09ee3f",
@@ -222,8 +298,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4954,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:07.517Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d24919be6e7152a1c9ee-f9a06d45895068adff76",
@@ -242,8 +332,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3274,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:13.029Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d24919be6e7152a1c9ee-c3340cde86fc7f2908c9",
@@ -262,8 +366,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 6391,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:16.343Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d24919be6e7152a1c9ee-899553acb2b6141fc714",
@@ -299,8 +417,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5535,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:20.524Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "7db7bcaadd8a4835d529-600d2c08b210554495e2",
@@ -319,8 +451,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3532,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:26.112Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "7db7bcaadd8a4835d529-72245213f43cd621281f",
@@ -339,8 +485,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3204,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:29.702Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "7db7bcaadd8a4835d529-4209edfc7535401da87e",
@@ -376,8 +536,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5374,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:22.839Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "fbbc3f8c7effa28db4e0-a71f1cb5d6b5765e77ae",
@@ -396,8 +570,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5265,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:28.299Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "fbbc3f8c7effa28db4e0-fe8b5a7b157b7cf91225",
@@ -416,8 +604,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3324,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:33.604Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "fbbc3f8c7effa28db4e0-0a324ac0b9354ba40967",
@@ -448,13 +650,27 @@
               "tags": [],
               "tests": [
                 {
-                  "timeout": 30000,
+                  "timeout": 120000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17580,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:33.009Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "a87cae255acc72e236e6-94eac3b82538c6ab8c63",
@@ -473,8 +689,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3546,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:50.643Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "a87cae255acc72e236e6-6b8530b347b2253c4dc0",
@@ -488,13 +718,27 @@
               "tags": [],
               "tests": [
                 {
-                  "timeout": 30000,
+                  "timeout": 60000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1040,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:54.272Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "a87cae255acc72e236e6-7d55526c31c3daec49b4",
@@ -530,8 +774,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 463,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:36.984Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1e2dd9804cdd016b9be2-7c84b17e477d67db9acf",
@@ -550,8 +808,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 437,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:37.472Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1e2dd9804cdd016b9be2-35dd1bdc1842d4ff38ca",
@@ -570,8 +842,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 452,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:37.929Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1e2dd9804cdd016b9be2-b6d8cfba4280f1ef36a6",
@@ -602,13 +888,27 @@
               "tags": [],
               "tests": [
                 {
-                  "timeout": 30000,
+                  "timeout": 90000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 8608,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:38.420Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "68bfce22ded2a6cd8cd5-dfd5ebb80f7b6c8a13ca",
@@ -644,8 +944,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3640,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:47.079Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "9bb21db57e14c10f9588-d27948605839de675f1d",
@@ -659,13 +973,27 @@
               "tags": [],
               "tests": [
                 {
-                  "timeout": 30000,
+                  "timeout": 120000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4148,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:50.804Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "9bb21db57e14c10f9588-090f4ab58a1d149d5cd0",
@@ -684,8 +1012,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1165,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:54.983Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "9bb21db57e14c10f9588-0612a5a7fd61b2eeade4",
@@ -721,8 +1063,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 939,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:55.447Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "04b596abfcbf4145b009-2e6030f7b391a5bda2da",
@@ -741,8 +1097,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 847,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:56.426Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "04b596abfcbf4145b009-74b17df4237852ba77ed",
@@ -761,8 +1131,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1534,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:57.348Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "04b596abfcbf4145b009-4edd3a337ee0d6415a72",
@@ -781,8 +1165,26 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 786,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[10] Second order-lab returned status=200, labOrders.length=2\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:59.027Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "04b596abfcbf4145b009-3af5ec3b6be7bec9a6f1",
@@ -801,75 +1203,26 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4108,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:59.885Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "04b596abfcbf4145b009-acda526a31618142e200",
               "file": "10-invalid-transition-blocked.spec.ts",
-              "line": 104,
-              "column": 7
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "11-chaos-nightly.spec.ts",
-      "file": "11-chaos-nightly.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "@nightly Chaos journey — bounded safe exploration",
-          "file": "11-chaos-nightly.spec.ts",
-          "line": 43,
-          "column": 6,
-          "specs": [
-            {
-              "title": "@nightly random page navigation produces no console errors",
-              "ok": true,
-              "tags": [
-                "nightly",
-                "nightly"
-              ],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "operator",
-                  "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "af7e86950ee9ce498de8-f68a8d2a8e5ca9e08e76",
-              "file": "11-chaos-nightly.spec.ts",
-              "line": 44,
-              "column": 7
-            },
-            {
-              "title": "@nightly full workflow smoke with timing capture",
-              "ok": true,
-              "tags": [
-                "nightly",
-                "nightly"
-              ],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "operator",
-                  "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "af7e86950ee9ce498de8-2d8d8cc7d45a7be7f2a9",
-              "file": "11-chaos-nightly.spec.ts",
               "line": 104,
               "column": 7
             }
@@ -901,8 +1254,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3572,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:56.194Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "e8155346c87eb7e615cc-7064c40b85a451b1b8be",
@@ -921,8 +1288,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3208,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:47:59.827Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "e8155346c87eb7e615cc-b2dd350d5bcf10219626",
@@ -961,8 +1342,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1061,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:03.108Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "5350e4e4eb63f605944f-502db76a13d1369b8620",
@@ -984,8 +1379,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3392,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:04.198Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "5350e4e4eb63f605944f-082f52ff7d3f8cae232a",
@@ -1007,8 +1416,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1552,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:07.633Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "5350e4e4eb63f605944f-a8ae4f4cf8f025c8750d",
@@ -1030,8 +1453,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1917,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:09.218Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "5350e4e4eb63f605944f-a81c288be186f5b2db2e",
@@ -1053,8 +1490,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2222,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:11.172Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "5350e4e4eb63f605944f-9ed1a35b5ff2ddde7088",
@@ -1076,8 +1527,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2164,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:13.418Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "5350e4e4eb63f605944f-45120bce5da7936c5227",
@@ -1115,8 +1580,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3812,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:04.076Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "110c7d49bc27d8a8bcb5-72049d257a07c6af6b48",
@@ -1137,8 +1616,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2836,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:07.954Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "110c7d49bc27d8a8bcb5-a7c5e4e17ff7931c8c26",
@@ -1159,8 +1652,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 520,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:10.851Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "110c7d49bc27d8a8bcb5-9684ce0b2f6d213c9f06",
@@ -1181,8 +1688,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2050,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:11.418Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "110c7d49bc27d8a8bcb5-b28ff5286c1f080f4302",
@@ -1221,8 +1742,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2973,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:13.563Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "705043c0c71b88bb9bd2-743d237d420ff9243337",
@@ -1244,8 +1779,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3232,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:16.577Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "705043c0c71b88bb9bd2-690a4b8ebc3406b7f7ae",
@@ -1267,8 +1816,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6753,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:19.845Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "705043c0c71b88bb9bd2-cab0182124afdfc32a79",
@@ -1306,8 +1869,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3815,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:15.626Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "e7b63a44658d7c58b1b4-830cae7b20b1d855a8f0",
@@ -1328,8 +1905,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 812,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:19.474Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "e7b63a44658d7c58b1b4-debd7a109bcf703251c4",
@@ -1377,7 +1968,31 @@
                   "expectedStatus": "skipped",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:20.333Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "\n    Render failure simulation requires injecting PDF_SERVICE_URL=http://invalid-host:9999\n    at the Docker container level so the PDF worker fails to render.\n\n    To enable this test:\n    1. Stop the pdf service container\n    2. Update docker-compose.yml: PDF_SERVICE_URL=http://invalid-host:9999 in the api/worker env\n    3. Trigger document generation\n    4. Verify document status reaches FAILED\n    5. Restart pdf service and verify FAILED → retried → RENDERED\n\n    Once infrastructure hooks are wired, re-enable this test and implement:\n      - Trigger verification (creates QUEUED document)\n      - Poll until document reaches FAILED status\n      - Restart PDF service via API or infrastructure hook\n      - Re-queue document (POST /documents/{id}:retry if implemented)\n      - Poll until document reaches RENDERED or PUBLISHED\n    ",
+                          "location": {
+                            "file": "/home/munaim/srv/apps/vexel/apps/e2e/tests/documents/03-render-failure-retry.spec.ts",
+                            "line": 13,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
                   "status": "skipped"
                 }
               ],
@@ -1409,7 +2024,31 @@
                   "expectedStatus": "skipped",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:20.347Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "\n    Render failure simulation requires injecting PDF_SERVICE_URL=http://invalid-host:9999\n    at the Docker container level so the PDF worker fails to render.\n\n    To enable this test:\n    1. Stop the pdf service container\n    2. Update docker-compose.yml: PDF_SERVICE_URL=http://invalid-host:9999 in the api/worker env\n    3. Trigger document generation\n    4. Verify document status reaches FAILED\n    5. Restart pdf service and verify FAILED → retried → RENDERED\n\n    Once infrastructure hooks are wired, re-enable this test and implement:\n      - Trigger verification (creates QUEUED document)\n      - Poll until document reaches FAILED status\n      - Restart PDF service via API or infrastructure hook\n      - Re-queue document (POST /documents/{id}:retry if implemented)\n      - Poll until document reaches RENDERED or PUBLISHED\n    ",
+                          "location": {
+                            "file": "/home/munaim/srv/apps/vexel/apps/e2e/tests/documents/03-render-failure-retry.spec.ts",
+                            "line": 13,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
                   "status": "skipped"
                 }
               ],
@@ -1449,8 +2088,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5182,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:20.370Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "c70e335b4e700f1c7ba6-65e4e9ee26735aed856c",
@@ -1488,8 +2141,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5542,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:25.631Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "ad00fb0aac2cdc7ce8e5-6075a8505fd267df0ca7",
@@ -1527,8 +2194,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 927,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:26.691Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "dbfcf73d841fa5cc18ef-67e6d5411a0d3cc7e4dc",
@@ -1549,8 +2230,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 876,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:27.670Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "dbfcf73d841fa5cc18ef-0ffee95ffec74290a658",
@@ -1571,8 +2266,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1220,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:28.689Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "dbfcf73d841fa5cc18ef-35ae2f792daa4f0a8987",
@@ -1593,8 +2302,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3119,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:29.982Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "dbfcf73d841fa5cc18ef-9d6837ca4b7b82ea01b2",
@@ -1632,8 +2355,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3960,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:31.233Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "6dae90ed6b3bcb9967da-f84df97c089025d504b2",
@@ -1654,8 +2391,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4834,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:35.227Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "6dae90ed6b3bcb9967da-0cbd9615e7a7b8fd599c",
@@ -1676,8 +2427,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 631,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:40.152Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "6dae90ed6b3bcb9967da-c229a6953a283b07828c",
@@ -1716,8 +2481,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1500,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:33.293Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-92feb109f9af2e1f084f",
@@ -1739,8 +2518,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2622,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:34.828Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-30bfd97847d1c59bd8ec",
@@ -1762,8 +2555,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2809,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:37.540Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-238b3fce87b248189aba",
@@ -1785,8 +2592,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2314,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:40.394Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-33f9666d8de8c0f60922",
@@ -1808,8 +2629,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3256,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:42.737Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-edae0c8ba2d8dd804f94",
@@ -1831,8 +2666,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2864,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:46.110Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-ba32dbb42eeeaa68c6ac",
@@ -1854,8 +2703,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2230,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:49.019Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-763e25e9dedec63c84f0",
@@ -1877,8 +2740,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3523,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:51.277Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-fcdd0c31ac34e8840568",
@@ -1900,8 +2777,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2823,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:54.887Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-8359d7ccaab92665ef9c",
@@ -1923,8 +2814,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1883,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:57.746Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "d4ce209aa0abbbb334d5-01e5fe606758ebb2ebf9",
@@ -1963,8 +2868,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1558,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:40.845Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "73b6679531bac27009cc-f34ece3e30ad7ad3dad6",
@@ -1986,8 +2905,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1708,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:42.436Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "73b6679531bac27009cc-254aec1185bc26a653f5",
@@ -2009,8 +2942,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1003,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:44.191Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "73b6679531bac27009cc-e43b320596eb64ff66a9",
@@ -2032,8 +2979,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1096,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:45.298Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "73b6679531bac27009cc-54367f83c82b93f1d950",
@@ -2055,8 +3016,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1223,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:46.462Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "73b6679531bac27009cc-ee6cc94d2a76049af385",
@@ -2078,8 +3053,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1454,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:47.737Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "73b6679531bac27009cc-4b7235982707c153075d",
@@ -2117,8 +3106,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1666,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:49.568Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "b67f9422b9fb3ec20532-c0cccd35fd3f2bb61f2c",
@@ -2139,8 +3142,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3416,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:51.266Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "b67f9422b9fb3ec20532-363aeb3650ecdffc50a5",
@@ -2161,8 +3178,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 753,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:54.713Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "b67f9422b9fb3ec20532-a248d61dfc28821fc4bf",
@@ -2183,8 +3214,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1670,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:55.517Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "b67f9422b9fb3ec20532-794ca0a2772c2608efcd",
@@ -2205,8 +3250,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 899,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:57.268Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "b67f9422b9fb3ec20532-0d871d3f468f9053bc90",
@@ -2227,8 +3286,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 508,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:58.250Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "b67f9422b9fb3ec20532-ccbe89392f5ea314e3c9",
@@ -2249,8 +3322,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 11,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:58.788Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "b67f9422b9fb3ec20532-7dfd6de1d7bbee45f5c0",
@@ -2289,8 +3376,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 815,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:58.834Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "f290d1dd94163b8bd8a2-863552c1793a1f1dc9c5",
@@ -2312,8 +3413,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 481,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:48:59.680Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "f290d1dd94163b8bd8a2-240861211ab9d97a2d17",
@@ -2335,8 +3450,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 469,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:00.184Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "f290d1dd94163b8bd8a2-a8a6747713d5d314456b",
@@ -2358,8 +3487,22 @@
                   "expectedStatus": "passed",
                   "projectId": "operator",
                   "projectName": "operator",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 500,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:00.673Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "f290d1dd94163b8bd8a2-f9a17894db0c739c0824",
@@ -2395,8 +3538,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2483,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:02.304Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "9888e8e8b07733fe0491-17de8e1af25788ab824c",
@@ -2415,8 +3572,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2991,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:05.082Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "9888e8e8b07733fe0491-a759772b177b9dd07811",
@@ -2435,8 +3606,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3517,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:08.121Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "9888e8e8b07733fe0491-a7a90fac2542860d2b1e",
@@ -2455,8 +3640,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2983,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:11.735Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "9888e8e8b07733fe0491-f48451c27e4c49e69d92",
@@ -2475,8 +3674,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 807,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:14.767Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "9888e8e8b07733fe0491-40bcdc089553261742c5",
@@ -2512,8 +3725,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2944,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:04.046Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1ff5fff398592a46d983-574fe11afe8612657037",
@@ -2532,8 +3759,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2783,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:07.531Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1ff5fff398592a46d983-e9f931f166881bc4cdca",
@@ -2572,8 +3813,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 868,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:10.425Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "18a730538f15b014f7cf-c7b9e391b273319b98e4",
@@ -2595,8 +3850,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2670,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:11.354Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "18a730538f15b014f7cf-58c60695fc4904260125",
@@ -2618,8 +3887,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2575,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:14.109Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "18a730538f15b014f7cf-abab1f6824513b9bd13e",
@@ -2641,8 +3924,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2602,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:16.744Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "18a730538f15b014f7cf-e2fe498e35261316483d",
@@ -2680,8 +3977,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3160,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:15.671Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "fa44a46311055018755e-cf48c5d189fa293fbd49",
@@ -2702,8 +4013,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2752,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:18.898Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "fa44a46311055018755e-d00c643e2bce1ad910ce",
@@ -2724,8 +4049,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3350,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:21.687Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "fa44a46311055018755e-7e73ec3bf3e21d5d303b",
@@ -2755,7 +4094,30 @@
                   "expectedStatus": "skipped",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:25.092Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/home/munaim/srv/apps/vexel/apps/e2e/tests/admin/02-tenants.spec.ts",
+                            "line": 60,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
                   "status": "skipped"
                 }
               ],
@@ -2778,7 +4140,7 @@
         {
           "title": "@admin Users & Roles",
           "file": "admin/03-users-roles.spec.ts",
-          "line": 20,
+          "line": 30,
           "column": 6,
           "specs": [
             {
@@ -2794,13 +4156,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2868,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:19.435Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "f7e5f0e1b8b9e5a47513-f92ad57fc8eefb627be1",
               "file": "admin/03-users-roles.spec.ts",
-              "line": 21,
+              "line": 31,
               "column": 7
             },
             {
@@ -2816,13 +4192,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2890,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:22.367Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "f7e5f0e1b8b9e5a47513-2dd5817ad5de5bba0dc1",
               "file": "admin/03-users-roles.spec.ts",
-              "line": 28,
+              "line": 38,
               "column": 7
             },
             {
@@ -2838,13 +4228,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4111,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:25.310Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "f7e5f0e1b8b9e5a47513-92d20b52b996b5bcec83",
               "file": "admin/03-users-roles.spec.ts",
-              "line": 39,
+              "line": 49,
               "column": 7
             },
             {
@@ -2860,13 +4264,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3930,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:29.489Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "f7e5f0e1b8b9e5a47513-dc5697e1499826de9ef6",
               "file": "admin/03-users-roles.spec.ts",
-              "line": 67,
+              "line": 77,
               "column": 7
             }
           ]
@@ -2899,8 +4317,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2749,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:25.147Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "004391042f293e048219-d6e986effeb54348bd0e",
@@ -2921,8 +4353,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3968,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:27.927Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "004391042f293e048219-6a9b3a2261e5b55bd266",
@@ -2943,8 +4389,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 803,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:32.002Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "004391042f293e048219-c5e2c6d2293c0dbb1cdb",
@@ -2982,8 +4442,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4068,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:32.898Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1ba23811021fd0874fb7-5f9ce6dc885f988f2368",
@@ -3004,8 +4478,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2803,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:37.053Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1ba23811021fd0874fb7-8df44a00631c29dd820c",
@@ -3026,8 +4514,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2572,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:39.947Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1ba23811021fd0874fb7-a33a47a80fc220552ce5",
@@ -3048,8 +4550,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2856,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:42.585Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1ba23811021fd0874fb7-8c8a67ada30634060dad",
@@ -3070,8 +4586,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3473,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:45.469Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1ba23811021fd0874fb7-a7566ffc4794b1aa2901",
@@ -3092,8 +4622,22 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2764,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:48.976Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "1ba23811021fd0874fb7-9e8e6ca4c79e9ce50353",
@@ -3115,7 +4659,7 @@
         {
           "title": "@admin Audit Explorer",
           "file": "admin/06-audit-explorer.spec.ts",
-          "line": 20,
+          "line": 30,
           "column": 6,
           "specs": [
             {
@@ -3131,13 +4675,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4170,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:33.493Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "e2cd3cf50a0be53b0807-058592f64fac28f14a04",
               "file": "admin/06-audit-explorer.spec.ts",
-              "line": 21,
+              "line": 31,
               "column": 7
             },
             {
@@ -3153,13 +4711,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2891,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:37.710Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "e2cd3cf50a0be53b0807-f7121c756e5e4d53dcbc",
               "file": "admin/06-audit-explorer.spec.ts",
-              "line": 28,
+              "line": 38,
               "column": 7
             },
             {
@@ -3175,13 +4747,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3731,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:40.646Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "e2cd3cf50a0be53b0807-12683da7ce8198f6a90f",
               "file": "admin/06-audit-explorer.spec.ts",
-              "line": 37,
+              "line": 47,
               "column": 7
             },
             {
@@ -3197,13 +4783,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3219,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:44.466Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "e2cd3cf50a0be53b0807-aad5dd6eebc67b897666",
               "file": "admin/06-audit-explorer.spec.ts",
-              "line": 63,
+              "line": 73,
               "column": 7
             }
           ]
@@ -3220,7 +4820,7 @@
         {
           "title": "@admin Jobs & Failures",
           "file": "admin/07-jobs-failures.spec.ts",
-          "line": 19,
+          "line": 29,
           "column": 6,
           "specs": [
             {
@@ -3236,13 +4836,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3003,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:47.887Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "ab210778a72b4deebd20-5ea67619c2f797379fdd",
               "file": "admin/07-jobs-failures.spec.ts",
-              "line": 20,
+              "line": 30,
               "column": 7
             },
             {
@@ -3258,13 +4872,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2305,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:50.944Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "ab210778a72b4deebd20-28649c0e670b6a8d978a",
               "file": "admin/07-jobs-failures.spec.ts",
-              "line": 27,
+              "line": 37,
               "column": 7
             },
             {
@@ -3280,13 +4908,27 @@
                   "expectedStatus": "passed",
                   "projectId": "admin",
                   "projectName": "admin",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2010,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-26T00:49:53.299Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "ab210778a72b4deebd20-ed0dbbe76b3a4219ee80",
               "file": "admin/07-jobs-failures.spec.ts",
-              "line": 54,
+              "line": 52,
               "column": 7
             }
           ]
@@ -3296,10 +4938,10 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-03-07T04:25:07.880Z",
-    "duration": 188.41000000000008,
-    "expected": 0,
-    "skipped": 121,
+    "startTime": "2026-03-26T00:47:03.742Z",
+    "duration": 171705.94,
+    "expected": 116,
+    "skipped": 3,
     "unexpected": 0,
     "flaky": 0
   }

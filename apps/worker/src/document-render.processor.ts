@@ -7,7 +7,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
 
 // Auto-publish after render for document types that should not require a manual publish click.
-const AUTO_PUBLISH_TYPES = new Set(['RECEIPT', 'OPD_INVOICE_RECEIPT', 'LAB_REPORT']);
+const AUTO_PUBLISH_TYPES = new Set(['RECEIPT', 'OPD_INVOICE_RECEIPT', 'LAB_REPORT', 'OPD_PRESCRIPTION']);
 
 interface RenderJobData {
   documentId: string;

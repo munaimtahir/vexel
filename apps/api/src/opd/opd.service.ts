@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -6,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { DocumentsService } from '../documents/documents.service';
 
 function parseBool(value: unknown): boolean | undefined {
   if (typeof value === 'boolean') return value;
@@ -43,6 +45,7 @@ export class OpdService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly documents: DocumentsService,
   ) {}
 
   private async assertOpdEnabled(tenantId: string) {
@@ -205,6 +208,7 @@ export class OpdService {
       id: inv.id,
       tenantId: inv.tenantId,
       patientId: inv.patientId,
+      encounterId: inv.encounterId ?? null,
       visitId: inv.opdVisitId ?? null,
       appointmentId: inv.opdVisit?.appointmentId ?? null,
       invoiceCode: inv.invoiceCode ?? null,
@@ -245,6 +249,105 @@ export class OpdService {
       referenceNo: p.referenceNo ?? null,
       notes: p.notes ?? null,
     };
+  }
+
+  private async assertOpdFeatureEnabled(tenantId: string, key: string) {
+    const flag = await (this.prisma as any).tenantFeature.findUnique({
+      where: { tenantId_key: { tenantId, key } },
+    });
+    if (!flag?.enabled) {
+      throw new ForbiddenException(`${key} feature is disabled for this tenant`);
+    }
+  }
+
+  private mapKmvpDoctor(d: any) {
+    return {
+      id: d.id,
+      tenantId: d.tenantId,
+      code: d.code,
+      displayName: d.displayName,
+      specialtyName: d.specialtyName,
+      consultationFee: Number(d.consultationFee),
+      currency: d.currency,
+      isActive: d.isActive,
+      sortOrder: d.sortOrder,
+      designation: d.designation ?? null,
+      degrees: d.degrees ?? null,
+      pmdcNumber: d.pmdcNumber ?? null,
+      phcNumber: d.phcNumber ?? null,
+      clinicName: d.clinicName ?? null,
+      clinicAddress: d.clinicAddress ?? null,
+      clinicPhone: d.clinicPhone ?? null,
+      signatureLabel: d.signatureLabel ?? null,
+      signatureUrl: d.signatureUrl ?? null,
+      createdAt: d.createdAt,
+      updatedAt: d.updatedAt,
+    };
+  }
+
+  private mapKmvpEncounter(e: any) {
+    return {
+      id: e.id,
+      tenantId: e.tenantId,
+      patientId: e.patientId,
+      encounterId: e.encounterId,
+      doctorId: e.doctorId,
+      status: e.status,
+      visitCode: e.visitCode,
+      chiefComplaint: e.chiefComplaint ?? null,
+      diagnosis: e.diagnosis ?? null,
+      advice: e.advice ?? null,
+      followUp: e.followUp ?? null,
+      investigations: e.investigations ?? null,
+      remarks: e.remarks ?? null,
+      paymentStatus: e.paymentStatus ?? null,
+      cancelledAt: e.cancelledAt ?? null,
+      cancelledReason: e.cancelledReason ?? null,
+      completedAt: e.completedAt ?? null,
+      createdAt: e.createdAt,
+      publishedAt: e.publishedAt ?? null,
+      updatedAt: e.updatedAt,
+    };
+  }
+
+  private async withCommandIdempotency<T>(
+    tenantId: string,
+    commandName: string,
+    idempotencyKey: string | undefined,
+    requestJson: Record<string, unknown>,
+    executor: () => Promise<T>,
+  ): Promise<T> {
+    if (!idempotencyKey || !idempotencyKey.trim()) {
+      return executor();
+    }
+    const key = idempotencyKey.trim();
+    const existing = await (this.prisma as any).opdCommandLog.findFirst({
+      where: { tenantId, commandName, idempotencyKey: key },
+    });
+    if (existing?.responseJson != null) {
+      return existing.responseJson as T;
+    }
+    const result = await executor();
+    try {
+      await (this.prisma as any).opdCommandLog.create({
+        data: {
+          tenantId,
+          commandName,
+          idempotencyKey: key,
+          requestJson,
+          responseJson: result as any,
+        },
+      });
+    } catch (err: any) {
+      if (err?.code === 'P2002') {
+        const deduped = await (this.prisma as any).opdCommandLog.findFirst({
+          where: { tenantId, commandName, idempotencyKey: key },
+        });
+        if (deduped?.responseJson != null) return deduped.responseJson as T;
+      }
+      throw err;
+    }
+    return result;
   }
 
   private async assertScheduleNoOverlap(
@@ -1494,6 +1597,7 @@ export class OpdService {
       data: {
         tenantId,
         patientId: body.patientId,
+        encounterId: body.encounterId ?? null,
         opdVisitId: body.visitId ?? null,
         invoiceCode,
         status: 'DRAFT',
@@ -1684,5 +1788,796 @@ export class OpdService {
       correlationId,
     });
     return { invoiceId, message: 'Receipt generation queued', status: 'QUEUED' };
+  }
+
+  // ─── OPD KMVP Doctor Master ───────────────────────────────────────────────
+
+  async listDoctors(tenantId: string, q: any) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertOpdFeatureEnabled(tenantId, 'module.opd.doctorProfiles');
+    const page = Number(q?.page ?? 1);
+    const limit = Number(q?.limit ?? 20);
+    const where: any = { tenantId };
+    if (q?.isActive !== undefined) {
+      const b = parseBool(q.isActive);
+      if (b !== undefined) where.isActive = b;
+    }
+    const search = typeof q?.search === 'string' ? q.search.trim() : '';
+    if (search) {
+      where.OR = [
+        { code: { contains: search, mode: 'insensitive' } },
+        { displayName: { contains: search, mode: 'insensitive' } },
+        { specialtyName: { contains: search, mode: 'insensitive' } },
+        { designation: { contains: search, mode: 'insensitive' } },
+        { clinicName: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    const [data, total] = await Promise.all([
+      (this.prisma as any).opdDoctor.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: [{ sortOrder: 'asc' }, { displayName: 'asc' }],
+      }),
+      (this.prisma as any).opdDoctor.count({ where }),
+    ]);
+    return {
+      data: data.map((d: any) => this.mapKmvpDoctor(d)),
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) || 1 },
+    };
+  }
+
+  async getDoctor(tenantId: string, doctorId: string) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertOpdFeatureEnabled(tenantId, 'module.opd.doctorProfiles');
+    const d = await (this.prisma as any).opdDoctor.findFirst({ where: { id: doctorId, tenantId } });
+    if (!d) throw new NotFoundException('OPD doctor not found');
+    return this.mapKmvpDoctor(d);
+  }
+
+  async createDoctor(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertOpdFeatureEnabled(tenantId, 'module.opd.doctorProfiles');
+    if (!body?.code?.trim() || !body?.displayName?.trim() || !body?.specialtyName?.trim()) {
+      throw new BadRequestException('code, displayName, and specialtyName are required');
+    }
+    if (body.consultationFee == null || Number(body.consultationFee) < 0) {
+      throw new BadRequestException('consultationFee must be a non-negative number');
+    }
+    try {
+      const d = await (this.prisma as any).opdDoctor.create({
+        data: {
+          tenantId,
+          code: body.code.trim(),
+          displayName: body.displayName.trim(),
+          specialtyName: body.specialtyName.trim(),
+          consultationFee: Number(body.consultationFee),
+          currency: (body.currency ?? 'PKR').toUpperCase(),
+          isActive: body.isActive !== undefined ? !!body.isActive : true,
+          sortOrder: Number(body.sortOrder ?? 0),
+          designation: body.designation != null ? String(body.designation).trim() : null,
+          degrees: body.degrees != null ? String(body.degrees).trim() : null,
+          pmdcNumber: body.pmdcNumber != null ? String(body.pmdcNumber).trim() : null,
+          phcNumber: body.phcNumber != null ? String(body.phcNumber).trim() : null,
+          clinicName: body.clinicName != null ? String(body.clinicName).trim() : null,
+          clinicAddress: body.clinicAddress != null ? String(body.clinicAddress).trim() : null,
+          clinicPhone: body.clinicPhone != null ? String(body.clinicPhone).trim() : null,
+          signatureLabel: body.signatureLabel != null ? String(body.signatureLabel).trim() : null,
+          signatureUrl: body.signatureUrl != null ? String(body.signatureUrl).trim() : null,
+        },
+      });
+      await this.audit.log({
+        tenantId,
+        actorUserId,
+        action: 'opd.doctor.created',
+        entityType: 'OpdDoctor',
+        entityId: d.id,
+        after: this.mapKmvpDoctor(d),
+        correlationId,
+      });
+      return this.mapKmvpDoctor(d);
+    } catch (err: any) {
+      if (err?.code === 'P2002') throw new ConflictException('Doctor code already exists in tenant');
+      throw err;
+    }
+  }
+
+  async updateDoctor(tenantId: string, doctorId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertOpdFeatureEnabled(tenantId, 'module.opd.doctorProfiles');
+    const existing = await (this.prisma as any).opdDoctor.findFirst({ where: { id: doctorId, tenantId } });
+    if (!existing) throw new NotFoundException('OPD doctor not found');
+    try {
+      const updated = await (this.prisma as any).opdDoctor.update({
+        where: { id: doctorId },
+        data: {
+          ...(body.code !== undefined ? { code: String(body.code).trim() } : {}),
+          ...(body.displayName !== undefined ? { displayName: String(body.displayName).trim() } : {}),
+          ...(body.specialtyName !== undefined ? { specialtyName: String(body.specialtyName).trim() } : {}),
+          ...(body.consultationFee !== undefined ? { consultationFee: Number(body.consultationFee) } : {}),
+          ...(body.currency !== undefined ? { currency: String(body.currency).toUpperCase() } : {}),
+          ...(body.isActive !== undefined ? { isActive: !!body.isActive } : {}),
+          ...(body.sortOrder !== undefined ? { sortOrder: Number(body.sortOrder) } : {}),
+          ...(body.designation !== undefined ? { designation: body.designation != null ? String(body.designation).trim() : null } : {}),
+          ...(body.degrees !== undefined ? { degrees: body.degrees != null ? String(body.degrees).trim() : null } : {}),
+          ...(body.pmdcNumber !== undefined ? { pmdcNumber: body.pmdcNumber != null ? String(body.pmdcNumber).trim() : null } : {}),
+          ...(body.phcNumber !== undefined ? { phcNumber: body.phcNumber != null ? String(body.phcNumber).trim() : null } : {}),
+          ...(body.clinicName !== undefined ? { clinicName: body.clinicName != null ? String(body.clinicName).trim() : null } : {}),
+          ...(body.clinicAddress !== undefined ? { clinicAddress: body.clinicAddress != null ? String(body.clinicAddress).trim() : null } : {}),
+          ...(body.clinicPhone !== undefined ? { clinicPhone: body.clinicPhone != null ? String(body.clinicPhone).trim() : null } : {}),
+          ...(body.signatureLabel !== undefined ? { signatureLabel: body.signatureLabel != null ? String(body.signatureLabel).trim() : null } : {}),
+          ...(body.signatureUrl !== undefined ? { signatureUrl: body.signatureUrl != null ? String(body.signatureUrl).trim() : null } : {}),
+        },
+      });
+      await this.audit.log({
+        tenantId,
+        actorUserId,
+        action: 'opd.doctor.updated',
+        entityType: 'OpdDoctor',
+        entityId: doctorId,
+        before: this.mapKmvpDoctor(existing),
+        after: this.mapKmvpDoctor(updated),
+        correlationId,
+      });
+      return this.mapKmvpDoctor(updated);
+    } catch (err: any) {
+      if (err?.code === 'P2002') throw new ConflictException('Doctor code already exists in tenant');
+      throw err;
+    }
+  }
+
+  // ─── OPD KMVP Encounters / Commands ───────────────────────────────────────
+
+  async listEncounters(tenantId: string, q: any) {
+    await this.assertOpdEnabled(tenantId);
+    const page = Number(q?.page ?? 1);
+    const limit = Number(q?.limit ?? 20);
+    const where: any = { tenantId };
+    if (q?.status) where.status = q.status;
+    if (q?.doctorId) where.doctorId = q.doctorId;
+    if (q?.patientId) where.patientId = q.patientId;
+    const search = typeof q?.search === 'string' ? q.search.trim() : '';
+    if (search) {
+      where.OR = [{ visitCode: { contains: search, mode: 'insensitive' } }];
+    }
+    const [data, total] = await Promise.all([
+      (this.prisma as any).opdEncounter.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      (this.prisma as any).opdEncounter.count({ where }),
+    ]);
+    return {
+      data: data.map((e: any) => this.mapKmvpEncounter(e)),
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) || 1 },
+    };
+  }
+
+  async getEncounter(tenantId: string, encounterId: string) {
+    await this.assertOpdEnabled(tenantId);
+    const e = await (this.prisma as any).opdEncounter.findFirst({
+      where: { id: encounterId, tenantId },
+      include: {
+        vitals: { orderBy: { enteredAt: 'desc' } },
+        notes: true,
+        prescriptions: { include: { items: { orderBy: { sortOrder: 'asc' } } } },
+      },
+    });
+    if (!e) throw new NotFoundException('OPD encounter not found');
+    return {
+      ...this.mapKmvpEncounter(e),
+      vitals: (e.vitals ?? []).map((v: any) => ({
+        id: v.id,
+        bpSystolic: v.bpSystolic,
+        bpDiastolic: v.bpDiastolic,
+        pulse: v.pulse,
+        temperatureC: v.temperatureC != null ? Number(v.temperatureC) : null,
+        respRate: v.respRate,
+        spo2: v.spo2,
+        weightKg: v.weightKg != null ? Number(v.weightKg) : null,
+        heightCm: v.heightCm != null ? Number(v.heightCm) : null,
+        bmi: v.bmi != null ? Number(v.bmi) : null,
+        enteredBy: v.enteredBy ?? null,
+        enteredAt: v.enteredAt,
+      })),
+      notes:
+        e.notes?.[0] != null
+          ? {
+              historyNotes: e.notes[0].historyNotes ?? null,
+              examNotes: e.notes[0].examNotes ?? null,
+              assessment: e.notes[0].assessment ?? null,
+              plan: e.notes[0].plan ?? null,
+              advice: e.notes[0].advice ?? null,
+              diagnosis: e.notes[0].diagnosis ?? null,
+              followUp: e.notes[0].followUp ?? null,
+              investigations: e.notes[0].investigations ?? null,
+              remarks: e.notes[0].remarks ?? null,
+              updatedAt: e.notes[0].updatedAt,
+            }
+          : null,
+      prescription:
+        e.prescriptions?.[0] != null
+          ? {
+              id: e.prescriptions[0].id,
+              publishedDocumentId: e.prescriptions[0].publishedDocumentId ?? null,
+              items: (e.prescriptions[0].items ?? []).map((i: any) => ({
+                id: i.id,
+                drugName: i.drugName,
+                genericName: i.genericName ?? null,
+                strength: i.strength ?? null,
+                dose: i.dose ?? null,
+                frequency: i.frequency ?? null,
+                duration: i.duration ?? null,
+                route: i.route ?? null,
+                instructions: i.instructions ?? null,
+                sortOrder: i.sortOrder,
+              })),
+            }
+          : null,
+    };
+  }
+
+  async createRegistration(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertOpdFeatureEnabled(tenantId, 'module.opd.doctorProfiles');
+    if (!body?.patientId || !body?.doctorId) {
+      throw new BadRequestException('patientId and doctorId are required');
+    }
+    return this.withCommandIdempotency(
+      tenantId,
+      'CreateOpdRegistration',
+      body?.idempotencyKey,
+      body,
+      async () => {
+        const patient = await (this.prisma as any).patient.findFirst({
+          where: { id: body.patientId, tenantId },
+        });
+        if (!patient) throw new NotFoundException('Patient not found');
+        const doctor = await (this.prisma as any).opdDoctor.findFirst({
+          where: { id: body.doctorId, tenantId, isActive: true },
+        });
+        if (!doctor) throw new NotFoundException('Active OPD doctor not found');
+
+        const encounter = await (this.prisma as any).encounter.create({
+          data: {
+            tenantId,
+            patientId: body.patientId,
+            moduleType: 'OPD',
+            status: 'registered',
+          },
+        });
+        const seq = (await (this.prisma as any).opdEncounter.count({ where: { tenantId } })) + 1;
+        const opd = await (this.prisma as any).opdEncounter.create({
+          data: {
+            tenantId,
+            patientId: body.patientId,
+            encounterId: encounter.id,
+            doctorId: body.doctorId,
+            status: 'DRAFT',
+            visitCode: buildCode('OPD', seq),
+            paymentStatus: body.immediatePaymentAmount != null && Number(body.immediatePaymentAmount) > 0 ? 'PAID' : 'UNPAID',
+          },
+        });
+
+        const line = {
+          description: `Consultation - ${doctor.displayName}`,
+          quantity: 1,
+          unitPrice: Number(doctor.consultationFee),
+          discountAmount: 0,
+        };
+        const inv = await this.createInvoice(
+          tenantId,
+          {
+            patientId: body.patientId,
+            visitId: null,
+            encounterId: encounter.id,
+            currency: doctor.currency,
+            lines: [line],
+          },
+          actorUserId,
+          correlationId,
+        );
+        if (body.immediatePaymentAmount != null && Number(body.immediatePaymentAmount) > 0) {
+          await this.issueInvoice(tenantId, inv.id, actorUserId, correlationId);
+          await this.recordPayment(
+            tenantId,
+            inv.id,
+            {
+              amount: Number(body.immediatePaymentAmount),
+              method: body.immediatePaymentMethod ?? 'CASH',
+              referenceNo: body.immediatePaymentReferenceNo ?? null,
+              notes: body.immediatePaymentNotes ?? null,
+            },
+            actorUserId,
+            correlationId,
+          );
+        }
+        const result = {
+          opdEncounter: this.mapKmvpEncounter(opd),
+          invoiceId: inv.id,
+        };
+        await this.audit.log({
+          tenantId,
+          actorUserId,
+          action: 'opd.registration.created',
+          entityType: 'OpdEncounter',
+          entityId: opd.id,
+          after: result,
+          correlationId,
+        });
+        return result;
+      },
+    );
+  }
+
+  async recordIntake(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertOpdFeatureEnabled(tenantId, 'opd.intake');
+    if (!body?.opdEncounterId) throw new BadRequestException('opdEncounterId is required');
+    if (!body?.chiefComplaint || !String(body.chiefComplaint).trim()) {
+      throw new BadRequestException('chiefComplaint is required');
+    }
+    return this.withCommandIdempotency(
+      tenantId,
+      'RecordOpdIntake',
+      body?.idempotencyKey,
+      body,
+      async () => {
+        const e = await (this.prisma as any).opdEncounter.findFirst({
+          where: { id: body.opdEncounterId, tenantId },
+        });
+        if (!e) throw new NotFoundException('OPD encounter not found');
+        if (e.status !== 'DRAFT') {
+          throw new ConflictException(`Invalid transition ${e.status} -> READY_FOR_PRINT`);
+        }
+
+        const hasMeaningfulVitals =
+          body.bpSystolic != null ||
+          body.bpDiastolic != null ||
+          body.pulse != null ||
+          body.temperatureC != null ||
+          body.respRate != null ||
+          body.spo2 != null ||
+          body.weightKg != null ||
+          body.heightCm != null;
+        if (!hasMeaningfulVitals) {
+          throw new BadRequestException('At least one meaningful vital input is required');
+        }
+
+        const height = body.heightCm != null ? Number(body.heightCm) : null;
+        const weight = body.weightKg != null ? Number(body.weightKg) : null;
+        let bmi: number | null = null;
+        if (height && weight) {
+          const hm = height / 100;
+          bmi = hm > 0 ? Math.round((weight / (hm * hm)) * 10) / 10 : null;
+        }
+        await (this.prisma as any).opdVital.create({
+          data: {
+            tenantId,
+            opdEncounterId: e.id,
+            bpSystolic: body.bpSystolic ?? null,
+            bpDiastolic: body.bpDiastolic ?? null,
+            pulse: body.pulse ?? null,
+            temperatureC: body.temperatureC ?? null,
+            respRate: body.respRate ?? null,
+            spo2: body.spo2 ?? null,
+            weightKg: body.weightKg ?? null,
+            heightCm: body.heightCm ?? null,
+            bmi,
+            enteredBy: actorUserId,
+            enteredAt: new Date(),
+          },
+        });
+        const updated = await (this.prisma as any).opdEncounter.update({
+          where: { id: e.id },
+          data: {
+            chiefComplaint: String(body.chiefComplaint).trim(),
+            status: 'READY_FOR_PRINT',
+            diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : null,
+            advice: body.advice != null ? String(body.advice).trim() : null,
+            followUp: body.followUp != null ? String(body.followUp).trim() : null,
+            investigations: body.investigations != null ? String(body.investigations).trim() : null,
+            remarks: body.remarks != null ? String(body.remarks).trim() : null,
+          },
+        });
+        await this.audit.log({
+          tenantId,
+          actorUserId,
+          action: 'opd.intake.recorded',
+          entityType: 'OpdEncounter',
+          entityId: e.id,
+          after: this.mapKmvpEncounter(updated),
+          correlationId,
+        });
+        return { opdEncounter: this.mapKmvpEncounter(updated) };
+      },
+    );
+  }
+
+  async publishPrescription(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertOpdFeatureEnabled(tenantId, 'module.opd.prescription');
+    if (!body?.opdEncounterId) throw new BadRequestException('opdEncounterId is required');
+    const items = Array.isArray(body?.prescriptionItems) ? body.prescriptionItems : [];
+    if (items.length < 1) throw new BadRequestException('At least one prescription item is required');
+    return this.withCommandIdempotency(
+      tenantId,
+      'PublishOpdPrescription',
+      body?.idempotencyKey,
+      body,
+      async () => {
+        const e = await (this.prisma as any).opdEncounter.findFirst({
+          where: { id: body.opdEncounterId, tenantId },
+          include: {
+            patient: true,
+            doctor: true,
+            vitals: { orderBy: { enteredAt: 'desc' }, take: 1 },
+          },
+        });
+        if (!e) throw new NotFoundException('OPD encounter not found');
+        if (e.status !== 'READY_FOR_PRINT') {
+          throw new ConflictException(`Invalid transition ${e.status} -> COMPLETED`);
+        }
+        const historyNotes = String(body.historyNotes ?? '').trim();
+        const examNotes = String(body.examNotes ?? '').trim();
+        const assessment = String(body.assessment ?? '').trim();
+        const plan = String(body.plan ?? '').trim();
+        const advice = String(body.advice ?? '').trim();
+        const followUp = String(body.followUp ?? '').trim();
+        const investigations = String(body.investigations ?? '').trim();
+        const remarks = String(body.remarks ?? '').trim();
+        if (!historyNotes || !examNotes || !assessment || !plan || !advice) {
+          throw new BadRequestException('historyNotes, examNotes, assessment, plan, and advice are required');
+        }
+
+        const note = await (this.prisma as any).opdNote.upsert({
+          where: { tenantId_opdEncounterId: { tenantId, opdEncounterId: e.id } },
+          create: {
+            tenantId,
+            opdEncounterId: e.id,
+            historyNotes,
+            examNotes,
+            assessment,
+            plan,
+            advice,
+            diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : null,
+            followUp: followUp || null,
+            investigations: investigations || null,
+            remarks: remarks || null,
+          },
+          update: {
+            historyNotes,
+            examNotes,
+            assessment,
+            plan,
+            advice,
+            diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : null,
+            followUp: followUp || null,
+            investigations: investigations || null,
+            remarks: remarks || null,
+          },
+        });
+        const prescription = await (this.prisma as any).opdEncounterPrescription.upsert({
+          where: { tenantId_opdEncounterId: { tenantId, opdEncounterId: e.id } },
+          create: { tenantId, opdEncounterId: e.id },
+          update: {},
+        });
+        await (this.prisma as any).opdPrescriptionItemKmvp.deleteMany({
+          where: { tenantId, opdPrescriptionId: prescription.id },
+        });
+        await (this.prisma as any).opdPrescriptionItemKmvp.createMany({
+          data: items.map((i: any, idx: number) => ({
+            tenantId,
+            opdPrescriptionId: prescription.id,
+            drugName: String(i.drugName ?? '').trim(),
+            genericName: i.genericName ? String(i.genericName).trim() : null,
+            strength: i.strength ? String(i.strength).trim() : null,
+            dose: i.dose ? String(i.dose).trim() : null,
+            frequency: i.frequency ? String(i.frequency).trim() : null,
+            duration: i.duration ? String(i.duration).trim() : null,
+            route: i.route ? String(i.route).trim() : null,
+            instructions: i.instructions ? String(i.instructions).trim() : null,
+            sortOrder: idx + 1,
+          })),
+        });
+
+        const vitals = e.vitals?.[0];
+        const payload = {
+          payload_version: 'v1',
+          templateVersion: 'v2',
+          documentFamily: 'opd.prescription.consultants_place.v2',
+          patient: {
+            mrn: e.patient.mrn,
+            firstName: e.patient.firstName,
+            lastName: e.patient.lastName,
+            gender: e.patient.gender ?? null,
+            dateOfBirth: e.patient.dateOfBirth?.toISOString() ?? null,
+            mobile: e.patient.mobile ?? null,
+          },
+          visitCode: e.visitCode,
+          doctor: {
+            fullName: e.doctor.displayName,
+            specialty: e.doctor.specialtyName,
+            designation: e.doctor.designation ?? null,
+            degrees: e.doctor.degrees ?? null,
+            pmdcNumber: e.doctor.pmdcNumber ?? null,
+            phcNumber: e.doctor.phcNumber ?? null,
+            clinicName: e.doctor.clinicName ?? null,
+            clinicAddress: e.doctor.clinicAddress ?? null,
+            clinicPhone: e.doctor.clinicPhone ?? null,
+            signatureLabel: e.doctor.signatureLabel ?? null,
+            signatureUrl: e.doctor.signatureUrl ?? null,
+          },
+          visitDateTime: e.createdAt.toISOString(),
+          majorComplaint: e.chiefComplaint ?? null,
+          diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : (e.diagnosis ?? null),
+          vitals: vitals
+            ? {
+                bpSystolic: vitals.bpSystolic,
+                bpDiastolic: vitals.bpDiastolic,
+                pulse: vitals.pulse,
+                temperatureC: vitals.temperatureC != null ? Number(vitals.temperatureC) : null,
+                respRate: vitals.respRate,
+                spo2: vitals.spo2,
+                weightKg: vitals.weightKg != null ? Number(vitals.weightKg) : null,
+                heightCm: vitals.heightCm != null ? Number(vitals.heightCm) : null,
+                bmi: vitals.bmi != null ? Number(vitals.bmi) : null,
+              }
+            : null,
+          notes: {
+            historyNotes: note.historyNotes,
+            examNotes: note.examNotes,
+            assessment: note.assessment,
+            plan: note.plan,
+            advice: note.advice,
+            followUp: note.followUp ?? null,
+            investigations: note.investigations ?? null,
+            remarks: note.remarks ?? null,
+          },
+          prescriptionItems: items,
+        };
+
+        const docResult = await this.documents.generateDocument(
+          tenantId,
+          'OPD_PRESCRIPTION',
+          payload,
+          e.id,
+          'OPD_ENCOUNTER',
+          actorUserId,
+          correlationId ?? '',
+        );
+        const updatedEncounter = await (this.prisma as any).opdEncounter.update({
+          where: { id: e.id },
+          data: {
+            status: 'COMPLETED',
+            publishedAt: new Date(),
+            completedAt: new Date(),
+            diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : e.diagnosis,
+            advice: advice,
+            followUp: followUp || null,
+            investigations: investigations || null,
+            remarks: remarks || null,
+          },
+        });
+        await (this.prisma as any).opdEncounterPrescription.update({
+          where: { id: prescription.id },
+          data: { publishedDocumentId: docResult.document.id },
+        });
+        await this.audit.log({
+          tenantId,
+          actorUserId,
+          action: 'opd.prescription.published',
+          entityType: 'OpdEncounter',
+          entityId: e.id,
+          after: { documentId: docResult.document.id, status: updatedEncounter.status },
+          correlationId,
+        });
+        return {
+          opdEncounter: this.mapKmvpEncounter(updatedEncounter),
+          documentId: docResult.document.id,
+        };
+      },
+    );
+  }
+
+  async getEncounterPrescriptionDocument(tenantId: string, opdEncounterId: string) {
+    await this.assertOpdEnabled(tenantId);
+    const prescription = await (this.prisma as any).opdEncounterPrescription.findFirst({
+      where: { tenantId, opdEncounterId },
+    });
+    if (!prescription?.publishedDocumentId) {
+      throw new NotFoundException('Prescription document not found');
+    }
+    const doc = await this.documents.getDocument(tenantId, prescription.publishedDocumentId);
+    return doc;
+  }
+
+  async downloadEncounterPrescriptionDocument(tenantId: string, opdEncounterId: string) {
+    const doc = await this.getEncounterPrescriptionDocument(tenantId, opdEncounterId);
+    const bytes = await this.documents.downloadDocument(tenantId, doc.id);
+    return { document: doc, bytes };
+  }
+
+  async getEncounterReceiptDocument(tenantId: string, opdEncounterId: string) {
+    await this.assertOpdEnabled(tenantId);
+    const doc = await this.prisma.document.findFirst({
+      where: {
+        tenantId,
+        type: 'OPD_INVOICE_RECEIPT',
+        sourceType: 'OPD_ENCOUNTER',
+        sourceRef: opdEncounterId,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (!doc) throw new NotFoundException('OPD receipt document not found');
+    return doc;
+  }
+
+  async downloadEncounterReceiptDocument(tenantId: string, opdEncounterId: string) {
+    const doc = await this.getEncounterReceiptDocument(tenantId, opdEncounterId);
+    const bytes = await this.documents.downloadDocument(tenantId, doc.id);
+    return { document: doc, bytes };
+  }
+
+  async finalizeEncounter(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    if (!body?.opdEncounterId) throw new BadRequestException('opdEncounterId is required');
+    return this.withCommandIdempotency(
+      tenantId,
+      'FinalizeOpdEncounter',
+      body?.idempotencyKey,
+      body,
+      async () => {
+        const e = await (this.prisma as any).opdEncounter.findFirst({
+          where: { id: body.opdEncounterId, tenantId },
+        });
+        if (!e) throw new NotFoundException('OPD encounter not found');
+        if (e.status !== 'READY_FOR_PRINT') {
+          throw new ConflictException(`Invalid transition ${e.status} -> COMPLETED`);
+        }
+        const updated = await (this.prisma as any).opdEncounter.update({
+          where: { id: e.id },
+          data: {
+            status: 'COMPLETED',
+            completedAt: new Date(),
+            diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : e.diagnosis,
+            advice: body.advice != null ? String(body.advice).trim() : e.advice,
+            followUp: body.followUp != null ? String(body.followUp).trim() : e.followUp,
+            investigations: body.investigations != null ? String(body.investigations).trim() : e.investigations,
+            remarks: body.remarks != null ? String(body.remarks).trim() : e.remarks,
+          },
+        });
+        await this.audit.log({
+          tenantId,
+          actorUserId,
+          action: 'opd.encounter.finalized',
+          entityType: 'OpdEncounter',
+          entityId: e.id,
+          before: this.mapKmvpEncounter(e),
+          after: this.mapKmvpEncounter(updated),
+          correlationId,
+        });
+        return { opdEncounter: this.mapKmvpEncounter(updated) };
+      },
+    );
+  }
+
+  async cancelEncounter(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    if (!body?.opdEncounterId) throw new BadRequestException('opdEncounterId is required');
+    const reason = String(body?.reason ?? '').trim();
+    if (!reason) throw new BadRequestException('reason is required');
+    return this.withCommandIdempotency(
+      tenantId,
+      'CancelOpdEncounter',
+      body?.idempotencyKey,
+      body,
+      async () => {
+        const e = await (this.prisma as any).opdEncounter.findFirst({
+          where: { id: body.opdEncounterId, tenantId },
+        });
+        if (!e) throw new NotFoundException('OPD encounter not found');
+        if (['CANCELLED', 'COMPLETED'].includes(e.status)) {
+          throw new ConflictException(`Invalid transition ${e.status} -> CANCELLED`);
+        }
+        const updated = await (this.prisma as any).opdEncounter.update({
+          where: { id: e.id },
+          data: {
+            status: 'CANCELLED',
+            cancelledAt: new Date(),
+            cancelledReason: reason,
+          },
+        });
+        await this.audit.log({
+          tenantId,
+          actorUserId,
+          action: 'opd.encounter.cancelled',
+          entityType: 'OpdEncounter',
+          entityId: e.id,
+          before: this.mapKmvpEncounter(e),
+          after: this.mapKmvpEncounter(updated),
+          correlationId,
+        });
+        return { opdEncounter: this.mapKmvpEncounter(updated) };
+      },
+    );
+  }
+
+  async generateEncounterReceipt(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    await this.assertOpdFeatureEnabled(tenantId, 'module.opd.receipt');
+    if (!body?.opdEncounterId) throw new BadRequestException('opdEncounterId is required');
+    return this.withCommandIdempotency(
+      tenantId,
+      'GenerateOpdEncounterReceipt',
+      body?.idempotencyKey,
+      body,
+      async () => {
+        const e = await (this.prisma as any).opdEncounter.findFirst({
+          where: { id: body.opdEncounterId, tenantId },
+          include: {
+            patient: true,
+            doctor: true,
+          },
+        });
+        if (!e) throw new NotFoundException('OPD encounter not found');
+        const inv = await (this.prisma as any).invoice.findFirst({
+          where: { tenantId, encounterId: e.encounterId },
+          include: { lines: { orderBy: { sortOrder: 'asc' } }, payments: { orderBy: { receivedAt: 'desc' } } },
+        });
+        if (!inv) throw new NotFoundException('OPD encounter invoice not found');
+
+        const payload = {
+          payload_version: 'v1',
+          templateVersion: 'v2',
+          documentFamily: 'opd.receipt.v2',
+          invoiceCode: inv.invoiceCode,
+          issuedAt: inv.issuedAt?.toISOString() ?? inv.createdAt.toISOString(),
+          patientName: `${e.patient.firstName} ${e.patient.lastName}`.trim(),
+          patientMrn: e.patient.mrn ?? null,
+          patientPhone: e.patient.mobile ?? null,
+          status: inv.status,
+          visitId: e.id,
+          sourceRef: e.id,
+          providerName: e.doctor.displayName,
+          lines: (inv.lines ?? []).map((line: any) => ({
+            description: line.description,
+            quantity: Number(line.quantity),
+            unitPrice: Number(line.unitPrice),
+            discountAmount: Number(line.discountAmount),
+            lineTotal: Number(line.lineTotal),
+          })),
+          subtotalAmount: Number(inv.subtotalAmount),
+          discountAmount: Number(inv.discountAmount),
+          totalAmount: Number(inv.totalAmount),
+          paidAmount: Number(inv.amountPaid),
+          balanceAmount: Number(inv.amountDue),
+          paymentMethod: inv.payments?.[0]?.method ?? null,
+          referenceNo: inv.payments?.[0]?.referenceNo ?? null,
+        };
+
+        const generated = await this.documents.generateDocument(
+          tenantId,
+          'OPD_INVOICE_RECEIPT',
+          payload,
+          e.id,
+          'OPD_ENCOUNTER',
+          actorUserId,
+          correlationId ?? '',
+        );
+        await this.audit.log({
+          tenantId,
+          actorUserId,
+          action: 'opd.receipt.generated',
+          entityType: 'OpdEncounter',
+          entityId: e.id,
+          after: { documentId: generated.document.id },
+          correlationId,
+        });
+        return { opdEncounter: this.mapKmvpEncounter(e), documentId: generated.document.id };
+      },
+    );
   }
 }

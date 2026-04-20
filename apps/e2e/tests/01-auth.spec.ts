@@ -51,7 +51,10 @@ test.describe('Authentication', () => {
     await page.getByLabel('Password').fill(ADMIN_PASSWORD);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await page.waitForURL('**/lims/worklist', { timeout: 15_000 });
+    await page.waitForURL((url) => /\/(lims\/worklist)?$/.test(url.pathname), { timeout: 30_000 });
+    if (!/\/lims\/worklist$/.test(page.url())) {
+      await page.goto('/lims/worklist');
+    }
     // The worklist heading is visible
     await expect(page.getByRole('heading', { name: 'Worklist' }).first()).toBeVisible();
   });

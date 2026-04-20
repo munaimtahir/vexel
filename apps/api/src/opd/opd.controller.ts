@@ -12,10 +12,12 @@ import {
   Put,
   Query,
   Req,
+  Res,
+  StreamableFile,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { getTenantId } from '../common/tenant-context';
@@ -24,7 +26,7 @@ import { PermissionsGuard } from '../rbac/permissions.guard';
 import { RequirePermissions } from '../rbac/require-permissions.decorator';
 import { OpdService } from './opd.service';
 
-@ApiTags('OPD Providers', 'OPD Schedules', 'OPD Scheduling', 'OPD Appointments', 'OPD Visits', 'OPD Billing')
+@ApiTags('OPD Providers', 'OPD Schedules', 'OPD Scheduling', 'OPD Appointments', 'OPD Visits', 'OPD Billing', 'OPD Doctors', 'OPD Encounters', 'OPD Commands')
 @Controller('opd')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
@@ -36,6 +38,170 @@ export class OpdController {
   }
 
   // ─── Providers ─────────────────────────────────────────────────────────────
+
+  // ─── OPD KMVP Doctors ──────────────────────────────────────────────────────
+
+  @Get('doctors')
+  @RequirePermissions(Permission.MODULE_ADMIN)
+  listDoctors(@Req() req: Request, @Query() q: any) {
+    return this.svc.listDoctors(this.resolveTenantId(req), q);
+  }
+
+  @Get('doctors/:doctorId')
+  @RequirePermissions(Permission.MODULE_ADMIN)
+  getDoctor(@Req() req: Request, @Param('doctorId') doctorId: string) {
+    return this.svc.getDoctor(this.resolveTenantId(req), doctorId);
+  }
+
+  @Post('doctors')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions(Permission.MODULE_ADMIN)
+  createDoctor(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.createDoctor(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Patch('doctors/:doctorId')
+  @RequirePermissions(Permission.MODULE_ADMIN)
+  updateDoctor(
+    @Req() req: Request,
+    @Param('doctorId') doctorId: string,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.updateDoctor(this.resolveTenantId(req), doctorId, body, user.userId, correlationId);
+  }
+
+  // ─── OPD KMVP Encounters + Commands ───────────────────────────────────────
+
+  @Get('encounters')
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  listEncounters(@Req() req: Request, @Query() q: any) {
+    return this.svc.listEncounters(this.resolveTenantId(req), q);
+  }
+
+  @Get('encounters/:encounterId')
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  getEncounter(@Req() req: Request, @Param('encounterId') encounterId: string) {
+    return this.svc.getEncounter(this.resolveTenantId(req), encounterId);
+  }
+
+  @Post('commands/createRegistration')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  createRegistration(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.createRegistration(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Post('commands/recordIntake')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  recordIntake(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.recordIntake(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Post('commands/publishPrescription')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  publishPrescription(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.publishPrescription(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Post('commands/finalizeEncounter')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  finalizeEncounter(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.finalizeEncounter(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Post('commands/cancelEncounter')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  cancelEncounter(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.cancelEncounter(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Post('commands/generateReceipt')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  generateEncounterReceipt(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.generateEncounterReceipt(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Get('encounters/:encounterId/prescription')
+  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  getEncounterPrescription(@Req() req: Request, @Param('encounterId') encounterId: string) {
+    return this.svc.getEncounterPrescriptionDocument(this.resolveTenantId(req), encounterId);
+  }
+
+  @Get('encounters/:encounterId/prescription/file')
+  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  async downloadEncounterPrescription(
+    @Req() req: Request,
+    @Param('encounterId') encounterId: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
+    const tenantId = this.resolveTenantId(req);
+    const { document, bytes } = await this.svc.downloadEncounterPrescriptionDocument(tenantId, encounterId);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="opd-prescription-${document.id}.pdf"`);
+    return new StreamableFile(bytes);
+  }
+
+  @Get('encounters/:encounterId/receipt')
+  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  getEncounterReceipt(@Req() req: Request, @Param('encounterId') encounterId: string) {
+    return this.svc.getEncounterReceiptDocument(this.resolveTenantId(req), encounterId);
+  }
+
+  @Get('encounters/:encounterId/receipt/file')
+  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  async downloadEncounterReceipt(
+    @Req() req: Request,
+    @Param('encounterId') encounterId: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
+    const tenantId = this.resolveTenantId(req);
+    const { document, bytes } = await this.svc.downloadEncounterReceiptDocument(tenantId, encounterId);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="opd-receipt-${document.id}.pdf"`);
+    return new StreamableFile(bytes);
+  }
 
   @Get('providers')
   @RequirePermissions(Permission.MODULE_ADMIN)

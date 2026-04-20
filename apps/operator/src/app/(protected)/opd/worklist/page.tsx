@@ -122,10 +122,13 @@ export default function OpdWorklistPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="OPD Worklist"
-        description="Appointments and visits (tenant-scoped via backend APIs)"
+        title="OPD Worklist (Legacy)"
+        description="Legacy appointments and visits workflow. Use OPD Encounters for KMVP flow."
         actions={
           <div className="flex gap-2">
+            <Button asChild>
+              <Link href="/opd/encounters">Open OPD Encounters</Link>
+            </Button>
             <Button variant="outline" asChild>
               <Link href="/opd/billing">OPD Billing</Link>
             </Button>

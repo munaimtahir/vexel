@@ -2170,6 +2170,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/verification/encounters/{encounterId}:return-for-correction": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Return submitted tests to result-entry queue for correction */
+        post: operations["returnEncounterForCorrection"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/opd/providers": {
         parameters: {
             query?: never;
@@ -2186,6 +2203,42 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/opd/doctors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List OPD doctors for registration dropdown and admin master */
+        get: operations["listOpdDoctors"];
+        put?: never;
+        /** Create OPD doctor master row */
+        post: operations["createOpdDoctor"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/doctors/{doctorId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get OPD doctor detail */
+        get: operations["getOpdDoctor"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update OPD doctor master row */
+        patch: operations["updateOpdDoctor"];
         trace?: never;
     };
     "/opd/providers/{providerId}": {
@@ -2723,6 +2776,210 @@ export interface paths {
         put?: never;
         /** Generate deterministic OPD invoice receipt document */
         post: operations["generateOpdInvoiceReceipt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/encounters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List OPD KMVP encounters */
+        get: operations["listOpdEncountersKmvp"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/encounters/{encounterId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get OPD KMVP encounter detail */
+        get: operations["getOpdEncounterKmvp"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/createRegistration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create OPD registration and initialize consult invoice line */
+        post: operations["createOpdRegistrationCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/recordIntake": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record intake and transition DRAFT -> READY_FOR_PRINT */
+        post: operations["recordOpdIntakeCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/publishPrescription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish prescription and transition READY_FOR_PRINT -> COMPLETED */
+        post: operations["publishOpdPrescriptionCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/finalizeEncounter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Finalize OPD encounter and transition READY_FOR_PRINT -> COMPLETED */
+        post: operations["finalizeOpdEncounterCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/cancelEncounter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel OPD encounter and transition DRAFT/READY_FOR_PRINT -> CANCELLED */
+        post: operations["cancelOpdEncounterCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/generateReceipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate deterministic OPD consultation receipt document for encounter */
+        post: operations["generateOpdEncounterReceiptCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/encounters/{encounterId}/prescription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get published OPD prescription document metadata */
+        get: operations["getOpdEncounterPrescriptionDocument"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/encounters/{encounterId}/prescription/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download/open published OPD prescription PDF bytes */
+        get: operations["downloadOpdEncounterPrescriptionFile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/encounters/{encounterId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get OPD encounter receipt document metadata */
+        get: operations["getOpdEncounterReceiptDocument"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/encounters/{encounterId}/receipt/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download/open OPD receipt PDF bytes */
+        get: operations["downloadOpdEncounterReceiptFile"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4002,7 +4259,7 @@ export interface components {
             id?: string;
             tenantId?: string;
             /** @enum {string} */
-            type?: "RECEIPT" | "LAB_REPORT";
+            type?: "RECEIPT" | "LAB_REPORT" | "OPD_INVOICE_RECEIPT" | "OPD_PRESCRIPTION";
             templateId?: string;
             payloadHash?: string;
             pdfHash?: string | null;
@@ -4024,7 +4281,7 @@ export interface components {
             id?: string;
             tenantId?: string;
             /** @enum {string} */
-            type?: "RECEIPT" | "LAB_REPORT";
+            type?: "RECEIPT" | "LAB_REPORT" | "OPD_INVOICE_RECEIPT" | "OPD_PRESCRIPTION";
             templateKey?: string;
             version?: number;
             config?: Record<string, never> | null;
@@ -4449,6 +4706,183 @@ export interface components {
         OpdInvoiceReceiptCommandResponse: {
             invoice: components["schemas"]["OpdInvoice"];
             document: components["schemas"]["Document"];
+        };
+        OpdDoctor: {
+            id: string;
+            tenantId: string;
+            code: string;
+            displayName: string;
+            specialtyName: string;
+            consultationFee: number;
+            currency: string;
+            isActive: boolean;
+            sortOrder: number;
+            designation?: string | null;
+            degrees?: string | null;
+            pmdcNumber?: string | null;
+            phcNumber?: string | null;
+            clinicName?: string | null;
+            clinicAddress?: string | null;
+            clinicPhone?: string | null;
+            signatureLabel?: string | null;
+            signatureUrl?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OpdDoctorCreateRequest: {
+            code: string;
+            displayName: string;
+            specialtyName: string;
+            consultationFee: number;
+            /** @default PKR */
+            currency: string;
+            /** @default true */
+            isActive: boolean;
+            /** @default 0 */
+            sortOrder: number;
+            designation?: string | null;
+            degrees?: string | null;
+            pmdcNumber?: string | null;
+            phcNumber?: string | null;
+            clinicName?: string | null;
+            clinicAddress?: string | null;
+            clinicPhone?: string | null;
+            signatureLabel?: string | null;
+            signatureUrl?: string | null;
+        };
+        OpdDoctorUpdateRequest: {
+            code?: string;
+            displayName?: string;
+            specialtyName?: string;
+            consultationFee?: number;
+            currency?: string;
+            isActive?: boolean;
+            sortOrder?: number;
+            designation?: string | null;
+            degrees?: string | null;
+            pmdcNumber?: string | null;
+            phcNumber?: string | null;
+            clinicName?: string | null;
+            clinicAddress?: string | null;
+            clinicPhone?: string | null;
+            signatureLabel?: string | null;
+            signatureUrl?: string | null;
+        };
+        OpdDoctorListResponse: {
+            data: components["schemas"]["OpdDoctor"][];
+            pagination: components["schemas"]["Pagination"];
+        };
+        OpdEncounterKmvp: {
+            id: string;
+            tenantId: string;
+            patientId: string;
+            encounterId: string;
+            doctorId: string;
+            /** @enum {string} */
+            status: "DRAFT" | "READY_FOR_PRINT" | "COMPLETED" | "CANCELLED";
+            visitCode: string;
+            chiefComplaint?: string | null;
+            diagnosis?: string | null;
+            advice?: string | null;
+            followUp?: string | null;
+            investigations?: string | null;
+            remarks?: string | null;
+            /** @enum {string|null} */
+            paymentStatus?: "UNPAID" | "PARTIALLY_PAID" | "PAID" | null;
+            /** Format: date-time */
+            cancelledAt?: string | null;
+            cancelledReason?: string | null;
+            /** Format: date-time */
+            completedAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            publishedAt?: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OpdEncounterKmvpListResponse: {
+            data: components["schemas"]["OpdEncounterKmvp"][];
+            pagination: components["schemas"]["Pagination"];
+        };
+        CreateOpdRegistrationRequest: {
+            patientId: string;
+            doctorId: string;
+            idempotencyKey?: string;
+            immediatePaymentAmount?: number | null;
+            /** @enum {string|null} */
+            immediatePaymentMethod?: "CASH" | null;
+            immediatePaymentReferenceNo?: string | null;
+            immediatePaymentNotes?: string | null;
+        };
+        CreateOpdRegistrationResponse: {
+            opdEncounter: components["schemas"]["OpdEncounterKmvp"];
+            invoiceId: string;
+        };
+        RecordOpdIntakeRequest: {
+            opdEncounterId: string;
+            idempotencyKey?: string;
+            chiefComplaint: string;
+            bpSystolic?: number | null;
+            bpDiastolic?: number | null;
+            pulse?: number | null;
+            temperatureC?: number | null;
+            respRate?: number | null;
+            spo2?: number | null;
+            weightKg?: number | null;
+            heightCm?: number | null;
+            diagnosis?: string | null;
+            advice?: string | null;
+            followUp?: string | null;
+            investigations?: string | null;
+            remarks?: string | null;
+        };
+        PublishOpdPrescriptionRequest: {
+            opdEncounterId: string;
+            idempotencyKey?: string;
+            historyNotes: string;
+            examNotes: string;
+            assessment: string;
+            plan: string;
+            advice: string;
+            diagnosis?: string | null;
+            followUp?: string | null;
+            investigations?: string | null;
+            remarks?: string | null;
+            prescriptionItems: {
+                drugName: string;
+                genericName?: string | null;
+                strength?: string | null;
+                dose?: string | null;
+                frequency?: string | null;
+                duration?: string | null;
+                route?: string | null;
+                instructions?: string | null;
+            }[];
+        };
+        PublishOpdPrescriptionResponse: {
+            opdEncounter: components["schemas"]["OpdEncounterKmvp"];
+            documentId: string;
+        };
+        FinalizeOpdEncounterRequest: {
+            opdEncounterId: string;
+            idempotencyKey?: string;
+            diagnosis?: string | null;
+            advice?: string | null;
+            followUp?: string | null;
+            investigations?: string | null;
+            remarks?: string | null;
+        };
+        CancelOpdEncounterRequest: {
+            opdEncounterId: string;
+            idempotencyKey?: string;
+            reason: string;
+        };
+        GenerateOpdReceiptRequest: {
+            opdEncounterId: string;
+            idempotencyKey?: string;
         };
         OpsStorageTarget: {
             id: string;
@@ -9684,6 +10118,50 @@ export interface operations {
             };
         };
     };
+    returnEncounterForCorrection: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    reason?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Encounter returned for correction */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        encounterId: string;
+                        status: string;
+                        correctedTestsCount: number;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description No submitted tests available for correction */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     listOpdProviders: {
         parameters: {
             query?: {
@@ -9745,9 +10223,123 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+        };
+    };
+    listOpdDoctors: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                isActive?: boolean;
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Doctor list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdDoctorListResponse"];
+                };
+            };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
-            /** @description Provider code conflict (tenant-scoped uniqueness) */
+        };
+    };
+    createOpdDoctor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpdDoctorCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Doctor created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdDoctor"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description Duplicate doctor code in tenant */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getOpdDoctor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doctorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Doctor detail */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdDoctor"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    updateOpdDoctor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doctorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpdDoctorUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Doctor updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdDoctor"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Duplicate doctor code in tenant */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -11172,6 +11764,362 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+        };
+    };
+    listOpdEncountersKmvp: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                status?: "DRAFT" | "READY_FOR_PRINT" | "COMPLETED" | "CANCELLED";
+                patientId?: string;
+                doctorId?: string;
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OPD encounter list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdEncounterKmvpListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getOpdEncounterKmvp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OPD encounter detail */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    createOpdRegistrationCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOpdRegistrationRequest"];
+            };
+        };
+        responses: {
+            /** @description OPD registration created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateOpdRegistrationResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description domain_error for invalid workflow or duplicate state mutation */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    recordOpdIntakeCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordOpdIntakeRequest"];
+            };
+        };
+        responses: {
+            /** @description Intake recorded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description domain_error for invalid state transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    publishOpdPrescriptionCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishOpdPrescriptionRequest"];
+            };
+        };
+        responses: {
+            /** @description Prescription published and document generated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublishOpdPrescriptionResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description domain_error for invalid state transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    finalizeOpdEncounterCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FinalizeOpdEncounterRequest"];
+            };
+        };
+        responses: {
+            /** @description Encounter finalized */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description domain_error for invalid state transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    cancelOpdEncounterCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelOpdEncounterRequest"];
+            };
+        };
+        responses: {
+            /** @description Encounter cancelled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description domain_error for invalid state transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    generateOpdEncounterReceiptCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateOpdReceiptRequest"];
+            };
+        };
+        responses: {
+            /** @description Receipt generation queued or idempotent document returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getOpdEncounterPrescriptionDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Published prescription document */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    downloadOpdEncounterPrescriptionFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF bytes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    getOpdEncounterReceiptDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OPD receipt document */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    downloadOpdEncounterReceiptFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounterId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF bytes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
         };
     };
     getOpsDashboard: {

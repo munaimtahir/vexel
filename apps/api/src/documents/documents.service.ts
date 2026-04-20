@@ -65,7 +65,7 @@ export class DocumentsService {
   }
 
   private async normalizeDeterministicFields(
-    type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT',
+    type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT' | 'OPD_PRESCRIPTION',
     payload: Record<string, unknown>,
     tenantId: string,
     sourceType?: string,
@@ -156,14 +156,16 @@ export class DocumentsService {
 
   async generateDocument(
     tenantId: string,
-    type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT',
+    type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT' | 'OPD_PRESCRIPTION',
     payload: Record<string, unknown>,
     sourceRef: string | undefined,
     sourceType: string | undefined,
     actorUserId: string,
     correlationId: string,
   ): Promise<{ document: any; created: boolean }> {
-    const moduleKey = type === 'OPD_INVOICE_RECEIPT' ? 'module.opd' : 'module.lims';
+    const moduleKey = ['OPD_INVOICE_RECEIPT', 'OPD_PRESCRIPTION'].includes(type)
+      ? 'module.opd'
+      : 'module.lims';
     const moduleFlag = await this.prisma.tenantFeature.findUnique({
       where: { tenantId_key: { tenantId, key: moduleKey } },
     });

@@ -7,3 +7,5 @@ export { ErrorState } from './error-state';
 export { SkeletonPage } from './skeleton-page';
 export { ConfirmDialog } from './confirm-dialog';
 export { DataTable } from './data-table';
+export { WorkflowEncounterCard } from './workflow-encounter-card';
+export type { WorkflowTestChip, WorkflowCardAction } from './workflow-encounter-card';

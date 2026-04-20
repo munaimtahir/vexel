@@ -275,4 +275,69 @@ export class VerificationService {
 
     return { encounterId, status: newEncounterStatus, documentJobId };
   }
+
+  async returnForCorrection(
+    tenantId: string,
+    actorId: string,
+    encounterId: string,
+    reason: string | undefined,
+    correlationId?: string,
+  ): Promise<{ encounterId: string; status: string; correctedTestsCount: number }> {
+    const encounter = await this.prisma.encounter.findFirst({
+      where: { id: encounterId, tenantId },
+    });
+    if (!encounter) throw new NotFoundException('Encounter not found');
+
+    const submittedOrders = await this.prisma.labOrder.findMany({
+      where: {
+        encounterId,
+        tenantId,
+        resultStatus: 'SUBMITTED',
+        status: { not: 'verified' },
+      },
+      select: { id: true },
+    });
+
+    if (submittedOrders.length === 0) {
+      throw new ConflictException('No submitted tests available for correction');
+    }
+
+    const submittedIds = submittedOrders.map((o) => o.id);
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.labOrder.updateMany({
+        where: { id: { in: submittedIds }, tenantId },
+        data: {
+          resultStatus: 'PENDING',
+          submittedAt: null,
+          submittedById: null,
+        },
+      });
+
+      await tx.encounter.update({
+        where: { id: encounterId },
+        data: { status: 'specimen_received' },
+      });
+    });
+
+    await this.audit.log({
+      tenantId,
+      actorUserId: actorId,
+      action: 'ENCOUNTER_RETURNED_FOR_CORRECTION',
+      entityType: 'Encounter',
+      entityId: encounterId,
+      correlationId,
+      after: {
+        status: 'specimen_received',
+        correctedTestsCount: submittedOrders.length,
+        reason: reason?.trim() || null,
+      },
+    });
+
+    return {
+      encounterId,
+      status: 'specimen_received',
+      correctedTestsCount: submittedOrders.length,
+    };
+  }
 }

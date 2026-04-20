@@ -54,6 +54,14 @@ const DEFAULT_FEATURE_FLAGS = [
   { key: 'module.rad', enabled: false, description: 'Radiology (RAD) scaffold' },
   { key: 'module.opd', enabled: false, description: 'OPD scaffold' },
   { key: 'opd.providers', enabled: false, description: 'OPD provider setup and directory' },
+  { key: 'opd.doctor_master', enabled: false, description: 'OPD doctor master for KMVP registration' },
+  { key: 'module.opd.doctorProfiles', enabled: false, description: 'OPD doctor profile configuration + selection' },
+  { key: 'module.opd.receipt', enabled: false, description: 'Deterministic OPD consultation receipt generation' },
+  { key: 'module.opd.prescription', enabled: false, description: 'OPD prescription command + print workflow' },
+  { key: 'module.opd.printSummary', enabled: false, description: 'OPD print summary data rendering' },
+  { key: 'opd.intake', enabled: false, description: 'OPD intake (vitals + chief complaint)' },
+  { key: 'opd.prescription', enabled: false, description: 'OPD prescription publish workflow' },
+  { key: 'opd.immediate_print_after_publish', enabled: true, description: 'Open prescription PDF after publish' },
   { key: 'opd.scheduling', enabled: false, description: 'OPD provider schedule management' },
   { key: 'opd.appointments', enabled: false, description: 'OPD appointment booking workflow' },
   { key: 'opd.vitals', enabled: false, description: 'OPD vitals capture workflow' },
@@ -388,9 +396,21 @@ export async function main() {
       type: 'LAB_REPORT',
       templateKey: 'lab_report_v2',
       version: 2,
+      isActive: false, // superseded by v3 readability update
+    },
+    update: { isActive: false },
+  });
+
+  await prisma.documentTemplate.upsert({
+    where: { tenantId_type_version: { tenantId: systemTenant.id, type: 'LAB_REPORT', version: 3 } },
+    create: {
+      tenantId: systemTenant.id,
+      type: 'LAB_REPORT',
+      templateKey: 'lab_report_v3',
+      version: 3,
       isActive: true,
     },
-    update: {},
+    update: { isActive: true, templateKey: 'lab_report_v3' },
   });
 
   await prisma.documentTemplate.upsert({
@@ -409,6 +429,70 @@ export async function main() {
       isActive: true,
     },
     update: {},
+  });
+
+  await prisma.documentTemplate.upsert({
+    where: {
+      tenantId_type_version: {
+        tenantId: systemTenant.id,
+        type: 'OPD_PRESCRIPTION',
+        version: 1,
+      },
+    },
+    create: {
+      tenantId: systemTenant.id,
+      type: 'OPD_PRESCRIPTION',
+      templateKey: 'opd_prescription_a4_v1',
+      version: 1,
+      isActive: true,
+    },
+    update: {},
+  });
+
+  await prisma.documentTemplate.upsert({
+    where: {
+      tenantId_type_version: {
+        tenantId: systemTenant.id,
+        type: 'OPD_PRESCRIPTION',
+        version: 2,
+      },
+    },
+    create: {
+      tenantId: systemTenant.id,
+      type: 'OPD_PRESCRIPTION',
+      templateKey: 'opd_prescription_consultants_place_v2',
+      version: 2,
+      isActive: true,
+    },
+    update: { isActive: true, templateKey: 'opd_prescription_consultants_place_v2' },
+  });
+
+  await prisma.documentTemplate.updateMany({
+    where: { tenantId: systemTenant.id, type: 'OPD_PRESCRIPTION', version: 1 },
+    data: { isActive: false },
+  });
+
+  await prisma.documentTemplate.upsert({
+    where: {
+      tenantId_type_version: {
+        tenantId: systemTenant.id,
+        type: 'OPD_INVOICE_RECEIPT',
+        version: 2,
+      },
+    },
+    create: {
+      tenantId: systemTenant.id,
+      type: 'OPD_INVOICE_RECEIPT',
+      templateKey: 'opd_invoice_receipt_v2',
+      version: 2,
+      isActive: true,
+    },
+    update: { isActive: true, templateKey: 'opd_invoice_receipt_v2' },
+  });
+
+  await prisma.documentTemplate.updateMany({
+    where: { tenantId: systemTenant.id, type: 'OPD_INVOICE_RECEIPT', version: 1 },
+    data: { isActive: false },
   });
   console.log('✅ Default DocumentTemplates seeded');
 
