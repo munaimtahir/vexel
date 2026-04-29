@@ -77,12 +77,3 @@ export async function captureEvidence(page: Page, testTitle: string): Promise<Ev
   return report;
 }
 
-/**
- * Returns a simple step logger.
- * Usage: const step = logStep('my-test'); step('navigate to login'); ...
- */
-export function logStep(context: string) {
-  return (name: string) => {
-    console.log(`[${new Date().toISOString()}] [${context}] STEP: ${name}`);
-  };
-}
