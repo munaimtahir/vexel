@@ -1,22 +1,16 @@
 import * as crypto from 'crypto';
 
-// Canonical serialiser: stable key sort + ISO dates + 4dp numbers
 export function canonicalJson(obj: unknown): string {
-  return JSON.stringify(sortKeys(obj));
+    if (obj === null || obj === undefined) return '';
+    if (typeof obj !== 'object') return String(obj);
+    if (Array.isArray(obj)) return '[' + obj.map(canonicalJson).join(',') + ']';
+
+    const keys = Object.keys(obj as object).sort();
+    return '{' + keys.map(k => `"${k}":${canonicalJson((obj as any)[k])}`).join(',') + '}';
 }
 
 export function payloadHash(obj: unknown): string {
   return crypto.createHash('sha256').update(canonicalJson(obj)).digest('hex');
-}
-
-function sortKeys(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(sortKeys);
-  if (value !== null && typeof value === 'object') {
-    return Object.keys(value as object)
-      .sort()
-      .reduce((acc, k) => ({ ...acc, [k]: sortKeys((value as Record<string, unknown>)[k]) }), {});
-  }
-  return value;
 }
 
 // ─── Receipt Payload ──────────────────────────────────────────────────────
