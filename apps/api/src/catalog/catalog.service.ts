@@ -854,8 +854,8 @@ export class CatalogService {
         })),
       });
     } else {
-      for (const item of resolved) {
-        await this.prisma.testParameterMapping.upsert({
+      await Promise.all(resolved.map((item) =>
+        this.prisma.testParameterMapping.upsert({
           where: { tenantId_testId_parameterId: { tenantId, testId, parameterId: item.parameterId! } },
           create: {
             tenantId, testId, parameterId: item.parameterId!,
@@ -866,8 +866,8 @@ export class CatalogService {
             displayOrder: item.displayOrder, ordering: item.displayOrder,
             isRequired: item.isRequired ?? true, unitOverride: item.unitOverride ?? null,
           },
-        });
-      }
+        })
+      ));
     }
 
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameters.bulk_update', entityType: 'CatalogTest', entityId: testId, after: { mode: body.mode, count: resolved.length }, correlationId });
@@ -919,13 +919,13 @@ export class CatalogService {
         })),
       });
     } else {
-      for (const item of resolved) {
-        await this.prisma.panelTestMapping.upsert({
+      await Promise.all(resolved.map((item) =>
+        this.prisma.panelTestMapping.upsert({
           where: { tenantId_panelId_testId: { tenantId, panelId, testId: item.testId! } },
           create: { tenantId, panelId, testId: item.testId!, ordering: item.displayOrder, displayOrder: item.displayOrder },
           update: { displayOrder: item.displayOrder, ordering: item.displayOrder },
-        });
-      }
+        })
+      ));
     }
 
     await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel_tests.bulk_update', entityType: 'CatalogPanel', entityId: panelId, after: { mode: body.mode, count: resolved.length }, correlationId });
