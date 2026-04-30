@@ -53,27 +53,70 @@ export class ResultsService {
     patientGender?: string | null,
     patientDob?: Date | null,
   ): Promise<{ referenceRange: string | null; unit: string | null }> {
+    const res = await this.resolveReferenceRanges(
+      tenantId,
+      testId,
+      [parameterId],
+      patientGender,
+      patientDob,
+    );
+    return res.get(parameterId) ?? { referenceRange: null, unit: null };
+  }
+
+  private async resolveReferenceRanges(
+    tenantId: string,
+    testId: string,
+    parameterIds: string[],
+    patientGender?: string | null,
+    patientDob?: Date | null,
+  ): Promise<Map<string, { referenceRange: string | null; unit: string | null }>> {
     const ageYears = patientDob
       ? Math.floor((Date.now() - new Date(patientDob).getTime()) / (365.25 * 24 * 3600 * 1000))
       : null;
-    const candidates = await this.prisma.referenceRange.findMany({
+
+    const allCandidates = await this.prisma.referenceRange.findMany({
       where: {
         tenantId,
-        parameterId,
+        parameterId: { in: parameterIds },
         OR: [{ testId }, { testId: null }],
       },
       orderBy: [{ testId: 'desc' }, { ageMinYears: 'desc' }, { createdAt: 'asc' }],
     });
-    for (const row of candidates) {
-      if (row.gender && patientGender && row.gender !== patientGender) continue;
-      if (row.gender && !patientGender) continue;
-      if (ageYears != null) {
-        if (row.ageMinYears != null && ageYears < row.ageMinYears) continue;
-        if (row.ageMaxYears != null && ageYears > row.ageMaxYears) continue;
+
+    const results = new Map<string, { referenceRange: string | null; unit: string | null }>();
+
+    // Group candidates by parameterId
+    const candidatesByParam = new Map<string, any[]>();
+    for (const cand of allCandidates) {
+      if (!candidatesByParam.has(cand.parameterId)) {
+        candidatesByParam.set(cand.parameterId, []);
       }
-      return { referenceRange: this.formatReferenceRange(row), unit: row.unit ?? null };
+      candidatesByParam.get(cand.parameterId)!.push(cand);
     }
-    return { referenceRange: null, unit: null };
+
+    for (const parameterId of parameterIds) {
+      const candidates = candidatesByParam.get(parameterId) ?? [];
+      let found = false;
+      for (const row of candidates) {
+        if (row.gender && patientGender && row.gender !== patientGender) continue;
+        if (row.gender && !patientGender) continue;
+        if (ageYears != null) {
+          if (row.ageMinYears != null && ageYears < row.ageMinYears) continue;
+          if (row.ageMaxYears != null && ageYears > row.ageMaxYears) continue;
+        }
+        results.set(parameterId, {
+          referenceRange: this.formatReferenceRange(row),
+          unit: row.unit ?? null,
+        });
+        found = true;
+        break;
+      }
+      if (!found) {
+        results.set(parameterId, { referenceRange: null, unit: null });
+      }
+    }
+
+    return results;
   }
 
   async getPendingTests(
@@ -203,16 +246,22 @@ export class ResultsService {
 
     const specimenReady = SPECIMEN_READY_STATUSES.includes(order.encounter.status);
 
-    const parameters = await Promise.all((parameterMappings as any[]).map(async (m) => {
+    const parameterIds = (parameterMappings as any[]).map((m) => m.parameterId);
+    const resolvedRanges = await this.resolveReferenceRanges(
+      tenantId,
+      order.testId,
+      parameterIds,
+      order.encounter?.patient?.gender ?? null,
+      order.encounter?.patient?.dateOfBirth ?? null,
+    );
+
+    const parameters = (parameterMappings as any[]).map((m) => {
       const existing = (order.results as any[]).find((r) => r.parameterId === m.parameterId);
       const locked = !!existing?.verifiedAt || !!existing?.locked;
-      const resolvedRange = await this.resolveReferenceRange(
-        tenantId,
-        order.testId,
-        m.parameterId,
-        order.encounter?.patient?.gender ?? null,
-        order.encounter?.patient?.dateOfBirth ?? null,
-      );
+      const resolvedRange = resolvedRanges.get(m.parameterId) ?? {
+        referenceRange: null,
+        unit: null,
+      };
       return {
         parameterId: m.parameterId,
         name: m.parameter.name,
@@ -226,7 +275,7 @@ export class ResultsService {
         enteredAt: existing?.enteredAt ?? null,
         verifiedAt: existing?.verifiedAt ?? null,
       };
-    }));
+    });
 
     return {
       id: order.id,
@@ -268,36 +317,51 @@ export class ResultsService {
     }
 
     const now = new Date();
+    const parameterIds = values.map((v) => v.parameterId);
+
+    const [existingResults, params, mappings, resolvedRanges] = await Promise.all([
+      this.prisma.labResult.findMany({
+        where: { labOrderId: orderedTestId, parameterId: { in: parameterIds } },
+      }),
+      this.prisma.parameter.findMany({
+        where: { id: { in: parameterIds }, tenantId },
+      }),
+      this.prisma.testParameterMapping.findMany({
+        where: {
+          tenantId,
+          testId: order.testId,
+          parameterId: { in: parameterIds },
+        },
+      }),
+      this.resolveReferenceRanges(
+        tenantId,
+        order.testId,
+        parameterIds,
+        order.encounter?.patient?.gender ?? null,
+        order.encounter?.patient?.dateOfBirth ?? null,
+      ),
+    ]);
+
+    const existingMap = new Map(existingResults.map((r) => [r.parameterId, r]));
+    const paramMap = new Map(params.map((p) => [p.id, p]));
+    const mappingMap = new Map(mappings.map((m) => [m.parameterId, m]));
+
+    const upserts: any[] = [];
+
     for (const { parameterId, value } of values) {
-      const existing = await this.prisma.labResult.findFirst({
-        where: { labOrderId: orderedTestId, parameterId },
-      });
+      const existing = existingMap.get(parameterId);
       if (existing?.locked) continue;
 
-      const param = await this.prisma.parameter.findFirst({
-        where: { id: parameterId, tenantId },
-      });
-      const mapping = param
-        ? await this.prisma.testParameterMapping.findUnique({
-            where: {
-              tenantId_testId_parameterId: {
-                tenantId,
-                testId: order.testId,
-                parameterId,
-              },
-            },
-          })
-        : null;
+      const param = paramMap.get(parameterId);
+      const mapping = mappingMap.get(parameterId);
 
       const effectiveUnit =
         (mapping as any)?.unitOverride ?? param?.defaultUnit ?? (param as any)?.unit ?? null;
-      const resolvedRange = await this.resolveReferenceRange(
-        tenantId,
-        order.testId,
-        parameterId,
-        order.encounter?.patient?.gender ?? null,
-        order.encounter?.patient?.dateOfBirth ?? null,
-      );
+      const resolvedRange = resolvedRanges.get(parameterId) ?? {
+        referenceRange: null,
+        unit: null,
+      };
+
       const referenceRange = existing?.referenceRange ?? resolvedRange.referenceRange;
       const unit = effectiveUnit ?? resolvedRange.unit;
       const flag = computeFlag(value, referenceRange);
@@ -316,10 +380,14 @@ export class ResultsService {
       };
 
       if (existing) {
-        await this.prisma.labResult.update({ where: { id: existing.id }, data });
+        upserts.push(this.prisma.labResult.update({ where: { id: (existing as any).id }, data }));
       } else {
-        await this.prisma.labResult.create({ data });
+        upserts.push(this.prisma.labResult.create({ data }));
       }
+    }
+
+    if (upserts.length > 0) {
+      await this.prisma.$transaction(upserts);
     }
 
     await this.audit.log({
