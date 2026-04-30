@@ -23,6 +23,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
+import { generateSecureId } from '@/lib/utils';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -289,10 +290,6 @@ function PropertiesPanel({
 
 // ─── Main Studio Page ─────────────────────────────────────────────────────────
 
-function generateId() {
-  return Math.random().toString(36).slice(2, 10);
-}
-
 export default function TemplatestudioPage() {
   const params  = useParams();
   const router  = useRouter();
@@ -349,7 +346,7 @@ export default function TemplatestudioPage() {
   // Add block from library
   const addBlock = (def: BlockDef) => {
     const newBlock: LayoutBlock = {
-      id:    `${def.type.toLowerCase()}_${generateId()}`,
+      id:    `${def.type.toLowerCase()}_${generateSecureId()}`,
       type:  def.type,
       props: { ...def.defaultProps },
     };
