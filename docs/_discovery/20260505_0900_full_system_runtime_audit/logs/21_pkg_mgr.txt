@@ -1,0 +1,2 @@
+$ rg -n 'packageManager' package.json pnpm-workspace.yaml 2>/dev/null || true
+package.json:27:  "packageManager": "pnpm@9.15.4",

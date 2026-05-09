@@ -1,0 +1,53 @@
+$ ls -la apps && find apps -maxdepth 2 -type d | sort
+
+total 36
+drwxrwxr-x  9 munaim munaim 4096 Mar  2 22:56 .
+drwxrwxr-x 17 munaim munaim 4096 Mar  7 06:58 ..
+drwxrwxr-x  6 munaim munaim 4096 Mar  7 06:59 admin
+drwxrwxr-x  9 munaim munaim 4096 Mar 26 00:04 api
+drwxrwxr-x  9 munaim munaim 4096 Mar 26 00:49 e2e
+drwxrwxr-x  7 munaim munaim 4096 Mar  3 03:56 mobile
+drwxrwxr-x  6 munaim munaim 4096 Mar 14 02:31 operator
+drwxrwxr-x  4 munaim munaim 4096 Mar  6 23:10 pdf
+drwxrwxr-x  6 munaim munaim 4096 Mar  2 23:05 worker
+apps
+apps/admin
+apps/admin/.next
+apps/admin/.turbo
+apps/admin/node_modules
+apps/admin/src
+apps/api
+apps/api/.turbo
+apps/api/dist
+apps/api/node_modules
+apps/api/prisma
+apps/api/resources
+apps/api/scripts
+apps/api/src
+apps/e2e
+apps/e2e/fixtures
+apps/e2e/helpers
+apps/e2e/node_modules
+apps/e2e/playwright-report
+apps/e2e/scripts
+apps/e2e/test-results
+apps/e2e/tests
+apps/mobile
+apps/mobile/.expo
+apps/mobile/app
+apps/mobile/assets
+apps/mobile/node_modules
+apps/mobile/src
+apps/operator
+apps/operator/.next
+apps/operator/.turbo
+apps/operator/node_modules
+apps/operator/src
+apps/pdf
+apps/pdf/bin
+apps/pdf/obj
+apps/worker
+apps/worker/.turbo
+apps/worker/dist
+apps/worker/node_modules
+apps/worker/src

@@ -1,0 +1,4 @@
+$ git remote -v
+
+origin	git@github.com:munaimtahir/vexel (fetch)
+origin	git@github.com:munaimtahir/vexel (push)

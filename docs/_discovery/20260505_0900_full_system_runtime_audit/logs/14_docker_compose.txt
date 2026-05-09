@@ -1,0 +1,3 @@
+$ docker compose version
+
+Docker Compose version v5.1.3

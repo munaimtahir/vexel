@@ -1,0 +1,3 @@
+COMMAND: rg -n 'setGlobalPrefix\(|GlobalPrefix|app\.setGlobalPrefix' apps/api/src -S || true
+
+apps/api/src/main.ts:25:  app.setGlobalPrefix('api');

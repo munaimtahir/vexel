@@ -1,0 +1,13 @@
+COMMAND: rg -n 'REDIS|redis|ioredis|connection' apps/worker/src -S | head -200
+
+apps/worker/src/main.ts:2:import IORedis from 'ioredis';
+apps/worker/src/main.ts:30:const REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6379';
+apps/worker/src/main.ts:32:const connection = new IORedis(REDIS_URL, {
+apps/worker/src/main.ts:36:connection.on('connect', () => console.log('✅ Worker connected to Redis'));
+apps/worker/src/main.ts:37:connection.on('error', (err) => console.error('❌ Redis error:', err.message));
+apps/worker/src/main.ts:47:  { connection },
+apps/worker/src/main.ts:51:const catalogImportWorker = new Worker('catalog-import', processCatalogImport, { connection });
+apps/worker/src/main.ts:54:const catalogExportWorker = new Worker('catalog-export', processCatalogExport, { connection });
+apps/worker/src/main.ts:58:  connection,
+apps/worker/src/main.ts:67:  { connection, concurrency: 1 },
+apps/worker/src/ops-backup.processor.ts:396:    'vexel-redis-1', 'vexel-minio-1',

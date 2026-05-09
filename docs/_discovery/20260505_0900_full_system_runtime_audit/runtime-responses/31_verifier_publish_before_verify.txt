@@ -1,0 +1,15 @@
+COMMAND: POST http://127.0.0.1:9021/api/encounters/e2986489-5ae5-4f3b-b45a-572086370cbb:publish-report
+
+HTTP/1.1 409 Conflict
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900-verifier
+Content-Type: application/json; charset=utf-8
+Content-Length: 106
+ETag: W/"6a-mYJfBzb4XjwXFEnI6iI328WDUbk"
+Date: Tue, 05 May 2026 09:19:34 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Cannot publish report for encounter in status 'resulted'","error":"Conflict","statusCode":409}

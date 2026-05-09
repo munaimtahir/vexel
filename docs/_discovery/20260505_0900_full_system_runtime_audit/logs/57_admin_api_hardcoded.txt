@@ -1,0 +1,2 @@
+COMMAND: bash -lc rg -n '[/]api/' apps/admin -S --glob '!**/node_modules/**' || true
+

@@ -1,0 +1,15 @@
+COMMAND: POST http://127.0.0.1:9021/api/encounters/e2986489-5ae5-4f3b-b45a-572086370cbb:collect-specimen
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900-v3
+Content-Type: application/json; charset=utf-8
+Content-Length: 1437
+ETag: W/"59d-UtJCmvrTYzFJmynrTxIGs3Qf7fw"
+Date: Tue, 05 May 2026 09:19:08 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":"e2986489-5ae5-4f3b-b45a-572086370cbb","tenantId":"system","patientId":"c654ad1e-4238-46a2-a9ee-b9a03cba5f03","moduleType":"LIMS","encounterCode":"SYS-2605-005","status":"specimen_collected","createdAt":"2026-05-05T09:19:06.956Z","updatedAt":"2026-05-05T09:19:08.237Z","patient":{"id":"c654ad1e-4238-46a2-a9ee-b9a03cba5f03","tenantId":"system","firstName":"Audit","lastName":"Test0900","dateOfBirth":null,"ageYears":null,"gender":null,"mrn":"PT-26-0577","mobile":null,"cnic":null,"address":null,"createdAt":"2026-05-05T09:17:01.371Z","updatedAt":"2026-05-05T09:17:01.371Z"},"labOrders":[{"id":"be4ca3d8-67ba-456a-ad88-d76a22a855f3","tenantId":"system","encounterId":"e2986489-5ae5-4f3b-b45a-572086370cbb","testId":"74eebdff-ce59-42d4-872a-9c6b684b0d0b","testNameSnapshot":null,"status":"specimen_collected","resultStatus":"PENDING","priority":"routine","totalAmount":null,"discountAmount":null,"discountPct":null,"payableAmount":null,"amountPaid":null,"dueAmount":null,"submittedAt":null,"submittedById":null,"cancelledAt":null,"cancelReason":null,"createdAt":"2026-05-05T09:19:07.407Z","updatedAt":"2026-05-05T09:19:08.237Z","specimen":{"id":"ae66aadf-6b89-4375-ba99-a98b736a1f50","tenantId":"system","labOrderId":"be4ca3d8-67ba-456a-ad88-d76a22a855f3","barcode":"AUDIT-0900-004","type":"Blood","collectedAt":"2026-05-05T09:19:08.233Z","receivedAt":null,"status":"collected","createdAt":"2026-05-05T09:19:08.237Z"},"results":[]}]}

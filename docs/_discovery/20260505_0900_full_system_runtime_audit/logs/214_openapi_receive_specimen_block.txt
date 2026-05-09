@@ -1,0 +1,147 @@
+COMMAND: block for ^\s*/encounters/\{encounterId\}:receive-specimen:
+
+line=7039
+
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:receive-specimen:
+    post:
+      operationId: receiveSpecimenLegacy
+      summary: Mark specimen as received (legacy single-specimen endpoint)
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                labOrderId:
+                  type: string
+                receivedAt:
+                  type: string
+      responses:
+        "200":
+          description: Specimen received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:result:
+    post:
+      operationId: enterResult
+      summary: Enter lab result
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [labOrderId, value]
+              properties:
+                labOrderId:
+                  type: string
+                value:
+                  type: string
+                unit:
+                  type: string
+                referenceRange:
+                  type: string
+                flag:
+                  type: string
+                  enum: [normal, high, low, critical]
+      responses:
+        "200":
+          description: Result entered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:verify:
+    post:
+      operationId: verifyEncounterLegacy
+      deprecated: true
+      summary: "(deprecated) Verify lab results — use POST /verification/encounters/{encounterId}:verify instead"
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounter verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:publish-report:
+    post:
+      operationId: publishEncounterReport
+      summary: Publish rendered lab report and mark encounter as published (idempotent)
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Report published and encounter moved to published
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encounter:
+                    $ref: '#/components/schemas/Encounter'
+                  document:
+                    $ref: '#/components/schemas/Document'
+        "409":
+          description: Encounter not verified or report not rendered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:cancel:
+    post:
+      operationId: cancelEncounter
+      summary: Cancel encounter
+      tags: [Encounters]

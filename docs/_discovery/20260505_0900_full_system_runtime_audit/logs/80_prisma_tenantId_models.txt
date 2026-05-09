@@ -1,0 +1,202 @@
+COMMAND: rg -n 'tenantId' apps/api/prisma/schema.prisma | head -200
+
+75:  tenantId String
+78:  tenant Tenant @relation(fields: [tenantId], references: [id])
+86:  tenantId           String  @unique
+104:  tenant Tenant @relation(fields: [tenantId], references: [id])
+111:  tenantId         String
+122:  tenant           Tenant           @relation(fields: [tenantId], references: [id])
+130:  @@unique([tenantId, email])
+131:  @@index([tenantId, status])
+152:  tenantId          String
+160:  tenant          Tenant           @relation(fields: [tenantId], references: [id])
+164:  @@unique([tenantId, name])
+165:  @@index([tenantId])
+196:  tenantId    String
+204:  tenant Tenant @relation(fields: [tenantId], references: [id])
+206:  @@unique([tenantId, key])
+207:  @@index([tenantId])
+215:  tenantId             String
+235:  tenant            Tenant      @relation(fields: [tenantId], references: [id])
+244:  @@unique([tenantId, externalId], name: "tenant_test_externalId")
+245:  @@index([tenantId, isActive])
+246:  @@index([tenantId, userCode])
+247:  @@index([tenantId, name])
+253:  tenantId  String
+258:  tenant Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+261:  @@unique([tenantId, rank])
+262:  @@unique([tenantId, testId])
+263:  @@index([tenantId, rank])
+269:  tenantId    String
+278:  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+281:  @@unique([tenantId, externalId], name: "tenant_sample_type_externalId")
+282:  @@index([tenantId, isActive])
+288:  tenantId    String
+299:  tenant      Tenant           @relation(fields: [tenantId], references: [id])
+302:  @@unique([tenantId, externalId], name: "tenant_panel_externalId")
+308:  tenantId      String
+325:  tenant          Tenant                 @relation(fields: [tenantId], references: [id])
+329:  @@unique([tenantId, externalId], name: "tenant_param_externalId")
+330:  @@index([tenantId, isActive])
+336:  tenantId     String
+344:  tenant    Tenant      @relation(fields: [tenantId], references: [id])
+348:  @@unique([tenantId, testId, parameterId])
+349:  @@index([tenantId, testId])
+355:  tenantId     String
+361:  tenant Tenant       @relation(fields: [tenantId], references: [id])
+365:  @@unique([tenantId, panelId, testId])
+366:  @@index([tenantId, panelId])
+372:  tenantId     String
+386:  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+390:  @@index([tenantId, parameterId])
+396:  tenantId      String
+408:  tenant Tenant @relation(fields: [tenantId], references: [id])
+410:  @@unique([tenantId, type, payloadHash])
+411:  @@index([tenantId, type, status])
+412:  @@index([tenantId, createdAt])
+420:  tenantId      String
+431:  tenant Tenant @relation(fields: [tenantId], references: [id])
+434:  @@index([tenantId, createdAt])
+435:  @@index([tenantId, actorUserId])
+436:  @@index([tenantId, entityType, entityId])
+445:  tenantId         String
+458:  tenant       Tenant         @relation(fields: [tenantId], references: [id])
+465:  @@unique([tenantId, mrn])
+466:  @@index([tenantId, lastName])
+467:  @@index([tenantId, mobile])
+473:  tenantId      String
+483:  tenant           Tenant           @relation(fields: [tenantId], references: [id])
+492:  @@unique([tenantId, encounterCode])
+493:  @@index([tenantId, status])
+494:  @@index([tenantId, moduleType, status])
+495:  @@index([tenantId, patientId])
+501:  tenantId         String
+522:  tenant           Tenant           @relation(fields: [tenantId], references: [id])
+529:  @@index([tenantId, status])
+530:  @@index([tenantId, resultStatus])
+531:  @@index([tenantId, encounterId])
+537:  tenantId    String
+546:  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+549:  @@unique([tenantId, barcode])
+550:  @@index([tenantId, barcode])
+558:  tenantId            String
+573:  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+576:  @@unique([tenantId, encounterId, catalogSpecimenType])
+577:  @@index([tenantId, status])
+578:  @@index([tenantId, encounterId])
+584:  tenantId             String
+599:  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+602:  @@index([tenantId])
+603:  @@index([tenantId, labOrderId])
+611:  tenantId       String
+624:  tenant        Tenant             @relation(fields: [tenantId], references: [id])
+631:  @@unique([tenantId, code], name: "tenant_provider_code")
+632:  @@unique([tenantId, registrationNo], name: "tenant_provider_registrationNo")
+633:  @@index([tenantId, isActive])
+634:  @@index([tenantId, displayName])
+640:  tenantId      String
+652:  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+655:  @@unique([tenantId, providerId, weekday, startTime, endTime])
+656:  @@index([tenantId, providerId, weekday, isActive])
+662:  tenantId              String
+681:  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+686:  @@unique([tenantId, appointmentCode])
+687:  @@index([tenantId, status, scheduledAt])
+688:  @@index([tenantId, patientId, scheduledAt])
+689:  @@index([tenantId, providerId, scheduledAt])
+695:  tenantId              String
+713:  tenant        Tenant             @relation(fields: [tenantId], references: [id])
+723:  @@unique([tenantId, encounterId])
+724:  @@unique([tenantId, appointmentId])
+725:  @@unique([tenantId, visitCode])
+726:  @@index([tenantId, status, createdAt])
+727:  @@index([tenantId, patientId, createdAt])
+728:  @@index([tenantId, providerId, createdAt])
+729:  @@index([tenantId, appointmentId])
+735:  tenantId         String
+753:  tenant Tenant  @relation(fields: [tenantId], references: [id])
+756:  @@index([tenantId, visitId, recordedAt])
+762:  tenantId       String
+775:  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+779:  @@unique([tenantId, visitId])
+780:  @@index([tenantId, providerId, createdAt])
+781:  @@index([tenantId, status])
+787:  tenantId   String
+797:  tenant   Tenant                @relation(fields: [tenantId], references: [id])
+802:  @@unique([tenantId, visitId])
+803:  @@index([tenantId, providerId, createdAt])
+804:  @@index([tenantId, status])
+810:  tenantId       String
+821:  tenant       Tenant          @relation(fields: [tenantId], references: [id])
+824:  @@unique([tenantId, prescriptionId, sortOrder])
+825:  @@index([tenantId, prescriptionId])
+831:  tenantId       String
+850:  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+857:  @@unique([tenantId, invoiceCode])
+858:  @@index([tenantId, status, createdAt])
+859:  @@index([tenantId, patientId, createdAt])
+860:  @@index([tenantId, opdVisitId])
+861:  @@index([tenantId, encounterId])
+867:  tenantId       String
+880:  tenant  Tenant  @relation(fields: [tenantId], references: [id])
+883:  @@unique([tenantId, invoiceId, sortOrder])
+884:  @@index([tenantId, invoiceId])
+890:  tenantId      String
+906:  tenant  Tenant  @relation(fields: [tenantId], references: [id])
+909:  @@unique([tenantId, paymentCode])
+910:  @@index([tenantId, invoiceId, receivedAt])
+911:  @@index([tenantId, status])
+912:  @@index([tenantId, correlationId])
+918:  tenantId        String
+938:  tenant        Tenant          @relation(fields: [tenantId], references: [id])
+941:  @@unique([tenantId, code])
+942:  @@index([tenantId, isActive, sortOrder])
+943:  @@index([tenantId, displayName])
+949:  tenantId       String
+969:  tenant          Tenant                     @relation(fields: [tenantId], references: [id])
+977:  @@unique([tenantId, visitCode])
+978:  @@unique([tenantId, encounterId])
+979:  @@index([tenantId, patientId, createdAt])
+980:  @@index([tenantId, doctorId, createdAt])
+981:  @@index([tenantId, status])
+987:  tenantId       String
+1003:  tenant        Tenant       @relation(fields: [tenantId], references: [id])
+1006:  @@index([tenantId, opdEncounterId, enteredAt])
+1012:  tenantId       String
+1026:  tenant       Tenant       @relation(fields: [tenantId], references: [id])
+1029:  @@unique([tenantId, opdEncounterId])
+1030:  @@index([tenantId, updatedAt])
+1036:  tenantId            String
+1042:  tenant       Tenant       @relation(fields: [tenantId], references: [id])
+1046:  @@unique([tenantId, opdEncounterId])
+1047:  @@index([tenantId, createdAt])
+1053:  tenantId          String
+1067:  tenant          Tenant                   @relation(fields: [tenantId], references: [id])
+1070:  @@unique([tenantId, opdPrescriptionId, sortOrder])
+1071:  @@index([tenantId, opdPrescriptionId])
+1077:  tenantId       String
+1085:  tenant Tenant @relation(fields: [tenantId], references: [id])
+1087:  @@unique([tenantId, commandName, idempotencyKey])
+1088:  @@index([tenantId, createdAt])
+1096:  tenantId    String
+1105:  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+1108:  @@unique([tenantId, type, version])
+1109:  @@index([tenantId, type, isActive])
+1115:  tenantId     String
+1121:  storageKey   String?   // MinIO object key e.g. {tenantId}/{documentId}/report.pdf
+1132:  tenant   Tenant           @relation(fields: [tenantId], references: [id])
+1135:  @@unique([tenantId, type, templateId, payloadHash])
+1136:  @@index([tenantId, status])
+1137:  @@index([tenantId, sourceRef, sourceType])
+1138:  @@index([tenantId, createdAt])
+1144:// Platform-owned starter blueprints — global, no tenantId
+1165:  tenantId             String
+1180:  tenant            Tenant             @relation(fields: [tenantId], references: [id])
+1187:  @@unique([tenantId, code, templateVersion], name: "tenant_template_code_version")
+1188:  @@index([tenantId, status])
+1189:  @@index([tenantId, schemaType])
+1190:  @@index([tenantId, templateFamily])
+1197:  tenantId   String
+1206:  tenant   Tenant        @relation(fields: [tenantId], references: [id])
+1210:  @@unique([tenantId, testId, templateId], name: "tenant_test_template")
+1211:  @@index([tenantId, testId])

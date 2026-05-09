@@ -1,0 +1,7 @@
+COMMAND: http://127.0.0.1:9022/health
+
+HTTP/1.1 404 Not Found
+Content-Length: 0
+Date: Tue, 05 May 2026 09:12:10 GMT
+Server: Kestrel
+

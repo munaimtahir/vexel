@@ -1,0 +1,30 @@
+COMMAND: rg -n 'Module\(|@Module\(' apps/api/src -S | head -250
+
+apps/api/src/tenant/tenant.module.ts:6:@Module({
+apps/api/src/app.module.ts:30:@Module({
+apps/api/src/jobs/jobs.module.ts:6:@Module({ imports: [AuditModule], controllers: [JobsController], providers: [JobsService] })
+apps/api/src/roles/roles.module.ts:7:@Module({
+apps/api/src/documents/documents.module.ts:9:@Module({
+apps/api/src/feature-flags/feature-flags.module.ts:7:@Module({
+apps/api/src/verification/verification.module.ts:7:@Module({
+apps/api/src/storage/storage.module.ts:4:@Module({ providers: [StorageService], exports: [StorageService] })
+apps/api/src/rbac/rbac.module.ts:4:@Module({
+apps/api/src/appointments/appointments.module.ts:6:@Module({
+apps/api/src/templates/templates.module.ts:6:@Module({
+apps/api/src/templates/__tests__/templates.service.spec.ts:78:    const module: TestingModule = await Test.createTestingModule({
+apps/api/src/health/health.module.ts:5:@Module({
+apps/api/src/audit/audit.module.ts:7:@Module({
+apps/api/src/opd/opd.module.ts:7:@Module({
+apps/api/src/sample-collection/sample-collection.module.ts:7:@Module({
+apps/api/src/catalog/catalog.module.ts:12:@Module({
+apps/api/src/billing/billing.module.ts:7:@Module({
+apps/api/src/prisma/prisma.module.ts:5:@Module({
+apps/api/src/encounters/encounters.module.ts:7:@Module({ imports: [AuditModule, DocumentsModule], controllers: [EncountersController], providers: [EncountersService] })
+apps/api/src/ops/ops.module.ts:7:@Module({
+apps/api/src/ops/__tests__/ops.service.spec.ts:77:    const module: TestingModule = await Test.createTestingModule({
+apps/api/src/patients/patients.module.ts:6:@Module({ imports: [AuditModule], controllers: [PatientsController], providers: [PatientsService] })
+apps/api/src/results/results.module.ts:9:@Module({
+apps/api/src/users/users.module.ts:7:@Module({
+apps/api/src/auth/auth.module.ts:9:@Module({
+apps/api/src/account/account.module.ts:7:@Module({
+apps/api/src/tenants/tenants.module.ts:12:@Module({

@@ -1,0 +1,18 @@
+COMMAND: top-level dirs
+
+.
+.cursor
+.git
+.github
+.playwright-cli
+.turbo
+.vscode
+OUT
+apps
+docker
+docs
+node_modules
+ops
+packages
+runtime
+scripts

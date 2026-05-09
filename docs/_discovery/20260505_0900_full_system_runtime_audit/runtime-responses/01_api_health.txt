@@ -1,0 +1,15 @@
+COMMAND: http://127.0.0.1:9021/api/health
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: c8183f89-a3fb-4725-995a-66d18f1cac92
+Content-Type: application/json; charset=utf-8
+Content-Length: 82
+ETag: W/"52-lNljhPgSlZz+kWI/taL3QdRiAFE"
+Date: Tue, 05 May 2026 09:12:11 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"status":"ok","version":"0.1.0","uptime":79239.690005721,"services":{"api":"ok"}}

@@ -1,0 +1,3 @@
+$ dotnet --version
+
+environment: line 11: dotnet: command not found

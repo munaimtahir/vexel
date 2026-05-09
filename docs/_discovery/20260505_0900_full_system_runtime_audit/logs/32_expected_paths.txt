@@ -1,0 +1,9 @@
+$ for p in apps/api apps/worker apps/pdf apps/admin apps/operator packages/contracts/openapi.yaml packages/sdk; do if [ -e  ]; then echo FOUND ; else echo MISSING ; fi; done
+
+FOUND
+FOUND
+FOUND
+FOUND
+FOUND
+FOUND
+FOUND

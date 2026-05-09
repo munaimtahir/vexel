@@ -1,0 +1,9 @@
+COMMAND: curl http://127.0.0.1:9022/health/pdf
+
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Tue, 05 May 2026 09:12:27 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"status":"ok","version":"1.0.0","services":{"pdf":"ok"}}

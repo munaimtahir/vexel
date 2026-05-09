@@ -1,0 +1,16 @@
+COMMAND: POST http://127.0.0.1:9021/api/auth/login (body omitted; tokens redacted)
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900-login-v3
+Set-Cookie: vexel_refresh=<REDACTED_COOKIE>; Max-Age=604800; Path=/api/auth; Expires=Tue, 12 May 2026 09:15:05 GMT; HttpOnly; SameSite=Lax
+Content-Type: application/json; charset=utf-8
+Content-Length: 679
+ETag: W/"2a7-IK+4FDbcfbQf2X+o2XTv1Vtelio"
+Date: Tue, 05 May 2026 09:15:05 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"accessToken":"<REDACTED_ACCESS_TOKEN>","refreshToken":"<REDACTED_REFRESH_TOKEN>","expiresIn":3600,"tokenType":"Bearer"}

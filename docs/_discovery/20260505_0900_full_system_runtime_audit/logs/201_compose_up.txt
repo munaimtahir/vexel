@@ -1,0 +1,22 @@
+COMMAND: docker compose up -d
+
+ Container vexel-pdf-1 Running 
+ Container vexel-operator-1 Running 
+ Container vexel-minio-1 Running 
+ Container vexel-postgres-1 Running 
+ Container vexel-redis-1 Running 
+ Container vexel-worker-1 Running 
+ Container vexel-api-1 Running 
+ Container vexel-admin-1 Running 
+ Container vexel-postgres-1 Waiting 
+ Container vexel-redis-1 Waiting 
+ Container vexel-minio-1 Waiting 
+ Container vexel-redis-1 Waiting 
+ Container vexel-postgres-1 Waiting 
+ Container vexel-postgres-1 Healthy 
+ Container vexel-postgres-1 Healthy 
+ Container vexel-minio-1 Healthy 
+ Container vexel-redis-1 Healthy 
+ Container vexel-redis-1 Healthy 
+ Container vexel-api-1 Waiting 
+ Container vexel-api-1 Healthy 

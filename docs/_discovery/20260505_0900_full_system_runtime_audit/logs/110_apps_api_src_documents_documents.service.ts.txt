@@ -1,0 +1,262 @@
+COMMAND: sed apps/api/src/documents/documents.service.ts
+
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
+import { LabReportPayload } from './canonical';
+import { Queue } from 'bullmq';
+import IORedis from 'ioredis';
+import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
+import { StorageService } from '../storage/storage.service';
+import { payloadHash, canonicalJson } from './canonical';
+
+const DOCUMENT_RENDER_QUEUE = 'document-render';
+
+function getRedisConnection() {
+  const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
+  return new IORedis(url, { maxRetriesPerRequest: null });
+}
+
+@Injectable()
+export class DocumentsService {
+  private readonly renderQueue: Queue;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+    private readonly storage: StorageService,
+  ) {
+    this.renderQueue = new Queue(DOCUMENT_RENDER_QUEUE, {
+      connection: getRedisConnection() as any,
+    });
+  }
+
+  private computeAgeAt(dateOfBirth: Date | null | undefined, anchor: Date): string | undefined {
+    if (!dateOfBirth) return undefined;
+    let years = anchor.getUTCFullYear() - dateOfBirth.getUTCFullYear();
+    const beforeBirthday =
+      anchor.getUTCMonth() < dateOfBirth.getUTCMonth() ||
+      (anchor.getUTCMonth() === dateOfBirth.getUTCMonth() &&
+        anchor.getUTCDate() < dateOfBirth.getUTCDate());
+    if (beforeBirthday) years -= 1;
+    return `${Math.max(0, years)}Y`;
+  }
+
+  private computeAgeDisplay(
+    dateOfBirth: Date | null | undefined,
+    ageYears: number | null | undefined,
+    anchor: Date,
+  ): string {
+    const computed = this.computeAgeAt(dateOfBirth, anchor);
+    if (computed) return computed;
+    if (typeof ageYears === 'number' && Number.isFinite(ageYears)) return `${Math.max(0, ageYears)}Y`;
+    return '';
+  }
+
+  private buildPatientDisplayName(firstName?: string | null, lastName?: string | null): string {
+    const first = (firstName ?? '').trim();
+    const last = (lastName ?? '').trim();
+    if (first && last && first.toLowerCase() === last.toLowerCase()) {
+      return first;
+    }
+    return [first, last].filter(Boolean).join(' ').trim();
+  }
+
+  private async normalizeDeterministicFields(
+    type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT' | 'OPD_PRESCRIPTION',
+    payload: Record<string, unknown>,
+    tenantId: string,
+    sourceType?: string,
+    sourceRef?: string,
+  ): Promise<Record<string, unknown>> {
+    const normalized: Record<string, unknown> = { ...payload };
+
+    if (type === 'LAB_REPORT') {
+      delete normalized.printedAt;
+    }
+
+    const normalizedSourceType = (sourceType ?? '').trim().toUpperCase();
+    if (normalizedSourceType !== 'ENCOUNTER' || !sourceRef) {
+      return normalized;
+    }
+
+    const encounter = await this.prisma.encounter.findFirst({
+      where: { id: sourceRef, tenantId },
+      include: {
+        patient: true,
+        labOrders: {
+          orderBy: { createdAt: 'asc' },
+          select: { id: true },
+        },
+      },
+    });
+    if (!encounter) {
+      return normalized;
+    }
+
+    if (type === 'RECEIPT') {
+      normalized.issuedAt = encounter.createdAt.toISOString();
+      const displayName =
+        this.buildPatientDisplayName(encounter.patient.firstName, encounter.patient.lastName) || 'N/A';
+      const ageDisplay = this.computeAgeDisplay(
+        encounter.patient.dateOfBirth,
+        encounter.patient.ageYears,
+        encounter.createdAt,
+      );
+      const gender = (encounter.patient.gender ?? '').trim();
+      const mrn = (encounter.patient.mrn ?? '').trim();
+      const mobile = (encounter.patient.mobile ?? '').trim();
+      const normalizedEncounterCode =
+        (normalized.encounterCode as string | undefined) ?? encounter.encounterCode ?? undefined;
+      const labOrderCode =
+        (normalized.labOrderCode as string | undefined) ??
+        (normalized.primaryOrderCode as string | undefined) ??
+        encounter.labOrders?.[0]?.id ??
+        normalizedEncounterCode ??
+        encounter.encounterCode ??
+        undefined;
+      normalized.patientDemographics = {
+        displayName,
+        ageDisplay,
+        gender: gender || undefined,
+        mrn: mrn || undefined,
+        mobile: mobile || undefined,
+      };
+      // Backward-compatible keys for existing PDF templates.
+      normalized.patientName = displayName;
+      normalized.patientMrn = mrn || undefined;
+      normalized.patientAge = ageDisplay || undefined;
+      normalized.patientGender = gender || undefined;
+      normalized.encounterCode = normalizedEncounterCode;
+      normalized.labOrderCode = labOrderCode ?? undefined;
+      return normalized;
+    }
+
+    if (type === 'LAB_REPORT') {
+      const verifyAudit = await this.prisma.auditEvent.findFirst({
+        where: {
+          tenantId,
+          entityId: sourceRef,
+          OR: [{ action: 'encounter.verify' }, { action: 'ENCOUNTER_VERIFIED' }],
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      const issuedAtAnchor = verifyAudit?.createdAt ?? encounter.createdAt;
+      normalized.issuedAt = issuedAtAnchor.toISOString();
+      const patientAge = this.computeAgeAt(encounter.patient.dateOfBirth, encounter.createdAt);
+      if (patientAge) {
+        normalized.patientAge = patientAge;
+      }
+    }
+
+    return normalized;
+  }
+
+  async generateDocument(
+    tenantId: string,
+    type: 'RECEIPT' | 'LAB_REPORT' | 'OPD_INVOICE_RECEIPT' | 'OPD_PRESCRIPTION',
+    payload: Record<string, unknown>,
+    sourceRef: string | undefined,
+    sourceType: string | undefined,
+    actorUserId: string,
+    correlationId: string,
+  ): Promise<{ document: any; created: boolean }> {
+    const moduleKey = ['OPD_INVOICE_RECEIPT', 'OPD_PRESCRIPTION'].includes(type)
+      ? 'module.opd'
+      : 'module.lims';
+    const moduleFlag = await this.prisma.tenantFeature.findUnique({
+      where: { tenantId_key: { tenantId, key: moduleKey } },
+    });
+    if (!moduleFlag?.enabled) {
+      throw new BadRequestException(`${moduleKey} feature flag is not enabled for this tenant`);
+    }
+
+    // Fetch active DocumentTemplate for tenant + type
+    const template =
+      (await this.prisma.documentTemplate.findFirst({
+        where: { tenantId, type, isActive: true },
+        orderBy: { version: 'desc' },
+      })) ??
+      (await this.prisma.documentTemplate.findFirst({
+        where: { tenantId: 'system', type, isActive: true },
+        orderBy: { version: 'desc' },
+      }));
+    if (!template) {
+      throw new NotFoundException(`No active DocumentTemplate found for type ${type}`);
+    }
+
+    // Inject branding from TenantConfig
+    const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+    const tenant = await this.prisma.tenant.findUnique({ where: { id: tenantId } });
+    const enrichedPayload = {
+      ...payload,
+      tenantName: tenantConfig?.brandName ?? tenant?.name ?? tenantId,
+      tenantLogoUrl: tenantConfig?.logoUrl ?? undefined,
+      reportHeader: tenantConfig?.reportHeader ?? undefined,
+      reportFooter: tenantConfig?.reportFooter ?? undefined,
+    };
+    const normalizedPayload = await this.normalizeDeterministicFields(
+      type,
+      enrichedPayload,
+      tenantId,
+      sourceType,
+      sourceRef,
+    );
+
+    // Compute hash using canonical serialiser
+    const jsonPayload = JSON.parse(JSON.stringify(normalizedPayload)) as any;
+    const hash = payloadHash(jsonPayload);
+
+    // Check idempotency
+    const existing = await this.prisma.document.findUnique({
+      where: {
+        tenantId_type_templateId_payloadHash: {
+          tenantId,
+          type,
+          templateId: template.id,
+          payloadHash: hash,
+        },
+      },
+    });
+    if (existing && existing.status !== 'FAILED') {
+      return { document: existing, created: false };
+    }
+
+    const doc =
+      existing && existing.status === 'FAILED'
+        ? await this.prisma.document.update({
+            where: { id: existing.id },
+            data: {
+              templateId: template.id,
+              payloadJson: jsonPayload,
+              status: 'RENDERING',
+              sourceRef,
+              sourceType,
+              errorMessage: null,
+              pdfHash: null,
+              storageKey: null,
+              publishedAt: null,
+            },
+          })
+        : await this.prisma.document.create({
+            data: {
+              tenantId,
+              type,
+              templateId: template.id,
+              payloadJson: jsonPayload,
+              payloadHash: hash,
+              status: 'RENDERING',
+              sourceRef,
+              sourceType,
+              createdBy: actorUserId,
+            },
+          });
+
+    // Enqueue BullMQ job (status already RENDERING — no race with worker)
+    await this.renderQueue.add(
+      'render',
+      { documentId: doc.id, tenantId, correlationId },

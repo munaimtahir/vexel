@@ -1,0 +1,4 @@
+postgres:17
+postgres:15-alpine
+postgres:16-alpine
+redis:7-alpine

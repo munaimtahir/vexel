@@ -1,0 +1,223 @@
+COMMAND: ls -la /home/munaim/srv/proxy/caddy/Caddyfile 2>/dev/null && sed -n '1,220p' /home/munaim/srv/proxy/caddy/Caddyfile 2>/dev/null || true
+
+-rw-rw-r-- 1 munaim munaim 9199 May  1 22:43 /home/munaim/srv/proxy/caddy/Caddyfile
+{
+	email munaim.tahir@gmail.com
+	log {
+		output stdout
+		format json
+		# Keep internal logs useful, but drop validation-time auto-HTTPS
+		# and active health-check noise from intentionally special routes.
+		exclude http.auto_https http.handlers.reverse_proxy.health_checker.active tls.cache.maintenance http
+		level INFO
+	}
+}
+
+(std_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}
+
+(std_log) {
+	log {
+		output stdout
+		format json
+	}
+}
+
+(std_proxy) {
+	transport http {
+		read_timeout 30s
+		write_timeout 30s
+	}
+	header_up Host {host}
+	header_up X-Real-IP {remote_host}
+}
+
+(maintenance_503) {
+	header {
+		Retry-After "3600"
+		Content-Type "text/html; charset=utf-8"
+	}
+	respond "<!doctype html><html><head><title>Service Maintenance</title></head><body style=\"font-family:sans-serif;max-width:760px;margin:40px auto;line-height:1.5;\"><h1>Service not deployed</h1><p>This domain is currently offline or under maintenance. Please try again later.</p></body></html>" 503
+}
+
+# LIMS
+lims.alshifalab.pk {
+	encode gzip zstd
+	import std_log lims
+	import std_headers
+
+	# Media: served directly from host (required)
+	handle_path /media/* {
+		root * /home/munaim/srv/apps/lims/media
+		file_server
+	}
+	# Mobile app static build (path-based; default when DNS not ready)
+	handle_path /mobile/* {
+		root * /home/munaim/srv/apps/lims/mobile_app_dist
+		file_server
+	}
+	# APK download endpoint
+	handle_path /apk/* {
+		root * /home/munaim/srv/apps/lims/mobile_apk
+		file_server
+	}
+
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8012 {
+			import std_proxy
+		}
+	}
+
+	handle /admin/* {
+		reverse_proxy 127.0.0.1:8012 {
+			import std_proxy
+		}
+	}
+
+	handle /static/* {
+		reverse_proxy 127.0.0.1:8012 {
+			import std_proxy
+		}
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:8012 {
+			import std_proxy
+		}
+	}
+}
+
+# Optional: mobile app subdomain (uncomment when DNS for mobile.lims.alshifalab.pk is ready)
+# mobile.lims.alshifalab.pk {
+# 	import std_headers
+# 	import std_log mobile_lims
+# 	root * /home/munaim/srv/apps/lims/mobile_app_dist
+# 	file_server
+# }
+
+api.lims.alshifalab.pk {
+	encode gzip zstd
+	import std_log api_lims
+
+	handle /healthz {
+		header Content-Type "application/json"
+		respond "{\"status\":\"ok\",\"service\":\"api.lims\"}" 200
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:8012 {
+			import std_proxy
+		}
+	}
+}
+
+# RIMS
+rims.alshifalab.pk {
+	encode gzip zstd
+	import std_log rims
+	import std_headers
+
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8015 {
+			import std_proxy
+		}
+	}
+
+	handle /admin/* {
+		reverse_proxy 127.0.0.1:8015 {
+			import std_proxy
+		}
+	}
+
+	handle /static/* {
+		reverse_proxy 127.0.0.1:8015 {
+			import std_proxy
+		}
+	}
+
+	handle /media/* {
+		reverse_proxy 127.0.0.1:8015 {
+			import std_proxy
+		}
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:8081 {
+			import std_proxy
+		}
+	}
+}
+
+api.rims.alshifalab.pk {
+	encode gzip zstd
+	import std_log api_rims
+
+	@root_path path /
+
+	handle /healthz {
+		header Content-Type "application/json"
+		respond "{\"status\":\"ok\",\"service\":\"api.rims\"}" 200
+	}
+
+	handle @root_path {
+		redir * /healthz 302
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:8015 {
+			import std_proxy
+		}
+	}
+}
+
+# PHC
+phc.alshifalab.pk {
+	encode gzip zstd
+	import std_log phc
+	import std_headers
+
+	handle {
+		# PHC web domain now serves AccrediOps.
+		reverse_proxy 127.0.0.1:18080 {
+			import std_proxy
+		}
+	}
+}
+
+api.phc.alshifalab.pk {
+	encode gzip zstd
+	import std_log api_phc
+
+	handle /healthz {
+		header Content-Type "application/json"
+		respond "{\"status\":\"ok\",\"service\":\"api.phc\"}" 200
+	}
+
+	handle {
+		# PHC API domain now serves AccrediOps API via the same app Caddy entrypoint.
+		reverse_proxy 127.0.0.1:18080 {
+			import std_proxy
+		}
+	}
+}
+
+# SENAITE
+snt.alshifalab.pk {
+	encode gzip zstd
+	import std_log snt
+	import std_headers
+
+	@health path /healthz
+	handle @health {
+		header Content-Type "application/json"
+		respond "{\"status\":\"ok\",\"service\":\"snt\"}" 200
+	}
+
+	handle {

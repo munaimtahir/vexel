@@ -1,0 +1,3 @@
+COMMAND: find apps/pdf *.csproj
+
+apps/pdf/vexel-pdf.csproj

@@ -1,0 +1,15 @@
+COMMAND: GET http://127.0.0.1:9021/api/me (Authorization redacted)
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: 5b7358b6-05f2-4105-83cc-9406334138dd
+Content-Type: application/json; charset=utf-8
+Content-Length: 376
+ETag: W/"178-DqZEfeKHuXlyeBqaQTM9Ecox1xA"
+Date: Tue, 05 May 2026 09:15:05 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"userId":"a3e45944-1031-4bcd-9980-54093c672750","email":"operator@demo.vexel.pk","tenantId":"system","roles":["operator"],"isSuperAdmin":false,"permissions":["catalog.read","patient.manage","encounter.manage","result.enter","document.generate","account.profile.read-self","account.profile.update-self","account.password.change-self"],"firstName":"Demo","lastName":"Operator"}

@@ -1,0 +1,5 @@
+COMMAND: rg sdk imports (source only)
+
+apps/operator/src/lib/auth.ts:5:import { getTokens, getToken, setTokens, clearTokens, isAuthenticated, decodeJwt } from '@vexel/sdk';
+apps/operator/src/lib/api-client.ts:3: * IMPORTANT: Uses @vexel/sdk only. No direct fetch/axios.
+apps/operator/src/lib/api-client.ts:5:import { createApiClient } from '@vexel/sdk';

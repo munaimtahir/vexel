@@ -1,0 +1,12 @@
+COMMAND: rg payloadHash/pdfHash in documents.service
+
+7:import { LabReportPayload } from './canonical';
+13:import { payloadHash, canonicalJson } from './canonical';
+208:    // Compute hash using canonical serialiser
+210:    const hash = payloadHash(jsonPayload);
+215:        tenantId_type_templateId_payloadHash: {
+219:          payloadHash: hash,
+238:              pdfHash: null,
+249:              payloadHash: hash,
+275:      after: { type, status: 'RENDERING', payloadHash: hash, templateId: template.id },
+465:      // Template identity fields — included so payloadHash changes when template changes

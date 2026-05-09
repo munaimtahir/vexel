@@ -1,0 +1,10 @@
+COMMAND: bash -lc ls -la packages/contracts && ls -la packages/contracts/openapi.yaml
+
+total 324
+drwxrwxr-x 4 munaim munaim   4096 Mar  2 23:05 .
+drwxrwxr-x 6 munaim munaim   4096 Mar  2 22:38 ..
+drwxrwxr-x 3 munaim munaim   4096 Mar  2 23:50 node_modules
+-rw-rw-r-- 1 munaim munaim 308896 Mar 29 22:32 openapi.yaml
+-rw-rw-r-- 1 munaim munaim    279 Mar  2 22:38 package.json
+drwxrwxr-x 2 munaim munaim   4096 Mar  2 22:38 scripts
+-rw-rw-r-- 1 munaim munaim 308896 Mar 29 22:32 packages/contracts/openapi.yaml

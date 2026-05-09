@@ -1,0 +1,15 @@
+COMMAND: POST http://127.0.0.1:9021/api/encounters
+
+HTTP/1.1 201 Created
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900-v3
+Content-Type: application/json; charset=utf-8
+Content-Length: 577
+ETag: W/"241-buqO0TgTDkjnjutM39BM1i8gzx8"
+Date: Tue, 05 May 2026 09:19:07 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":"e2986489-5ae5-4f3b-b45a-572086370cbb","tenantId":"system","patientId":"c654ad1e-4238-46a2-a9ee-b9a03cba5f03","moduleType":"LIMS","encounterCode":null,"status":"registered","createdAt":"2026-05-05T09:19:06.956Z","updatedAt":"2026-05-05T09:19:06.956Z","patient":{"id":"c654ad1e-4238-46a2-a9ee-b9a03cba5f03","tenantId":"system","firstName":"Audit","lastName":"Test0900","dateOfBirth":null,"ageYears":null,"gender":null,"mrn":"PT-26-0577","mobile":null,"cnic":null,"address":null,"createdAt":"2026-05-05T09:17:01.371Z","updatedAt":"2026-05-05T09:17:01.371Z"},"labOrders":[]}

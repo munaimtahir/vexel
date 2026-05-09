@@ -1,0 +1,72 @@
+$ for p in apps/api apps/worker apps/pdf apps/admin apps/operator; do echo == packages/sdk ==; (ls -la packages/sdk 2>/dev/null || true); (find packages/sdk -maxdepth 2 -name package.json -o -name Dockerfile -o -name next.config.* -o -name nest-cli.json -o -name prisma -o -name tsconfig.json | sort || true); echo; done
+
+== packages/sdk ==
+total 36
+drwxrwxr-x 6 munaim munaim 4096 Mar  6 21:18 .
+drwxrwxr-x 6 munaim munaim 4096 Mar  2 22:38 ..
+drwxr-xr-x 2 munaim munaim 4096 Mar  2 23:50 .turbo
+-rw-rw-r-- 1 munaim munaim  548 Mar  2 22:38 README.md
+drwxrwxr-x 3 munaim munaim 4096 Mar  2 23:50 node_modules
+-rw-rw-r-- 1 munaim munaim  445 Mar  6 21:18 package.json
+drwxrwxr-x 2 munaim munaim 4096 Mar  2 22:38 scripts
+drwxrwxr-x 3 munaim munaim 4096 Mar  6 21:18 src
+-rw-rw-r-- 1 munaim munaim  224 Mar  2 22:38 tsconfig.json
+packages/sdk/package.json
+packages/sdk/tsconfig.json
+
+== packages/sdk ==
+total 36
+drwxrwxr-x 6 munaim munaim 4096 Mar  6 21:18 .
+drwxrwxr-x 6 munaim munaim 4096 Mar  2 22:38 ..
+drwxr-xr-x 2 munaim munaim 4096 Mar  2 23:50 .turbo
+-rw-rw-r-- 1 munaim munaim  548 Mar  2 22:38 README.md
+drwxrwxr-x 3 munaim munaim 4096 Mar  2 23:50 node_modules
+-rw-rw-r-- 1 munaim munaim  445 Mar  6 21:18 package.json
+drwxrwxr-x 2 munaim munaim 4096 Mar  2 22:38 scripts
+drwxrwxr-x 3 munaim munaim 4096 Mar  6 21:18 src
+-rw-rw-r-- 1 munaim munaim  224 Mar  2 22:38 tsconfig.json
+packages/sdk/package.json
+packages/sdk/tsconfig.json
+
+== packages/sdk ==
+total 36
+drwxrwxr-x 6 munaim munaim 4096 Mar  6 21:18 .
+drwxrwxr-x 6 munaim munaim 4096 Mar  2 22:38 ..
+drwxr-xr-x 2 munaim munaim 4096 Mar  2 23:50 .turbo
+-rw-rw-r-- 1 munaim munaim  548 Mar  2 22:38 README.md
+drwxrwxr-x 3 munaim munaim 4096 Mar  2 23:50 node_modules
+-rw-rw-r-- 1 munaim munaim  445 Mar  6 21:18 package.json
+drwxrwxr-x 2 munaim munaim 4096 Mar  2 22:38 scripts
+drwxrwxr-x 3 munaim munaim 4096 Mar  6 21:18 src
+-rw-rw-r-- 1 munaim munaim  224 Mar  2 22:38 tsconfig.json
+packages/sdk/package.json
+packages/sdk/tsconfig.json
+
+== packages/sdk ==
+total 36
+drwxrwxr-x 6 munaim munaim 4096 Mar  6 21:18 .
+drwxrwxr-x 6 munaim munaim 4096 Mar  2 22:38 ..
+drwxr-xr-x 2 munaim munaim 4096 Mar  2 23:50 .turbo
+-rw-rw-r-- 1 munaim munaim  548 Mar  2 22:38 README.md
+drwxrwxr-x 3 munaim munaim 4096 Mar  2 23:50 node_modules
+-rw-rw-r-- 1 munaim munaim  445 Mar  6 21:18 package.json
+drwxrwxr-x 2 munaim munaim 4096 Mar  2 22:38 scripts
+drwxrwxr-x 3 munaim munaim 4096 Mar  6 21:18 src
+-rw-rw-r-- 1 munaim munaim  224 Mar  2 22:38 tsconfig.json
+packages/sdk/package.json
+packages/sdk/tsconfig.json
+
+== packages/sdk ==
+total 36
+drwxrwxr-x 6 munaim munaim 4096 Mar  6 21:18 .
+drwxrwxr-x 6 munaim munaim 4096 Mar  2 22:38 ..
+drwxr-xr-x 2 munaim munaim 4096 Mar  2 23:50 .turbo
+-rw-rw-r-- 1 munaim munaim  548 Mar  2 22:38 README.md
+drwxrwxr-x 3 munaim munaim 4096 Mar  2 23:50 node_modules
+-rw-rw-r-- 1 munaim munaim  445 Mar  6 21:18 package.json
+drwxrwxr-x 2 munaim munaim 4096 Mar  2 22:38 scripts
+drwxrwxr-x 3 munaim munaim 4096 Mar  6 21:18 src
+-rw-rw-r-- 1 munaim munaim  224 Mar  2 22:38 tsconfig.json
+packages/sdk/package.json
+packages/sdk/tsconfig.json
+

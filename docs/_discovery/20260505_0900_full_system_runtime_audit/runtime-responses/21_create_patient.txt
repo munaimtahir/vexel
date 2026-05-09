@@ -1,0 +1,15 @@
+COMMAND: POST http://127.0.0.1:9021/api/patients
+
+HTTP/1.1 201 Created
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900
+Content-Type: application/json; charset=utf-8
+Content-Length: 294
+ETag: W/"126-ZjoQ9RVV2iXRT4drg5xylKlSnls"
+Date: Tue, 05 May 2026 09:17:01 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":"c654ad1e-4238-46a2-a9ee-b9a03cba5f03","tenantId":"system","firstName":"Audit","lastName":"Test0900","dateOfBirth":null,"ageYears":null,"gender":null,"mrn":"PT-26-0577","mobile":null,"cnic":null,"address":null,"createdAt":"2026-05-05T09:17:01.371Z","updatedAt":"2026-05-05T09:17:01.371Z"}

@@ -1,0 +1,129 @@
+### OpsScheduleTarget
+scheduleId      String
+  storageTargetId String
+
+  schedule      OpsSchedule      @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  storageTarget OpsStorageTarget @relation(fields: [storageTargetId], references: [id], onDelete: Cascade)
+
+  @@id([scheduleId, storageTargetId])
+  @@map("ops_schedule_targets")
+
+### RefreshToken
+id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique  // hashed token stored
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
+
+### RolePermission
+roleId     String
+  permission String  // matches Permission enum values
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([roleId, permission])
+  @@map("role_permissions")
+
+### TemplateBlueprint
+id                String   @id @default(uuid())
+  code              String   @unique  // e.g. "general_table_v1"
+  name              String
+  templateFamily    String   // GENERAL_TABLE | TWO_COLUMN_TABLE | PERIPHERAL_FILM_REPORT | HISTOPATH_NARRATIVE | GRAPHICAL_SCALE_REPORT | IMAGE_REPORT
+  schemaType        String   // TABULAR | DESCRIPTIVE_HEMATOLOGY | HISTOPATHOLOGY | GRAPH_SERIES | IMAGE_ATTACHMENT | MIXED_STRUCTURED
+  defaultConfigJson Json?    // default configJson for templates provisioned from this blueprint
+  isActive          Boolean  @default(true)
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  printTemplates PrintTemplate[]
+
+  @@map("template_blueprints")
+
+### Tenant
+id        String   @id @default(uuid())
+  name      String
+  status    String   @default("trial") // active | suspended | trial
+  isSuperAdmin Boolean @default(false)  // system tenant for super-admins
+  // Catalog seed state (set by enable-lims command)
+  catalogSeedMode        String?   // BASE_ON_ENABLE | EMPTY | CUSTOM_UPLOAD
+  catalogSeededAt        DateTime?
+  catalogSeedBaseVersion String?
+  catalogSeedHash        String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  domains       TenantDomain[]
+  config        TenantConfig?
+  users         User[]
+  featureFlags  TenantFeature[]
+  auditEvents   AuditEvent[]
+  catalogTests  CatalogTest[]
+  catalogPanels CatalogPanel[]
+  sampleTypes   SampleType[]
+  roles         Role[]
+  encounters    Encounter[]
+  patients      Patient[]
+  labOrders     LabOrder[]
+  specimens     Specimen[]
+  specimenItems SpecimenItem[]
+  labResults    LabResult[]
+  parameters           Parameter[]
+  testParameterMappings TestParameterMapping[]
+  panelTestMappings    PanelTestMapping[]
+  referenceRanges      ReferenceRange[]
+  jobRuns              JobRun[]
+  documentTemplates    DocumentTemplate[]
+  documents            Document[]
+  cashTransactions     CashTransaction[]
+  topTests             TenantTopTest[]
+  providers            Provider[]
+  providerSchedules    ProviderSchedule[]
+  appointments         Appointment[]
+  opdVisits            OPDVisit[]
+  opdVitals            OPDVitals[]
+  opdClinicalNotes     OPDClinicalNote[]
+  opdPrescriptions     OPDPrescription[]
+  opdPrescriptionItems OPDPrescriptionItem[]
+  invoices             Invoice[]
+  invoiceLines         InvoiceLine[]
+  payments             Payment[]
+  printTemplates       PrintTemplate[]
+  testTemplateMaps     TestTemplateMap[]
+  opdDoctors           OpdDoctor[]
+  opdEncountersKmvp    OpdEncounter[]
+  opdVitalsKmvp        OpdVital[]
+  opdNotesKmvp         OpdNote[]
+  opdPrescriptionsKmvp OpdEncounterPrescription[]
+  opdPrescriptionItemsKmvp OpdPrescriptionItemKmvp[]
+  opdCommandLogs       OpdCommandLog[]
+
+  @@map("tenants")
+
+### UserRole
+userId    String
+  roleId    String
+  grantedBy String?  // userId who granted this role
+  grantedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+
+### WorkerHeartbeat
+id          String   @id @default("worker-singleton")
+  lastBeatAt  DateTime @default(now())
+  startedAt   DateTime @default(now())
+  version     String?
+
+  @@map("worker_heartbeats")
+

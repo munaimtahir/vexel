@@ -1,0 +1,27 @@
+COMMAND: openapi.yaml snippet for encounter command bodies
+
+--- /encounters/{encounterId}:collect-specimen ---
+rg: regex parse error:
+    (?:^\s*/encounters/{encounterId}:collect-specimen:)
+                        ^
+error: repetition quantifier expects a valid decimal
+--- /encounters/{encounterId}:receive-specimen ---
+rg: regex parse error:
+    (?:^\s*/encounters/{encounterId}:receive-specimen:)
+                        ^
+error: repetition quantifier expects a valid decimal
+--- /encounters/{encounterId}:result ---
+rg: regex parse error:
+    (?:^\s*/encounters/{encounterId}:result:)
+                        ^
+error: repetition quantifier expects a valid decimal
+--- /encounters/{encounterId}:verify ---
+rg: regex parse error:
+    (?:^\s*/encounters/{encounterId}:verify:)
+                        ^
+error: repetition quantifier expects a valid decimal
+--- /encounters/{encounterId}:publish-report ---
+rg: regex parse error:
+    (?:^\s*/encounters/{encounterId}:publish-report:)
+                        ^
+error: repetition quantifier expects a valid decimal

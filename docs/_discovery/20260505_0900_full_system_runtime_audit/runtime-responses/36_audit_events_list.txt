@@ -1,0 +1,15 @@
+COMMAND: GET http://127.0.0.1:9021/api/audit-events?page=1&limit=10
+
+HTTP/1.1 403 Forbidden
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: b5714e9a-323f-4283-af97-6abd51952c06
+Content-Type: application/json; charset=utf-8
+Content-Length: 91
+ETag: W/"5b-va2FxsbOxPwEeG4Ci8V3ebEIth4"
+Date: Tue, 05 May 2026 09:20:15 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Missing required permissions: audit.read","error":"Forbidden","statusCode":403}

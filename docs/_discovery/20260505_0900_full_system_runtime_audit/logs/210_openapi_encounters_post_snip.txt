@@ -1,0 +1,126 @@
+COMMAND: openapi.yaml snippet for /encounters
+
+6866:  /encounters:
+
+  # ─── Encounters ───────────────────────────────────────────────────────────
+  /encounters:
+    get:
+      operationId: listEncounters
+      summary: List encounters (tenant-scoped)
+      tags: [Encounters]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: patientId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounters list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Encounter'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createEncounter
+      summary: Register a new encounter
+      tags: [Encounters]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patientId]
+              properties:
+                patientId:
+                  type: string
+      responses:
+        "201":
+          description: Encounter registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+
+  /encounters/{encounterId}:
+    get:
+      operationId: getEncounter
+      summary: Get encounter by ID
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:order-lab:
+    post:
+      operationId: orderLab
+      summary: Add a lab order to encounter
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [testId]
+              properties:
+                testId:
+                  type: string
+                priority:
+                  type: string
+                  enum: [routine, stat, urgent]
+                  default: routine
+                totalAmount:
+                  type: number
+                  nullable: true
+                discountAmount:
+                  type: number
+                  nullable: true
+                discountPct:
+                  type: number
+                  nullable: true
+                payableAmount:
+                  type: number
+                  nullable: true
+                amountPaid:
+                  type: number
+                  nullable: true
+                dueAmount:
+                  type: number
+                  nullable: true
+      responses:

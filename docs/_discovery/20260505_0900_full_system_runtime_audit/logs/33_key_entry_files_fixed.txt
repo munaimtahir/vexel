@@ -1,0 +1,119 @@
+COMMAND: inspect key files per app
+
+== apps/api ==
+total 396
+drwxrwxr-x  9 munaim munaim   4096 Mar 26 00:04 .
+drwxrwxr-x  9 munaim munaim   4096 Mar  2 22:56 ..
+-rw-rw-r--  1 munaim munaim     39 Mar  2 22:38 .dockerignore
+-rw-rw-r--  1 munaim munaim    194 Mar  2 22:38 .eslintrc.json
+drwxr-xr-x  2 munaim munaim   4096 Mar  2 23:50 .turbo
+-rw-rw-r--  1 munaim munaim    675 Mar  2 22:38 Dockerfile
+drwxrwxr-x  5 munaim munaim   4096 Mar 26 00:04 dist
+-rwxrwxr-x  1 munaim munaim    200 Mar  2 22:38 docker-entrypoint.sh
+-rw-rw-r--  1 munaim munaim    171 Mar  2 22:38 nest-cli.json
+drwxrwxr-x  9 munaim munaim   4096 Mar  3 21:18 node_modules
+-rw-rw-r--  1 munaim munaim 338540 Mar  2 22:38 package-lock.json
+-rw-rw-r--  1 munaim munaim   2260 Mar  2 22:38 package.json
+drwxrwxr-x  3 munaim munaim   4096 Mar  6 21:18 prisma
+drwxrwxr-x  3 munaim munaim   4096 Mar  2 22:38 resources
+drwxrwxr-x  2 munaim munaim   4096 Mar  2 22:38 scripts
+drwxrwxr-x 29 munaim munaim   4096 Mar 14 01:07 src
+-rw-rw-r--  1 munaim munaim    639 Mar  7 05:06 tsconfig.json
+-- key files --
+apps/api/Dockerfile
+apps/api/dist/prisma
+apps/api/dist/src/prisma
+apps/api/nest-cli.json
+apps/api/node_modules/.bin/prisma
+apps/api/node_modules/prisma
+apps/api/package.json
+apps/api/prisma
+apps/api/src/prisma
+apps/api/tsconfig.json
+
+== apps/worker ==
+total 36
+drwxrwxr-x 6 munaim munaim 4096 Mar  2 23:05 .
+drwxrwxr-x 9 munaim munaim 4096 Mar  2 22:56 ..
+drwxr-xr-x 2 munaim munaim 4096 Mar  2 23:50 .turbo
+-rw-rw-r-- 1 munaim munaim  608 Mar  7 04:36 Dockerfile
+drwxr-xr-x 2 munaim munaim 4096 Mar 14 02:15 dist
+drwxrwxr-x 6 munaim munaim 4096 Mar  2 23:50 node_modules
+-rw-rw-r-- 1 munaim munaim  600 Mar  2 22:38 package.json
+drwxrwxr-x 2 munaim munaim 4096 Mar  6 21:17 src
+-rw-rw-r-- 1 munaim munaim  200 Mar  2 22:38 tsconfig.json
+-- key files --
+apps/worker/Dockerfile
+apps/worker/node_modules/.bin/prisma
+apps/worker/node_modules/prisma
+apps/worker/package.json
+apps/worker/tsconfig.json
+
+== apps/pdf ==
+total 164
+drwxrwxr-x 4 munaim munaim   4096 Mar  6 23:10 .
+drwxrwxr-x 9 munaim munaim   4096 Mar  2 22:56 ..
+-rw-rw-r-- 1 munaim munaim     10 Mar  2 22:38 .gitignore
+-rw-rw-r-- 1 munaim munaim    631 Mar  2 22:38 Dockerfile
+-rw-rw-r-- 1 munaim munaim 136500 Mar 29 22:28 Program.cs
+drwxrwxr-x 3 munaim munaim   4096 Mar  2 23:05 bin
+drwxrwxr-x 3 munaim munaim   4096 Mar  2 23:50 obj
+-rw-rw-r-- 1 munaim munaim    622 Mar  2 22:38 vexel-pdf.csproj
+-- key files --
+apps/pdf/Dockerfile
+
+== apps/admin ==
+total 280
+drwxrwxr-x 6 munaim munaim   4096 Mar  7 06:59 .
+drwxrwxr-x 9 munaim munaim   4096 Mar  2 22:56 ..
+-rw-rw-r-- 1 munaim munaim     42 Mar  2 22:38 .env.example
+-rw-rw-r-- 1 munaim munaim    224 Mar  2 22:38 .eslintrc.json
+drwxrwxr-x 8 munaim munaim   4096 Mar 29 22:40 .next
+drwxrwxr-x 2 munaim munaim   4096 Mar  2 23:50 .turbo
+-rw-rw-r-- 1 munaim munaim   1228 Mar  2 22:38 Dockerfile
+-rw-rw-r-- 1 munaim munaim    262 Mar  2 22:38 next-env.d.ts
+-rw-rw-r-- 1 munaim munaim    306 Mar  7 05:13 next.config.ts
+drwxrwxr-x 7 munaim munaim   4096 Mar  7 06:58 node_modules
+-rw-rw-r-- 1 munaim munaim    956 Mar  7 06:59 package.json
+-rw-rw-r-- 1 munaim munaim     83 Mar  2 22:38 postcss.config.js
+drwxrwxr-x 5 munaim munaim   4096 Mar  6 21:34 src
+-rw-rw-r-- 1 munaim munaim   1072 Mar  2 22:38 tailwind.config.ts
+-rw-rw-r-- 1 munaim munaim    577 Mar  2 22:38 tsconfig.json
+-rw-rw-r-- 1 munaim munaim 221766 Mar 25 23:27 tsconfig.tsbuildinfo
+-- key files --
+apps/admin/.next/package.json
+apps/admin/.next/standalone/package.json
+apps/admin/.next/types/package.json
+apps/admin/Dockerfile
+apps/admin/next.config.ts
+apps/admin/node_modules/.ignored_react/package.json
+apps/admin/package.json
+apps/admin/tsconfig.json
+
+== apps/operator ==
+total 256
+drwxrwxr-x 6 munaim munaim   4096 Mar 14 02:31 .
+drwxrwxr-x 9 munaim munaim   4096 Mar  2 22:56 ..
+-rw-rw-r-- 1 munaim munaim    224 Mar  2 22:38 .eslintrc.json
+drwxrwxr-x 8 munaim munaim   4096 Mar 29 22:40 .next
+drwxrwxr-x 2 munaim munaim   4096 Mar  2 23:50 .turbo
+-rw-rw-r-- 1 munaim munaim   1247 Mar  2 22:38 Dockerfile
+-rw-rw-r-- 1 munaim munaim    262 Mar  2 22:38 next-env.d.ts
+-rw-rw-r-- 1 munaim munaim    283 Mar  2 22:38 next.config.ts
+drwxrwxr-x 8 munaim munaim   4096 Mar  2 23:50 node_modules
+-rw-rw-r-- 1 munaim munaim   1734 Mar  2 22:38 package.json
+-rw-rw-r-- 1 munaim munaim     83 Mar  2 22:38 postcss.config.js
+drwxrwxr-x 6 munaim munaim   4096 Mar  6 21:34 src
+-rw-rw-r-- 1 munaim munaim   1072 Mar  2 22:38 tailwind.config.ts
+-rw-rw-r-- 1 munaim munaim    567 Mar  2 22:38 tsconfig.json
+-rw-rw-r-- 1 munaim munaim 203175 Mar 25 23:26 tsconfig.tsbuildinfo
+-- key files --
+apps/operator/.next/package.json
+apps/operator/.next/standalone/package.json
+apps/operator/.next/types/package.json
+apps/operator/Dockerfile
+apps/operator/next.config.ts
+apps/operator/node_modules/.ignored_react/package.json
+apps/operator/package.json
+apps/operator/tsconfig.json
+

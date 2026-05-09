@@ -1,0 +1,15 @@
+COMMAND: GET http://127.0.0.1:9021/api/catalog/tests?page=1&limit=1
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900
+Content-Type: application/json; charset=utf-8
+Content-Length: 609
+ETag: W/"261-URMQr2V0O9VuJIqCnyGeij2X9Xs"
+Date: Tue, 05 May 2026 09:17:00 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"data":[{"id":"74eebdff-ce59-42d4-872a-9c6b684b0d0b","tenantId":"system","sampleTypeId":"84f2cc32-5ad2-4797-a516-1919d8a6c837","name":"AFB Smear / Ziehl–Neelsen (ZN) (Sputum)","description":null,"sampleType":"Sputum","specimenType":"Sputum","price":"0","turnaroundHours":null,"isActive":true,"externalId":"t182","userCode":"ZN","loincCode":null,"department":"Microbiology","method":null,"printAlone":false,"resultSchemaType":"TABULAR","allowTemplateOverride":false,"createdAt":"2026-03-05T22:04:45.969Z","updatedAt":"2026-03-07T04:08:45.141Z"}],"pagination":{"page":1,"limit":1,"total":84,"totalPages":84}}

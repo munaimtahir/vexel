@@ -1,0 +1,23 @@
+COMMAND: bash -lc find .github -maxdepth 3 -type f | sort && rg -n 'openapi|sdk|contract|prism|truth' .github -S || true
+
+.github/ISSUE_TEMPLATE/architecture_change.md
+.github/ISSUE_TEMPLATE/bug_report.md
+.github/ISSUE_TEMPLATE/implementation_task.md
+.github/ISSUE_TEMPLATE/performance_regression.md
+.github/workflows/ci.yml
+.github/ISSUE_TEMPLATE/implementation_task.md:12:- [ ] Contract updated (OpenAPI)
+.github/ISSUE_TEMPLATE/implementation_task.md:13:- [ ] SDK regenerated
+.github/workflows/ci.yml:10:  openapi-sdk-freshness:
+.github/workflows/ci.yml:11:    name: OpenAPI → SDK freshness check
+.github/workflows/ci.yml:23:      - name: Check SDK is up to date with OpenAPI
+.github/workflows/ci.yml:24:        run: bash packages/sdk/scripts/check-sdk-freshness.sh
+.github/workflows/ci.yml:26:  sdk-only-enforcement:
+.github/workflows/ci.yml:27:    name: SDK-only enforcement (no raw fetch/axios in Next apps)
+.github/workflows/ci.yml:46:  no-prisma-in-frontend:
+.github/workflows/ci.yml:47:    name: No Prisma imports in Next apps
+.github/workflows/ci.yml:51:      - name: Check no Prisma in operator or admin
+.github/workflows/ci.yml:53:          if grep -rn "@prisma/client\|from 'prisma'" apps/operator/src apps/admin/src 2>/dev/null; then
+.github/workflows/ci.yml:54:            echo "FAIL: Prisma import found in frontend"
+.github/workflows/ci.yml:57:          echo "PASS: no Prisma in frontends"
+.github/workflows/ci.yml:128:          docker compose exec -T api npx prisma migrate deploy
+.github/workflows/ci.yml:129:          docker compose exec -T api npx ts-node --transpile-only --skip-project --compiler-options '{"module":"NodeNext","moduleResolution":"NodeNext"}' prisma/seed.ts

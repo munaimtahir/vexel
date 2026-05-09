@@ -1,0 +1,3 @@
+$ redis-server --version
+
+environment: line 11: redis-server: command not found

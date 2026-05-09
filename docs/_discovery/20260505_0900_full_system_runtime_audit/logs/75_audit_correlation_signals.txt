@@ -1,0 +1,252 @@
+COMMAND: rg -n 'correlationId|AuditEvent|audit' apps/api/src -S | head -250
+
+apps/api/src/jobs/jobs.module.ts:4:import { AuditModule } from '../audit/audit.module';
+apps/api/src/jobs/jobs.controller.ts:36:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/jobs/jobs.controller.ts:42:      correlationId,
+apps/api/src/jobs/jobs.service.ts:4:import { AuditService } from '../audit/audit.service';
+apps/api/src/jobs/jobs.service.ts:17:  constructor(private readonly audit: AuditService) {
+apps/api/src/jobs/jobs.service.ts:71:    opts: { tenantId: string; actorUserId: string; correlationId?: string },
+apps/api/src/jobs/jobs.service.ts:83:    await this.audit.log({
+apps/api/src/jobs/jobs.service.ts:89:      correlationId: opts.correlationId,
+apps/api/src/sample-collection/sample-collection.module.ts:4:import { AuditModule } from '../audit/audit.module';
+apps/api/src/sample-collection/sample-collection.controller.ts:46:    const correlationId = req.headers[CORRELATION_ID_HEADER] as string | undefined;
+apps/api/src/sample-collection/sample-collection.controller.ts:52:      correlationId,
+apps/api/src/sample-collection/sample-collection.controller.ts:58:        await this.svc.receiveSpecimens(tenantId, user.userId, encounterId, body.specimenItemIds ?? [], correlationId);
+apps/api/src/sample-collection/sample-collection.controller.ts:73:    const correlationId = req.headers[CORRELATION_ID_HEADER] as string | undefined;
+apps/api/src/sample-collection/sample-collection.controller.ts:80:      correlationId,
+apps/api/src/sample-collection/sample-collection.controller.ts:97:    const correlationId = req.headers[CORRELATION_ID_HEADER] as string | undefined;
+apps/api/src/sample-collection/sample-collection.controller.ts:103:      correlationId,
+apps/api/src/sample-collection/sample-collection.service.ts:3:import { AuditService } from '../audit/audit.service';
+apps/api/src/sample-collection/sample-collection.service.ts:19:    private readonly audit: AuditService,
+apps/api/src/sample-collection/sample-collection.service.ts:98:    correlationId?: string,
+apps/api/src/sample-collection/sample-collection.service.ts:128:    await this.audit.log({
+apps/api/src/sample-collection/sample-collection.service.ts:135:      correlationId,
+apps/api/src/sample-collection/sample-collection.service.ts:150:    correlationId?: string,
+apps/api/src/sample-collection/sample-collection.service.ts:171:    await this.audit.log({
+apps/api/src/sample-collection/sample-collection.service.ts:178:      correlationId,
+apps/api/src/sample-collection/sample-collection.service.ts:189:    correlationId?: string,
+apps/api/src/sample-collection/sample-collection.service.ts:208:    await this.audit.log({
+apps/api/src/sample-collection/sample-collection.service.ts:215:      correlationId,
+apps/api/src/catalog/catalog-jobs.service.ts:6:import { AuditService } from '../audit/audit.service';
+apps/api/src/catalog/catalog-jobs.service.ts:37:    private readonly audit: AuditService,
+apps/api/src/catalog/catalog-jobs.service.ts:45:  async createImportJob(tenantId: string, payload: any, actorUserId: string, correlationId: string) {
+apps/api/src/catalog/catalog-jobs.service.ts:67:        correlationId,
+apps/api/src/catalog/catalog-jobs.service.ts:72:    await this.importQueue.add('catalog.import', { jobRunId: job.id, tenantId, payload, correlationId });
+apps/api/src/catalog/catalog-jobs.service.ts:74:    await this.audit.log({
+apps/api/src/catalog/catalog-jobs.service.ts:76:      entityType: 'JobRun', entityId: job.id, correlationId,
+apps/api/src/catalog/catalog-jobs.service.ts:82:  async retryImportJob(tenantId: string, id: string, actorUserId: string, correlationId: string) {
+apps/api/src/catalog/catalog-jobs.service.ts:92:    await this.importQueue.add('catalog.import', { jobRunId: id, tenantId, correlationId });
+apps/api/src/catalog/catalog-jobs.service.ts:94:    await this.audit.log({
+apps/api/src/catalog/catalog-jobs.service.ts:96:      entityType: 'JobRun', entityId: id, correlationId,
+apps/api/src/catalog/catalog-jobs.service.ts:130:  async applyImportJob(tenantId: string, id: string, actorUserId: string, correlationId: string) {
+apps/api/src/catalog/catalog-jobs.service.ts:135:    return this.retryImportJob(tenantId, id, actorUserId, correlationId);
+apps/api/src/catalog/catalog-jobs.service.ts:148:  async createExportJob(tenantId: string, actorUserId: string, correlationId: string) {
+apps/api/src/catalog/catalog-jobs.service.ts:154:        correlationId,
+apps/api/src/catalog/catalog-jobs.service.ts:159:    await this.exportQueue.add('catalog.export', { jobRunId: job.id, tenantId, correlationId });
+apps/api/src/catalog/catalog-jobs.service.ts:161:    await this.audit.log({
+apps/api/src/catalog/catalog-jobs.service.ts:163:      entityType: 'JobRun', entityId: job.id, correlationId,
+apps/api/src/catalog/catalog.module.ts:9:import { AuditModule } from '../audit/audit.module';
+apps/api/src/catalog/catalog.service.ts:4:import { AuditService } from '../audit/audit.service';
+apps/api/src/catalog/catalog.service.ts:21:    private readonly audit: AuditService,
+apps/api/src/catalog/catalog.service.ts:78:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:99:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.sample_type.create', entityType: 'SampleType', entityId: created.id, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:114:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:134:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.sample_type.update', entityType: 'SampleType', entityId: id, before: existing, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:138:  async deleteSampleType(tenantId: string, id: string, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:141:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.sample_type.delete', entityType: 'SampleType', entityId: id, before: row, after: { isActive: false }, correlationId });
+apps/api/src/catalog/catalog.service.ts:277:  async setTopTests(tenantId: string, testIds: string[], actorUserId: string, correlationId?: string): Promise<CatalogTestSearchResult[]> {
+apps/api/src/catalog/catalog.service.ts:309:    await this.audit.log({
+apps/api/src/catalog/catalog.service.ts:316:      correlationId,
+apps/api/src/catalog/catalog.service.ts:331:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:365:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test.create', entityType: 'CatalogTest', entityId: test.id, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:385:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:419:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test.update', entityType: 'CatalogTest', entityId: id, before: test, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:423:  async deleteTest(tenantId: string, id: string, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:427:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test.delete', entityType: 'CatalogTest', entityId: id, correlationId });
+apps/api/src/catalog/catalog.service.ts:456:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:470:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel.create', entityType: 'CatalogPanel', entityId: panel.id, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:479:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:493:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel.update', entityType: 'CatalogPanel', entityId: id, before: panel, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:503:  async deletePanel(tenantId: string, id: string, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:506:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel.delete', entityType: 'CatalogPanel', entityId: id, before: panel, after: { isActive: false }, correlationId });
+apps/api/src/catalog/catalog.service.ts:540:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:560:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.parameter.create', entityType: 'Parameter', entityId: param.id, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:580:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:602:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.parameter.update', entityType: 'Parameter', entityId: id, before: param, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:606:  async deleteParameter(tenantId: string, id: string, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:609:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.parameter.delete', entityType: 'Parameter', entityId: id, before: param, after: { isActive: false }, correlationId });
+apps/api/src/catalog/catalog.service.ts:629:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:647:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameter.add', entityType: 'TestParameterMapping', entityId: mapping.id, after: { testId, parameterId, ordering, displayOrder }, correlationId });
+apps/api/src/catalog/catalog.service.ts:657:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:677:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameter.update', entityType: 'TestParameterMapping', entityId: mapping.id, after: { testId, parameterId, ...body }, correlationId });
+apps/api/src/catalog/catalog.service.ts:681:  async removeTestParameterMapping(tenantId: string, testId: string, parameterId: string, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:687:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameter.remove', entityType: 'TestParameterMapping', entityId: mapping.id, correlationId });
+apps/api/src/catalog/catalog.service.ts:702:  async addPanelTestMapping(tenantId: string, panelId: string, testId: string, ordering: number, actorUserId: string, correlationId?: string, displayOrder?: number) {
+apps/api/src/catalog/catalog.service.ts:712:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel_test.add', entityType: 'PanelTestMapping', entityId: mapping.id, after: { panelId, testId, ordering, displayOrder: effectiveDisplayOrder }, correlationId });
+apps/api/src/catalog/catalog.service.ts:716:  async removePanelTestMapping(tenantId: string, panelId: string, testId: string, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:722:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel_test.remove', entityType: 'PanelTestMapping', entityId: mapping.id, correlationId });
+apps/api/src/catalog/catalog.service.ts:823:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:873:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.test_parameters.bulk_update', entityType: 'CatalogTest', entityId: testId, after: { mode: body.mode, count: resolved.length }, correlationId });
+apps/api/src/catalog/catalog.service.ts:892:    correlationId?: string,
+apps/api/src/catalog/catalog.service.ts:931:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.panel_tests.bulk_update', entityType: 'CatalogPanel', entityId: panelId, after: { mode: body.mode, count: resolved.length }, correlationId });
+apps/api/src/catalog/catalog.service.ts:949:  async createReferenceRange(tenantId: string, body: { parameterId: string; testId?: string; gender?: string; ageMinYears?: number; ageMaxYears?: number; lowValue?: number; highValue?: number; criticalLow?: number; criticalHigh?: number; unit?: string }, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:955:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.reference_range.create', entityType: 'ReferenceRange', entityId: range.id, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:959:  async updateReferenceRange(tenantId: string, id: string, body: any, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:969:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.reference_range.update', entityType: 'ReferenceRange', entityId: id, before: range, after: body, correlationId });
+apps/api/src/catalog/catalog.service.ts:973:  async deleteReferenceRange(tenantId: string, id: string, actorUserId: string, correlationId?: string) {
+apps/api/src/catalog/catalog.service.ts:977:    await this.audit.log({ tenantId, actorUserId, action: 'catalog.reference_range.delete', entityType: 'ReferenceRange', entityId: id, correlationId });
+apps/api/src/catalog/catalog.controller.ts:34:  createSampleType(@Req() req: Request, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:36:    return this.svc.createSampleType(user.tenantId, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:53:  updateSampleType(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:55:    return this.svc.updateSampleType(user.tenantId, id, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:61:  deleteSampleType(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:63:    return this.svc.deleteSampleType(user.tenantId, id, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:77:  createTest(@Req() req: Request, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:79:    return this.svc.createTest(user.tenantId, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:102:  updateTest(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:104:    return this.svc.updateTest(user.tenantId, id, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:110:  deleteTest(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:112:    return this.svc.deleteTest(user.tenantId, id, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:128:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/catalog/catalog.controller.ts:132:    return this.svc.addTestParameterMapping(user.tenantId, testId, b.parameterId, ordering, user.userId, correlationId, { displayOrder: b.displayOrder ?? ordering, isRequired: b.isRequired, unitOverride: b.unitOverride });
+apps/api/src/catalog/catalog.controller.ts:137:  bulkUpdateTestParameters(@Req() req: Request, @Param('testId') testId: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:139:    return this.svc.bulkUpdateTestParameters(user.tenantId, testId, body, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:144:  async updateTestParameterMapping(@Req() req: Request, @Param('testId') testId: string, @Param('parameterId') parameterId: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:146:    return this.svc.updateTestParameterMapping(user.tenantId, testId, parameterId, body, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:152:  removeTestParameter(@Req() req: Request, @Param('testId') testId: string, @Param('parameterId') parameterId: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:154:    return this.svc.removeTestParameterMapping(user.tenantId, testId, parameterId, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:168:  createPanel(@Req() req: Request, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:170:    return this.svc.createPanel(user.tenantId, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:193:  updatePanel(@Req() req: Request, @Param('panelId') panelId: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:195:    return this.svc.updatePanel(user.tenantId, panelId, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:201:  deletePanel(@Req() req: Request, @Param('panelId') panelId: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:203:    return this.svc.deletePanel(user.tenantId, panelId, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:215:  addPanelTest(@Req() req: Request, @Param('panelId') panelId: string, @Body() b: { testId: string; ordering?: number; displayOrder?: number }, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:218:    return this.svc.addPanelTestMapping(user.tenantId, panelId, b.testId, ordering, user.userId, correlationId, b.displayOrder ?? ordering);
+apps/api/src/catalog/catalog.controller.ts:223:  bulkUpdatePanelTests(@Req() req: Request, @Param('panelId') panelId: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:225:    return this.svc.bulkUpdatePanelTests(user.tenantId, panelId, body, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:231:  removePanelTest(@Req() req: Request, @Param('panelId') panelId: string, @Param('testId') testId: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:233:    return this.svc.removePanelTestMapping(user.tenantId, panelId, testId, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:247:  createParameter(@Req() req: Request, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:249:    return this.svc.createParameter(user.tenantId, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:266:  updateParameter(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:268:    return this.svc.updateParameter(user.tenantId, id, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:273:  patchParameter(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:275:    return this.svc.updateParameter(user.tenantId, id, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:281:  deleteParameter(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:283:    return this.svc.deleteParameter(user.tenantId, id, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:297:  createReferenceRange(@Req() req: Request, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:299:    return this.svc.createReferenceRange(user.tenantId, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:304:  updateReferenceRange(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:306:    return this.svc.updateReferenceRange(user.tenantId, id, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:311:  patchReferenceRange(@Req() req: Request, @Param('id') id: string, @Body() b: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:313:    return this.svc.updateReferenceRange(user.tenantId, id, b, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:319:  deleteReferenceRange(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:321:    return this.svc.deleteReferenceRange(user.tenantId, id, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:396:  async importCatalog(@Req() req: Request, @UploadedFile() file: Express.Multer.File, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog.controller.ts:400:    return this.importExportSvc.importFromWorkbook(user.tenantId, file.buffer, { mode, validate }, user.userId, correlationId);
+apps/api/src/catalog/catalog.controller.ts:413:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/catalog/catalog.controller.ts:424:      correlationId,
+apps/api/src/catalog/__tests__/catalog-search.spec.ts:47:  const audit: any = { log: jest.fn().mockResolvedValue(undefined) };
+apps/api/src/catalog/__tests__/catalog-search.spec.ts:49:    service: new CatalogService(prisma, audit),
+apps/api/src/catalog/__tests__/catalog-reference-range-import.spec.ts:32:    const audit: any = { log: jest.fn().mockResolvedValue(undefined) };
+apps/api/src/catalog/__tests__/catalog-reference-range-import.spec.ts:33:    const svc = new CatalogImportExportService(prisma, audit);
+apps/api/src/catalog/__tests__/catalog-import-export.spec.ts:26:    const audit: any = { log: jest.fn() };
+apps/api/src/catalog/__tests__/catalog-import-export.spec.ts:27:    const svc = new CatalogImportExportService(prisma, audit);
+apps/api/src/catalog/__tests__/catalog-import-multipart.spec.ts:51:      const correlationId = 'corr-1';
+apps/api/src/catalog/__tests__/catalog-import-multipart.spec.ts:59:        correlationId,
+apps/api/src/catalog/__tests__/catalog-import-multipart.spec.ts:67:        correlationId,
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:29:  correlationId: 'corr-1',
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:82:      audit: mockAudit,
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:87:      async createImportJob(tenantId: string, payload: any, actorUserId: string, correlationId: string) {
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:100:          data: { tenantId, type: 'catalog.import', status: 'queued', payloadHash, correlationId, createdBy: actorUserId },
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:102:        await this.importQueue.add('catalog.import', { jobRunId: job.id, tenantId, payload, correlationId });
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:103:        await this.audit.log({ tenantId, actorUserId, action: 'catalog.import.created', entityType: 'JobRun', entityId: job.id, correlationId });
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:107:      async retryImportJob(tenantId: string, id: string, actorUserId: string, correlationId: string) {
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:116:        await this.importQueue.add('catalog.import', { jobRunId: id, tenantId, correlationId });
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:117:        await this.audit.log({ tenantId, actorUserId, action: 'catalog.import.retry', entityType: 'JobRun', entityId: id, correlationId });
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:181:    it('should write AuditEvent on retry', async () => {
+apps/api/src/catalog/catalog-import-export.service.ts:4:import { AuditService } from '../audit/audit.service';
+apps/api/src/catalog/catalog-import-export.service.ts:38:    private readonly audit: AuditService,
+apps/api/src/catalog/catalog-import-export.service.ts:274:    correlationId?: string,
+apps/api/src/catalog/catalog-import-export.service.ts:326:      const result = await this._importSheet(tenantId, spec.key, rows, opts, actorUserId, correlationId);
+apps/api/src/catalog/catalog-import-export.service.ts:341:      await this.audit.log({ tenantId, actorUserId, action: 'catalog.import', entityType: 'Catalog', entityId: tenantId, after: { mode: opts.mode, ...summary }, correlationId });
+apps/api/src/catalog/catalog-import-export.service.ts:355:    correlationId?: string,
+apps/api/src/catalog/catalog-import-export.service.ts:367:    return this._importSheet(tenantId, sheet, rows, opts, actorUserId, correlationId);
+apps/api/src/catalog/catalog-import-export.service.ts:496:    _correlationId?: string,
+apps/api/src/catalog/catalog-admin-top.controller.ts:23:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/catalog/catalog-admin-top.controller.ts:26:    return this.svc.setTopTests(user.tenantId, body?.testIds ?? [], user.userId, correlationId);
+apps/api/src/catalog/catalog-jobs.controller.ts:26:  createImportJob(@Req() req: Request, @Body() payload: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog-jobs.controller.ts:28:    return this.svc.createImportJob(user.tenantId, payload, user.userId, correlationId ?? 'manual');
+apps/api/src/catalog/catalog-jobs.controller.ts:53:  applyImportJob(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog-jobs.controller.ts:55:    return this.svc.applyImportJob(user.tenantId, id, user.userId, correlationId ?? 'manual');
+apps/api/src/catalog/catalog-jobs.controller.ts:66:  retryImportJob(@Req() req: Request, @Param('id') id: string, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog-jobs.controller.ts:68:    return this.svc.retryImportJob(user.tenantId, id, user.userId, correlationId ?? 'manual');
+apps/api/src/catalog/catalog-jobs.controller.ts:74:  createExportJob(@Req() req: Request, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+apps/api/src/catalog/catalog-jobs.controller.ts:76:    return this.svc.createExportJob(user.tenantId, user.userId, correlationId ?? 'manual');
+apps/api/src/feature-flags/feature-flags.service.ts:3:import { AuditService } from '../audit/audit.service';
+apps/api/src/feature-flags/feature-flags.service.ts:25:    private readonly audit: AuditService,
+apps/api/src/feature-flags/feature-flags.service.ts:108:    correlationId?: string,
+apps/api/src/feature-flags/feature-flags.service.ts:120:    await this.audit.log({
+apps/api/src/feature-flags/feature-flags.service.ts:125:      correlationId,
+apps/api/src/feature-flags/feature-flags.service.ts:134:    correlationId?: string,
+apps/api/src/feature-flags/feature-flags.service.ts:152:      await this.audit.log({
+apps/api/src/feature-flags/feature-flags.service.ts:157:        correlationId,
+apps/api/src/feature-flags/feature-flags.service.ts:165:  async setGlobal(key: string, enabled: boolean, actorUserId: string, correlationId?: string) {
+apps/api/src/feature-flags/feature-flags.service.ts:166:    await this.audit.log({
+apps/api/src/feature-flags/feature-flags.service.ts:169:      before: { key }, after: { key, enabled }, correlationId,
+apps/api/src/appointments/appointments.module.ts:2:import { AuditModule } from '../audit/audit.module';
+apps/api/src/appointments/appointments.controller.ts:48:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:51:    return this.svc.createAppointment(this.resolveTenantId(req), body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:67:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:70:    return this.svc.rescheduleAppointment(this.resolveTenantId(req), appointmentId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:79:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:82:    return this.svc.checkInAppointment(this.resolveTenantId(req), appointmentId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:91:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:94:    return this.svc.startAppointmentConsultation(this.resolveTenantId(req), appointmentId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:104:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:107:    return this.svc.completeAppointment(this.resolveTenantId(req), appointmentId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:117:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:120:    return this.svc.cancelAppointment(this.resolveTenantId(req), appointmentId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:129:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:132:    return this.svc.markNoShowAppointment(this.resolveTenantId(req), appointmentId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:147:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:150:    return this.svc.createVisit(this.resolveTenantId(req), body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:165:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:168:    return this.svc.markVisitWaiting(this.resolveTenantId(req), visitId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:177:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:180:    return this.svc.startVisitConsultation(this.resolveTenantId(req), visitId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:189:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:192:    return this.svc.completeVisit(this.resolveTenantId(req), visitId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:202:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:205:    return this.svc.cancelVisit(this.resolveTenantId(req), visitId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:221:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:224:    return this.svc.recordVisitVitals(this.resolveTenantId(req), visitId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:239:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:247:      correlationId,
+apps/api/src/appointments/appointments.controller.ts:257:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:264:      correlationId,
+apps/api/src/appointments/appointments.controller.ts:280:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:288:      correlationId,
+apps/api/src/appointments/appointments.controller.ts:298:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:305:      correlationId,
+apps/api/src/appointments/appointments.controller.ts:315:    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+apps/api/src/appointments/appointments.controller.ts:322:      correlationId,
+apps/api/src/appointments/appointments.service.ts:8:import { AuditService } from '../audit/audit.service';
+apps/api/src/appointments/appointments.service.ts:47:    private readonly audit: AuditService,
+apps/api/src/appointments/appointments.service.ts:294:  async createAppointment(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+apps/api/src/appointments/appointments.service.ts:316:    await this.audit.log({
+apps/api/src/appointments/appointments.service.ts:323:      correlationId,
+apps/api/src/appointments/appointments.service.ts:340:    correlationId?: string,
+apps/api/src/appointments/appointments.service.ts:350:    await this.audit.log({
+apps/api/src/appointments/appointments.service.ts:358:      correlationId,
+apps/api/src/appointments/appointments.service.ts:368:    correlationId?: string,
+apps/api/src/appointments/appointments.service.ts:389:    await this.audit.log({
+apps/api/src/appointments/appointments.service.ts:397:      correlationId,
+apps/api/src/appointments/appointments.service.ts:402:  async checkInAppointment(tenantId: string, appointmentId: string, actorUserId: string, correlationId?: string) {
+apps/api/src/appointments/appointments.service.ts:410:      correlationId,
+apps/api/src/appointments/appointments.service.ts:418:    correlationId?: string,
+apps/api/src/appointments/appointments.service.ts:427:      correlationId,
+apps/api/src/appointments/appointments.service.ts:436:    correlationId?: string,
+apps/api/src/appointments/appointments.service.ts:445:      correlationId,
+apps/api/src/appointments/appointments.service.ts:448:      await this.audit.log({

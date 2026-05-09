@@ -1,0 +1,18 @@
+COMMAND: rg -n 'BullMQ|Queue\(|Worker\(|processor|process\(' apps/worker/src -S | head -250
+
+apps/worker/src/document-render.processor.ts:225:    throw err; // Re-throw so BullMQ can retry
+apps/worker/src/main.ts:4:import { processCatalogImport } from './catalog-import.processor';
+apps/worker/src/main.ts:5:import { processCatalogExport } from './catalog-export.processor';
+apps/worker/src/main.ts:6:import { processDocumentRender } from './document-render.processor';
+apps/worker/src/main.ts:7:import { processOpsBackup } from './ops-backup.processor';
+apps/worker/src/main.ts:40:const jobsWorker = new Worker(
+apps/worker/src/main.ts:50:// Catalog import processor
+apps/worker/src/main.ts:51:const catalogImportWorker = new Worker('catalog-import', processCatalogImport, { connection });
+apps/worker/src/main.ts:53:// Catalog export processor
+apps/worker/src/main.ts:54:const catalogExportWorker = new Worker('catalog-export', processCatalogExport, { connection });
+apps/worker/src/main.ts:56:// Document render processor — concurrency=3 so multiple render jobs run in parallel
+apps/worker/src/main.ts:57:const documentRenderWorker = new Worker('document-render', processDocumentRender, {
+apps/worker/src/main.ts:62:// Ops backup processor — concurrency=1 (serialised to prevent resource conflicts)
+apps/worker/src/main.ts:64:const opsBackupWorker = new Worker(
+apps/worker/src/ops-backup.processor.ts:2: * Ops Backup Processor — BullMQ worker for ops-backup queue
+apps/worker/src/ops-backup.processor.ts:126:    throw err; // re-throw so BullMQ marks job as failed

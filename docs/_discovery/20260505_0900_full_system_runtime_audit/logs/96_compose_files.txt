@@ -1,0 +1,3 @@
+COMMAND: ls -la docker-compose.yml docker-compose.*.yml compose.yml compose.*.yml 2>/dev/null || true
+
+-rw-rw-r-- 1 munaim munaim 4943 Mar  7 04:35 docker-compose.yml

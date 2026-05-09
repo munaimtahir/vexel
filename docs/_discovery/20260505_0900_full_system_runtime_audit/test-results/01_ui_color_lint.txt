@@ -1,0 +1,10 @@
+COMMAND: pnpm ui:color-lint
+
+
+> vexel@0.1.0 ui:color-lint /home/munaim/srv/apps/vexel
+> node scripts/ui-color-lint.mjs
+
+PASS: no hard-coded hex or arbitrary hex Tailwind classes outside token files
+real 8.15
+user 1.10
+sys 0.45

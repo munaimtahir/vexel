@@ -1,0 +1,202 @@
+COMMAND: rg -n 'tenantId|x-tenant-id|TENANCY|resolveTenant|TenantResolver|Host' apps/api/src -S | head -200
+
+apps/api/src/tenant/tenant.module.ts:2:import { TenantResolverMiddleware } from './tenant-resolver.middleware';
+apps/api/src/tenant/tenant.module.ts:8:  providers: [TenantResolverMiddleware, TenantService],
+apps/api/src/tenant/tenant.module.ts:9:  exports: [TenantResolverMiddleware, TenantService],
+apps/api/src/tenant/tenant.service.ts:57:  async getConfig(tenantId: string) {
+apps/api/src/tenant/tenant.service.ts:59:      where: { tenantId },
+apps/api/src/tenant/tenant.service.ts:61:      create: { tenantId },
+apps/api/src/tenant/tenant.service.ts:65:  async updateConfig(tenantId: string, body: any) {
+apps/api/src/tenant/tenant.service.ts:67:      where: { tenantId },
+apps/api/src/tenant/tenant.service.ts:69:      create: { tenantId, ...body },
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:1:import { TenantResolverMiddleware } from './tenant-resolver.middleware';
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:5:describe('TenantResolverMiddleware', () => {
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:6:  let middleware: TenantResolverMiddleware;
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:13:    middleware = new TenantResolverMiddleware(tenantService);
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:16:  it('resolves tenant from x-tenant-id header in dev mode', async () => {
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:17:    process.env.TENANCY_DEV_HEADER_ENABLED = 'true';
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:18:    const req: any = { headers: { 'x-tenant-id': 'tenant-abc' }, hostname: 'localhost' };
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:26:    delete process.env.TENANCY_DEV_HEADER_ENABLED;
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:30:    process.env.TENANCY_DEV_HEADER_ENABLED = 'false';
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:32:    const req: any = { headers: { 'x-tenant-id': 'should-be-ignored' }, hostname: 'myapp.com' };
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:38:    delete process.env.TENANCY_DEV_HEADER_ENABLED;
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:42:    process.env.TENANCY_DEV_HEADER_ENABLED = 'false';
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:51:    delete process.env.TENANCY_DEV_HEADER_ENABLED;
+apps/api/src/tenant/tenant-resolver.middleware.ts:7:export class TenantResolverMiddleware implements NestMiddleware {
+apps/api/src/tenant/tenant-resolver.middleware.ts:11:    if (process.env.TENANCY_DEV_HEADER_ENABLED === 'true') {
+apps/api/src/tenant/tenant-resolver.middleware.ts:12:      const devTenantId = req.headers['x-tenant-id'] as string | undefined;
+apps/api/src/jobs/jobs.controller.ts:40:      tenantId: user.tenantId,
+apps/api/src/jobs/jobs.service.ts:71:    opts: { tenantId: string; actorUserId: string; correlationId?: string },
+apps/api/src/jobs/jobs.service.ts:84:      tenantId: opts.tenantId,
+apps/api/src/roles/roles.controller.ts:23:  listRoles(@Req() req: Request) { return this.svc.list((req as any).user.tenantId); }
+apps/api/src/roles/roles.controller.ts:37:    return this.svc.create(user.tenantId, body, user.userId, cid);
+apps/api/src/roles/roles.controller.ts:47:    return this.svc.update(user.tenantId, id, body, user.userId, cid);
+apps/api/src/roles/roles.controller.ts:58:    return this.svc.delete(user.tenantId, id, user.userId, cid);
+apps/api/src/roles/roles.service.ts:13:  async list(tenantId: string) {
+apps/api/src/roles/roles.service.ts:15:      where: { tenantId },
+apps/api/src/roles/roles.service.ts:27:    tenantId: string,
+apps/api/src/roles/roles.service.ts:32:      where: { tenantId_name: { tenantId, name: body.name } },
+apps/api/src/roles/roles.service.ts:39:        tenantId, name: body.name, description: body.description,
+apps/api/src/roles/roles.service.ts:46:      tenantId, actorUserId, action: 'role.create',
+apps/api/src/roles/roles.service.ts:55:    tenantId: string, roleId: string,
+apps/api/src/roles/roles.service.ts:59:    const role = await this.prisma.role.findFirst({ where: { id: roleId, tenantId } });
+apps/api/src/roles/roles.service.ts:81:      tenantId, actorUserId, action: 'role.update',
+apps/api/src/roles/roles.service.ts:94:    tenantId: string,
+apps/api/src/roles/roles.service.ts:100:      where: { id: roleId, tenantId },
+apps/api/src/roles/roles.service.ts:115:      tenantId,
+apps/api/src/documents/documents.controller.ts:43:      user.tenantId,
+apps/api/src/documents/documents.controller.ts:65:        user.tenantId,
+apps/api/src/documents/documents.controller.ts:74:      user.tenantId,
+apps/api/src/documents/documents.controller.ts:88:    return this.svc.listDocuments((req as any).user.tenantId, q);
+apps/api/src/documents/documents.controller.ts:94:    return this.svc.getDocument((req as any).user.tenantId, id);
+apps/api/src/documents/documents.controller.ts:106:    return this.svc.publishDocument(user.tenantId, id, user.userId, correlationId ?? '');
+apps/api/src/documents/documents.controller.ts:116:    const tenantId = (req as any).user.tenantId;
+apps/api/src/documents/documents.controller.ts:117:    const bytes = await this.svc.downloadDocument(tenantId, id);
+apps/api/src/documents/documents.controller.ts:131:    const tenantId = (req as any).user.tenantId;
+apps/api/src/documents/documents.controller.ts:132:    const pdfBytes = await this.svc.renderWithFormatOverride(tenantId, id, format);
+apps/api/src/documents/__tests__/documents.service.spec.ts:8:  tenantId: 'tenant-1',
+apps/api/src/documents/__tests__/documents.service.spec.ts:28:  tenantId: 'tenant-1',
+apps/api/src/documents/__tests__/documents.service.spec.ts:37:  tenantId: 'tenant-1',
+apps/api/src/documents/__tests__/documents.service.spec.ts:47:  tenantId: 'tenant-1',
+apps/api/src/documents/__tests__/documents.service.spec.ts:54:    tenantId: 'tenant-1',
+apps/api/src/documents/__tests__/documents.service.spec.ts:332:      prisma.document.findUnique.mockResolvedValue(mockDoc({ tenantId: 'other-tenant' }));
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:18:    tenantId: 'tenant-1',
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:42:        id: 'tpl-1', tenantId: 'tenant-1', type: 'LAB_REPORT', version: 1, isActive: true,
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:60:        tenantId: 'tenant-1',
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:163:        tenantId: 'tenant-1',
+apps/api/src/documents/documents.service.ts:70:    tenantId: string,
+apps/api/src/documents/documents.service.ts:86:      where: { id: sourceRef, tenantId },
+apps/api/src/documents/documents.service.ts:140:          tenantId,
+apps/api/src/documents/documents.service.ts:158:    tenantId: string,
+apps/api/src/documents/documents.service.ts:170:      where: { tenantId_key: { tenantId, key: moduleKey } },
+apps/api/src/documents/documents.service.ts:179:        where: { tenantId, type, isActive: true },
+apps/api/src/documents/documents.service.ts:183:        where: { tenantId: 'system', type, isActive: true },
+apps/api/src/documents/documents.service.ts:191:    const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+apps/api/src/documents/documents.service.ts:192:    const tenant = await this.prisma.tenant.findUnique({ where: { id: tenantId } });
+apps/api/src/documents/documents.service.ts:195:      tenantName: tenantConfig?.brandName ?? tenant?.name ?? tenantId,
+apps/api/src/documents/documents.service.ts:203:      tenantId,
+apps/api/src/documents/documents.service.ts:215:        tenantId_type_templateId_payloadHash: {
+apps/api/src/documents/documents.service.ts:216:          tenantId,
+apps/api/src/documents/documents.service.ts:245:              tenantId,
+apps/api/src/documents/documents.service.ts:260:      { documentId: doc.id, tenantId, correlationId },
+apps/api/src/documents/documents.service.ts:269:      tenantId,
+apps/api/src/documents/documents.service.ts:282:    tenantId: string,
+apps/api/src/documents/documents.service.ts:288:    if (!doc || doc.tenantId !== tenantId) {
+apps/api/src/documents/documents.service.ts:309:      tenantId,
+apps/api/src/documents/documents.service.ts:321:  async getDocument(tenantId: string, id: string) {
+apps/api/src/documents/documents.service.ts:323:    if (!doc || doc.tenantId !== tenantId) {
+apps/api/src/documents/documents.service.ts:329:  async downloadDocument(tenantId: string, id: string): Promise<Buffer> {
+apps/api/src/documents/documents.service.ts:330:    const doc = await this.getDocument(tenantId, id);
+apps/api/src/documents/documents.service.ts:340:  async renderWithFormatOverride(tenantId: string, id: string, format?: string): Promise<Buffer> {
+apps/api/src/documents/documents.service.ts:341:    const doc = await this.getDocument(tenantId, id);
+apps/api/src/documents/documents.service.ts:344:    const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+apps/api/src/documents/documents.service.ts:373:  async listDocuments(tenantId: string, filters: { status?: string; limit?: number; sourceRef?: string; sourceType?: string; encounterId?: string; docType?: string; fromDate?: string; toDate?: string }) {
+apps/api/src/documents/documents.service.ts:376:    const where: any = { tenantId };
+apps/api/src/documents/documents.service.ts:397:    tenantId: string,
+apps/api/src/documents/documents.service.ts:403:      where: { id: encounterId, tenantId },
+apps/api/src/documents/documents.service.ts:420:    const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+apps/api/src/documents/documents.service.ts:429:        where: { tenantId, entityId: encounterId, action: 'encounter.verify' },
+apps/api/src/documents/documents.service.ts:434:        where: { id: verifyAudit.actorUserId, tenantId },
+apps/api/src/documents/documents.service.ts:442:      where: { tenantId, encounterId },
+apps/api/src/documents/documents.service.ts:449:    const printTemplate = await this.resolvePrintTemplate(tenantId, encounter.labOrders[0]?.testId);
+apps/api/src/documents/documents.service.ts:512:      tenantName: tenantConfig?.brandName ?? tenantId,
+apps/api/src/documents/documents.service.ts:520:      tenantId,
+apps/api/src/documents/documents.service.ts:535:    tenantId: string,
+apps/api/src/documents/documents.service.ts:541:        where: { tenantId, testId, isDefault: true, isEnabled: true },
+apps/api/src/documents/documents.service.ts:555:      where: { tenantId, templateFamily: 'GENERAL_TABLE', status: 'ACTIVE' },
+apps/api/src/encounters/encounters.controller.ts:19:  private resolveTenantId(req: Request): string {
+apps/api/src/encounters/encounters.controller.ts:20:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/encounters/encounters.controller.ts:26:    return this.svc.list(this.resolveTenantId(req), q);
+apps/api/src/encounters/encounters.controller.ts:34:    return this.svc.register(this.resolveTenantId(req), body, user.userId, correlationId);
+apps/api/src/encounters/encounters.controller.ts:40:    return this.svc.getById(this.resolveTenantId(req), id);
+apps/api/src/encounters/encounters.controller.ts:48:    return this.svc.orderLab(this.resolveTenantId(req), id, body, user.userId, correlationId);
+apps/api/src/encounters/encounters.controller.ts:56:    return this.svc.collectSpecimen(this.resolveTenantId(req), id, body, user.userId, correlationId);
+apps/api/src/encounters/encounters.controller.ts:64:    return this.svc.receiveSpecimen(this.resolveTenantId(req), id, body, user.userId, correlationId);
+apps/api/src/encounters/encounters.controller.ts:72:    return this.svc.enterResult(this.resolveTenantId(req), id, body, user.userId, correlationId);
+apps/api/src/encounters/encounters.controller.ts:80:    return this.svc.verify(this.resolveTenantId(req), id, user.userId, correlationId);
+apps/api/src/encounters/encounters.controller.ts:88:    return this.svc.publishReport(this.resolveTenantId(req), id, user.userId, correlationId);
+apps/api/src/encounters/encounters.controller.ts:96:    return this.svc.cancel(this.resolveTenantId(req), id, user.userId, correlationId, body?.reason);
+apps/api/src/encounters/encounters.controller.ts:102:    return this.svc.getFinancials(this.resolveTenantId(req), id);
+apps/api/src/encounters/encounters.controller.ts:110:    return this.svc.collectDue(this.resolveTenantId(req), id, body, user.userId, correlationId);
+apps/api/src/encounters/encounters.controller.ts:118:    return this.svc.applyDiscount(this.resolveTenantId(req), id, body, user.userId, correlationId);
+apps/api/src/feature-flags/feature-flags.controller.ts:31:    return this.svc.getResolvedFlags(user.tenantId);
+apps/api/src/feature-flags/feature-flags.controller.ts:39:    return this.svc.listForTenant(user.tenantId);
+apps/api/src/feature-flags/feature-flags.controller.ts:54:      return this.svc.setVariantForTenant(user.tenantId, key, variant, user.userId, cid);
+apps/api/src/feature-flags/feature-flags.controller.ts:56:    return this.svc.setForTenant(user.tenantId, [{ key, enabled: body.enabled }], user.userId, cid);
+apps/api/src/feature-flags/feature-flags.service.ts:32:  async listForTenant(tenantId: string) {
+apps/api/src/feature-flags/feature-flags.service.ts:34:      where: { tenantId },
+apps/api/src/feature-flags/feature-flags.service.ts:49:  async getResolvedFlags(tenantId: string): Promise<Record<string, unknown>> {
+apps/api/src/feature-flags/feature-flags.service.ts:50:    const rows = await this.prisma.tenantFeature.findMany({ where: { tenantId } });
+apps/api/src/feature-flags/feature-flags.service.ts:84:  async isEnabled(tenantId: string, key: string): Promise<boolean> {
+apps/api/src/feature-flags/feature-flags.service.ts:86:      where: { tenantId_key: { tenantId, key } },
+apps/api/src/feature-flags/feature-flags.service.ts:93:  async getVariant<T = unknown>(tenantId: string, key: string): Promise<T> {
+apps/api/src/feature-flags/feature-flags.service.ts:95:      where: { tenantId_key: { tenantId, key } },
+apps/api/src/feature-flags/feature-flags.service.ts:104:    tenantId: string,
+apps/api/src/feature-flags/feature-flags.service.ts:111:      where: { tenantId_key: { tenantId, key } },
+apps/api/src/feature-flags/feature-flags.service.ts:115:      where: { tenantId_key: { tenantId, key } },
+apps/api/src/feature-flags/feature-flags.service.ts:117:      create: { tenantId, key, enabled: true, variantJson, updatedBy: actorUserId,
+apps/api/src/feature-flags/feature-flags.service.ts:121:      tenantId, actorUserId, action: 'feature_flag.set_variant',
+apps/api/src/feature-flags/feature-flags.service.ts:131:    tenantId: string,
+apps/api/src/feature-flags/feature-flags.service.ts:139:        where: { tenantId_key: { tenantId, key: update.key } },
+apps/api/src/feature-flags/feature-flags.service.ts:143:        where: { tenantId_key: { tenantId, key: update.key } },
+apps/api/src/feature-flags/feature-flags.service.ts:146:          tenantId, key: update.key, enabled: update.enabled,
+apps/api/src/feature-flags/feature-flags.service.ts:153:        tenantId, actorUserId, action: 'feature_flag.set',
+apps/api/src/feature-flags/feature-flags.service.ts:167:      tenantId: 'system', actorUserId, action: 'feature_flag.set_global',
+apps/api/src/appointments/appointments.controller.ts:32:  private resolveTenantId(req: Request): string {
+apps/api/src/appointments/appointments.controller.ts:33:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/appointments/appointments.controller.ts:39:    return this.svc.listAppointments(this.resolveTenantId(req), q);
+apps/api/src/appointments/appointments.controller.ts:51:    return this.svc.createAppointment(this.resolveTenantId(req), body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:57:    return this.svc.getAppointment(this.resolveTenantId(req), appointmentId);
+apps/api/src/appointments/appointments.controller.ts:70:    return this.svc.rescheduleAppointment(this.resolveTenantId(req), appointmentId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:82:    return this.svc.checkInAppointment(this.resolveTenantId(req), appointmentId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:94:    return this.svc.startAppointmentConsultation(this.resolveTenantId(req), appointmentId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:107:    return this.svc.completeAppointment(this.resolveTenantId(req), appointmentId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:120:    return this.svc.cancelAppointment(this.resolveTenantId(req), appointmentId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:132:    return this.svc.markNoShowAppointment(this.resolveTenantId(req), appointmentId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:138:    return this.svc.listVisits(this.resolveTenantId(req), q);
+apps/api/src/appointments/appointments.controller.ts:150:    return this.svc.createVisit(this.resolveTenantId(req), body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:156:    return this.svc.getVisit(this.resolveTenantId(req), visitId);
+apps/api/src/appointments/appointments.controller.ts:168:    return this.svc.markVisitWaiting(this.resolveTenantId(req), visitId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:180:    return this.svc.startVisitConsultation(this.resolveTenantId(req), visitId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:192:    return this.svc.completeVisit(this.resolveTenantId(req), visitId, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:205:    return this.svc.cancelVisit(this.resolveTenantId(req), visitId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:211:    return this.svc.listVisitVitals(this.resolveTenantId(req), visitId);
+apps/api/src/appointments/appointments.controller.ts:224:    return this.svc.recordVisitVitals(this.resolveTenantId(req), visitId, body, user.userId, correlationId);
+apps/api/src/appointments/appointments.controller.ts:230:    return this.svc.getVisitClinicalNote(this.resolveTenantId(req), visitId);
+apps/api/src/appointments/appointments.controller.ts:243:      this.resolveTenantId(req),
+apps/api/src/appointments/appointments.controller.ts:261:      this.resolveTenantId(req),
+apps/api/src/appointments/appointments.controller.ts:271:    return this.svc.getVisitPrescription(this.resolveTenantId(req), visitId);
+apps/api/src/appointments/appointments.controller.ts:284:      this.resolveTenantId(req),
+apps/api/src/appointments/appointments.controller.ts:302:      this.resolveTenantId(req),
+apps/api/src/appointments/appointments.controller.ts:319:      this.resolveTenantId(req),
+apps/api/src/appointments/appointments.service.ts:50:  private async assertOpdEnabled(tenantId: string) {
+apps/api/src/appointments/appointments.service.ts:52:      where: { tenantId_key: { tenantId, key: 'module.opd' } },
+apps/api/src/appointments/appointments.service.ts:57:  private async assertOpdSubFeatureEnabled(tenantId: string, key: string) {
+apps/api/src/appointments/appointments.service.ts:58:    await this.assertOpdEnabled(tenantId);
+apps/api/src/appointments/appointments.service.ts:60:      where: { tenantId_key: { tenantId, key } },
+apps/api/src/appointments/appointments.service.ts:65:  private async getAppointmentOrThrow(tenantId: string, appointmentId: string) {
+apps/api/src/appointments/appointments.service.ts:67:      where: { id: appointmentId, tenantId },
+apps/api/src/appointments/appointments.service.ts:78:  private async getVisitOrThrow(tenantId: string, visitId: string) {
+apps/api/src/appointments/appointments.service.ts:80:      where: { id: visitId, tenantId },
+apps/api/src/appointments/appointments.service.ts:93:    tenantId: string,
+apps/api/src/appointments/appointments.service.ts:100:      where: { id: providerId, tenantId, isActive: true },
+apps/api/src/appointments/appointments.service.ts:110:        tenantId,
+apps/api/src/appointments/appointments.service.ts:126:        tenantId,
+apps/api/src/appointments/appointments.service.ts:145:      tenantId: row.tenantId,
+apps/api/src/appointments/appointments.service.ts:165:      tenantId: row.tenantId,
+apps/api/src/appointments/appointments.service.ts:185:      tenantId: row.tenantId,
+apps/api/src/appointments/appointments.service.ts:208:      tenantId: row.tenantId,
+apps/api/src/appointments/appointments.service.ts:226:      tenantId: row.tenantId,
+apps/api/src/appointments/appointments.service.ts:254:  async listAppointments(tenantId: string, q: any) {
+apps/api/src/appointments/appointments.service.ts:255:    await this.assertOpdEnabled(tenantId);
+apps/api/src/appointments/appointments.service.ts:258:    const where: any = { tenantId };
+apps/api/src/appointments/appointments.service.ts:262:    if (q?.visitId) where.opdVisits = { some: { id: q.visitId, tenantId } };
+apps/api/src/appointments/appointments.service.ts:294:  async createAppointment(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+apps/api/src/appointments/appointments.service.ts:295:    await this.assertOpdEnabled(tenantId);
+apps/api/src/appointments/appointments.service.ts:298:    const patient = await (this.prisma as any).patient.findFirst({ where: { id: body?.patientId, tenantId } });
+apps/api/src/appointments/appointments.service.ts:300:    await this.assertAppointmentSlotAvailable(tenantId, body?.providerId, scheduledAt, durationMinutes);
+apps/api/src/appointments/appointments.service.ts:304:        tenantId,
+apps/api/src/appointments/appointments.service.ts:317:      tenantId,
+apps/api/src/appointments/appointments.service.ts:328:  async getAppointment(tenantId: string, appointmentId: string) {
+apps/api/src/appointments/appointments.service.ts:329:    await this.assertOpdEnabled(tenantId);
+apps/api/src/appointments/appointments.service.ts:330:    return this.mapAppointment(await this.getAppointmentOrThrow(tenantId, appointmentId));

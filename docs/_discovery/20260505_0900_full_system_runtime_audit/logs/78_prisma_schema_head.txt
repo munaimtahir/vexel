@@ -1,0 +1,222 @@
+COMMAND: sed -n '1,220p' apps/api/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── System / Platform ────────────────────────────────────────────────────
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  status    String   @default("trial") // active | suspended | trial
+  isSuperAdmin Boolean @default(false)  // system tenant for super-admins
+  // Catalog seed state (set by enable-lims command)
+  catalogSeedMode        String?   // BASE_ON_ENABLE | EMPTY | CUSTOM_UPLOAD
+  catalogSeededAt        DateTime?
+  catalogSeedBaseVersion String?
+  catalogSeedHash        String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  domains       TenantDomain[]
+  config        TenantConfig?
+  users         User[]
+  featureFlags  TenantFeature[]
+  auditEvents   AuditEvent[]
+  catalogTests  CatalogTest[]
+  catalogPanels CatalogPanel[]
+  sampleTypes   SampleType[]
+  roles         Role[]
+  encounters    Encounter[]
+  patients      Patient[]
+  labOrders     LabOrder[]
+  specimens     Specimen[]
+  specimenItems SpecimenItem[]
+  labResults    LabResult[]
+  parameters           Parameter[]
+  testParameterMappings TestParameterMapping[]
+  panelTestMappings    PanelTestMapping[]
+  referenceRanges      ReferenceRange[]
+  jobRuns              JobRun[]
+  documentTemplates    DocumentTemplate[]
+  documents            Document[]
+  cashTransactions     CashTransaction[]
+  topTests             TenantTopTest[]
+  providers            Provider[]
+  providerSchedules    ProviderSchedule[]
+  appointments         Appointment[]
+  opdVisits            OPDVisit[]
+  opdVitals            OPDVitals[]
+  opdClinicalNotes     OPDClinicalNote[]
+  opdPrescriptions     OPDPrescription[]
+  opdPrescriptionItems OPDPrescriptionItem[]
+  invoices             Invoice[]
+  invoiceLines         InvoiceLine[]
+  payments             Payment[]
+  printTemplates       PrintTemplate[]
+  testTemplateMaps     TestTemplateMap[]
+  opdDoctors           OpdDoctor[]
+  opdEncountersKmvp    OpdEncounter[]
+  opdVitalsKmvp        OpdVital[]
+  opdNotesKmvp         OpdNote[]
+  opdPrescriptionsKmvp OpdEncounterPrescription[]
+  opdPrescriptionItemsKmvp OpdPrescriptionItemKmvp[]
+  opdCommandLogs       OpdCommandLog[]
+
+  @@map("tenants")
+}
+
+model TenantDomain {
+  id       String @id @default(uuid())
+  tenantId String
+  domain   String @unique  // globally unique — one domain maps to one tenant
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([domain])
+  @@map("tenant_domains")
+}
+
+model TenantConfig {
+  id                 String  @id @default(uuid())
+  tenantId           String  @unique
+  brandName          String?
+  logoUrl            String?
+  primaryColor       String?
+  reportHeader       String?
+  reportFooter       String?
+  headerText         String?
+  footerText         String?
+  registrationPrefix   String? // e.g. "VX" — 2-3 letters; server appends -YY-SEQ
+  orderPrefix          String? // e.g. "VX" — server appends module letter + YYMM + SEQ
+  reportHeaderLayout   String? // default | classic | minimal  (lab report)
+  receiptHeaderLayout  String? // default | classic | minimal  (receipt)
+  receiptLayout        String? // a4 | thermal
+  reportFooterImageUrl String? // URL to footer image for lab reports/receipts
+  reportFooterLayout   String? // text | image | both  (lab report)
+  receiptFooterLayout  String? // text | image | both  (receipt)
+  updatedAt            DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@map("tenant_configs")
+}
+
+model User {
+  id               String   @id @default(uuid())
+  tenantId         String
+  email            String
+  firstName        String
+  lastName         String
+  passwordHash     String
+  status           String   @default("active") // active | disabled | pending
+  isSuperAdmin     Boolean  @default(false)    // super-admin bypasses all RBAC
+  maxDiscountPct   Decimal? @db.Decimal(5,2)   // overrides role default when set
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  tenant           Tenant           @relation(fields: [tenantId], references: [id])
+  userRoles        UserRole[]
+  refreshTokens    RefreshToken[]
+  auditEvents      AuditEvent[]
+  cashTransactions CashTransaction[]
+  opsBackupRuns    OpsBackupRun[]
+  createdTemplates PrintTemplate[]  @relation("TemplateCreatedBy")
+
+  @@unique([tenantId, email])
+  @@index([tenantId, status])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique  // hashed token stored
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
+}
+
+model Role {
+  id                String   @id @default(uuid())
+  tenantId          String
+  name              String
+  description       String?
+  isSystem          Boolean  @default(false)  // system roles cannot be deleted
+  maxDiscountPct    Decimal? @db.Decimal(5,2) // max % discount this role may apply
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  tenant          Tenant           @relation(fields: [tenantId], references: [id])
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("roles")
+}
+
+// System-defined permission keys
+// Stored as strings so schema doesn't need to change when adding new permissions
+model RolePermission {
+  roleId     String
+  permission String  // matches Permission enum values
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([roleId, permission])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  userId    String
+  roleId    String
+  grantedBy String?  // userId who granted this role
+  grantedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model TenantFeature {
+  id          String   @id @default(uuid())
+  tenantId    String
+  key         String   // e.g. module.lims, module.printing
+  enabled     Boolean  @default(false)
+  variantJson String?  // JSON string for variant-type flags e.g. {"mode":"separate"}
+  description String?
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?  // userId who last changed it
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, key])
+  @@index([tenantId])
+  @@map("tenant_features")
+}
+
+// ─── Catalog ──────────────────────────────────────────────────────────────
+
+model CatalogTest {
+  id                   String   @id @default(uuid())
+  tenantId             String
+  sampleTypeId         String?
+  name                 String
+  description          String?
+  sampleType           String?  // legacy field kept for compat
+  specimenType         String?  // exact specimen type e.g. "EDTA Blood", "Clot Blood", "Urine"

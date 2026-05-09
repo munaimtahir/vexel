@@ -1,0 +1,2 @@
+.env.example
+apps/admin/.env.example

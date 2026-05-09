@@ -1,0 +1,236 @@
+COMMAND: pnpm --filter @vexel/api test
+
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+> @vexel/api@0.1.0 test /home/munaim/srv/apps/vexel/apps/api
+> jest
+
+PASS src/documents/__tests__/result-grouping.spec.ts (74.087 s)
+PASS src/templates/__tests__/templates-validation.spec.ts (6.707 s)
+PASS src/templates/__tests__/templates.service.spec.ts (82.369 s)
+PASS src/documents/__tests__/documents.service.spec.ts (83.111 s)
+PASS src/catalog/__tests__/catalog-import.spec.ts
+PASS src/ops/__tests__/ops.service.spec.ts (12.681 s)
+[Nest] 3017009  - 05/05/2026, 9:24:45 AM     LOG [TenantServiceHealthService] Object:
+{
+  "msg": "admin.tenant.service_health.read",
+  "tenantId": "tenant-a-uuid",
+  "actorUserId": "actor-1",
+  "correlationId": "corr-1"
+}
+
+[Nest] 3017009  - 05/05/2026, 9:24:58 AM    WARN [TenantServiceHealthService] Worker queue probe failed: ioredis_1.default is not a constructor
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM     LOG [TenantServiceHealthService] Object:
+{
+  "msg": "admin.tenant.service_health.read",
+  "tenantId": "tenant-a-uuid",
+  "actorUserId": "actor-1"
+}
+
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM    WARN [TenantServiceHealthService] Worker queue probe failed: ioredis_1.default is not a constructor
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM     LOG [TenantServiceHealthService] Object:
+{
+  "msg": "admin.tenant.service_health.read",
+  "tenantId": "tenant-a-uuid",
+  "actorUserId": "actor-user-1",
+  "correlationId": "corr-xyz"
+}
+
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM    WARN [TenantServiceHealthService] Worker queue probe failed: ioredis_1.default is not a constructor
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM     LOG [TenantServiceHealthService] Object:
+{
+  "msg": "admin.tenant.service_health.read",
+  "tenantId": "tenant-a-uuid",
+  "actorUserId": "actor-1"
+}
+
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM    WARN [TenantServiceHealthService] Worker queue probe failed: ioredis_1.default is not a constructor
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM     LOG [TenantServiceHealthService] Object:
+{
+  "msg": "admin.tenant.service_health.read",
+  "tenantId": "tenant-a-uuid",
+  "actorUserId": "actor-1"
+}
+
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM    WARN [TenantServiceHealthService] Worker queue probe failed: ioredis_1.default is not a constructor
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM     LOG [TenantServiceHealthService] Object:
+{
+  "msg": "admin.tenant.service_health.read",
+  "tenantId": "tenant-a-uuid",
+  "actorUserId": "actor-1"
+}
+
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM    WARN [TenantServiceHealthService] Worker queue probe failed: ioredis_1.default is not a constructor
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM     LOG [TenantServiceHealthService] Object:
+{
+  "msg": "admin.tenant.service_health.read",
+  "tenantId": "tenant-a-uuid",
+  "actorUserId": "actor-1"
+}
+
+[Nest] 3017009  - 05/05/2026, 9:25:00 AM    WARN [TenantServiceHealthService] Worker queue probe failed: ioredis_1.default is not a constructor
+PASS src/tenants/__tests__/tenant-service-health.spec.ts (106.199 s)
+PASS src/templates/__tests__/block-validation.spec.ts (128.259 s)
+PASS src/encounters/__tests__/encounter-workflow.spec.ts (935.641 s)
+  ● Console
+
+    console.error
+      [encounters] Failed to generate encounterCode: Cannot read properties of undefined (reading 'findUnique')
+
+      203 |         (updatedEncounter as any).encounterCode = encounterCode;
+      204 |       } catch (err) {
+    > 205 |         console.error('[encounters] Failed to generate encounterCode:', (err as Error).message);
+          |                 ^
+      206 |       }
+      207 |     }
+      208 |
+
+      at EncountersService.orderLab (encounters/encounters.service.ts:205:17)
+      at Object.<anonymous> (encounters/__tests__/encounter-workflow.spec.ts:105:24)
+
+    console.error
+      [encounters] Failed to auto-create SpecimenItem: Cannot read properties of undefined (reading 'upsert')
+
+      228 |       });
+      229 |     } catch (err) {
+    > 230 |       console.error('[encounters] Failed to auto-create SpecimenItem:', (err as Error).message);
+          |               ^
+      231 |     }
+      232 |
+      233 |     // Auto-generate RECEIPT document after order finalization (non-fatal)
+
+      at EncountersService.orderLab (encounters/encounters.service.ts:230:15)
+      at Object.<anonymous> (encounters/__tests__/encounter-workflow.spec.ts:105:24)
+
+    console.error
+      [encounters] Failed to auto-generate receipt after order-lab: Cannot read properties of undefined (reading 'findUnique')
+
+      291 |     } catch (err) {
+      292 |       // Non-fatal: receipt generation failure must not block order placement
+    > 293 |       console.error('[encounters] Failed to auto-generate receipt after order-lab:', (err as Error).message);
+          |               ^
+      294 |     }
+      295 |
+      296 |     return updatedEncounter;
+
+      at EncountersService.orderLab (encounters/encounters.service.ts:293:15)
+      at Object.<anonymous> (encounters/__tests__/encounter-workflow.spec.ts:105:24)
+
+    console.error
+      [encounters] Failed to generate encounterCode: Cannot read properties of undefined (reading 'findUnique')
+
+      203 |         (updatedEncounter as any).encounterCode = encounterCode;
+      204 |       } catch (err) {
+    > 205 |         console.error('[encounters] Failed to generate encounterCode:', (err as Error).message);
+          |                 ^
+      206 |       }
+      207 |     }
+      208 |
+
+      at EncountersService.orderLab (encounters/encounters.service.ts:205:17)
+      at Object.<anonymous> (encounters/__tests__/encounter-workflow.spec.ts:159:5)
+
+    console.error
+      [encounters] Failed to auto-create SpecimenItem: Cannot read properties of undefined (reading 'upsert')
+
+      228 |       });
+      229 |     } catch (err) {
+    > 230 |       console.error('[encounters] Failed to auto-create SpecimenItem:', (err as Error).message);
+          |               ^
+      231 |     }
+      232 |
+      233 |     // Auto-generate RECEIPT document after order finalization (non-fatal)
+
+      at EncountersService.orderLab (encounters/encounters.service.ts:230:15)
+      at Object.<anonymous> (encounters/__tests__/encounter-workflow.spec.ts:159:5)
+
+    console.error
+      [encounters] Failed to auto-generate receipt after order-lab: Cannot read properties of undefined (reading 'findUnique')
+
+      291 |     } catch (err) {
+      292 |       // Non-fatal: receipt generation failure must not block order placement
+    > 293 |       console.error('[encounters] Failed to auto-generate receipt after order-lab:', (err as Error).message);
+          |               ^
+      294 |     }
+      295 |
+      296 |     return updatedEncounter;
+
+      at EncountersService.orderLab (encounters/encounters.service.ts:293:15)
+      at Object.<anonymous> (encounters/__tests__/encounter-workflow.spec.ts:159:5)
+
+PASS src/documents/__tests__/document-idempotency.spec.ts (1345.252 s)
+PASS src/tenants/__tests__/enable-lims.spec.ts (1385.111 s)
+PASS src/catalog/__tests__/catalog-import-multipart.spec.ts (425.885 s)
+PASS src/catalog/__tests__/catalog-search.spec.ts (61.014 s)
+(node:3017008) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS src/account/account.service.spec.ts (56.046 s)
+PASS src/health/health.service.spec.ts (45.203 s)
+PASS src/appointments/__tests__/appointments.service.spec.ts (67.152 s)
+PASS src/billing/__tests__/billing.service.spec.ts (182.866 s)
+PASS src/rbac/permissions.guard.spec.ts (120.778 s)
+PASS src/tenant/tenant-resolver.middleware.spec.ts (139.9 s)
+[2026-05-05T09:53:24.779Z] Retention purged artifact for run old-run: /home/munaim/srv/apps/vexel/runtime/backups/full/retention-old-1777974803742.tar.gz
+PASS src/ops/__tests__/ops-backup.retention.spec.ts (68.852 s)
+[Nest] 3017009  - 05/05/2026, 9:55:02 AM   ERROR [AuditService] Best-effort audit write failed
+[Nest] 3017009  - 05/05/2026, 9:55:03 AM   ERROR [AuditService] Error: db down
+PASS src/audit/audit.service.spec.ts (98.646 s)
+FAIL src/catalog/__tests__/catalog-reference-range-import.spec.ts (221.617 s)
+  ● CatalogImportExportService reference range workbook import › parses reference ranges from workbook sheet with header variants and en-dash expression
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      3 |
+      4 | describe('CatalogImportExportService reference range workbook import', () => {
+    > 5 |   it('parses reference ranges from workbook sheet with header variants and en-dash expression', async () => {
+        |   ^
+      6 |     const wb = new ExcelJS.Workbook();
+      7 |     const ws = wb.addWorksheet('Reference Ranges');
+      8 |     ws.addRow([
+
+      at catalog/__tests__/catalog-reference-range-import.spec.ts:5:3
+      at Object.<anonymous> (catalog/__tests__/catalog-reference-range-import.spec.ts:4:1)
+
+PASS src/ops/__tests__/ops-backup.processor.spec.ts (59.812 s)
+PASS src/catalog/__tests__/catalog-import-export.spec.ts (252.892 s)
+PASS src/documents/__tests__/canonical.spec.ts (150.121 s)
+PASS src/catalog/__tests__/catalog-validation.spec.ts (249.304 s)
+(node:3017009) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS src/account/account.controller.spec.ts (571.653 s)
+(node:3017015) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS src/app.module.spec.ts (507.636 s)
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+
+Summary of all failing tests
+FAIL catalog/__tests__/catalog-reference-range-import.spec.ts (221.617 s)
+  ● CatalogImportExportService reference range workbook import › parses reference ranges from workbook sheet with header variants and en-dash expression
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      3 |
+      4 | describe('CatalogImportExportService reference range workbook import', () => {
+    > 5 |   it('parses reference ranges from workbook sheet with header variants and en-dash expression', async () => {
+        |   ^
+      6 |     const wb = new ExcelJS.Workbook();
+      7 |     const ws = wb.addWorksheet('Reference Ranges');
+      8 |     ws.addRow([
+
+      at catalog/__tests__/catalog-reference-range-import.spec.ts:5:3
+      at Object.<anonymous> (catalog/__tests__/catalog-reference-range-import.spec.ts:4:1)
+
+
+Test Suites: 1 failed, 27 passed, 28 total
+Tests:       1 failed, 198 passed, 199 total
+Snapshots:   0 total
+Time:        2744.71 s
+Ran all test suites.
+/home/munaim/srv/apps/vexel/apps/api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @vexel/api@0.1.0 test: `jest`
+Exit status 1
+real 2757.05
+user 181.42
+sys 19.17

@@ -1,0 +1,146 @@
+COMMAND: openapi.yaml snippet for /patients
+
+6720:  /patients:
+
+  # ─── Patients ─────────────────────────────────────────────────────────────
+  /patients:
+    get:
+      operationId: listPatients
+      summary: List patients (tenant-scoped)
+      tags: [Patients]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: lastName
+          in: query
+          schema:
+            type: string
+        - name: mrn
+          in: query
+          schema:
+            type: string
+        - name: mobile
+          in: query
+          schema:
+            type: string
+          description: Search by mobile number (exact or partial match)
+      responses:
+        "200":
+          description: Patients list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Patient'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      operationId: createPatient
+      summary: Create a patient record
+      tags: [Patients]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [firstName, lastName]
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  format: date
+                ageYears:
+                  type: integer
+                gender:
+                  type: string
+                mobile:
+                  type: string
+                cnic:
+                  type: string
+                address:
+                  type: string
+                mrn:
+                  type: string
+                  description: "If omitted, server generates from tenant prefix"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        "409":
+          description: MRN already exists in tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /patients/{patientId}:
+    get:
+      operationId: getPatient
+      summary: Get patient by ID
+      tags: [Patients]
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Patient record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      operationId: updatePatient
+      summary: Update patient record
+      tags: [Patients]
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  format: date
+                gender:
+                  type: string
+      responses:
+        "200":
+          description: Updated patient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        "404":
+          description: Not found
+          content:

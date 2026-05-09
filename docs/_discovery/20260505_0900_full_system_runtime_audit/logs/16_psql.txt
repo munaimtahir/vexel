@@ -1,0 +1,3 @@
+$ psql --version
+
+environment: line 11: psql: command not found

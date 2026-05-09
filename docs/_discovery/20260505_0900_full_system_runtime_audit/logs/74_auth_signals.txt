@@ -1,0 +1,252 @@
+COMMAND: rg -n 'Jwt|jwt|RefreshToken|refresh token|bcrypt|AuthGuard|Permissions|RBAC|roles' apps/api/src -S | head -250
+
+apps/api/src/jobs/jobs.controller.ts:3:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/jobs/jobs.controller.ts:4:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/jobs/jobs.controller.ts:5:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/jobs/jobs.controller.ts:13:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/jobs/jobs.controller.ts:19:  @RequirePermissions(Permission.JOB_READ)
+apps/api/src/jobs/jobs.controller.ts:23:  @RequirePermissions(Permission.JOB_READ)
+apps/api/src/jobs/jobs.controller.ts:27:  @RequirePermissions(Permission.JOB_READ)
+apps/api/src/jobs/jobs.controller.ts:32:  @RequirePermissions(Permission.JOB_RETRY)
+apps/api/src/roles/roles.controller.ts:6:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/roles/roles.controller.ts:7:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/roles/roles.controller.ts:8:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/roles/roles.controller.ts:10:import { RolesService } from './roles.service';
+apps/api/src/roles/roles.controller.ts:15:@Controller('roles')
+apps/api/src/roles/roles.controller.ts:16:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/roles/roles.controller.ts:22:  @RequirePermissions(Permission.ROLE_READ)
+apps/api/src/roles/roles.controller.ts:26:  @RequirePermissions(Permission.ROLE_READ)
+apps/api/src/roles/roles.controller.ts:27:  listPermissions() { return this.svc.listPermissions(); }
+apps/api/src/roles/roles.controller.ts:31:  @RequirePermissions(Permission.ROLE_CREATE)
+apps/api/src/roles/roles.controller.ts:41:  @RequirePermissions(Permission.ROLE_UPDATE)
+apps/api/src/roles/roles.controller.ts:52:  @RequirePermissions(Permission.ROLE_DELETE)
+apps/api/src/roles/roles.service.ts:14:    const roles = await this.prisma.role.findMany({
+apps/api/src/roles/roles.service.ts:16:      include: { rolePermissions: true },
+apps/api/src/roles/roles.service.ts:19:    return roles.map((r) => ({
+apps/api/src/roles/roles.service.ts:22:      permissions: r.rolePermissions.map((rp) => rp.permission),
+apps/api/src/roles/roles.service.ts:40:        rolePermissions: { create: permissions.map((p) => ({ permission: p })) },
+apps/api/src/roles/roles.service.ts:42:      include: { rolePermissions: true },
+apps/api/src/roles/roles.service.ts:51:    return { ...role, permissions: role.rolePermissions.map((rp) => rp.permission) };
+apps/api/src/roles/roles.service.ts:88:      where: { id: roleId }, include: { rolePermissions: true },
+apps/api/src/roles/roles.service.ts:90:    return { ...updated, permissions: updated?.rolePermissions.map((rp) => rp.permission) };
+apps/api/src/roles/roles.service.ts:101:      include: { rolePermissions: true },
+apps/api/src/roles/roles.service.ts:104:    if (role.isSystem) throw new ConflictException('System roles cannot be deleted');
+apps/api/src/roles/roles.service.ts:120:      before: { name: role.name, permissions: role.rolePermissions.map((rp) => rp.permission) },
+apps/api/src/roles/roles.service.ts:126:  listPermissions() {
+apps/api/src/verification/verification.controller.ts:15:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/verification/verification.controller.ts:16:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/verification/verification.controller.ts:17:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/verification/verification.controller.ts:26:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/verification/verification.controller.ts:36:  @RequirePermissions(Permission.RESULT_VERIFY)
+apps/api/src/verification/verification.controller.ts:47:  @RequirePermissions(Permission.RESULT_VERIFY)
+apps/api/src/verification/verification.controller.ts:57:  @RequirePermissions(Permission.RESULT_VERIFY)
+apps/api/src/verification/verification.controller.ts:74:  @RequirePermissions(Permission.RESULT_VERIFY)
+apps/api/src/roles/roles.module.ts:2:import { RolesController } from './roles.controller';
+apps/api/src/roles/roles.module.ts:3:import { RolesService } from './roles.service';
+apps/api/src/rbac/permissions.ts:18:  ADMIN_ROLES_READ = 'admin.roles.read',
+apps/api/src/rbac/permissions.ts:19:  ADMIN_ROLES_WRITE = 'admin.roles.write',
+apps/api/src/rbac/require-permissions.decorator.ts:5:export const RequirePermissions = (...permissions: Permission[]) =>
+apps/api/src/documents/documents.controller.ts:18:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/documents/documents.controller.ts:19:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/documents/documents.controller.ts:20:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/documents/documents.controller.ts:27:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/documents/documents.controller.ts:33:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:55:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:86:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:92:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:99:  @RequirePermissions(Permission.DOCUMENT_PUBLISH)
+apps/api/src/documents/documents.controller.ts:110:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:124:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/rbac/rbac.module.ts:2:import { PermissionsGuard } from './permissions.guard';
+apps/api/src/rbac/rbac.module.ts:5:  providers: [PermissionsGuard],
+apps/api/src/rbac/rbac.module.ts:6:  exports: [PermissionsGuard],
+apps/api/src/rbac/permissions.guard.ts:9:export class PermissionsGuard implements CanActivate {
+apps/api/src/rbac/permissions.guard.ts:27:    const userPermissions: string[] = user.permissions ?? [];
+apps/api/src/rbac/permissions.guard.ts:29:    const hasAll = required.every((perm) => userPermissions.includes(perm));
+apps/api/src/rbac/permissions.guard.ts:32:        `Missing required permissions: ${required.filter(p => !userPermissions.includes(p)).join(', ')}`,
+apps/api/src/rbac/permissions.guard.spec.ts:1:import { PermissionsGuard } from './permissions.guard';
+apps/api/src/rbac/permissions.guard.spec.ts:6:describe('PermissionsGuard', () => {
+apps/api/src/rbac/permissions.guard.spec.ts:7:  let guard: PermissionsGuard;
+apps/api/src/rbac/permissions.guard.spec.ts:12:    guard = new PermissionsGuard(reflector);
+apps/api/src/app.module.ts:10:import { RolesModule } from './roles/roles.module';
+apps/api/src/account/account.service.ts:2:import * as bcrypt from 'bcrypt';
+apps/api/src/account/account.service.ts:11:  roles?: string[];
+apps/api/src/account/account.service.ts:30:  { key: 'roles', label: 'Roles', href: '/roles', requiredAny: ['admin.roles.read', 'admin.roles.write', 'role.read', 'role.create', 'role.update', 'role.delete', 'role.assign'] },
+apps/api/src/account/account.service.ts:41:  '/roles',
+apps/api/src/account/account.service.ts:72:function hasAnyPermission(grantedPermissions: string[], requiredAny: string[]): boolean {
+apps/api/src/account/account.service.ts:74:  const grantedSet = new Set(grantedPermissions);
+apps/api/src/account/account.service.ts:107:      roles: dbUser.userRoles.map((userRole) => userRole.role.name),
+apps/api/src/account/account.service.ts:174:    const validCurrent = await bcrypt.compare(currentPassword, dbUser.passwordHash);
+apps/api/src/account/account.service.ts:177:    const newHash = await bcrypt.hash(newPassword, 12);
+apps/api/src/account/account.service.ts:192:      metadata: { revokeRefreshTokens: true },
+apps/api/src/account/account.service.ts:200:    const grantedPermissions = user.permissions ?? [];
+apps/api/src/account/account.service.ts:207:      allowed: isSuperAdmin || hasAnyPermission(grantedPermissions, section.requiredAny),
+apps/api/src/account/account.service.ts:211:      || grantedPermissions.some((permission) => permission.startsWith('admin.'));
+apps/api/src/account/account.service.ts:212:    const hasLegacyAdminAccess = hasAnyPermission(grantedPermissions, LEGACY_ADMIN_ACCESS_PERMISSIONS);
+apps/api/src/account/account.service.ts:214:      || grantedPermissions.includes(Permission.ADMIN_APP_ACCESS)
+apps/api/src/results/results.controller.ts:15:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/results/results.controller.ts:16:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/results/results.controller.ts:17:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/results/results.controller.ts:26:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/results/results.controller.ts:36:  @RequirePermissions(Permission.RESULT_ENTER)
+apps/api/src/results/results.controller.ts:42:  @RequirePermissions(Permission.RESULT_ENTER)
+apps/api/src/results/results.controller.ts:48:  @RequirePermissions(Permission.RESULT_ENTER)
+apps/api/src/results/results.controller.ts:58:  @RequirePermissions(Permission.RESULT_ENTER)
+apps/api/src/results/results.controller.ts:77:  @RequirePermissions(Permission.RESULT_ENTER)
+apps/api/src/results/results.controller.ts:94:  @RequirePermissions(Permission.RESULT_VERIFY)
+apps/api/src/account/account.controller.ts:13:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/account/account.controller.ts:14:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/account/account.controller.ts:15:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/account/account.controller.ts:23:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/account/account.controller.ts:28:  @RequirePermissions(Permission.ACCOUNT_PROFILE_READ_SELF)
+apps/api/src/account/account.controller.ts:34:  @RequirePermissions(Permission.ACCOUNT_PROFILE_UPDATE_SELF)
+apps/api/src/account/account.controller.ts:44:  @RequirePermissions(Permission.ACCOUNT_PASSWORD_CHANGE_SELF)
+apps/api/src/account/account.controller.ts:54:  @RequirePermissions(Permission.ACCOUNT_PROFILE_READ_SELF)
+apps/api/src/account/account.controller.ts:60:  @RequirePermissions(Permission.ACCOUNT_PROFILE_READ_SELF)
+apps/api/src/auth/jwt.strategy.ts:3:import { ExtractJwt, Strategy } from 'passport-jwt';
+apps/api/src/auth/jwt.strategy.ts:8:export class JwtStrategy extends PassportStrategy(Strategy) {
+apps/api/src/auth/jwt.strategy.ts:11:      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+apps/api/src/auth/jwt.strategy.ts:18:    // Load user + roles + permissions from DB on every request.
+apps/api/src/auth/jwt.strategy.ts:24:        include: { role: { include: { rolePermissions: true } } },
+apps/api/src/auth/jwt.strategy.ts:32:      ...userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
+apps/api/src/auth/jwt.strategy.ts:40:      roles: payload.roles,
+apps/api/src/auth/auth.service.ts:5:import { JwtService } from '@nestjs/jwt';
+apps/api/src/auth/auth.service.ts:6:import * as bcrypt from 'bcrypt';
+apps/api/src/auth/auth.service.ts:12:export interface JwtPayload {
+apps/api/src/auth/auth.service.ts:16:  roles: string[];
+apps/api/src/auth/auth.service.ts:28:    private readonly jwtService: JwtService,
+apps/api/src/auth/auth.service.ts:36:        userRoles: { include: { role: { include: { rolePermissions: true } } } },
+apps/api/src/auth/auth.service.ts:43:    const valid = await bcrypt.compare(password, user.passwordHash);
+apps/api/src/auth/auth.service.ts:46:    const roles = user.userRoles.map((ur) => ur.role.name);
+apps/api/src/auth/auth.service.ts:48:      ...user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
+apps/api/src/auth/auth.service.ts:52:    const payload: JwtPayload = {
+apps/api/src/auth/auth.service.ts:56:      roles,
+apps/api/src/auth/auth.service.ts:61:    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+apps/api/src/auth/auth.service.ts:63:    const refreshTokenHash = await bcrypt.hash(refreshTokenRaw, 10);
+apps/api/src/auth/auth.service.ts:98:            userRoles: { include: { role: { include: { rolePermissions: true } } } },
+apps/api/src/auth/auth.service.ts:106:      const match = await bcrypt.compare(refreshTokenRaw, record.token);
+apps/api/src/auth/auth.service.ts:110:    if (!matchedRecord) throw new UnauthorizedException('Invalid or expired refresh token');
+apps/api/src/auth/auth.service.ts:118:    const roles = user.userRoles.map((ur) => ur.role.name);
+apps/api/src/auth/auth.service.ts:120:      ...user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
+apps/api/src/auth/auth.service.ts:124:    const payload: JwtPayload = {
+apps/api/src/auth/auth.service.ts:128:      roles,
+apps/api/src/auth/auth.service.ts:133:    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+apps/api/src/auth/auth.service.ts:135:    const newRefreshHash = await bcrypt.hash(newRefreshRaw, 10);
+apps/api/src/auth/auth.service.ts:167:    return bcrypt.hash(password, BCRYPT_ROUNDS);
+apps/api/src/auth/jwt-auth.guard.ts:2:import { AuthGuard } from '@nestjs/passport';
+apps/api/src/auth/jwt-auth.guard.ts:6:export class JwtAuthGuard extends AuthGuard('jwt') {
+apps/api/src/auth/auth.module.ts:2:import { JwtModule } from '@nestjs/jwt';
+apps/api/src/auth/auth.module.ts:6:import { JwtAuthGuard } from './jwt-auth.guard';
+apps/api/src/auth/auth.module.ts:7:import { JwtStrategy } from './jwt.strategy';
+apps/api/src/auth/auth.module.ts:13:    JwtModule.register({
+apps/api/src/auth/auth.module.ts:19:  providers: [AuthService, JwtAuthGuard, JwtStrategy],
+apps/api/src/auth/auth.module.ts:20:  exports: [JwtAuthGuard, AuthService, JwtModule],
+apps/api/src/auth/auth.controller.ts:7:import { JwtAuthGuard } from './jwt-auth.guard';
+apps/api/src/auth/auth.controller.ts:47:  @ApiOperation({ summary: 'Refresh access token (rotates refresh token)' })
+apps/api/src/auth/auth.controller.ts:65:  @UseGuards(JwtAuthGuard)
+apps/api/src/auth/auth.controller.ts:67:  @ApiOperation({ summary: 'Logout (revokes all refresh tokens)' })
+apps/api/src/auth/auth.controller.ts:85:  @UseGuards(JwtAuthGuard)
+apps/api/src/auth/auth.controller.ts:89:    const jwtUser = (req as any).user;
+apps/api/src/auth/auth.controller.ts:92:        where: { id: jwtUser.userId },
+apps/api/src/auth/auth.controller.ts:96:        ...jwtUser,
+apps/api/src/auth/auth.controller.ts:101:      return jwtUser;
+apps/api/src/audit/audit-events.controller.ts:3:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/audit/audit-events.controller.ts:4:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/audit/audit-events.controller.ts:5:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/audit/audit-events.controller.ts:11:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/audit/audit-events.controller.ts:17:  @RequirePermissions(Permission.AUDIT_READ)
+apps/api/src/opd/opd.controller.ts:21:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/opd/opd.controller.ts:25:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/opd/opd.controller.ts:26:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/opd/opd.controller.ts:31:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/opd/opd.controller.ts:45:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:51:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:58:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:69:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:83:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:89:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:96:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:108:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:120:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:132:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:144:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:156:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:167:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:173:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:187:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:193:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:207:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:214:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:225:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:231:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:244:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:257:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:268:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:286:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:307:  @RequirePermissions(Permission.MODULE_ADMIN)
+apps/api/src/opd/opd.controller.ts:327:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:339:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:346:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:357:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:364:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:383:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:400:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:417:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:434:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:453:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:471:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:478:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:489:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:496:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:508:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:520:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:532:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:546:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:553:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:567:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:574:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:587:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:600:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:607:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:620:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:632:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:645:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:652:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:663:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:669:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:676:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:688:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:701:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/opd/opd.controller.ts:714:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/catalog/catalog-jobs.controller.ts:3:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/catalog/catalog-jobs.controller.ts:4:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/catalog/catalog-jobs.controller.ts:5:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/catalog/catalog-jobs.controller.ts:15:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/catalog/catalog-jobs.controller.ts:25:  @RequirePermissions(Permission.CATALOG_MANAGE)
+apps/api/src/catalog/catalog-jobs.controller.ts:32:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/catalog/catalog-jobs.controller.ts:38:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/catalog/catalog-jobs.controller.ts:45:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/catalog/catalog-jobs.controller.ts:52:  @RequirePermissions(Permission.CATALOG_MANAGE)
+apps/api/src/catalog/catalog-jobs.controller.ts:59:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/catalog/catalog-jobs.controller.ts:65:  @RequirePermissions(Permission.JOB_RETRY)
+apps/api/src/catalog/catalog-jobs.controller.ts:73:  @RequirePermissions(Permission.CATALOG_MANAGE)
+apps/api/src/catalog/catalog-jobs.controller.ts:80:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/catalog/catalog-jobs.controller.ts:86:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/catalog/catalog-jobs.controller.ts:92:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/catalog/catalog-operator.controller.ts:4:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/catalog/catalog-operator.controller.ts:5:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/catalog/catalog-operator.controller.ts:6:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/catalog/catalog-operator.controller.ts:12:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/catalog/catalog-operator.controller.ts:18:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/catalog/catalog-operator.controller.ts:27:  @RequirePermissions(Permission.CATALOG_READ)
+apps/api/src/sample-collection/sample-collection.controller.ts:6:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/sample-collection/sample-collection.controller.ts:7:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/sample-collection/sample-collection.controller.ts:8:import { RequirePermissions } from '../rbac/require-permissions.decorator';
+apps/api/src/sample-collection/sample-collection.controller.ts:18:@UseGuards(JwtAuthGuard, PermissionsGuard)
+apps/api/src/sample-collection/sample-collection.controller.ts:31:  @RequirePermissions(Permission.PATIENT_MANAGE)
+apps/api/src/sample-collection/sample-collection.controller.ts:38:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/sample-collection/sample-collection.controller.ts:66:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/sample-collection/sample-collection.controller.ts:86:  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+apps/api/src/appointments/appointments.controller.ts:17:import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+apps/api/src/appointments/appointments.controller.ts:21:import { PermissionsGuard } from '../rbac/permissions.guard';
+apps/api/src/appointments/appointments.controller.ts:22:import { RequirePermissions } from '../rbac/require-permissions.decorator';

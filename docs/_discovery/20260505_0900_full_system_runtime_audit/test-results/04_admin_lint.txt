@@ -1,0 +1,49 @@
+COMMAND: pnpm --filter @vexel/admin lint
+
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+
+> @vexel/admin@0.1.0 lint /home/munaim/srv/apps/vexel/apps/admin
+> next lint
+
+`next lint` is deprecated and will be removed in Next.js 16.
+For new projects, use create-next-app to choose your preferred linter.
+For existing projects, migrate to the ESLint CLI:
+npx @next/codemod@canary next-lint-to-eslint-cli .
+
+
+./src/app/(protected)/audit/page.tsx
+40:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/panels/page.tsx
+43:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/parameters/page.tsx
+39:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/reference-ranges/page.tsx
+95:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+326:6  Warning: React Hook useMemo has a missing dependency: 'getTestName'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/sample-types/page.tsx
+36:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/catalog/tests/page.tsx
+60:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/opd/providers/page.tsx
+102:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/opd/schedules/page.tsx
+137:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+145:6  Warning: React Hook useEffect has a missing dependency: 'loadSchedules'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/ops/backups/page.tsx
+56:50  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/(protected)/templates/page.tsx
+51:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+real 28.65
+user 6.07
+sys 1.58

@@ -1,0 +1,3 @@
+COMMAND: bash -lc rg -n 'axios\b|fetch\s*\(|XMLHttpRequest' apps/admin -S --glob '!**/node_modules/**' || true
+
+apps/admin/src/lib/api-client.ts:5: * Uses @vexel/sdk only. No direct fetch/axios to backend endpoints.

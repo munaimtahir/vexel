@@ -1,0 +1,29 @@
+$ ls -la packages && find packages -maxdepth 3 -type d | sort
+
+total 24
+drwxrwxr-x  6 munaim munaim 4096 Mar  2 22:38 .
+drwxrwxr-x 17 munaim munaim 4096 Mar  7 06:58 ..
+drwxrwxr-x  4 munaim munaim 4096 Mar  2 23:05 contracts
+drwxrwxr-x  6 munaim munaim 4096 Mar  6 21:18 sdk
+drwxrwxr-x  5 munaim munaim 4096 Mar  2 23:05 theme
+drwxrwxr-x  3 munaim munaim 4096 Mar  2 23:05 ui-system
+packages
+packages/contracts
+packages/contracts/node_modules
+packages/contracts/node_modules/.bin
+packages/contracts/scripts
+packages/sdk
+packages/sdk/.turbo
+packages/sdk/node_modules
+packages/sdk/node_modules/.bin
+packages/sdk/scripts
+packages/sdk/src
+packages/sdk/src/generated
+packages/theme
+packages/theme/node_modules
+packages/theme/node_modules/.ignored_react
+packages/theme/src
+packages/theme/styles
+packages/ui-system
+packages/ui-system/node_modules
+packages/ui-system/node_modules/.ignored_react

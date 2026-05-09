@@ -1,0 +1,17 @@
+COMMAND: root package.json (scripts excerpt)
+
+{
+  "build": "turbo run build",
+  "dev": "turbo run dev",
+  "lint": "turbo run lint",
+  "mcp:playwright": "./scripts/playwright-mcp.sh",
+  "mcp:playwright:install-runtime-libs": "./scripts/playwright-runtime-libs.sh",
+  "mcp:playwright:install-browsers": "pnpm mcp:playwright:install-runtime-libs && pnpm --filter @vexel/e2e exec playwright install chromium",
+  "ui:color-lint": "node scripts/ui-color-lint.mjs",
+  "sdk:generate": "pnpm --filter @vexel/contracts sdk:generate",
+  "check:admin-openapi-parity": "node scripts/check-admin-openapi-parity.js",
+  "mock:api": "docker compose --profile mock up mock-api mock-gateway",
+  "dev:ui-mock": "NEXT_PUBLIC_API_URL=http://127.0.0.1:9031 turbo run dev --filter=@vexel/admin --filter=@vexel/operator",
+  "dev:full": "docker compose up -d",
+  "mock:smoke": "node scripts/mock-smoke.js"
+}

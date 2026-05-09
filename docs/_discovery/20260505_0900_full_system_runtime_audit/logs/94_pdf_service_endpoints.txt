@@ -1,0 +1,5 @@
+COMMAND: rg -n 'MapGet|MapPost|\[Http|app\.Map|Minimal API|Controller\b|Route\b|health' apps/pdf -S | head -250
+
+apps/pdf/Program.cs:25:app.MapGet("/health/pdf", () => Results.Ok(new { status = "ok", version = "1.0.0", services = new { pdf = "ok" } }))
+apps/pdf/Program.cs:28:app.MapPost("/render", async (HttpContext context) =>
+apps/pdf/Program.cs:102:// ─── Static Route Helpers ─────────────────────────────────────────────────────

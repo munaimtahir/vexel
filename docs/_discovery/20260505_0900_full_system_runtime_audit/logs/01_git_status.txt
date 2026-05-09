@@ -1,0 +1,4 @@
+$ git status --short
+
+?? docs/_discovery/20260505_0858_full_system_runtime_audit/
+?? docs/_discovery/20260505_0900_full_system_runtime_audit/

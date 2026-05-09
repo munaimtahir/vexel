@@ -1,0 +1,9 @@
+COMMAND: check expected paths
+
+FOUND apps/api
+FOUND apps/worker
+FOUND apps/pdf
+FOUND apps/admin
+FOUND apps/operator
+FOUND packages/contracts/openapi.yaml
+FOUND packages/sdk

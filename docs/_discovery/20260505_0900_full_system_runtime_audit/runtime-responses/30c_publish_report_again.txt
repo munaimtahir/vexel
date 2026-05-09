@@ -1,0 +1,15 @@
+COMMAND: POST http://127.0.0.1:9021/api/encounters/:publish-report
+
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900-v2
+Content-Type: application/json; charset=utf-8
+Content-Length: 94
+ETag: W/"5e-W6ut89vZfB9pe0YxNm7v5ekDJq0"
+Date: Tue, 05 May 2026 09:18:30 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Cannot POST /api/encounters/:publish-report","error":"Not Found","statusCode":404}

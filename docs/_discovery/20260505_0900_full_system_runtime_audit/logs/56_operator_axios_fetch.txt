@@ -1,0 +1,4 @@
+COMMAND: bash -lc rg -n 'axios\b|fetch\s*\(|XMLHttpRequest' apps/operator -S --glob '!**/node_modules/**' || true
+
+apps/operator/src/hooks/use-feature-flags.ts:45:/** Force-clear the flags cache on next fetch (call after updating flags in admin) */
+apps/operator/src/lib/api-client.ts:3: * IMPORTANT: Uses @vexel/sdk only. No direct fetch/axios.

@@ -1,0 +1,15 @@
+COMMAND: POST http://127.0.0.1:9021/api/auth/refresh (token redacted)
+
+HTTP/1.1 401 Unauthorized
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: c373cd4e-1ff7-48da-9a32-272c5bcaa4fb
+Content-Type: application/json; charset=utf-8
+Content-Length: 76
+ETag: W/"4c-4k8IeqfOkKu8/TXP2mqBP672sjU"
+Date: Tue, 05 May 2026 09:14:38 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Refresh token required","error":"Unauthorized","statusCode":401}

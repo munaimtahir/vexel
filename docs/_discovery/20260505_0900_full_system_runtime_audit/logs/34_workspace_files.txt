@@ -1,0 +1,5 @@
+$ ls -la pnpm-workspace.yaml package.json pnpm-lock.yaml 2>/dev/null || true
+
+-rw-rw-r-- 1 munaim munaim   1243 Mar  6 21:17 package.json
+-rw-rw-r-- 1 munaim munaim 586283 Mar  7 06:58 pnpm-lock.yaml
+-rw-rw-r-- 1 munaim munaim     55 Mar  2 22:38 pnpm-workspace.yaml

@@ -1,0 +1,12 @@
+COMMAND: http://127.0.0.1:9024/lims/worklist
+
+HTTP/1.1 307 Temporary Redirect
+location: /login
+set-cookie: vexel_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+set-cookie: vexel_refresh=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+Date: Tue, 05 May 2026 09:12:11 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+
+/login

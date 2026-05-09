@@ -1,0 +1,45 @@
+COMMAND: rg -n ':/|:lab-|:receive-|:collect-|:verify|Command' apps/api/src -S | head -250
+
+apps/api/src/jobs/jobs.service.ts:9:  const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
+apps/api/src/sample-collection/sample-collection.controller.ts:36:  @Post('encounters/:encounterId\\:collect-specimens')
+apps/api/src/sample-collection/sample-collection.controller.ts:84:  @Post('encounters/:encounterId\\:receive-specimens')
+apps/api/src/verification/verification.controller.ts:55:  @Post('encounters/:encounterId\\:verify')
+apps/api/src/storage/storage.service.ts:2:import { S3Client, PutObjectCommand, GetObjectCommand, HeadBucketCommand, CreateBucketCommand } from '@aws-sdk/client-s3';
+apps/api/src/storage/storage.service.ts:15:      endpoint: process.env.STORAGE_ENDPOINT ?? 'http://minio:9000',
+apps/api/src/storage/storage.service.ts:39:      await this.s3.send(new HeadBucketCommand({ Bucket: this.bucket }));
+apps/api/src/storage/storage.service.ts:41:      await this.s3.send(new CreateBucketCommand({ Bucket: this.bucket }));
+apps/api/src/storage/storage.service.ts:47:    await this.s3.send(new PutObjectCommand({
+apps/api/src/storage/storage.service.ts:57:    const res = await this.s3.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
+apps/api/src/storage/storage.service.ts:79:    return getSignedUrl(signingClient, new GetObjectCommand({ Bucket: this.bucket, Key: key }), { expiresIn });
+apps/api/src/documents/documents.service.ts:18:  const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
+apps/api/src/documents/documents.service.ts:360:    const pdfServiceUrl = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
+apps/api/src/encounters/encounters.controller.ts:51:  @Post(':id\\:collect-specimen')
+apps/api/src/encounters/encounters.controller.ts:59:  @Post(':id\\:receive-specimen')
+apps/api/src/encounters/encounters.controller.ts:75:  @Post(':id\\:verify')
+apps/api/src/encounters/encounters.controller.ts:105:  @Post(':id\\:collect-due')
+apps/api/src/health/health.service.ts:51:      const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
+apps/api/src/health/health.service.ts:80:    const pdfUrl = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
+apps/api/src/main.ts:12:  const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? 'http://localhost:3000,http://localhost:3001')
+apps/api/src/catalog/catalog-jobs.service.ts:10:  const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
+apps/api/src/templates/templates.service.ts:389:    const pdfServiceUrl = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
+apps/api/src/opd/opd.service.ts:313:  private async withCommandIdempotency<T>(
+apps/api/src/opd/opd.service.ts:324:    const existing = await (this.prisma as any).opdCommandLog.findFirst({
+apps/api/src/opd/opd.service.ts:332:      await (this.prisma as any).opdCommandLog.create({
+apps/api/src/opd/opd.service.ts:343:        const deduped = await (this.prisma as any).opdCommandLog.findFirst({
+apps/api/src/opd/opd.service.ts:1929:  // ─── OPD KMVP Encounters / Commands ───────────────────────────────────────
+apps/api/src/opd/opd.service.ts:2028:    return this.withCommandIdempotency(
+apps/api/src/opd/opd.service.ts:2122:    return this.withCommandIdempotency(
+apps/api/src/opd/opd.service.ts:2205:    return this.withCommandIdempotency(
+apps/api/src/opd/opd.service.ts:2427:    return this.withCommandIdempotency(
+apps/api/src/opd/opd.service.ts:2472:    return this.withCommandIdempotency(
+apps/api/src/opd/opd.service.ts:2512:    return this.withCommandIdempotency(
+apps/api/src/templates/blocks/block-validation.ts:216:const DANGEROUS_PATTERNS = [/<script/i, /javascript:/i, /on\w+\s*=/i, /data:text\/html/i];
+apps/api/src/opd/opd.controller.ts:29:@ApiTags('OPD Providers', 'OPD Schedules', 'OPD Scheduling', 'OPD Appointments', 'OPD Visits', 'OPD Billing', 'OPD Doctors', 'OPD Encounters', 'OPD Commands')
+apps/api/src/opd/opd.controller.ts:80:  // ─── OPD KMVP Encounters + Commands ───────────────────────────────────────
+apps/api/src/ops/ops.controller.ts:57:  // ─── Backup Commands ──────────────────────────────────────────────────────
+apps/api/src/ops/ops.controller.ts:81:  // ─── Restore Commands ─────────────────────────────────────────────────────
+apps/api/src/tenants/tenant-service-health.service.ts:99:      const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
+apps/api/src/tenants/tenant-service-health.service.ts:113:    const pdfUrl = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
+apps/api/src/tenants/tenant-service-health.service.ts:150:      const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
+apps/api/src/ops/ops.service.ts:21:  const url = process.env.REDIS_URL ?? 'redis://localhost:6379';
+apps/api/src/ops/ops.service.ts:133:  // ─── Trigger Commands ─────────────────────────────────────────────────────

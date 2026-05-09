@@ -1,0 +1,147 @@
+COMMAND: block for ^\s*/encounters/\{encounterId\}:publish-report:
+
+line=7145
+
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:publish-report:
+    post:
+      operationId: publishEncounterReport
+      summary: Publish rendered lab report and mark encounter as published (idempotent)
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Report published and encounter moved to published
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encounter:
+                    $ref: '#/components/schemas/Encounter'
+                  document:
+                    $ref: '#/components/schemas/Document'
+        "409":
+          description: Encounter not verified or report not rendered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /encounters/{encounterId}:cancel:
+    post:
+      operationId: cancelEncounter
+      summary: Cancel encounter
+      tags: [Encounters]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string }
+      responses:
+        "200":
+          description: Encounter cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  status: { type: string }
+        "409":
+          description: Invalid transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Documents ────────────────────────────────────────────────────────────
+  /documents/receipt:generate:
+    post:
+      operationId: generateReceipt
+      summary: Generate a receipt document (idempotent by payload hash)
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptGenerateRequest'
+      responses:
+        "200":
+          description: Existing document returned (idempotent — same payloadHash)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "201":
+          description: New document created and queued for render
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /documents/report:generate:
+    post:
+      operationId: generateReport
+      summary: Generate a lab report document (idempotent by payload hash)
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportGenerateRequest'
+      responses:
+        "200":
+          description: Existing document returned (idempotent — same payloadHash)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "201":
+          description: New document created and queued for render
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":

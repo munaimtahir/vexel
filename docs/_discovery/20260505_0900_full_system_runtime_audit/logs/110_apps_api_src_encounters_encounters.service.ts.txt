@@ -1,0 +1,262 @@
+COMMAND: sed apps/api/src/encounters/encounters.service.ts
+
+import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import * as crypto from 'crypto';
+import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
+import { DocumentsService } from '../documents/documents.service';
+import { Decimal } from '@prisma/client/runtime/library';
+
+// Valid transitions: fromStatus → allowed toStatuses
+const VALID_TRANSITIONS: Record<string, string[]> = {
+  registered: ['lab_ordered', 'cancelled'],
+  lab_ordered: ['specimen_collected', 'cancelled'],
+  specimen_collected: ['specimen_received', 'resulted', 'cancelled'],
+  specimen_received: ['resulted', 'cancelled'],
+  resulted: ['verified', 'cancelled'],
+  verified: ['published'],
+  published: [],
+  cancelled: [],
+};
+
+@Injectable()
+export class EncountersService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+    private readonly documentsService: DocumentsService,
+  ) {}
+
+  /** Throws ForbiddenException if module.lims is not enabled for the tenant. */
+  private async assertLimsEnabled(tenantId: string) {
+    const flag = await this.prisma.tenantFeature.findUnique({
+      where: { tenantId_key: { tenantId, key: 'module.lims' } },
+    });
+    if (!flag?.enabled) {
+      throw new ForbiddenException('module.lims feature is disabled for this tenant');
+    }
+  }
+
+  private async getEncounterOrThrow(tenantId: string, id: string) {
+    const encounter = await this.prisma.encounter.findFirst({
+      where: { id, tenantId },
+      include: {
+        patient: true,
+        labOrders: {
+          include: { specimen: true, results: true, test: true },
+        },
+      },
+    });
+    if (!encounter) throw new NotFoundException('Encounter not found');
+    if ((encounter as any).moduleType && (encounter as any).moduleType !== 'LIMS') {
+      throw new ConflictException('Encounter belongs to a non-LIMS module');
+    }
+    return encounter;
+  }
+
+  async list(tenantId: string, opts: { page?: number; limit?: number; status?: string; patientId?: string } = {}) {
+    const { status, patientId } = opts;
+    const page = Number(opts.page ?? 1);
+    const limit = Number(opts.limit ?? 20);
+    const where: any = { tenantId, moduleType: 'LIMS' };
+    if (status) where.status = status;
+    if (patientId) where.patientId = patientId;
+
+    const [data, total] = await Promise.all([
+      this.prisma.encounter.findMany({
+        where,
+        include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.encounter.count({ where }),
+    ]);
+    return { data, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async register(tenantId: string, body: { patientId: string }, actorUserId: string, correlationId?: string) {
+    await this.assertLimsEnabled(tenantId);
+    // Verify patient exists in tenant
+    const patient = await this.prisma.patient.findFirst({ where: { id: body.patientId, tenantId } });
+    if (!patient) throw new NotFoundException('Patient not found');
+
+    const encounter = await this.prisma.encounter.create({
+      data: { tenantId, patientId: body.patientId, moduleType: 'LIMS', status: 'registered' } as any,
+      include: { patient: true, labOrders: true },
+    });
+
+    await this.audit.log({ tenantId, actorUserId, action: 'encounter.register', entityType: 'Encounter', entityId: encounter.id, after: { patientId: body.patientId, status: 'registered' }, correlationId });
+    return encounter;
+  }
+
+  async getById(tenantId: string, id: string) {
+    return this.getEncounterOrThrow(tenantId, id);
+  }
+
+  async orderLab(
+    tenantId: string,
+    encounterId: string,
+    body: {
+      testId?: string;
+      tests?: Array<{ code?: string; externalId?: string }>;
+      priority?: string;
+      totalAmount?: number;
+      discountAmount?: number;
+      discountPct?: number;
+      payableAmount?: number;
+      amountPaid?: number;
+      dueAmount?: number;
+    },
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    await this.assertLimsEnabled(tenantId);
+    const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
+
+    if (!['registered', 'lab_ordered'].includes(encounter.status)) {
+      throw new ConflictException(`Cannot order lab for encounter in status '${encounter.status}'`);
+    }
+
+    // Resolve test: support { testId } OR { tests: [{ code }] }
+    let resolvedTestId: string;
+    if (body.testId) {
+      const test = await this.prisma.catalogTest.findFirst({ where: { id: body.testId, tenantId } });
+      if (!test) throw new NotFoundException('Catalog test not found');
+      resolvedTestId = test.id;
+    } else if (body.tests?.length) {
+      const code = body.tests[0].code ?? body.tests[0].externalId;
+      const test = await this.prisma.catalogTest.findFirst({ where: { tenantId, ...(code ? { externalId: code } : {}) } });
+      if (!test) throw new NotFoundException(`Catalog test not found: ${code}`);
+      resolvedTestId = test.id;
+    } else {
+      throw new NotFoundException('No test specified');
+    }
+
+    const newStatus = 'lab_ordered';
+    const [labOrder, updatedEncounter] = await this.prisma.$transaction([
+      this.prisma.labOrder.create({
+        data: {
+          tenant: { connect: { id: tenantId } },
+          encounter: { connect: { id: encounterId } },
+          test: { connect: { id: resolvedTestId } },
+          priority: body.priority ?? 'routine',
+          status: 'ordered',
+          totalAmount: body.totalAmount != null ? new Decimal(String(body.totalAmount)) : undefined,
+          discountAmount: body.discountAmount != null ? new Decimal(String(body.discountAmount)) : undefined,
+          discountPct: body.discountPct != null ? new Decimal(String(body.discountPct)) : undefined,
+          payableAmount: body.payableAmount != null ? new Decimal(String(body.payableAmount)) : undefined,
+          amountPaid: body.amountPaid != null ? new Decimal(String(body.amountPaid)) : undefined,
+          dueAmount: body.dueAmount != null ? new Decimal(String(body.dueAmount)) : undefined,
+        },
+      }),
+      this.prisma.encounter.update({
+        where: { id: encounterId },
+        data: { status: newStatus },
+        include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
+      }),
+    ]);
+
+    await this.audit.log({ tenantId, actorUserId, action: 'encounter.order-lab', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: newStatus, labOrderId: labOrder.id }, correlationId });
+
+    // Log PAYMENT cash transaction if amountPaid was provided
+    if (body.amountPaid != null && body.amountPaid > 0) {
+      try {
+        await this.prisma.cashTransaction.create({
+          data: {
+            tenantId,
+            encounterId,
+            labOrderId: labOrder.id,
+            type: 'PAYMENT',
+            amount: new Decimal(String(body.amountPaid)),
+            actorUserId,
+            correlationId: correlationId ?? null,
+          },
+        });
+      } catch (err) {
+        console.error('[encounters] Failed to log cash transaction:', (err as Error).message);
+      }
+    }
+
+    // Generate encounterCode if not already set on encounter
+    if (!updatedEncounter.encounterCode) {
+      try {
+        const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+        const prefix = (
+          tenantConfig?.orderPrefix ??
+          tenantId
+        )
+          .replace(/[^A-Za-z]/g, '')
+          .toUpperCase()
+          .slice(0, 3) || 'VXL';
+        const now = new Date();
+        const yymm = `${String(now.getFullYear()).slice(-2)}${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const count = await this.prisma.labOrder.count({
+          where: { tenantId, createdAt: { gte: monthStart, lt: monthEnd } },
+        });
+        const seq = String(count).padStart(3, '0');
+        const encounterCode = `${prefix}-${yymm}-${seq}`;
+        await this.prisma.encounter.update({
+          where: { id: encounterId },
+          data: { encounterCode },
+        });
+        (updatedEncounter as any).encounterCode = encounterCode;
+      } catch (err) {
+        console.error('[encounters] Failed to generate encounterCode:', (err as Error).message);
+      }
+    }
+
+    // Auto-create SpecimenItem for the test's specimenType
+    try {
+      const catalogTest = await this.prisma.catalogTest.findUnique({ where: { id: resolvedTestId } });
+      const specimenType = catalogTest?.specimenType ?? 'Blood';
+      await this.prisma.specimenItem.upsert({
+        where: {
+          tenantId_encounterId_catalogSpecimenType: {
+            tenantId,
+            encounterId,
+            catalogSpecimenType: specimenType,
+          },
+        },
+        create: {
+          tenantId,
+          encounterId,
+          catalogSpecimenType: specimenType,
+          status: 'PENDING',
+        },
+        update: {},
+      });
+    } catch (err) {
+      console.error('[encounters] Failed to auto-create SpecimenItem:', (err as Error).message);
+    }
+
+    // Auto-generate RECEIPT document after order finalization (non-fatal)
+    try {
+      const test = await this.prisma.catalogTest.findUnique({ where: { id: resolvedTestId } });
+      const patient = (updatedEncounter as any).patient;
+      const tenantCfg = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+
+      // Compute patient age from DOB
+      let patientAge: string | undefined;
+      if (patient?.dateOfBirth) {
+        const dob = new Date(patient.dateOfBirth);
+        const years = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 3600 * 1000));
+        patientAge = `${years}Y`;
+      }
+
+      // Fetch registeredBy name from encounter creator
+      let registeredBy: string | undefined;
+      if ((updatedEncounter as any).createdById) {
+        const creator = await this.prisma.user.findUnique({ where: { id: (updatedEncounter as any).createdById } });
+        if (creator) registeredBy = `${creator.firstName} ${creator.lastName}`;
+      }
+
+      const unitPrice = test?.price ? Number(test.price) : 0;
+      const receiptPayload = {
+        receiptNumber: `RCP-${labOrder.id.slice(0, 8).toUpperCase()}`,
+        issuedAt: new Date().toISOString(),
+        patientName: patient ? `${patient.firstName} ${patient.lastName}` : 'Unknown',
+        patientMrn: patient?.mrn ?? '',
+        patientAge,

@@ -1,0 +1,5 @@
+$ ls -la | rg -n 'compose|docker' || true
+5:-rw-rw-r--  1 munaim munaim    313 Mar  2 22:38 .dockerignore
+22:drwxrwxr-x  2 munaim munaim   4096 Mar  3 21:25 docker
+23:-rw-rw-r--  1 munaim munaim   4943 Mar  7 04:35 docker-compose.yml
+24:-rwxrwxr-x  1 munaim munaim    878 Mar  2 23:58 docker.sh

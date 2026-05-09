@@ -1,0 +1,15 @@
+COMMAND: POST http://127.0.0.1:9021/api/encounters/:order-lab
+
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900-v2
+Content-Type: application/json; charset=utf-8
+Content-Length: 89
+ETag: W/"59-FxpRsSoBaxpnf3InK9fWdEzkzTY"
+Date: Tue, 05 May 2026 09:17:49 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Cannot POST /api/encounters/:order-lab","error":"Not Found","statusCode":404}

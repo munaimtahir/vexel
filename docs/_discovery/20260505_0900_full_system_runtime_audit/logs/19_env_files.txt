@@ -1,0 +1,5 @@
+$ find . -maxdepth 4 -name '.env' -o -name '.env.*' | sort | sed 's#^\./##'
+.env
+.env.example
+apps/admin/.env.example
+scripts/mock-gateway/.env

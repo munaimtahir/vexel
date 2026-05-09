@@ -1,0 +1,44 @@
+COMMAND: rg -n 'healthcheck|9021|9022|9023|9024|9025|postgres|redis|minio' docker-compose*.yml compose*.yml -S || true
+
+rg: compose*.yml: No such file or directory (os error 2)
+docker-compose.yml:2:  postgres:
+docker-compose.yml:3:    image: postgres:16-alpine
+docker-compose.yml:5:      POSTGRES_USER: vexel
+docker-compose.yml:6:      POSTGRES_PASSWORD: vexel
+docker-compose.yml:7:      POSTGRES_DB: vexel
+docker-compose.yml:11:      - pgdata:/var/lib/postgresql/data
+docker-compose.yml:12:    healthcheck:
+docker-compose.yml:18:  redis:
+docker-compose.yml:19:    image: redis:7-alpine
+docker-compose.yml:22:    healthcheck:
+docker-compose.yml:23:      test: ["CMD", "redis-cli", "ping"]
+docker-compose.yml:28:  minio:
+docker-compose.yml:29:    image: minio/minio:latest
+docker-compose.yml:32:      MINIO_ROOT_USER: vexel
+docker-compose.yml:33:      MINIO_ROOT_PASSWORD: vexel_secret_2026
+docker-compose.yml:34:      MINIO_SERVER_URL: https://vexel.alshifalab.pk
+docker-compose.yml:36:      - minio_data:/data
+docker-compose.yml:38:      - "127.0.0.1:9025:9001"
+docker-compose.yml:40:    healthcheck:
+docker-compose.yml:41:      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+docker-compose.yml:52:      postgres:
+docker-compose.yml:54:      redis:
+docker-compose.yml:56:      minio:
+docker-compose.yml:59:      - "127.0.0.1:9021:3000"
+docker-compose.yml:62:      DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
+docker-compose.yml:63:      REDIS_URL: redis://redis:6379
+docker-compose.yml:68:      STORAGE_ENDPOINT: http://minio:9000
+docker-compose.yml:73:      CORS_ALLOWED_ORIGINS: "https://vexel.alshifalab.pk,http://localhost:3000,http://localhost:3001,http://127.0.0.1:9023,http://127.0.0.1:9024"
+docker-compose.yml:74:    healthcheck:
+docker-compose.yml:86:      postgres:
+docker-compose.yml:88:      redis:
+docker-compose.yml:92:      DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
+docker-compose.yml:93:      REDIS_URL: redis://redis:6379
+docker-compose.yml:95:      STORAGE_ENDPOINT: http://minio:9000
+docker-compose.yml:116:      - "127.0.0.1:9022:8080"
+docker-compose.yml:117:    healthcheck:
+docker-compose.yml:134:      - "127.0.0.1:9023:3001"
+docker-compose.yml:138:    healthcheck:
+docker-compose.yml:148:      - "127.0.0.1:9024:3000"
+docker-compose.yml:151:    healthcheck:
+docker-compose.yml:182:  minio_data:

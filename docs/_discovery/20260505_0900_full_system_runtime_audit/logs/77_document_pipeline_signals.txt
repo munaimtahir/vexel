@@ -1,0 +1,134 @@
+COMMAND: rg -n 'payloadHash|pdfHash|QuestPDF|render|DocumentStatus|DOCUMENT' apps/api/src apps/worker/src apps/pdf -S | head -250
+
+apps/api/src/documents/canonical.ts:8:export function payloadHash(obj: unknown): string {
+apps/api/src/documents/documents.controller.ts:33:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:55:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:86:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:92:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:99:  @RequirePermissions(Permission.DOCUMENT_PUBLISH)
+apps/api/src/documents/documents.controller.ts:110:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:123:  @Get(':id/render')
+apps/api/src/documents/documents.controller.ts:124:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/documents/documents.controller.ts:125:  async renderOverride(
+apps/api/src/documents/documents.controller.ts:132:    const pdfBytes = await this.svc.renderWithFormatOverride(tenantId, id, format);
+apps/api/src/documents/__tests__/documents.service.spec.ts:12:  payloadHash: 'hash-abc',
+apps/api/src/documents/__tests__/documents.service.spec.ts:13:  pdfHash: null,
+apps/api/src/documents/__tests__/documents.service.spec.ts:156:    it('returns created: false (idempotent) when same payloadHash exists with non-FAILED status', async () => {
+apps/api/src/documents/__tests__/canonical.spec.ts:1:import { canonicalJson, payloadHash } from '../canonical';
+apps/api/src/documents/__tests__/canonical.spec.ts:12:    expect(payloadHash(payload)).toBe(payloadHash({ ...payload }));
+apps/api/src/documents/__tests__/canonical.spec.ts:18:    expect(payloadHash(a)).not.toBe(payloadHash(b));
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:22:    payloadHash: 'hash-xyz',
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:23:    pdfHash: null,
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:102:    // Second call: same payloadHash exists
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:136:    // Simulate the document-render BullMQ processor behaviour on PDF failure.
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:138:    // and audit.log({ action: 'document.render_failed' }).
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:161:      auditAction = 'document.render_failed';
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:165:        action: 'document.render_failed',
+apps/api/src/documents/__tests__/document-idempotency.spec.ts:177:      expect.objectContaining({ action: 'document.render_failed' }),
+apps/api/src/documents/__tests__/result-grouping.spec.ts:7: * - Single-parameter tests: 1 parameter in the array (PDF renders as inline line)
+apps/api/src/documents/__tests__/result-grouping.spec.ts:8: * - Multi-parameter tests: 2+ parameters (PDF renders with heading + table)
+apps/api/src/documents/__tests__/result-grouping.spec.ts:211:  it('empty-parameter test produces no parameters (renders as placeholder)', () => {
+apps/api/src/documents/__tests__/result-grouping.spec.ts:289:    // In the PDF, ComposeTestSectionV2 will render "{testName}: No results"
+apps/api/src/documents/__tests__/result-grouping.spec.ts:312:    // Single-parameter: PDF renders inline. referenceRange === "" → no "Ref: " appended.
+apps/api/src/documents/__tests__/result-grouping.spec.ts:335:    // In the PDF, flag=normal → no arrow/badge rendered (empty flag cell)
+apps/api/src/documents/documents.service.ts:13:import { payloadHash, canonicalJson } from './canonical';
+apps/api/src/documents/documents.service.ts:15:const DOCUMENT_RENDER_QUEUE = 'document-render';
+apps/api/src/documents/documents.service.ts:24:  private readonly renderQueue: Queue;
+apps/api/src/documents/documents.service.ts:31:    this.renderQueue = new Queue(DOCUMENT_RENDER_QUEUE, {
+apps/api/src/documents/documents.service.ts:210:    const hash = payloadHash(jsonPayload);
+apps/api/src/documents/documents.service.ts:215:        tenantId_type_templateId_payloadHash: {
+apps/api/src/documents/documents.service.ts:219:          payloadHash: hash,
+apps/api/src/documents/documents.service.ts:238:              pdfHash: null,
+apps/api/src/documents/documents.service.ts:249:              payloadHash: hash,
+apps/api/src/documents/documents.service.ts:258:    await this.renderQueue.add(
+apps/api/src/documents/documents.service.ts:259:      'render',
+apps/api/src/documents/documents.service.ts:275:      after: { type, status: 'RENDERING', payloadHash: hash, templateId: template.id },
+apps/api/src/documents/documents.service.ts:336:   * Re-renders a document on-the-fly with an optional format override
+apps/api/src/documents/documents.service.ts:340:  async renderWithFormatOverride(tenantId: string, id: string, format?: string): Promise<Buffer> {
+apps/api/src/documents/documents.service.ts:354:    const renderBody = JSON.stringify({
+apps/api/src/documents/documents.service.ts:361:    const response = await fetch(`${pdfServiceUrl}/render`, {
+apps/api/src/documents/documents.service.ts:364:      body: renderBody,
+apps/api/src/documents/documents.service.ts:465:      // Template identity fields — included so payloadHash changes when template changes
+apps/api/src/encounters/encounters.controller.ts:85:  @RequirePermissions(Permission.DOCUMENT_PUBLISH)
+apps/api/src/encounters/encounters.service.ts:479:      throw new ConflictException('Report not rendered yet');
+apps/api/src/encounters/__tests__/encounter-workflow.spec.ts:195:  it('Test 6: publish-report returns 409 when report is not rendered', async () => {
+apps/api/src/encounters/__tests__/encounter-workflow.spec.ts:208:  it('Test 7: publish-report publishes rendered report and is idempotent', async () => {
+apps/api/src/feature-flags/registry.ts:302:    description: 'Enable OPD summary rendering in print payload.',
+apps/api/src/feature-flags/feature-flags.controller.ts:18:   *  Used by Admin UI to render structured sections with status badges. */
+apps/api/src/templates/templates.service.ts:382:    const renderBody = JSON.stringify({
+apps/api/src/templates/templates.service.ts:390:    const response = await fetch(`${pdfServiceUrl}/render`, {
+apps/api/src/templates/templates.service.ts:393:      body: renderBody,
+apps/api/src/templates/templates.service.ts:567:      TWO_COLUMN_TABLE: 'lab_report_v3', // shares renderer; config drives column layout
+apps/api/src/templates/templates.service.ts:568:      PERIPHERAL_FILM_REPORT: 'lab_report_v3', // stub — specialized renderer deferred
+apps/api/src/billing/billing.controller.ts:106:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/tenants/tenant-service-health.service.ts:7:const DOCUMENT_RENDER_QUEUE = 'document-render';
+apps/api/src/tenants/tenant-service-health.service.ts:154:      documentRenderDepth = await conn.llen(`bull:${DOCUMENT_RENDER_QUEUE}:wait`);
+apps/api/src/catalog/catalog-jobs.service.ts:52:    const payloadHash = computePayloadHash(payload);
+apps/api/src/catalog/catalog-jobs.service.ts:55:      where: { tenantId_type_payloadHash: { tenantId, type: 'catalog.import', payloadHash } },
+apps/api/src/catalog/catalog-jobs.service.ts:66:        payloadHash,
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:28:  payloadHash: '',
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:92:        const payloadHash = computeHash(payload);
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:95:          where: { tenantId_type_payloadHash: { tenantId, type: 'catalog.import', payloadHash } },
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:100:          data: { tenantId, type: 'catalog.import', status: 'queued', payloadHash, correlationId, createdBy: actorUserId },
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:126:      const payloadHash = computePayloadHash(payload);
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:127:      const existingJob = { ...mockJobRun, payloadHash, status: 'queued' };
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:131:      mockPrisma.jobRun.create.mockResolvedValueOnce({ ...mockJobRun, payloadHash });
+apps/api/src/catalog/__tests__/catalog-import.spec.ts:145:      expect(secondResult.payloadHash).toBe(payloadHash);
+apps/api/src/opd/opd.controller.ts:156:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:167:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:173:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:187:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/opd/opd.controller.ts:193:  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+apps/api/src/rbac/permissions.ts:72:  DOCUMENT_GENERATE = 'document.generate',
+apps/api/src/rbac/permissions.ts:73:  DOCUMENT_PUBLISH = 'document.publish',
+apps/api/src/health/health.service.ts:55:      await conn.llen('bull:document-render:wait');
+apps/pdf/vexel-pdf.csproj:10:    <PackageReference Include="QuestPDF" Version="2024.10.4" />
+apps/pdf/Program.cs:4:using QuestPDF.Fluent;
+apps/pdf/Program.cs:5:using QuestPDF.Helpers;
+apps/pdf/Program.cs:6:using QuestPDF.Infrastructure;
+apps/pdf/Program.cs:11:QuestPDF.Settings.License = LicenseType.Community;
+apps/pdf/Program.cs:28:app.MapPost("/render", async (HttpContext context) =>
+apps/pdf/Program.cs:607:// v2 layout: single-parameter tests render as a single labelled line (no heading);
+apps/pdf/Program.cs:608:// multi-parameter tests render with a blue test heading + parameter table.
+apps/pdf/Program.cs:609:// Arrays are rendered in the order received (pre-sorted by the API payload builder).
+apps/pdf/Program.cs:1205:    // Cell padding in QuestPDF: Padding(3) = 3 pt each side = 6 pt total; plus the font cap height.
+apps/pdf/Program.cs:1209:    // font-metric variance between our estimates and QuestPDF's actual render.
+apps/pdf/Program.cs:1237:    // (1, MinItemFontPt) so the receipt is always renderable; QuestPDF will clip at the border.
+apps/pdf/Program.cs:2038:    // Color token → QuestPDF Color
+apps/pdf/Program.cs:2039:    private static readonly Dictionary<string, QuestPDF.Infrastructure.Color> TokenColors = new()
+apps/pdf/Program.cs:2041:        ["GOOD"]    = QuestPDF.Infrastructure.Color.FromHex("#22C55E"),  // green-500
+apps/pdf/Program.cs:2042:        ["CAUTION"] = QuestPDF.Infrastructure.Color.FromHex("#F59E0B"),  // amber-500
+apps/pdf/Program.cs:2043:        ["BAD"]     = QuestPDF.Infrastructure.Color.FromHex("#EF4444"),  // red-500
+apps/pdf/Program.cs:2044:        ["INFO"]    = QuestPDF.Infrastructure.Color.FromHex("#3B82F6"),  // blue-500
+apps/pdf/Program.cs:2045:        ["NEUTRAL"] = QuestPDF.Infrastructure.Color.FromHex("#9CA3AF"),  // gray-400
+apps/pdf/Program.cs:2048:    private static readonly QuestPDF.Infrastructure.Color LightGray   = QuestPDF.Infrastructure.Color.FromHex("#F3F4F6");
+apps/pdf/Program.cs:2049:    private static readonly QuestPDF.Infrastructure.Color MediumGray  = QuestPDF.Infrastructure.Color.FromHex("#9CA3AF");
+apps/pdf/Program.cs:2050:    private static readonly QuestPDF.Infrastructure.Color DarkGray    = QuestPDF.Infrastructure.Color.FromHex("#374151");
+apps/pdf/Program.cs:2051:    private static readonly QuestPDF.Infrastructure.Color TextPrimary = QuestPDF.Infrastructure.Color.FromHex("#111827");
+apps/pdf/Program.cs:2257:                var bgColor   = isMatch ? bandColor : QuestPDF.Infrastructure.Color.FromHex("#E5E7EB");
+apps/pdf/Program.cs:2303:                    QuestPDF.Infrastructure.Color catColor = MediumGray;
+apps/pdf/Program.cs:2800:        // Simplified: render a text notice that graph scale blocks require a
+apps/pdf/Program.cs:2802:        // Full integration deferred — the GRAPHICAL_SCALE_REPORT family handles full rendering.
+apps/pdf/Program.cs:2861:        // QuestPDF's Text() doesn't support chained underline but we can use BorderBottom
+apps/pdf/Program.cs:2871:        // Image grid rendering deferred — requires MinIO asset fetching in renderer.
+apps/worker/src/document-render.processor.ts:9:// Auto-publish after render for document types that should not require a manual publish click.
+apps/worker/src/document-render.processor.ts:67:): Promise<{ pdfHash: string; bytes: Buffer }> {
+apps/worker/src/document-render.processor.ts:90:        const pdfHash = (res.headers['x-pdf-hash'] as string) ?? '';
+apps/worker/src/document-render.processor.ts:94:          resolve({ pdfHash, bytes });
+apps/worker/src/document-render.processor.ts:113:  const logCtx = `[document-render] correlationId=${correlationId} docId=${documentId}`;
+apps/worker/src/document-render.processor.ts:127:  // Idempotent: already rendered or published
+apps/worker/src/document-render.processor.ts:158:  const renderBody = JSON.stringify({
+apps/worker/src/document-render.processor.ts:167:    const { pdfHash, bytes } = await postJson(
+apps/worker/src/document-render.processor.ts:168:      `${PDF_SERVICE_URL}/render`,
+apps/worker/src/document-render.processor.ts:169:      renderBody,
+apps/worker/src/document-render.processor.ts:172:    console.log(`${logCtx} pdf_render_ms=${Date.now() - tPdf} bytes=${bytes.length}`);
+apps/worker/src/document-render.processor.ts:182:      data: { status: 'RENDERED', pdfHash: pdfHash || null, storageKey },
+apps/worker/src/document-render.processor.ts:184:    await writeAudit(tenantId, 'document.rendered', documentId, correlationId, { pdfHash, storageKey });
+apps/worker/src/document-render.processor.ts:214:      console.log(`${logCtx} rendered total_ms=${Date.now() - t0}`);
+apps/worker/src/document-render.processor.ts:223:    await writeAudit(tenantId, 'document.render_failed', documentId, correlationId, { errorMessage });
+apps/worker/src/main.ts:6:import { processDocumentRender } from './document-render.processor';
+apps/worker/src/main.ts:56:// Document render processor — concurrency=3 so multiple render jobs run in parallel
+apps/worker/src/main.ts:57:const documentRenderWorker = new Worker('document-render', processDocumentRender, {
+apps/worker/src/main.ts:76:documentRenderWorker.on('completed', (job) => console.log(`[document-render] Job ${job.id} completed`));
+apps/worker/src/main.ts:77:documentRenderWorker.on('failed', (job, err) => console.error(`[document-render] Job ${job?.id} failed: ${err.message}`));
+apps/worker/src/main.ts:81:console.log('🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render, ops-backup');

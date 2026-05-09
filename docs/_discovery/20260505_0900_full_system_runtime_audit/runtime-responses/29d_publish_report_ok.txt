@@ -1,0 +1,15 @@
+COMMAND: POST http://127.0.0.1:9021/api/encounters/e2986489-5ae5-4f3b-b45a-572086370cbb:publish-report
+
+HTTP/1.1 403 Forbidden
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-20260505-0900-v3
+Content-Type: application/json; charset=utf-8
+Content-Length: 97
+ETag: W/"61-ulaawP7ozXPj3235vjTDwy0shLY"
+Date: Tue, 05 May 2026 09:19:09 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Missing required permissions: document.publish","error":"Forbidden","statusCode":403}
