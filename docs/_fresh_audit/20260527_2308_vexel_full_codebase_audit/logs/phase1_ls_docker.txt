@@ -1,0 +1,4 @@
+total 8
+drwxrwxr-x  2 munaim munaim 4096 Mar  3 21:25 .
+drwxrwxr-x 17 munaim munaim 4096 May 27 23:09 ..
+lrwxrwxrwx  1 munaim munaim   46 Mar  3 21:25 docker-compose.yml -> /home/munaim/srv/apps/vexel/docker-compose.yml

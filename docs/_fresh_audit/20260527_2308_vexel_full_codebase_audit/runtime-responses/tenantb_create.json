@@ -1,0 +1,19 @@
+{
+  "id": "bf7b3522-aeeb-4d3b-8b08-916a1686faac",
+  "name": "Tenant B",
+  "status": "active",
+  "isSuperAdmin": false,
+  "catalogSeedMode": null,
+  "catalogSeededAt": null,
+  "catalogSeedBaseVersion": null,
+  "catalogSeedHash": null,
+  "createdAt": "2026-05-27T23:33:27.412Z",
+  "updatedAt": "2026-05-27T23:33:27.412Z",
+  "domains": [
+    {
+      "id": "7842fde7-f1e7-43a0-b387-3a2065419845",
+      "tenantId": "bf7b3522-aeeb-4d3b-8b08-916a1686faac",
+      "domain": "tenant-b.localhost"
+    }
+  ]
+}

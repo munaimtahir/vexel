@@ -1,0 +1,10 @@
+total 36
+drwxrwxr-x  9 munaim munaim 4096 Mar  2 22:56 .
+drwxrwxr-x 17 munaim munaim 4096 May 27 23:09 ..
+drwxrwxr-x  6 munaim munaim 4096 Mar  7 06:59 admin
+drwxrwxr-x  9 munaim munaim 4096 May 27 20:42 api
+drwxrwxr-x  9 munaim munaim 4096 May 27 20:50 e2e
+drwxrwxr-x  8 munaim munaim 4096 May 27 20:43 mobile
+drwxrwxr-x  6 munaim munaim 4096 Mar 14 02:31 operator
+drwxrwxr-x  4 munaim munaim 4096 Mar  6 23:10 pdf
+drwxrwxr-x  6 munaim munaim 4096 Mar  2 23:05 worker

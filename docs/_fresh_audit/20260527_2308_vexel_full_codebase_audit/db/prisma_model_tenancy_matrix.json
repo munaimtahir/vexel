@@ -1,0 +1,222 @@
+{
+  "generatedAt": "2026-05-27T23:23:10.734463Z",
+  "modelCount": 54,
+  "models": [
+    {
+      "model": "Tenant",
+      "tenantId_present": false
+    },
+    {
+      "model": "TenantDomain",
+      "tenantId_present": true
+    },
+    {
+      "model": "TenantConfig",
+      "tenantId_present": true
+    },
+    {
+      "model": "User",
+      "tenantId_present": true
+    },
+    {
+      "model": "RefreshToken",
+      "tenantId_present": false
+    },
+    {
+      "model": "Role",
+      "tenantId_present": true
+    },
+    {
+      "model": "RolePermission",
+      "tenantId_present": false
+    },
+    {
+      "model": "UserRole",
+      "tenantId_present": false
+    },
+    {
+      "model": "TenantFeature",
+      "tenantId_present": true
+    },
+    {
+      "model": "CatalogTest",
+      "tenantId_present": true
+    },
+    {
+      "model": "TenantTopTest",
+      "tenantId_present": true
+    },
+    {
+      "model": "SampleType",
+      "tenantId_present": true
+    },
+    {
+      "model": "CatalogPanel",
+      "tenantId_present": true
+    },
+    {
+      "model": "Parameter",
+      "tenantId_present": true
+    },
+    {
+      "model": "TestParameterMapping",
+      "tenantId_present": true
+    },
+    {
+      "model": "PanelTestMapping",
+      "tenantId_present": true
+    },
+    {
+      "model": "ReferenceRange",
+      "tenantId_present": true
+    },
+    {
+      "model": "JobRun",
+      "tenantId_present": true
+    },
+    {
+      "model": "AuditEvent",
+      "tenantId_present": true
+    },
+    {
+      "model": "Patient",
+      "tenantId_present": true
+    },
+    {
+      "model": "Encounter",
+      "tenantId_present": true
+    },
+    {
+      "model": "LabOrder",
+      "tenantId_present": true
+    },
+    {
+      "model": "Specimen",
+      "tenantId_present": true
+    },
+    {
+      "model": "SpecimenItem",
+      "tenantId_present": true
+    },
+    {
+      "model": "LabResult",
+      "tenantId_present": true
+    },
+    {
+      "model": "Provider",
+      "tenantId_present": true
+    },
+    {
+      "model": "ProviderSchedule",
+      "tenantId_present": true
+    },
+    {
+      "model": "Appointment",
+      "tenantId_present": true
+    },
+    {
+      "model": "OPDVisit",
+      "tenantId_present": true
+    },
+    {
+      "model": "OPDVitals",
+      "tenantId_present": true
+    },
+    {
+      "model": "OPDClinicalNote",
+      "tenantId_present": true
+    },
+    {
+      "model": "OPDPrescription",
+      "tenantId_present": true
+    },
+    {
+      "model": "OPDPrescriptionItem",
+      "tenantId_present": true
+    },
+    {
+      "model": "Invoice",
+      "tenantId_present": true
+    },
+    {
+      "model": "InvoiceLine",
+      "tenantId_present": true
+    },
+    {
+      "model": "Payment",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpdDoctor",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpdEncounter",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpdVital",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpdNote",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpdEncounterPrescription",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpdPrescriptionItemKmvp",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpdCommandLog",
+      "tenantId_present": true
+    },
+    {
+      "model": "DocumentTemplate",
+      "tenantId_present": true
+    },
+    {
+      "model": "Document",
+      "tenantId_present": true
+    },
+    {
+      "model": "TemplateBlueprint",
+      "tenantId_present": false
+    },
+    {
+      "model": "PrintTemplate",
+      "tenantId_present": true
+    },
+    {
+      "model": "TestTemplateMap",
+      "tenantId_present": true
+    },
+    {
+      "model": "CashTransaction",
+      "tenantId_present": true
+    },
+    {
+      "model": "WorkerHeartbeat",
+      "tenantId_present": false
+    },
+    {
+      "model": "OpsStorageTarget",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpsBackupRun",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpsSchedule",
+      "tenantId_present": true
+    },
+    {
+      "model": "OpsScheduleTarget",
+      "tenantId_present": false
+    }
+  ]
+}

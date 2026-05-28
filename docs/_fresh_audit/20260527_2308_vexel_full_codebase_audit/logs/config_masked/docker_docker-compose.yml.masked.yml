@@ -1,0 +1,182 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vexel
+      POSTGRES_PASSWORD: ***MASKED***
+      POSTGRES_DB: vexel
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vexel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: vexel
+      MINIO_ROOT_PASSWORD: ***MASKED***
+      MINIO_SERVER_URL: https://vexel.alshifalab.pk
+    volumes:
+      - minio_data:/data
+    ports:
+      - "127.0.0.1:9025:9001"
+      - "127.0.0.1:9027:9000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:9021:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
+      REDIS_URL: redis://redis:6379
+      TENANCY_DEV_HEADER_ENABLED: "${TENANCY_DEV_HEADER_ENABLED:-false}"
+      JWT_SECRET: ***MASKED***
+      DEFAULT_TENANT_ID: system
+      PDF_SERVICE_URL: http://pdf:8080
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_PUBLIC_URL: https://vexel.alshifalab.pk
+      STORAGE_ACCESS_KEY: ***MASKED***
+      STORAGE_SECRET_KEY: ***MASKED***
+      STORAGE_BUCKET: vexel-documents
+      CORS_ALLOWED_ORIGINS: "https://vexel.alshifalab.pk,http://localhost:3000,http://localhost:3001,http://127.0.0.1:9023,http://127.0.0.1:9024"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
+      REDIS_URL: redis://redis:6379
+      PDF_SERVICE_URL: http://pdf:8080
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_ACCESS_KEY: ***MASKED***
+      STORAGE_SECRET_KEY: ***MASKED***
+      STORAGE_BUCKET: vexel-documents
+      VEXEL_ROOT: /home/munaim/srv/apps/vexel
+      VEXEL_RUNTIME_DIR: /home/munaim/srv/apps/vexel/runtime
+      BACKUP_PASSPHRASE: ${BACKUP_PASSPHRASE:-}
+      VEXEL_ALLOW_RESTORE: ${VEXEL_ALLOW_RESTORE:-false}
+      OPS_BACKUP_RETENTION_DAYS: ${OPS_BACKUP_RETENTION_DAYS:-30}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./runtime:/home/munaim/srv/apps/vexel/runtime
+      - ./ops:/home/munaim/srv/apps/vexel/ops:ro
+      - ./docker-compose.yml:/home/munaim/srv/apps/vexel/docker-compose.yml:ro
+      - ./.env:/home/munaim/srv/apps/vexel/.env:ro
+
+  pdf:
+    build:
+      context: ./apps/pdf
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:9022:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health/pdf || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://vexel.alshifalab.pk}
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:9023:3001"
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+    healthcheck:
+      disable: true
+
+  operator:
+    build:
+      context: .
+      dockerfile: apps/operator/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://vexel.alshifalab.pk}
+    ports:
+      - "127.0.0.1:9024:3000"
+    environment:
+      NODE_ENV: production
+    healthcheck:
+      disable: true
+
+  mock-api:
+    image: stoplight/prism:4
+    command: mock -h 0.0.0.0 /openapi.yaml
+    volumes:
+      - ./packages/contracts/openapi.yaml:/openapi.yaml:ro
+    ports:
+      - "127.0.0.1:9030:4010"
+    profiles:
+      - mock
+
+  mock-gateway:
+    image: node:20-alpine
+    working_dir: /app
+    command: node server.js
+    volumes:
+      - ./scripts/mock-gateway:/app
+      - ./docs/mocks/fixtures:/app/fixtures:ro
+    ports:
+      - "127.0.0.1:9031:3000"
+    environment:
+      PRISM_URL: http://mock-api:4010
+    depends_on:
+      - mock-api
+    profiles:
+      - mock
+
+volumes:
+  pgdata:
+  minio_data:

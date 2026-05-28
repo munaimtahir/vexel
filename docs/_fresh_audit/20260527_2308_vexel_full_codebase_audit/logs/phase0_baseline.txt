@@ -1,0 +1,72 @@
+### pwd
+/home/munaim/srv/apps/vexel
+
+### whoami
+munaim
+
+### hostname
+vps-clone
+
+### date -u
+Wed May 27 23:08:54 UTC 2026
+
+### git status --short
+ M apps/admin/tsconfig.tsbuildinfo
+ M apps/e2e/playwright-report/index.html
+ M apps/e2e/test-results/.last-run.json
+ M apps/e2e/test-results/preflight.json
+ M apps/e2e/test-results/results.json
+ D apps/e2e/test-results/timings-raw.json
+ M apps/operator/tsconfig.tsbuildinfo
+?? docs/_audit/02_PREVIOUS_AUDIT_REVIEW.md
+?? docs/_audit/20260527_203959_vexel_full_audit/
+?? docs/_audit/FINAL_VERDICT_2026_05_27/
+?? docs/_discovery/20260527_1841_true_status_audit/
+?? docs/_fresh_audit/
+
+### git branch --show-current
+main
+
+### git rev-parse HEAD
+7e31b8d42c29b47e2c296ee120f11e5f32f10a8d
+
+### git remote -v
+origin	git@github.com:munaimtahir/vexel (fetch)
+origin	git@github.com:munaimtahir/vexel (push)
+
+### git log -10 --oneline
+7e31b8d Merge branch 'main' of github.com:munaimtahir/vexel
+83af101 audit
+918eaf8 Merge pull request #8 from munaimtahir/fix-results-service-n-plus-1-optimization-7668487075709137181
+380581f perf(api): optimize results.service.ts by eliminating N+1 queries
+c176ab6 Merge pull request #7 from munaimtahir/fix-e2e-unnecessary-log-9702645933496150838
+8a76f58 chore: remove unnecessary console.log and dead code in evidence.ts
+3122c0c Merge pull request #6 from munaimtahir/testing-improvement-canonical-json-15483825031513309027
+77b9a71 test(api): add comprehensive tests for canonicalJson
+ba1ff00 test
+e26c0dd dj
+
+### node -v
+v25.8.0
+
+### npm -v
+11.12.1
+
+### pnpm -v
+9.15.4
+
+### yarn -v
+/bin/bash: line 14: yarn: command not found
+
+### docker --version
+Docker version 29.5.2, build 79eb04c
+
+### docker compose version
+Docker Compose version v5.1.4
+
+### dotnet --version
+/bin/bash: line 17: dotnet: command not found
+
+### uname -a
+Linux vps-clone 6.17.0-1016-gcp #17~24.04.1-Ubuntu SMP Thu May  7 15:12:38 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+

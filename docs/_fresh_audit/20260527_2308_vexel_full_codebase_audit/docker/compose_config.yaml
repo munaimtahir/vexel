@@ -1,0 +1,247 @@
+name: vexel
+services:
+  admin:
+    build:
+      context: /home/munaim/srv/apps/vexel
+      dockerfile: apps/admin/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://vexel.alshifalab.pk
+    depends_on:
+      api:
+        condition: service_healthy
+        required: true
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+    healthcheck:
+      disable: true
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 3001
+        published: "9023"
+        protocol: tcp
+  api:
+    build:
+      context: /home/munaim/srv/apps/vexel/apps/api
+      dockerfile: Dockerfile
+    depends_on:
+      minio:
+        condition: service_healthy
+        required: true
+      postgres:
+        condition: service_healthy
+        required: true
+      redis:
+        condition: service_healthy
+        required: true
+    environment:
+      CORS_ALLOWED_ORIGINS: https://vexel.alshifalab.pk,http://localhost:3000,http://localhost:3001,http://127.0.0.1:9023,http://127.0.0.1:9024
+      DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
+      DEFAULT_TENANT_ID: system
+      JWT_SECRET: ci-test-jwt-secret-not-for-production-use-only
+      NODE_ENV: development
+      PDF_SERVICE_URL: http://pdf:8080
+      REDIS_URL: redis://redis:6379
+      STORAGE_ACCESS_KEY: vexel
+      STORAGE_BUCKET: vexel-documents
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_PUBLIC_URL: https://vexel.alshifalab.pk
+      STORAGE_SECRET_KEY: vexel_secret_2026
+      TENANCY_DEV_HEADER_ENABLED: "false"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget -qO- http://localhost:3000/api/health || exit 1
+      timeout: 5s
+      interval: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 3000
+        published: "9021"
+        protocol: tcp
+  minio:
+    command:
+      - server
+      - /data
+      - --console-address
+      - :9001
+    environment:
+      MINIO_ROOT_PASSWORD: vexel_secret_2026
+      MINIO_ROOT_USER: vexel
+      MINIO_SERVER_URL: https://vexel.alshifalab.pk
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:9000/minio/health/live || exit 1
+      timeout: 5s
+      interval: 10s
+      retries: 10
+      start_period: 20s
+    image: minio/minio:latest
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 9001
+        published: "9025"
+        protocol: tcp
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 9000
+        published: "9027"
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: minio_data
+        target: /data
+        volume: {}
+  operator:
+    build:
+      context: /home/munaim/srv/apps/vexel
+      dockerfile: apps/operator/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://vexel.alshifalab.pk
+    environment:
+      NODE_ENV: production
+    healthcheck:
+      disable: true
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 3000
+        published: "9024"
+        protocol: tcp
+  pdf:
+    build:
+      context: /home/munaim/srv/apps/vexel/apps/pdf
+      dockerfile: Dockerfile
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:8080/health/pdf || exit 1
+      timeout: 5s
+      interval: 10s
+      retries: 10
+      start_period: 20s
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 8080
+        published: "9022"
+        protocol: tcp
+  postgres:
+    environment:
+      POSTGRES_DB: vexel
+      POSTGRES_PASSWORD: vexel
+      POSTGRES_USER: vexel
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U vexel
+      timeout: 5s
+      interval: 5s
+      retries: 10
+    image: postgres:16-alpine
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 5432
+        published: "5433"
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: pgdata
+        target: /var/lib/postgresql/data
+        volume: {}
+  redis:
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      timeout: 3s
+      interval: 5s
+      retries: 10
+    image: redis:7-alpine
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 6379
+        published: "6380"
+        protocol: tcp
+  worker:
+    build:
+      context: /home/munaim/srv/apps/vexel
+      dockerfile: apps/worker/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: true
+      redis:
+        condition: service_healthy
+        required: true
+    environment:
+      BACKUP_PASSPHRASE: ""
+      DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
+      NODE_ENV: development
+      OPS_BACKUP_RETENTION_DAYS: "30"
+      PDF_SERVICE_URL: http://pdf:8080
+      REDIS_URL: redis://redis:6379
+      STORAGE_ACCESS_KEY: vexel
+      STORAGE_BUCKET: vexel-documents
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_SECRET_KEY: vexel_secret_2026
+      VEXEL_ALLOW_RESTORE: "false"
+      VEXEL_ROOT: /home/munaim/srv/apps/vexel
+      VEXEL_RUNTIME_DIR: /home/munaim/srv/apps/vexel/runtime
+    networks:
+      default: null
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        bind: {}
+      - type: bind
+        source: /home/munaim/srv/apps/vexel/runtime
+        target: /home/munaim/srv/apps/vexel/runtime
+        bind: {}
+      - type: bind
+        source: /home/munaim/srv/apps/vexel/ops
+        target: /home/munaim/srv/apps/vexel/ops
+        read_only: true
+        bind: {}
+      - type: bind
+        source: /home/munaim/srv/apps/vexel/docker-compose.yml
+        target: /home/munaim/srv/apps/vexel/docker-compose.yml
+        read_only: true
+        bind: {}
+      - type: bind
+        source: /home/munaim/srv/apps/vexel/.env
+        target: /home/munaim/srv/apps/vexel/.env
+        read_only: true
+        bind: {}
+networks:
+  default:
+    name: vexel_default
+volumes:
+  minio_data:
+    name: vexel_minio_data
+  pgdata:
+    name: vexel_pgdata

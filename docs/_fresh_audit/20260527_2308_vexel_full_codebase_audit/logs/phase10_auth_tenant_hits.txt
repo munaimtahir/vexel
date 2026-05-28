@@ -1,0 +1,10 @@
+apps/api/src/auth/jwt.strategy.ts:39:      tenantId: payload.tenantId,
+apps/api/src/auth/auth.service.ts:15:  tenantId: string;
+apps/api/src/auth/auth.service.ts:55:      tenantId: user.tenantId,
+apps/api/src/auth/auth.service.ts:77:      tenantId: user.tenantId,
+apps/api/src/auth/auth.service.ts:127:      tenantId: user.tenantId,
+apps/api/src/auth/auth.service.ts:145:      tenantId: user.tenantId,
+apps/api/src/auth/auth.service.ts:159:      tenantId: 'system',
+apps/api/src/auth/jwt-auth.guard.ts:21:    if (requestedTenantId && requestedTenantId !== user.tenantId) {
+apps/api/src/auth/jwt-auth.guard.ts:26:    if (user.tenantId) {
+apps/api/src/auth/jwt-auth.guard.ts:27:      setTenantId(req, user.tenantId);

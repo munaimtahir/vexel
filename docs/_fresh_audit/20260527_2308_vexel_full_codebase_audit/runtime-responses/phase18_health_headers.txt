@@ -1,0 +1,50 @@
+### GET api health
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: 5d34d778-37cf-4154-842d-6424b3a08bdf
+Content-Type: application/json; charset=utf-8
+Content-Length: 81
+ETag: W/"51-d4eFA2NQo+EC1Z09IqGG15vaBFI"
+Date: Wed, 27 May 2026 23:24:04 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+
+### GET pdf health
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Wed, 27 May 2026 23:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+
+### GET admin /admin/login (local)
+HTTP/1.1 200 OK
+Vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+x-nextjs-cache: HIT
+x-nextjs-prerender: 1
+x-nextjs-prerender: 1
+x-nextjs-stale-time: 300
+X-Powered-By: Next.js
+Cache-Control: s-maxage=31536000
+ETag: "cjecwdqoyv6a4"
+Content-Type: text/html; charset=utf-8
+Content-Length: 8144
+Date: Wed, 27 May 2026 23:24:04 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+
+### GET operator / (local)
+HTTP/1.1 307 Temporary Redirect
+location: /login
+set-cookie: vexel_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+set-cookie: vexel_refresh=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+Date: Wed, 27 May 2026 23:24:04 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+
+

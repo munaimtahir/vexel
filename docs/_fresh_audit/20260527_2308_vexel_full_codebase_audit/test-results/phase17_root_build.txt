@@ -1,0 +1,265 @@
+
+> vexel@0.1.0 build /home/munaim/srv/apps/vexel
+> turbo run build
+
+• turbo 2.8.10
+• Packages in scope: @vexel/admin, @vexel/api, @vexel/contracts, @vexel/e2e, @vexel/mobile, @vexel/operator, @vexel/sdk, @vexel/theme, @vexel/ui-system, @vexel/worker
+• Running build in 10 packages
+• Remote caching disabled
+@vexel/sdk:build: cache hit, replaying logs 8cdaae33eca15db8
+@vexel/sdk:build: 
+@vexel/sdk:build: 
+@vexel/sdk:build: > @vexel/sdk@0.1.0 build /home/munaim/srv/apps/vexel/packages/sdk
+@vexel/sdk:build: > tsc --noEmit
+@vexel/sdk:build: 
+@vexel/worker:build: cache hit, replaying logs 50b748d29f52569c
+@vexel/worker:build: 
+@vexel/worker:build: 
+@vexel/worker:build: > @vexel/worker@0.1.0 build /home/munaim/srv/apps/vexel/apps/worker
+@vexel/worker:build: > tsc
+@vexel/worker:build: 
+@vexel/admin:build: cache miss, executing 74edefef04e02925
+@vexel/operator:build: cache miss, executing 30daa1651e84ba99
+@vexel/api:build: cache hit, replaying logs 65125496aefd55d3
+@vexel/api:build: 
+@vexel/api:build: 
+@vexel/api:build: > @vexel/api@0.1.0 build /home/munaim/srv/apps/vexel/apps/api
+@vexel/api:build: > nest build
+@vexel/api:build: 
+@vexel/admin:build: 
+@vexel/admin:build: > @vexel/admin@0.1.0 build /home/munaim/srv/apps/vexel/apps/admin
+@vexel/admin:build: > next build
+@vexel/admin:build: 
+@vexel/operator:build: 
+@vexel/operator:build: > @vexel/operator@0.1.0 build /home/munaim/srv/apps/vexel/apps/operator
+@vexel/operator:build: > next build
+@vexel/operator:build: 
+@vexel/admin:build:    ▲ Next.js 15.5.12
+@vexel/admin:build: 
+@vexel/operator:build:    ▲ Next.js 15.5.12
+@vexel/operator:build: 
+@vexel/admin:build:    Creating an optimized production build ...
+@vexel/operator:build:    Creating an optimized production build ...
+@vexel/admin:build:  ✓ Compiled successfully in 10.2s
+@vexel/admin:build:    Linting and checking validity of types ...
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/audit/page.tsx
+@vexel/admin:build: 40:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/catalog/panels/page.tsx
+@vexel/admin:build: 43:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/catalog/parameters/page.tsx
+@vexel/admin:build: 39:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/catalog/reference-ranges/page.tsx
+@vexel/admin:build: 95:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 326:6  Warning: React Hook useMemo has a missing dependency: 'getTestName'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/catalog/sample-types/page.tsx
+@vexel/admin:build: 36:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/catalog/tests/page.tsx
+@vexel/admin:build: 60:6  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/opd/providers/page.tsx
+@vexel/admin:build: 102:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/opd/schedules/page.tsx
+@vexel/admin:build: 137:6  Warning: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 145:6  Warning: React Hook useEffect has a missing dependency: 'loadSchedules'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/ops/backups/page.tsx
+@vexel/admin:build: 56:50  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: ./src/app/(protected)/templates/page.tsx
+@vexel/admin:build: 51:32  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/admin:build: 
+@vexel/admin:build: info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+@vexel/operator:build:  ✓ Compiled successfully in 13.9s
+@vexel/operator:build:    Linting and checking validity of types ...
+@vexel/operator:build: 
+@vexel/operator:build: ./src/app/(protected)/lims/encounters/[id]/page.tsx
+@vexel/operator:build: 70:6  Warning: React Hook useEffect has missing dependencies: 'fetchDocuments' and 'fetchEncounter'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/operator:build: 81:6  Warning: React Hook useEffect has missing dependencies: 'reportDoc' and 'startPolling'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/operator:build: 
+@vexel/operator:build: ./src/app/(protected)/lims/encounters/[id]/publish/page.tsx
+@vexel/operator:build: 67:6  Warning: React Hook useEffect has missing dependencies: 'fetchDocument' and 'startPolling'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/operator:build: 
+@vexel/operator:build: ./src/app/(protected)/lims/encounters/[id]/reports/page.tsx
+@vexel/operator:build: 38:37  Warning: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/operator:build: 
+@vexel/operator:build: ./src/app/(protected)/lims/encounters/[id]/verify/page.tsx
+@vexel/operator:build: 41:6  Warning: React Hook useEffect has a missing dependency: 'startPolling'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/operator:build: 
+@vexel/operator:build: ./src/app/(protected)/lims/results/[orderedTestId]/page.tsx
+@vexel/operator:build: 147:9  Warning: The 'saveCurrentValues' function makes the dependencies of useCallback Hook (at line 278) change on every render. To fix this, wrap the definition of 'saveCurrentValues' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+@vexel/operator:build: 203:9  Warning: The 'handleSubmit' function makes the dependencies of useCallback Hook (at line 278) change on every render. To fix this, wrap the definition of 'handleSubmit' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+@vexel/operator:build: 228:9  Warning: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 231) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+@vexel/operator:build: 228:9  Warning: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 235) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+@vexel/operator:build: 246:6  Warning: React Hook useEffect has a missing dependency: 'localValues'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/operator:build: 
+@vexel/operator:build: ./src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx
+@vexel/operator:build: 225:9  Warning: The 'saveTest' function makes the dependencies of useCallback Hook (at line 348) change on every render. To fix this, wrap the definition of 'saveTest' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+@vexel/operator:build: 256:9  Warning: The 'handleSubmit' function makes the dependencies of useCallback Hook (at line 348) change on every render. To fix this, wrap the definition of 'handleSubmit' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+@vexel/operator:build: 315:9  Warning: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 318) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+@vexel/operator:build: 
+@vexel/operator:build: ./src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx
+@vexel/operator:build: 120:6  Warning: React Hook useEffect has a missing dependency: 'loadDetail'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+@vexel/operator:build: 
+@vexel/operator:build: info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+@vexel/admin:build:    Collecting page data ...
+@vexel/operator:build:    Collecting page data ...
+@vexel/admin:build:    Generating static pages (0/45) ...
+@vexel/admin:build:    Generating static pages (11/45) 
+@vexel/admin:build:    Generating static pages (22/45) 
+@vexel/admin:build:    Generating static pages (33/45) 
+@vexel/admin:build:  ✓ Generating static pages (45/45)
+@vexel/admin:build:    Finalizing page optimization ...
+@vexel/admin:build:    Collecting build traces ...
+@vexel/operator:build:    Generating static pages (0/35) ...
+@vexel/operator:build:    Generating static pages (8/35) 
+@vexel/operator:build:    Generating static pages (17/35) 
+@vexel/operator:build:    Generating static pages (26/35) 
+@vexel/operator:build:  ✓ Generating static pages (35/35)
+@vexel/operator:build:    Finalizing page optimization ...
+@vexel/operator:build:    Collecting build traces ...
+@vexel/admin:build: 
+@vexel/admin:build: Route (app)                                 Size  First Load JS
+@vexel/admin:build: ┌ ○ /                                      145 B         102 kB
+@vexel/admin:build: ├ ○ /_not-found                            994 B         103 kB
+@vexel/admin:build: ├ ○ /account                             4.58 kB         107 kB
+@vexel/admin:build: ├ ○ /audit                               3.99 kB         124 kB
+@vexel/admin:build: ├ ○ /branding                            6.54 kB         108 kB
+@vexel/admin:build: ├ ○ /catalog                             5.07 kB         110 kB
+@vexel/admin:build: ├ ○ /catalog/import-export               6.75 kB         109 kB
+@vexel/admin:build: ├ ○ /catalog/panels                      4.12 kB         120 kB
+@vexel/admin:build: ├ ○ /catalog/parameters                  3.54 kB         120 kB
+@vexel/admin:build: ├ ○ /catalog/reference-ranges            6.81 kB         123 kB
+@vexel/admin:build: ├ ○ /catalog/sample-types                2.95 kB         119 kB
+@vexel/admin:build: ├ ○ /catalog/tests                       6.64 kB         123 kB
+@vexel/admin:build: ├ ○ /dashboard                           3.19 kB         123 kB
+@vexel/admin:build: ├ ○ /documents                           2.43 kB         119 kB
+@vexel/admin:build: ├ ○ /encounters                          1.81 kB         118 kB
+@vexel/admin:build: ├ ○ /feature-flags                       3.95 kB         120 kB
+@vexel/admin:build: ├ ○ /jobs                                3.23 kB         119 kB
+@vexel/admin:build: ├ ○ /login                               4.99 kB         107 kB
+@vexel/admin:build: ├ ○ /opd                                   825 B         106 kB
+@vexel/admin:build: ├ ○ /opd/doctors                         3.19 kB         119 kB
+@vexel/admin:build: ├ ○ /opd/feature-flags                   5.21 kB         107 kB
+@vexel/admin:build: ├ ○ /opd/providers                       3.07 kB         123 kB
+@vexel/admin:build: ├ ƒ /opd/providers/[providerId]          4.38 kB         110 kB
+@vexel/admin:build: ├ ○ /opd/schedules                       3.37 kB         120 kB
+@vexel/admin:build: ├ ○ /ops                                 5.16 kB         110 kB
+@vexel/admin:build: ├ ○ /ops/backups                         4.82 kB         110 kB
+@vexel/admin:build: ├ ○ /ops/backups/new                      4.7 kB         107 kB
+@vexel/admin:build: ├ ○ /ops/logs                            4.92 kB         107 kB
+@vexel/admin:build: ├ ○ /ops/restore                         5.65 kB         108 kB
+@vexel/admin:build: ├ ○ /ops/schedules                       5.39 kB         107 kB
+@vexel/admin:build: ├ ○ /ops/storage                         5.44 kB         107 kB
+@vexel/admin:build: ├ ○ /ops/tenants                         4.99 kB         107 kB
+@vexel/admin:build: ├ ○ /patients                            1.68 kB         118 kB
+@vexel/admin:build: ├ ○ /roles                               5.99 kB         108 kB
+@vexel/admin:build: ├ ○ /system/health                        4.8 kB         107 kB
+@vexel/admin:build: ├ ○ /templates                           5.72 kB         111 kB
+@vexel/admin:build: ├ ƒ /templates/[id]                      8.46 kB         114 kB
+@vexel/admin:build: ├ ƒ /templates/[id]/preview              4.61 kB         110 kB
+@vexel/admin:build: ├ ○ /templates/new                       5.53 kB         107 kB
+@vexel/admin:build: ├ ƒ /templates/studio/[id]               24.4 kB         130 kB
+@vexel/admin:build: ├ ○ /tenant-settings                       145 B         102 kB
+@vexel/admin:build: ├ ○ /tenant-settings/catalog               145 B         102 kB
+@vexel/admin:build: ├ ○ /tenant-settings/documents             145 B         102 kB
+@vexel/admin:build: ├ ○ /tenant-settings/roles                 145 B         102 kB
+@vexel/admin:build: ├ ○ /tenant-settings/users                 145 B         102 kB
+@vexel/admin:build: ├ ○ /tenants                             6.38 kB         112 kB
+@vexel/admin:build: └ ○ /users                               3.25 kB         119 kB
+@vexel/admin:build: + First Load JS shared by all             102 kB
+@vexel/admin:build:   ├ chunks/4356-c00abddb50d8b42e.js      45.7 kB
+@vexel/admin:build:   ├ chunks/f551614d-25ba98725e534a98.js  54.2 kB
+@vexel/admin:build:   └ other shared chunks (total)          1.93 kB
+@vexel/admin:build: 
+@vexel/admin:build: 
+@vexel/admin:build: ƒ Middleware                             35.1 kB
+@vexel/admin:build: 
+@vexel/admin:build: ○  (Static)   prerendered as static content
+@vexel/admin:build: ƒ  (Dynamic)  server-rendered on demand
+@vexel/admin:build: 
+@vexel/operator:build: 
+@vexel/operator:build: Route (app)                                         Size  First Load JS
+@vexel/operator:build: ┌ ○ /                                              164 B         102 kB
+@vexel/operator:build: ├ ○ /_not-found                                    994 B         103 kB
+@vexel/operator:build: ├ ○ /account                                     4.21 kB         124 kB
+@vexel/operator:build: ├ ○ /encounters                                    377 B         102 kB
+@vexel/operator:build: ├ ƒ /encounters/[id]                               164 B         102 kB
+@vexel/operator:build: ├ ƒ /encounters/[id]/order                         164 B         102 kB
+@vexel/operator:build: ├ ƒ /encounters/[id]/publish                       173 B         123 kB
+@vexel/operator:build: ├ ƒ /encounters/[id]/receive                       164 B         102 kB
+@vexel/operator:build: ├ ƒ /encounters/[id]/reports                       164 B         102 kB
+@vexel/operator:build: ├ ƒ /encounters/[id]/results                       164 B         102 kB
+@vexel/operator:build: ├ ƒ /encounters/[id]/sample                        164 B         102 kB
+@vexel/operator:build: ├ ƒ /encounters/[id]/verify                        164 B         102 kB
+@vexel/operator:build: ├ ○ /encounters/new                                164 B         102 kB
+@vexel/operator:build: ├ ○ /lims/encounters                             1.64 kB         121 kB
+@vexel/operator:build: ├ ƒ /lims/encounters/[id]                        5.48 kB         128 kB
+@vexel/operator:build: ├ ƒ /lims/encounters/[id]/order                  3.09 kB         123 kB
+@vexel/operator:build: ├ ƒ /lims/encounters/[id]/publish                  174 B         123 kB
+@vexel/operator:build: ├ ƒ /lims/encounters/[id]/receive                4.07 kB         124 kB
+@vexel/operator:build: ├ ƒ /lims/encounters/[id]/reports                3.74 kB         123 kB
+@vexel/operator:build: ├ ƒ /lims/encounters/[id]/results                4.43 kB         124 kB
+@vexel/operator:build: ├ ƒ /lims/encounters/[id]/sample                 3.21 kB         123 kB
+@vexel/operator:build: ├ ƒ /lims/encounters/[id]/verify                    5 kB         124 kB
+@vexel/operator:build: ├ ○ /lims/encounters/new                         4.71 kB         107 kB
+@vexel/operator:build: ├ ○ /lims/patients                               2.48 kB         125 kB
+@vexel/operator:build: ├ ○ /lims/patients/new                           4.88 kB         107 kB
+@vexel/operator:build: ├ ○ /lims/payments                               5.37 kB         125 kB
+@vexel/operator:build: ├ ƒ /lims/print/[id]                             5.54 kB         107 kB
+@vexel/operator:build: ├ ○ /lims/registrations/new                      8.71 kB         128 kB
+@vexel/operator:build: ├ ○ /lims/reports                                4.19 kB         137 kB
+@vexel/operator:build: ├ ○ /lims/results                                3.69 kB         152 kB
+@vexel/operator:build: ├ ƒ /lims/results/[orderedTestId]                6.04 kB         129 kB
+@vexel/operator:build: ├ ƒ /lims/results/encounters/[encounterId]       8.37 kB         136 kB
+@vexel/operator:build: ├ ○ /lims/sample-collection                      6.12 kB         139 kB
+@vexel/operator:build: ├ ○ /lims/verification                           3.61 kB         152 kB
+@vexel/operator:build: ├ ƒ /lims/verification/encounters/[encounterId]  4.89 kB         121 kB
+@vexel/operator:build: ├ ○ /lims/worklist                               4.33 kB         124 kB
+@vexel/operator:build: ├ ○ /login                                       5.35 kB         118 kB
+@vexel/operator:build: ├ ○ /opd                                           164 B         102 kB
+@vexel/operator:build: ├ ƒ /opd/appointments/[id]                       4.81 kB         128 kB
+@vexel/operator:build: ├ ○ /opd/appointments/new                        4.79 kB         127 kB
+@vexel/operator:build: ├ ○ /opd/billing                                 2.94 kB         155 kB
+@vexel/operator:build: ├ ƒ /opd/billing/invoices/[invoiceId]            5.38 kB         128 kB
+@vexel/operator:build: ├ ○ /opd/billing/new                             4.06 kB         127 kB
+@vexel/operator:build: ├ ○ /opd/encounters                              3.28 kB         155 kB
+@vexel/operator:build: ├ ƒ /opd/encounters/[id]/doctor                  5.03 kB         124 kB
+@vexel/operator:build: ├ ƒ /opd/encounters/[id]/intake                  3.87 kB         123 kB
+@vexel/operator:build: ├ ○ /opd/encounters/new                          4.31 kB         153 kB
+@vexel/operator:build: ├ ƒ /opd/providers/[providerId]/availability     3.79 kB         126 kB
+@vexel/operator:build: ├ ƒ /opd/visits/[visitId]                        6.15 kB         129 kB
+@vexel/operator:build: ├ ○ /opd/visits/new                              3.03 kB         155 kB
+@vexel/operator:build: ├ ○ /opd/worklist                                3.09 kB         155 kB
+@vexel/operator:build: ├ ○ /patients                                      376 B         102 kB
+@vexel/operator:build: ├ ○ /patients/new                                  164 B         102 kB
+@vexel/operator:build: ├ ○ /registrations/new                             380 B         102 kB
+@vexel/operator:build: ├ ○ /reports                                       373 B         102 kB
+@vexel/operator:build: ├ ○ /results                                       376 B         102 kB
+@vexel/operator:build: ├ ƒ /results/[orderedTestId]                       164 B         102 kB
+@vexel/operator:build: ├ ○ /sample-collection                             380 B         102 kB
+@vexel/operator:build: ├ ○ /verification                                  378 B         102 kB
+@vexel/operator:build: ├ ƒ /verification/encounters/[encounterId]         164 B         102 kB
+@vexel/operator:build: └ ○ /worklist                                      378 B         102 kB
+@vexel/operator:build: + First Load JS shared by all                     102 kB
+@vexel/operator:build:   ├ chunks/4356-9959c9166734ad71.js              45.7 kB
+@vexel/operator:build:   ├ chunks/f551614d-25ba98725e534a98.js          54.2 kB
+@vexel/operator:build:   └ other shared chunks (total)                  1.93 kB
+@vexel/operator:build: 
+@vexel/operator:build: 
+@vexel/operator:build: ƒ Middleware                                     34.5 kB
+@vexel/operator:build: 
+@vexel/operator:build: ○  (Static)   prerendered as static content
+@vexel/operator:build: ƒ  (Dynamic)  server-rendered on demand
+@vexel/operator:build: 
+
+ Tasks:    5 successful, 5 total
+Cached:    3 cached, 5 total
+  Time:    1m56.988s 
+

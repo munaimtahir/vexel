@@ -1,0 +1,12 @@
+./apps/admin/package.json
+./apps/api/package.json
+./apps/e2e/package.json
+./apps/mobile/package.json
+./apps/operator/package.json
+./apps/worker/package.json
+./package.json
+./packages/contracts/package.json
+./packages/sdk/package.json
+./packages/theme/package.json
+./packages/ui-system/package.json
+./scripts/mock-gateway/package.json

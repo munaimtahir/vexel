@@ -1,0 +1,2262 @@
+{
+  "extractedAt": "2026-05-27T23:20:17.033Z",
+  "total": 282,
+  "calls": [
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/account/page.tsx",
+      "line": 34,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/account/me"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/account/page.tsx",
+      "line": 59,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/account/me"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/account/page.tsx",
+      "line": 83,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/account/change-password"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/audit/page.tsx",
+      "line": 21,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/audit-events"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/branding/page.tsx",
+      "line": 106,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/branding/page.tsx",
+      "line": 106,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/branding/page.tsx",
+      "line": 119,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants/{tenantId}/config"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/branding/page.tsx",
+      "line": 127,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/tenants/{tenantId}/config"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/import-export/page.tsx",
+      "line": 110,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/import/workbook"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/import-export/page.tsx",
+      "line": 148,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/export-jobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/page.tsx",
+      "line": 16,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/sample-types"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/page.tsx",
+      "line": 17,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/page.tsx",
+      "line": 18,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/page.tsx",
+      "line": 19,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/panels"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 37,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/panels"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 48,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/panels/{panelId}/tests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 55,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 62,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/panels/next-id"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 92,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/panels/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 94,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/panels"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 104,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/panels/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 125,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/panels/{panelId}/tests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 137,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/panels/{panelId}/tests/{testId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 33,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 44,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters/next-id"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 83,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/catalog/parameters/{parameterId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 85,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/parameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 95,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/parameters/{parameterId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 77,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/reference-ranges"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 87,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 88,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 102,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/reference-ranges"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 179,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/catalog/reference-ranges/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 181,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/reference-ranges"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 193,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/reference-ranges/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/sample-types"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 41,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/sample-types/next-id"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 70,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/sample-types/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 72,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/sample-types"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 82,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/sample-types/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 52,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 67,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/operator/catalog/tests/top"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 84,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests/{testId}/parameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 91,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 98,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 103,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests/{testId}/parameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 124,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests/next-id"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 168,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/tests/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 170,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/tests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 188,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/tests/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 209,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/tests/{testId}/parameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 221,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/tests/{testId}/parameters/{parameterId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 239,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/tests/{testId}/parameters/{parameterId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 243,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/tests/{testId}/parameters/{parameterId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 274,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/operator/catalog/tests/search"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 319,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/admin/catalog/tests/top"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 66,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/health"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 67,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs/failed-count"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 68,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/audit-events"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 69,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 70,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 71,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 72,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 73,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 74,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 75,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs/failed"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 76,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/audit-events"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 77,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/documents/page.tsx",
+      "line": 31,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/documents/page.tsx",
+      "line": 48,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/documents/{id}:publish"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/encounters/page.tsx",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 83,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 84,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 85,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/feature-flags/definitions"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 101,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants/{tenantId}/feature-flags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 117,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/tenants/{tenantId}/feature-flags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 138,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/tenants/{tenantId}/feature-flags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 26,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs/failed"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 28,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/import-jobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 29,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/export-jobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 50,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/jobs/${pendingRetry.id}:retry"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 52,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/documents/{id}:publish"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx",
+      "line": 109,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/doctors"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx",
+      "line": 150,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/doctors"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx",
+      "line": 191,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/opd/doctors/{doctorId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx",
+      "line": 228,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/opd/doctors/{doctorId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 42,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants/{tenantId}/feature-flags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 77,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/tenants/{tenantId}/feature-flags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 94,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/tenants/{tenantId}/feature-flags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/[providerId]/page.tsx",
+      "line": 24,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers/{providerId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 85,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 118,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/providers"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 150,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/opd/providers/{providerId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 167,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/opd/providers/{providerId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 104,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 122,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers/{providerId}/schedules"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 153,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/providers/{providerId}/schedules"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 178,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/opd/providers/{providerId}/schedules/{scheduleId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 196,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/opd/providers/{providerId}/schedules/{scheduleId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/backups/new/page.tsx",
+      "line": 22,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/storage-targets"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/backups/new/page.tsx",
+      "line": 36,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/backups/full:run"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/backups/page.tsx",
+      "line": 50,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/logs/page.tsx",
+      "line": 38,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/logs/page.tsx",
+      "line": 54,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs/{id}/logs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/logs/page.tsx",
+      "line": 74,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/logs/page.tsx",
+      "line": 75,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs/{id}/logs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/page.tsx",
+      "line": 52,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/dashboard"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/page.tsx",
+      "line": 62,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/backups/full:run"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/page.tsx",
+      "line": 74,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/healthcheck:run"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 46,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 47,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 65,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/restores/full:dryRun"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 75,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 96,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/restores/full:run"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx",
+      "line": 40,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/schedules"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx",
+      "line": 41,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/storage-targets"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx",
+      "line": 53,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/schedules/{id}:toggle"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx",
+      "line": 64,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/schedules:create"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/storage/page.tsx",
+      "line": 53,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/storage-targets"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/storage/page.tsx",
+      "line": 77,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/storage-targets:create"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/storage/page.tsx",
+      "line": 101,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/storage-targets/{id}:test"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/storage/page.tsx",
+      "line": 115,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/storage-targets/{id}:toggle"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/tenants/page.tsx",
+      "line": 40,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/tenants/page.tsx",
+      "line": 54,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/backups/tenant:export"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/patients/page.tsx",
+      "line": 20,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 26,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/roles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/roles/permissions"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 39,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/roles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 60,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/roles/{roleId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 69,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/roles/{roleId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/system/health/page.tsx",
+      "line": 15,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/health"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/system/health/page.tsx",
+      "line": 16,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/health/worker"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/system/health/page.tsx",
+      "line": 17,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/health/pdf"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 397,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/templates/{templateId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 414,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/admin/templates/{templateId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 440,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/activate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 444,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/archive"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 448,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/new-version"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/preview/page.tsx",
+      "line": 21,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/preview"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/new/page.tsx",
+      "line": 42,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/template-blueprints"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/new/page.tsx",
+      "line": 45,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/templates"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/new/page.tsx",
+      "line": 70,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/page.tsx",
+      "line": 39,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/templates"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/page.tsx",
+      "line": 59,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/activate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/page.tsx",
+      "line": 61,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/archive"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/page.tsx",
+      "line": 121,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/template-blueprints/provision-defaults"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 37,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/tenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 56,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/tenants/{tenantId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 68,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/tenants/{tenantId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 87,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/tenants/{tenantId}:enable-lims"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 38,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/users"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 39,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/roles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 52,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/users"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 61,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/users/{userId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 76,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/users/{userId}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 86,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/users/{userId}/roles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 99,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/users/{userId}/roles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/login/page.tsx",
+      "line": 22,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/auth/login"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/lib/use-auth.ts",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/me"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/account/page.tsx",
+      "line": 58,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/account/me"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/account/page.tsx",
+      "line": 59,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/navigation"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/account/page.tsx",
+      "line": 92,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/account/me"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/account/page.tsx",
+      "line": 117,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/account/change-password"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx",
+      "line": 38,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx",
+      "line": 40,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx",
+      "line": 64,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:order-lab"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx",
+      "line": 33,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx",
+      "line": 44,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx",
+      "line": 92,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:cancel"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx",
+      "line": 29,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx",
+      "line": 51,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx",
+      "line": 74,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents/{id}/download"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx",
+      "line": 95,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:publish-report"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/receive/page.tsx",
+      "line": 25,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/receive/page.tsx",
+      "line": 40,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:receive-specimen"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/reports/page.tsx",
+      "line": 23,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/reports/page.tsx",
+      "line": 25,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/results/page.tsx",
+      "line": 33,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/results/page.tsx",
+      "line": 69,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:result"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx",
+      "line": 38,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx",
+      "line": 54,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:collect-specimen"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx",
+      "line": 66,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:receive-specimen"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx",
+      "line": 47,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:verify"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx",
+      "line": 60,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/new/page.tsx",
+      "line": 17,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/new/page.tsx",
+      "line": 31,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/page.tsx",
+      "line": 19,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/patients/new/page.tsx",
+      "line": 40,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/patients/page.tsx",
+      "line": 17,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 92,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 119,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}/financials"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 144,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:collect-due"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 170,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:apply-discount"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 194,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:cancel"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/print/[id]/page.tsx",
+      "line": 54,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents/{id}/download"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/print/[id]/page.tsx",
+      "line": 74,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents/{id}/render"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 126,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 184,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/operator/catalog/tests/top"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 211,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/operator/catalog/tests/search"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 328,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/patients/{patientId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 332,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 365,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 372,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 381,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:order-lab"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 402,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/documents/receipt:generate"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 433,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/reports/page.tsx",
+      "line": 98,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/reports/page.tsx",
+      "line": 141,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/reports/page.tsx",
+      "line": 155,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/reports/page.tsx",
+      "line": 201,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents/{id}/download"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx",
+      "line": 112,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/{orderedTestId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx",
+      "line": 158,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:save"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx",
+      "line": 190,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/pending"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx",
+      "line": 212,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:submit"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 159,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/pending"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 161,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/submitted"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 185,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/{orderedTestId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 212,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/{orderedTestId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 239,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:save"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 264,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:submit"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/page.tsx",
+      "line": 117,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/pending"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/page.tsx",
+      "line": 118,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/submitted"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/page.tsx",
+      "line": 180,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:submit"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 106,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/sample-collection/worklist"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 138,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:collect-specimens"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 160,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:postpone-specimen"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 182,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:receive-specimens"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 239,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:receive-specimens"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx",
+      "line": 85,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx",
+      "line": 100,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/pending"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx",
+      "line": 143,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx",
+      "line": 179,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/verification/encounters/{encounterId}:verify"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/page.tsx",
+      "line": 85,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/pending"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/page.tsx",
+      "line": 96,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/page.tsx",
+      "line": 156,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/verification/encounters/{encounterId}:verify"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/page.tsx",
+      "line": 176,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/verification/encounters/{encounterId}:return-for-correction"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 63,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/pending"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 64,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/pending"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 65,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 66,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 67,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx",
+      "line": 56,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/appointments/{appointmentId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx",
+      "line": 144,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/visits"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx",
+      "line": 57,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx",
+      "line": 82,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers/{providerId}/availability"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx",
+      "line": 135,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/appointments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx",
+      "line": 47,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/billing/invoices/{invoiceId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx",
+      "line": 68,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/billing/invoices/{invoiceId}/payments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx",
+      "line": 149,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/billing/invoices/{invoiceId}/payments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/new/page.tsx",
+      "line": 75,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/billing/invoices"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/page.tsx",
+      "line": 45,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/billing/invoices"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx",
+      "line": 83,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx",
+      "line": 121,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/encounters/{encounterId}/prescription/file"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx",
+      "line": 156,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/commands/publishPrescription"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/intake/page.tsx",
+      "line": 47,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/encounters/{encounterId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/intake/page.tsx",
+      "line": 91,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/commands/recordIntake"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx",
+      "line": 76,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/doctors"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx",
+      "line": 99,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx",
+      "line": 134,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/patients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx",
+      "line": 165,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/commands/createRegistration"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/page.tsx",
+      "line": 52,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/encounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/providers/[providerId]/availability/page.tsx",
+      "line": 31,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers/{providerId}/availability"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 75,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits/{visitId}/vitals"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 93,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits/{visitId}/clinical-note"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 130,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits/{visitId}/prescription"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 175,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits/{visitId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 271,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/opd/visits/{visitId}/clinical-note"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 327,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/opd/visits/{visitId}/prescription"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/new/page.tsx",
+      "line": 34,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/new/page.tsx",
+      "line": 54,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/visits"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/worklist/page.tsx",
+      "line": 63,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/appointments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/worklist/page.tsx",
+      "line": 95,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/login/page.tsx",
+      "line": 27,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/auth/login"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/hooks/use-document-polling.ts",
+      "line": 20,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/hooks/use-document-polling.ts",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/hooks/use-feature-flags.ts",
+      "line": 35,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/feature-flags/resolved"
+    }
+  ]
+}

@@ -1,0 +1,536 @@
+### apps/operator/src/app/(protected)/worklist/page.tsx
+'use client';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+export default function Redirect() {
+  const router = useRouter();
+  useEffect(() => { router.replace('/lims/worklist'); }, [router]);
+  return null;
+}
+
+### apps/operator/src/app/(protected)/lims/worklist/page.tsx
+'use client';
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getApiClient } from '@/lib/api-client';
+import { getToken } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { PageHeader, SectionCard, DataTable, EmptyState } from '@/components/app';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+
+type SortDirection = 'asc' | 'desc';
+
+function minutesSince(iso?: string | null): number {
+  if (!iso) return 0;
+  const ms = Date.now() - new Date(iso).getTime();
+  return Math.max(0, Math.floor(ms / 60000));
+}
+
+function fmtSla(mins: number): string {
+  if (mins < 60) return `${mins}m`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${h}h ${m}m`;
+}
+
+function sortBySla<T extends { slaMinutes: number }>(rows: T[], direction: SortDirection): T[] {
+  const sorted = [...rows].sort((a, b) => b.slaMinutes - a.slaMinutes);
+  return direction === 'desc' ? sorted : sorted.reverse();
+}
+
+export default function OperatorQueueDashboardPage() {
+  const router = useRouter();
+  const { user } = useCurrentUser();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [sorts, setSorts] = useState<Record<string, SortDirection>>({
+    assigned: 'desc',
+    results: 'desc',
+    verify: 'desc',
+    failedDocs: 'desc',
+    published: 'desc',
+  });
+
+  const [assignedRows, setAssignedRows] = useState<any[]>([]);
+  const [resultsRows, setResultsRows] = useState<any[]>([]);
+  const [verifyRows, setVerifyRows] = useState<any[]>([]);
+  const [failedDocs, setFailedDocs] = useState<any[]>([]);
+  const [publishedToday, setPublishedToday] = useState<any[]>([]);
+
+  const toggleSort = (key: string) =>
+    setSorts((prev) => ({ ...prev, [key]: prev[key] === 'desc' ? 'asc' : 'desc' }));
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
+      const [resultsRes, verifyRes, failedRes, publishedRes, encounterRes] = await Promise.all([
+        api.GET('/results/tests/pending', { params: { query: { limit: 100 } as any } }),
+        api.GET('/verification/encounters/pending', { params: { query: { limit: 100, view: 'pending' as any } as any } }),
+        api.GET('/documents' as any, { params: { query: { status: 'FAILED', docType: 'LAB_REPORT', limit: 100 } } }),
+        api.GET('/documents' as any, { params: { query: { status: 'PUBLISHED', docType: 'LAB_REPORT', fromDate: startOfToday.toISOString(), limit: 100 } } }),
+        api.GET('/encounters' as any, { params: { query: { limit: 100 } } }),
+      ]);
+
+      const pendingTests: any[] = (resultsRes.data as any)?.data ?? [];
+      const verifyQueue: any[] = (verifyRes.data as any)?.data ?? [];
+      const failed: any[] = Array.isArray(failedRes.data) ? failedRes.data : ((failedRes.data as any)?.data ?? []);
+      const published: any[] = Array.isArray(publishedRes.data) ? publishedRes.data : ((publishedRes.data as any)?.data ?? []);
+      const encounters: any[] = (encounterRes.data as any)?.data ?? [];
+
+      const resultRows = pendingTests.map((r: any) => ({
+        id: r.id,
+        encounterId: r.encounterId,
+        patientName: r.patient ? `${r.patient.firstName} ${r.patient.lastName}` : '—',
+        mrn: r.patient?.mrn ?? '—',
+        testName: r.testName ?? r.testNameSnapshot ?? '—',
+        slaMinutes: minutesSince(r.createdAt ?? r.submittedAt),
+      }));
+      setResultsRows(resultRows);
+
+      const verifyRowsMapped = verifyQueue.map((r: any) => ({
+        id: r.encounterId,
+        encounterId: r.encounterId,
+        encounterCode: r.encounterCode ?? '—',
+        patientName: r.patient ? `${r.patient.firstName} ${r.patient.lastName}` : '—',
+        submittedTestsCount: r.submittedTestsCount ?? 0,
+        slaMinutes: minutesSince(r.oldestSubmittedAt ?? r.createdAt),
+      }));
+      setVerifyRows(verifyRowsMapped);
+
+      const failedRows = failed.map((d: any) => ({
+        id: d.id,
+        encounterId: d.encounterId ?? d.sourceRef ?? '—',
+        createdAt: d.createdAt,
+        slaMinutes: minutesSince(d.createdAt),
+        reason: d.errorMessage ?? d.errorSummary ?? 'Render failed',
+      }));
+      setFailedDocs(failedRows);
+
+      const publishedRows = published.map((d: any) => ({
+        id: d.id,
+        encounterId: d.encounterId ?? d.sourceRef ?? '—',
+        publishedAt: d.publishedAt ?? d.createdAt,
+        slaMinutes: minutesSince(d.publishedAt ?? d.createdAt),
+      }));
+      setPublishedToday(publishedRows);
+
+      const assigned = encounters
+        .filter((e: any) => {
+          const assignee = e.assignedToUserId ?? e.assigneeId ?? e.assignedUserId ?? e.createdByUserId;
+          if (!user?.userId || !assignee) return false;
+          return assignee === user.userId;
+        })
+        .map((e: any) => ({
+          id: e.id,
+
+### apps/operator/src/app/(protected)/sample-collection/page.tsx
+'use client';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+export default function Redirect() {
+  const router = useRouter();
+  useEffect(() => { router.replace('/lims/sample-collection'); }, [router]);
+  return null;
+}
+
+### apps/operator/src/app/(protected)/lims/sample-collection/page.tsx
+'use client';
+import { useState, useEffect, useCallback } from 'react';
+import { getApiClient } from '@/lib/api-client';
+import { getToken } from '@/lib/auth';
+import { useFeatureFlags, isReceiveSeparate, isBarcodeEnabled } from '@/hooks/use-feature-flags';
+import { PageHeader } from '@/components/app';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+type SpecimenStatus = 'PENDING' | 'COLLECTED' | 'POSTPONED' | 'RECEIVED';
+type FilterStatus = 'PENDING' | 'POSTPONED' | 'RECEIVED' | '';
+
+const SPECIMEN_STATUS_CLASS: Record<SpecimenStatus, string> = {
+  PENDING:   'bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning-fg))] text-xs font-semibold px-2 py-0.5 rounded',
+  COLLECTED: 'bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success-fg))] text-xs font-semibold px-2 py-0.5 rounded',
+  POSTPONED: 'bg-[hsl(var(--status-destructive-bg))] text-[hsl(var(--status-destructive-fg))] text-xs font-semibold px-2 py-0.5 rounded',
+  RECEIVED:  'bg-[hsl(var(--status-info-bg))] text-[hsl(var(--status-info-fg))] text-xs font-semibold px-2 py-0.5 rounded',
+};
+
+const SPECIMEN_STATUS_LABEL: Record<SpecimenStatus, string> = {
+  PENDING:   'Pending',
+  COLLECTED: 'Collected',
+  POSTPONED: 'Postponed',
+  RECEIVED:  'Received',
+};
+
+function defaultFromDate() {
+  const d = new Date();
+  d.setDate(d.getDate() - 3);
+  return d.toISOString().split('T')[0];
+}
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function fmt(dt: string) { return new Date(dt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit', hour12: true }); }
+function fmtDate(dt: string) { return new Date(dt).toLocaleDateString('en-PK', { day: '2-digit', month: 'short' }); }
+
+function ageFromDob(dob: string): string {
+  const birth = new Date(dob);
+  const now = new Date();
+  const years = now.getFullYear() - birth.getFullYear() - (now < new Date(now.getFullYear(), birth.getMonth(), birth.getDate()) ? 1 : 0);
+  return `${years}y`;
+}
+
+function printBarcodeLabel(encounterCode: string, patientName: string, specimenType: string) {
+  const win = window.open('', '_blank', 'width=400,height=200');
+  if (!win) return;
+  win.document.write(`
+    <html><head><title>Barcode Label</title>
+    <style>body{font-family:monospace;padding:16px;font-size:13px;}h2{margin:0 0 6px;font-size:16px;}p{margin:2px 0;}</style>
+    </head><body>
+    <h2>${encounterCode}</h2>
+    <p>Patient: ${patientName}</p>
+    <p>Specimen: ${specimenType}</p>
+    <script>window.print();window.close();</script>
+    </body></html>
+  `);
+}
+
+export default function SampleCollectionPage() {
+  const { flags } = useFeatureFlags();
+  const receiveSeparate = isReceiveSeparate(flags);
+  const barcodeEnabled = isBarcodeEnabled(flags);
+
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  // Filters
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>('PENDING');
+  const [fromDate, setFromDate] = useState(defaultFromDate());
+  const [toDate, setToDate] = useState(todayStr());
+  const [search, setSearch] = useState('');
+
+  // Postpone modal
+  const [postponeModal, setPostponeModal] = useState<{ encounterId: string; specimenItemId: string; label: string } | null>(null);
+  const [postponeReason, setPostponeReason] = useState('');
+  const [postponeError, setPostponeError] = useState('');
+  const [postponing, setPostponing] = useState(false);
+
+  // Per-row action loading (key: specimenItemId or `all-{encounterId}`)
+  const [acting, setActing] = useState<Set<string>>(new Set());
+  const [toast, setToast] = useState('');
+  const [selectedEncounterIds, setSelectedEncounterIds] = useState<Set<string>>(new Set());
+  const [bulkReceiving, setBulkReceiving] = useState(false);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 3000);
+  };
+
+  // ── load worklist ────────────────────────────────────────────────
+  const load = useCallback(async () => {
+    setLoading(true); setError('');
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const params: Record<string, string> = { fromDate, toDate };
+      if (statusFilter) params.status = statusFilter;
+      if (search.trim()) params.search = search.trim();
+      // @ts-ignore
+      const { data, error: apiErr } = await api.GET('/sample-collection/worklist', { params: { query: params as any } });
+      if (apiErr) { setError('Failed to load worklist'); return; }
+      const loaded: any[] = (data as any)?.data ?? [];
+      setRows(loaded);
+      setSelectedEncounterIds(new Set());
+      // Auto-expand rows that have pending specimens
+      setExpanded(new Set(loaded.filter((r: any) => r.pendingCount > 0).map((r: any) => r.id)));
+    } catch {
+      setError('Failed to load worklist');
+    } finally {
+      setLoading(false);
+    }
+  }, [statusFilter, fromDate, toDate, search]);
+
+  useEffect(() => { load(); }, [load]);
+
+### apps/operator/src/app/(protected)/results/page.tsx
+'use client';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+export default function Redirect() {
+  const router = useRouter();
+  useEffect(() => { router.replace('/lims/results'); }, [router]);
+  return null;
+}
+
+### apps/operator/src/app/(protected)/lims/results/page.tsx
+'use client';
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getApiClient } from '@/lib/api-client';
+import { getToken } from '@/lib/auth';
+import { EmptyState, PageHeader, SkeletonPage, WorkflowEncounterCard, type WorkflowTestChip } from '@/components/app';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+type Row = {
+  id: string;
+  encounterId: string;
+  encounterCode?: string | null;
+  testName: string;
+  resultStatus: 'PENDING' | 'SUBMITTED';
+  labOrderStatus?: string;
+  filledCount?: number;
+  totalCount?: number;
+  createdAt: string;
+  submittedAt?: string | null;
+  specimenStatus?: string | null;
+  patient?: {
+    firstName: string;
+    lastName: string;
+    mrn: string;
+    ageYears?: number | null;
+    dateOfBirth?: string | null;
+    gender?: string | null;
+  };
+};
+
+type EncounterCard = {
+  encounterId: string;
+  encounterCode: string;
+  patientName: string;
+  ageGender: string;
+  mrn: string;
+  createdAt: string;
+  tests: Row[];
+  department?: string | null;
+  priority?: string | null;
+};
+
+function ageLabel(p?: Row['patient']): string {
+  if (!p) return '—';
+  if (p.ageYears != null) return `${p.ageYears}y`;
+  if (!p.dateOfBirth) return '—';
+  const years = Math.floor((Date.now() - new Date(p.dateOfBirth).getTime()) / (365.25 * 24 * 3600 * 1000));
+  return `${years}y`;
+}
+
+function genderLabel(p?: Row['patient']): string {
+  return p?.gender ? p.gender.charAt(0).toUpperCase() : '—';
+}
+
+function timeLabel(iso: string): string {
+  const d = new Date(iso);
+  return `${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ${d.toLocaleDateString([], { day: '2-digit', month: 'short' })}`;
+}
+
+function mapTestStatus(row: Row): WorkflowTestChip['status'] {
+  const hasAny = (row.filledCount ?? 0) > 0;
+  const allDone = (row.totalCount ?? 0) > 0 && (row.filledCount ?? 0) >= (row.totalCount ?? 0);
+  if ((row.labOrderStatus ?? '').toLowerCase() === 'verified') return 'verified';
+  if (row.resultStatus === 'SUBMITTED') return 'completed';
+  if (allDone) return 'completed';
+  if (hasAny) return 'in-progress';
+  return 'pending';
+}
+
+function mapBoardColumn(rows: Row[]): 'pending' | 'in-progress' | 'ready' {
+  const statuses = rows.map(mapTestStatus);
+  if (statuses.every((s) => s === 'completed' || s === 'verified')) return 'ready';
+  if (statuses.some((s) => s === 'in-progress' || s === 'completed')) return 'in-progress';
+  return 'pending';
+}
+
+function group(rows: Row[]): EncounterCard[] {
+  const map = new Map<string, EncounterCard>();
+  for (const row of rows) {
+    if (!map.has(row.encounterId)) {
+      const p = row.patient;
+      map.set(row.encounterId, {
+        encounterId: row.encounterId,
+        encounterCode: row.encounterCode ?? row.encounterId.slice(0, 8),
+        patientName: p ? `${p.firstName} ${p.lastName}` : '—',
+        ageGender: `${ageLabel(p)} / ${genderLabel(p)}`,
+        mrn: p?.mrn ?? '—',
+        createdAt: row.createdAt,
+        tests: [],
+      });
+    }
+    map.get(row.encounterId)!.tests.push(row);
+  }
+  return Array.from(map.values());
+}
+
+export default function ResultsBoardPage() {
+  const router = useRouter();
+  const [rows, setRows] = useState<Row[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [drafts, setDrafts] = useState<Set<string>>(new Set());
+  const [filterType, setFilterType] = useState('all');
+  const [filterDept, setFilterDept] = useState('all');
+  const [submitting, setSubmitting] = useState<Record<string, boolean>>({});
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const [pendingRes, submittedRes] = await Promise.all([
+        api.GET('/results/tests/pending', { params: { query: { search: search || undefined, limit: 200 } } }),
+        api.GET('/results/tests/submitted', { params: { query: { search: search || undefined, limit: 200 } } }),
+      ]);
+      const pending = ((pendingRes.data as any)?.data ?? []) as Row[];
+
+### apps/operator/src/app/(protected)/verification/page.tsx
+'use client';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+export default function Redirect() {
+  const router = useRouter();
+  useEffect(() => { router.replace('/lims/verification'); }, [router]);
+  return null;
+}
+
+### apps/operator/src/app/(protected)/lims/verification/page.tsx
+'use client';
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getApiClient } from '@/lib/api-client';
+import { getToken } from '@/lib/auth';
+import { EmptyState, PageHeader, SkeletonPage, WorkflowEncounterCard, type WorkflowTestChip } from '@/components/app';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+type VerificationRow = {
+  encounterId: string;
+  encounterCode?: string | null;
+  submittedTestsCount: number;
+  oldestSubmittedAt?: string | null;
+  createdAt: string;
+  patient?: {
+    firstName: string;
+    lastName: string;
+    mrn: string;
+    ageYears?: number | null;
+    dateOfBirth?: string | null;
+    gender?: string | null;
+  };
+};
+
+type VerificationDetail = {
+  submittedTestsCount?: number;
+  pendingVerificationCount?: number;
+  testCards?: Array<{
+    labOrderId: string;
+    testName: string;
+    resultStatus: 'SUBMITTED' | 'VERIFIED';
+    filledParameters?: Array<{ flag?: 'normal' | 'high' | 'low' | 'critical' | null }>;
+  }>;
+};
+
+type EncounterCard = VerificationRow & {
+  patientName: string;
+  ageGender: string;
+};
+
+function ageLabel(p?: VerificationRow['patient']): string {
+  if (!p) return '—';
+  if (p.ageYears != null) return `${p.ageYears}y`;
+  if (!p.dateOfBirth) return '—';
+  const years = Math.floor((Date.now() - new Date(p.dateOfBirth).getTime()) / (365.25 * 24 * 3600 * 1000));
+  return `${years}y`;
+}
+
+function genderLabel(p?: VerificationRow['patient']): string {
+  return p?.gender ? p.gender.charAt(0).toUpperCase() : '—';
+}
+
+function timeLabel(iso: string): string {
+  const d = new Date(iso);
+  return `${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ${d.toLocaleDateString([], { day: '2-digit', month: 'short' })}`;
+}
+
+function columnFromDetails(detail: VerificationDetail): 'waiting' | 'flagged' | 'verified' {
+  const cards = detail.testCards ?? [];
+  if (cards.length > 0 && cards.every((c) => c.resultStatus === 'VERIFIED')) return 'verified';
+  const hasFlag = cards.some((c) => (c.filledParameters ?? []).some((p) => p.flag && p.flag !== 'normal'));
+  if (hasFlag) return 'flagged';
+  return 'waiting';
+}
+
+export default function VerificationBoardPage() {
+  const router = useRouter();
+  const [rows, setRows] = useState<VerificationRow[]>([]);
+  const [details, setDetails] = useState<Record<string, VerificationDetail>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [filterDept, setFilterDept] = useState('all');
+  const [busy, setBusy] = useState<Record<string, boolean>>({});
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const { data, error: apiErr } = await api.GET('/verification/encounters/pending', {
+        params: { query: { search: search || undefined, limit: 120, view: 'pending' } },
+      });
+      if (apiErr || !data) throw new Error('queue');
+      const queue: VerificationRow[] = Array.isArray((data as any).data)
+        ? (data as any).data
+        : (Array.isArray(data) ? (data as any) : []);
+      setRows(queue);
+
+      const detailPairs = await Promise.all(
+        queue.map(async (q) => {
+          const { data: detailData } = await api.GET('/verification/encounters/{encounterId}', {
+            params: { path: { encounterId: q.encounterId } },
+          });
+          return [q.encounterId, (detailData as VerificationDetail) ?? {}] as const;
+        }),
+      );
+      setDetails(Object.fromEntries(detailPairs));
+    } catch {
+      setError('Failed to load verification board');
+    } finally {
+      setLoading(false);
+    }
+  }, [search]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const encounters: EncounterCard[] = useMemo(
+    () => rows.map((r) => ({
+      ...r,
+      patientName: r.patient ? `${r.patient.firstName} ${r.patient.lastName}` : '—',
+      ageGender: `${ageLabel(r.patient)} / ${genderLabel(r.patient)}`,
+    })),
+    [rows],
+
+### apps/operator/src/app/(protected)/page.tsx
+import { redirect } from 'next/navigation';
+
+// Root landing — redirect to LIMS worklist (AppShell lives in lims/layout.tsx)
+export default function RootPage() {
+  redirect('/lims/worklist');
+}
+

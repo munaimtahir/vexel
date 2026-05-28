@@ -1,0 +1,91 @@
+{
+  "data": [
+    {
+      "id": "3c0402d3-8bc7-47c8-854c-f54a68bdca7e",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "encounter.auto_publish_report",
+      "entityType": "Encounter",
+      "entityId": "15123f73-1657-4a40-b2d8-bc2e7e04dbc9",
+      "correlationId": "audit-verify2-1779925257-16586",
+      "before": null,
+      "after": {
+        "status": "published",
+        "documentId": "2aa654bf-f25c-4d3e-95e8-e2c71451070b"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-27T23:40:57.343Z"
+    },
+    {
+      "id": "05dbcaf5-1a60-4efb-b416-4a17b10b63b5",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "document.auto_published",
+      "entityType": "Document",
+      "entityId": "2aa654bf-f25c-4d3e-95e8-e2c71451070b",
+      "correlationId": "audit-verify2-1779925257-16586",
+      "before": null,
+      "after": {
+        "type": "LAB_REPORT"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-27T23:40:57.330Z"
+    },
+    {
+      "id": "2987a1f5-aac7-4442-a88e-6d8725bbc4a1",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "document.rendered",
+      "entityType": "Document",
+      "entityId": "2aa654bf-f25c-4d3e-95e8-e2c71451070b",
+      "correlationId": "audit-verify2-1779925257-16586",
+      "before": null,
+      "after": {
+        "pdfHash": "76d0fd957d92fdfbcef0ebe9ccde518da627a8016a30f3647437b49da7f0ac59",
+        "storageKey": "system/2aa654bf-f25c-4d3e-95e8-e2c71451070b/report.pdf"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-27T23:40:57.317Z"
+    },
+    {
+      "id": "14cf9cd2-0b22-4d8b-a3ef-56317b48f226",
+      "tenantId": "system",
+      "actorUserId": "caad0bf9-880e-47b0-b0b6-67a32bf25b3f",
+      "action": "ENCOUNTER_VERIFIED",
+      "entityType": "Encounter",
+      "entityId": "15123f73-1657-4a40-b2d8-bc2e7e04dbc9",
+      "correlationId": "audit-verify2-1779925257-16586",
+      "before": null,
+      "after": {
+        "status": "verified",
+        "verifiedBy": "caad0bf9-880e-47b0-b0b6-67a32bf25b3f"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-27T23:40:57.143Z"
+    },
+    {
+      "id": "8f4a321d-2294-4a4d-b3cc-dcea18fac8ff",
+      "tenantId": "system",
+      "actorUserId": "caad0bf9-880e-47b0-b0b6-67a32bf25b3f",
+      "action": "document.generate",
+      "entityType": "Document",
+      "entityId": "2aa654bf-f25c-4d3e-95e8-e2c71451070b",
+      "correlationId": "audit-verify2-1779925257-16586",
+      "before": null,
+      "after": {
+        "type": "LAB_REPORT",
+        "status": "RENDERING",
+        "templateId": "315a2296-3e84-4c36-b36a-e3725fc58e9a",
+        "payloadHash": "30d43c1c95b0d1a50e04e0ed6ce869e9183d83cdc127f05120d0569000106589"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-27T23:40:57.137Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 5,
+    "totalPages": 1
+  }
+}

@@ -1,0 +1,11 @@
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:23:    expect(getTenantId(req)).toBe('tenant-abc');
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:49:    expect(getTenantId(req)).toBe('tenant-prod');
+apps/api/src/patients/patients.controller.ts:20:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/billing/billing.controller.ts:32:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/appointments/appointments.controller.ts:33:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/sample-collection/sample-collection.controller.ts:27:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/encounters/encounters.controller.ts:20:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/verification/verification.controller.ts:32:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/opd/opd.controller.ts:37:    return getTenantId(req) ?? (req as any).user.tenantId;
+apps/api/src/common/tenant-context.ts:5:export function getTenantId(req: Request): string | undefined {
+apps/api/src/results/results.controller.ts:32:    return getTenantId(req) ?? (req as any).user.tenantId;

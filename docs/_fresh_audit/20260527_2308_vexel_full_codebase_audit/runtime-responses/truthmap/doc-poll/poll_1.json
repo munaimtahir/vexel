@@ -1,0 +1,114 @@
+[
+  {
+    "id": "2aa654bf-f25c-4d3e-95e8-e2c71451070b",
+    "tenantId": "system",
+    "type": "LAB_REPORT",
+    "templateId": "315a2296-3e84-4c36-b36a-e3725fc58e9a",
+    "payloadJson": {
+      "tests": [
+        {
+          "testCode": "CBC",
+          "testName": "Complete Blood Count (CBC)",
+          "department": "Hematology",
+          "parameters": [
+            {
+              "unit": "mg/dL",
+              "value": "99",
+              "parameterCode": "8e6aa755-7279-4708-8dd2-97348a9bf085",
+              "parameterName": "Glucose"
+            },
+            {
+              "flag": "normal",
+              "unit": "g/dL",
+              "value": "13.5",
+              "parameterCode": "result",
+              "parameterName": "Result",
+              "referenceRange": "12-17"
+            }
+          ],
+          "printAlone": false
+        }
+      ],
+      "issuedAt": "2026-05-27T23:35:58.644Z",
+      "patientMrn": "PT-26-0586",
+      "tenantName": "Al Shifa Laboratory",
+      "encounterId": "15123f73-1657-4a40-b2d8-bc2e7e04dbc9",
+      "patientName": "Audit Patient",
+      "reportFooter": "This report is electronically generated from the LIMS and does not require a signature. Results are valid for the submitted specimen only and should be interpreted by the treating physician in clinical context.",
+      "reportHeader": "Circular Road Jaranwala  . 041-4312286",
+      "reportNumber": "RPT-15123F73",
+      "reportStatus": "Verified",
+      "templateCode": "general_table_v1",
+      "encounterCode": "SYS-2605-009",
+      "patientGender": "M",
+      "templateFamily": "GENERAL_TABLE",
+      "templateVersion": 1,
+      "sampleReceivedAt": "2026-05-27T23:36:45.586Z",
+      "reportHeaderLayout": "classic"
+    },
+    "payloadHash": "30d43c1c95b0d1a50e04e0ed6ce869e9183d83cdc127f05120d0569000106589",
+    "pdfHash": "76d0fd957d92fdfbcef0ebe9ccde518da627a8016a30f3647437b49da7f0ac59",
+    "storageKey": "system/2aa654bf-f25c-4d3e-95e8-e2c71451070b/report.pdf",
+    "status": "PUBLISHED",
+    "version": 1,
+    "sourceRef": "15123f73-1657-4a40-b2d8-bc2e7e04dbc9",
+    "sourceType": "ENCOUNTER",
+    "errorMessage": null,
+    "publishedAt": "2026-05-27T23:40:57.325Z",
+    "createdBy": "caad0bf9-880e-47b0-b0b6-67a32bf25b3f",
+    "createdAt": "2026-05-27T23:40:57.127Z",
+    "updatedAt": "2026-05-27T23:40:57.326Z"
+  },
+  {
+    "id": "a1c60430-e7f4-4b49-a9a6-bab67b867c0d",
+    "tenantId": "system",
+    "type": "RECEIPT",
+    "templateId": "tpl-receipt-v1-system",
+    "payloadJson": {
+      "tax": 0,
+      "items": [
+        {
+          "total": 700,
+          "quantity": 1,
+          "unitPrice": 700,
+          "description": "Complete Blood Count (CBC)"
+        }
+      ],
+      "discount": 0,
+      "issuedAt": "2026-05-27T23:35:58.644Z",
+      "subtotal": 700,
+      "grandTotal": 700,
+      "patientMrn": "PT-26-0586",
+      "tenantName": "Al Shifa Laboratory",
+      "encounterId": "15123f73-1657-4a40-b2d8-bc2e7e04dbc9",
+      "patientName": "Audit Patient",
+      "labOrderCode": "0387505e-4956-4917-99be-51b2bafe0c77",
+      "reportFooter": "This report is electronically generated from the LIMS and does not require a signature. Results are valid for the submitted specimen only and should be interpreted by the treating physician in clinical context.",
+      "reportHeader": "Circular Road Jaranwala  . 041-4312286",
+      "encounterCode": "SYS-2605-009",
+      "patientGender": "M",
+      "paymentMethod": "Cash",
+      "receiptNumber": "RCP-0387505E",
+      "paymentComments": "",
+      "patientDemographics": {
+        "mrn": "PT-26-0586",
+        "gender": "M",
+        "mobile": "0300-1234567",
+        "ageDisplay": "",
+        "displayName": "Audit Patient"
+      }
+    },
+    "payloadHash": "471ff62dc82da193074047b7edbe5d710ee7be7f9527e89998934b793c78189a",
+    "pdfHash": "48340ab13b45013c03a2eaa98824c2e162c9cb22fb241514e1e4f5b93473bca1",
+    "storageKey": "system/a1c60430-e7f4-4b49-a9a6-bab67b867c0d/report.pdf",
+    "status": "PUBLISHED",
+    "version": 1,
+    "sourceRef": "15123f73-1657-4a40-b2d8-bc2e7e04dbc9",
+    "sourceType": "ENCOUNTER",
+    "errorMessage": null,
+    "publishedAt": "2026-05-27T23:36:45.983Z",
+    "createdBy": "a3e45944-1031-4bcd-9980-54093c672750",
+    "createdAt": "2026-05-27T23:36:45.646Z",
+    "updatedAt": "2026-05-27T23:36:45.984Z"
+  }
+]

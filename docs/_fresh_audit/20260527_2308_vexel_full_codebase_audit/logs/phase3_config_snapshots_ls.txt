@@ -1,0 +1,11 @@
+total 40
+drwxrwxr-x 2 munaim munaim 4096 May 27 23:12 .
+drwxrwxr-x 5 munaim munaim 4096 May 27 23:12 ..
+-rw-rw-r-- 1 munaim munaim 1228 May 27 23:12 apps_admin_Dockerfile
+-rw-rw-r-- 1 munaim munaim  306 May 27 23:12 apps_admin_next.config.ts
+-rw-rw-r-- 1 munaim munaim  675 May 27 23:12 apps_api_Dockerfile
+-rw-rw-r-- 1 munaim munaim 1399 May 27 23:12 apps_e2e_playwright.config.ts
+-rw-rw-r-- 1 munaim munaim 1247 May 27 23:12 apps_operator_Dockerfile
+-rw-rw-r-- 1 munaim munaim  283 May 27 23:12 apps_operator_next.config.ts
+-rw-rw-r-- 1 munaim munaim  631 May 27 23:12 apps_pdf_Dockerfile
+-rw-rw-r-- 1 munaim munaim  608 May 27 23:12 apps_worker_Dockerfile

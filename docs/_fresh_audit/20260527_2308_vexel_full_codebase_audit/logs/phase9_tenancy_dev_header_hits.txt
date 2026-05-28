@@ -1,0 +1,13 @@
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:16:  it('resolves tenant from x-tenant-id header in dev mode', async () => {
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:17:    process.env.TENANCY_DEV_HEADER_ENABLED = 'true';
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:18:    const req: any = { headers: { 'x-tenant-id': 'tenant-abc' }, hostname: 'localhost' };
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:26:    delete process.env.TENANCY_DEV_HEADER_ENABLED;
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:30:    process.env.TENANCY_DEV_HEADER_ENABLED = 'false';
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:32:    const req: any = { headers: { 'x-tenant-id': 'should-be-ignored' }, hostname: 'myapp.com' };
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:38:    delete process.env.TENANCY_DEV_HEADER_ENABLED;
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:42:    process.env.TENANCY_DEV_HEADER_ENABLED = 'false';
+apps/api/src/tenant/tenant-resolver.middleware.spec.ts:51:    delete process.env.TENANCY_DEV_HEADER_ENABLED;
+apps/api/src/tenant/tenant-resolver.middleware.ts:11:    if (process.env.TENANCY_DEV_HEADER_ENABLED === 'true') {
+apps/api/src/tenant/tenant-resolver.middleware.ts:12:      const devTenantId = req.headers['x-tenant-id'] as string | undefined;
+apps/api/src/main.ts:22:    allowedHeaders: ['Content-Type', 'Authorization', 'x-tenant-id', 'x-correlation-id'],
+apps/api/src/auth/jwt-auth.guard.ts:17:    const headerTenantId = req?.headers?.['x-tenant-id'];

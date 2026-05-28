@@ -1,0 +1,39 @@
+{
+  "data": [
+    {
+      "id": "system",
+      "name": "Vexel System",
+      "status": "active",
+      "isSuperAdmin": true,
+      "catalogSeedMode": null,
+      "catalogSeededAt": null,
+      "catalogSeedBaseVersion": null,
+      "catalogSeedHash": null,
+      "createdAt": "2026-03-02T23:34:56.005Z",
+      "updatedAt": "2026-03-02T23:34:56.005Z",
+      "domains": [
+        {
+          "id": "98259050-2ad4-4d8a-b141-e703bf483444",
+          "tenantId": "system",
+          "domain": "admin.localhost"
+        },
+        {
+          "id": "2b9191e9-659e-4f60-ae6f-83bff93e1546",
+          "tenantId": "system",
+          "domain": "localhost"
+        },
+        {
+          "id": "2ab25eeb-4e5c-4c34-9b7b-489bc8976465",
+          "tenantId": "system",
+          "domain": "vexel.alshifalab.pk"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 1,
+    "totalPages": 1
+  }
+}

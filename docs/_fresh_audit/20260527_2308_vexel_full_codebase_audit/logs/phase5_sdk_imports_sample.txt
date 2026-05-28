@@ -1,0 +1,15 @@
+apps/admin/package.json:15:    "@vexel/sdk": "workspace:*",
+apps/admin/next.config.ts:8:  transpilePackages: ['@vexel/sdk', '@vexel/theme', '@vexel/ui-system'],
+apps/operator/src/lib/auth.ts:5:import { getTokens, getToken, setTokens, clearTokens, isAuthenticated, decodeJwt } from '@vexel/sdk';
+apps/operator/src/lib/api-client.ts:3: * IMPORTANT: Uses @vexel/sdk only. No direct fetch/axios.
+apps/operator/src/lib/api-client.ts:5:import { createApiClient } from '@vexel/sdk';
+apps/operator/package.json:24:    "@vexel/sdk": "workspace:*",
+apps/operator/next.config.ts:7:  transpilePackages: ['@vexel/sdk', '@vexel/theme', '@vexel/ui-system'],
+apps/admin/src/lib/auth.ts:5:import { getTokens, getToken, setTokens, clearTokens, isAuthenticated, decodeJwt } from '@vexel/sdk';
+apps/admin/src/lib/api-client.ts:5: * Uses @vexel/sdk only. No direct fetch/axios to backend endpoints.
+apps/admin/src/lib/api-client.ts:7:import { createApiClient } from '@vexel/sdk';
+packages/sdk/README.md:1:# @vexel/sdk
+packages/sdk/README.md:15:import { createApiClient } from '@vexel/sdk';
+packages/sdk/package.json:2:  "name": "@vexel/sdk",
+packages/sdk/src/index.ts:2: * @vexel/sdk — Generated API client
+packages/sdk/src/index.ts:8: *   import { createApiClient } from '@vexel/sdk';

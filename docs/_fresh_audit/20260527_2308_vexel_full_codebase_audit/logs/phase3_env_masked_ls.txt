@@ -1,0 +1,7 @@
+total 24
+drwxrwxr-x 2 munaim munaim 4096 May 27 23:12 .
+drwxrwxr-x 3 munaim munaim 4096 May 27 23:12 ..
+-rw-rw-r-- 1 munaim munaim  626 May 27 23:12 .env.example.masked.txt
+-rw-rw-r-- 1 munaim munaim  340 May 27 23:12 .env.masked.txt
+-rw-rw-r-- 1 munaim munaim   55 May 27 23:12 apps_admin_.env.example.masked.txt
+-rw-rw-r-- 1 munaim munaim  340 May 27 23:12 scripts_mock-gateway_.env.masked.txt

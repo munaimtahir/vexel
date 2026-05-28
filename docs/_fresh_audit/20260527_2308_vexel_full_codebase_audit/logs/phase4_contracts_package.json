@@ -1,0 +1,11 @@
+{
+  "name": "@vexel/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "sdk:generate": "openapi-typescript openapi.yaml -o ../sdk/src/generated/api.d.ts && node scripts/generate-client.js"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.4.4"
+  }
+}

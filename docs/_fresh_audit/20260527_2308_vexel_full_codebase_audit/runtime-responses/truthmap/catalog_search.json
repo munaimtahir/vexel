@@ -1,0 +1,20 @@
+[
+  {
+    "id": "a304f1db-cd8a-45f3-bccb-23b57e1821ad",
+    "name": "Complete Blood Count (CBC)",
+    "testCode": "t110",
+    "userCode": "CBC",
+    "sampleTypeName": "EDTA Whole Blood",
+    "departmentName": "Hematology",
+    "price": 700
+  },
+  {
+    "id": "9f4d8494-279d-48a7-8390-1c068408185e",
+    "name": "Complete Blood Count (CBC)",
+    "testCode": "t101",
+    "userCode": null,
+    "sampleTypeName": "Whole Blood",
+    "departmentName": null,
+    "price": null
+  }
+]

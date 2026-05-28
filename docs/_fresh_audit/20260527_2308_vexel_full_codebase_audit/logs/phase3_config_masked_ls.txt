@@ -1,0 +1,5 @@
+total 24
+drwxrwxr-x 2 munaim munaim 4096 May 27 23:12 .
+drwxrwxr-x 4 munaim munaim 4096 May 27 23:12 ..
+-rw-rw-r-- 1 munaim munaim 4908 May 27 23:12 docker-compose.yml.masked.yml
+-rw-rw-r-- 1 munaim munaim 4908 May 27 23:12 docker_docker-compose.yml.masked.yml

@@ -1,0 +1,43 @@
+
+> vexel@0.1.0 mcp:playwright:install-browsers /home/munaim/srv/apps/vexel
+> pnpm mcp:playwright:install-runtime-libs && pnpm --filter @vexel/e2e exec playwright install chromium
+
+
+> vexel@0.1.0 mcp:playwright:install-runtime-libs /home/munaim/srv/apps/vexel
+> ./scripts/playwright-runtime-libs.sh
+
+Downloading Playwright runtime libs into: /tmp/pw-libs/debs
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Extracting runtime libs into: /tmp/pw-libs
+Playwright runtime libs ready at: /tmp/pw-libs/usr/lib/x86_64-linux-gnu
+apps/worker                              |  WARN  The field "pnpm.overrides" was found in /home/munaim/srv/apps/vexel/apps/worker/package.json. This will not take effect. You should configure "pnpm.overrides" at the root of the workspace instead.
+Removing unused browser at /home/munaim/.cache/ms-playwright/chromium-1223
+Removing unused browser at /home/munaim/.cache/ms-playwright/chromium_headless_shell-1223
+Downloading Chrome for Testing 145.0.7632.6 (playwright chromium v1208)[2m from https://cdn.playwright.dev/builds/cft/145.0.7632.6/linux64/chrome-linux64.zip[22m
+|                                                                                |   0% of 167.3 MiB
+|■■■■■■■■                                                                        |  10% of 167.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 167.3 MiB
+Chrome for Testing 145.0.7632.6 (playwright chromium v1208) downloaded to /home/munaim/.cache/ms-playwright/chromium-1208
+Downloading Chrome Headless Shell 145.0.7632.6 (playwright chromium-headless-shell v1208)[2m from https://cdn.playwright.dev/builds/cft/145.0.7632.6/linux64/chrome-headless-shell-linux64.zip[22m
+|                                                                                |   0% of 110.9 MiB
+|■■■■■■■■                                                                        |  10% of 110.9 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 110.9 MiB
+Chrome Headless Shell 145.0.7632.6 (playwright chromium-headless-shell v1208) downloaded to /home/munaim/.cache/ms-playwright/chromium_headless_shell-1208

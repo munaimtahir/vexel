@@ -1,0 +1,14 @@
+{
+  "id": "41078931-49c2-4da1-aa38-6ecdcce233f2",
+  "tenantId": "bf7b3522-aeeb-4d3b-8b08-916a1686faac",
+  "email": "shared@example.com",
+  "firstName": "Shared",
+  "lastName": "UserB2",
+  "status": "active",
+  "isSuperAdmin": false,
+  "maxDiscountPct": null,
+  "createdAt": "2026-05-27T23:34:21.803Z",
+  "updatedAt": "2026-05-27T23:34:21.803Z",
+  "userRoles": [],
+  "roles": []
+}

@@ -1,0 +1,3 @@
+docs/_fresh_audit/20260527_2308_vexel_full_codebase_audit/e2e/playwright-report/index.html
+docs/_fresh_audit/20260527_2308_vexel_full_codebase_audit/e2e/test-results/preflight.json
+docs/_fresh_audit/20260527_2308_vexel_full_codebase_audit/e2e/test-results/results.json

@@ -1,0 +1,51 @@
+{
+  "id": "15123f73-1657-4a40-b2d8-bc2e7e04dbc9",
+  "tenantId": "system",
+  "patientId": "c4c114c6-cd21-41fa-a642-a9736b7bec01",
+  "moduleType": "LIMS",
+  "encounterCode": "SYS-2605-009",
+  "status": "lab_ordered",
+  "createdAt": "2026-05-27T23:35:58.644Z",
+  "updatedAt": "2026-05-27T23:36:45.522Z",
+  "patient": {
+    "id": "c4c114c6-cd21-41fa-a642-a9736b7bec01",
+    "tenantId": "system",
+    "firstName": "Audit",
+    "lastName": "Patient",
+    "dateOfBirth": null,
+    "ageYears": null,
+    "gender": "M",
+    "mrn": "PT-26-0586",
+    "mobile": "0300-1234567",
+    "cnic": null,
+    "address": "Audit Address",
+    "createdAt": "2026-05-27T23:35:37.090Z",
+    "updatedAt": "2026-05-27T23:35:37.090Z"
+  },
+  "labOrders": [
+    {
+      "id": "0387505e-4956-4917-99be-51b2bafe0c77",
+      "tenantId": "system",
+      "encounterId": "15123f73-1657-4a40-b2d8-bc2e7e04dbc9",
+      "testId": "a304f1db-cd8a-45f3-bccb-23b57e1821ad",
+      "testNameSnapshot": null,
+      "status": "ordered",
+      "resultStatus": "PENDING",
+      "priority": "routine",
+      "totalAmount": null,
+      "discountAmount": null,
+      "discountPct": null,
+      "payableAmount": null,
+      "amountPaid": null,
+      "dueAmount": null,
+      "submittedAt": null,
+      "submittedById": null,
+      "cancelledAt": null,
+      "cancelReason": null,
+      "createdAt": "2026-05-27T23:36:45.522Z",
+      "updatedAt": "2026-05-27T23:36:45.522Z",
+      "specimen": null,
+      "results": []
+    }
+  ]
+}

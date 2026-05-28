@@ -1,0 +1,12 @@
+HTTP/1.1 201 Created
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-1779924937-30960
+Content-Type: application/json; charset=utf-8
+Content-Length: 313
+ETag: W/"139-0yw1nClHGMuAxZqWQ+xYxrh4Ye4"
+Date: Wed, 27 May 2026 23:35:37 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+

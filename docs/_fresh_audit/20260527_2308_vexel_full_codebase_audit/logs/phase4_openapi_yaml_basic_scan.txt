@@ -1,0 +1,9 @@
+file: packages/contracts/openapi.yaml
+bytes: 308896
+lines: 10969
+openapi_version: 3.1.0
+has_paths: True
+operationId_count: 263
+security_schemes_mentions: 1
+unique_operationIds: 263
+duplicate_operationIds: 0

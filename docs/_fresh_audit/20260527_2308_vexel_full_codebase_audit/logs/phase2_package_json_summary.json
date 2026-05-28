@@ -1,0 +1,322 @@
+[
+  {
+    "path": "./apps/admin/package.json",
+    "name": "@vexel/admin",
+    "private": true,
+    "scripts": {
+      "dev": "next dev -p 3001",
+      "build": "next build",
+      "start": "next start -p 3001",
+      "lint": "next lint"
+    },
+    "dependencies": [
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@vexel/sdk",
+      "@vexel/theme",
+      "@vexel/ui-system",
+      "autoprefixer",
+      "class-variance-authority",
+      "clsx",
+      "lucide-react",
+      "next",
+      "next-themes",
+      "postcss",
+      "react",
+      "react-dom",
+      "sonner",
+      "tailwind-merge",
+      "tailwindcss",
+      "xlsx"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "@types/react",
+      "@types/react-dom",
+      "typescript"
+    ]
+  },
+  {
+    "path": "./apps/api/package.json",
+    "name": "@vexel/api",
+    "private": true,
+    "scripts": {
+      "build": "nest build",
+      "dev": "nest start --watch",
+      "start": "node dist/main",
+      "lint": "eslint \"{src,test}/**/*.ts\"",
+      "prisma:generate": "prisma generate",
+      "prisma:migrate": "prisma migrate deploy",
+      "prisma:dev": "prisma migrate dev",
+      "prisma:seed": "ts-node prisma/seed.ts",
+      "test": "jest",
+      "test:watch": "jest --watch",
+      "test:cov": "jest --coverage"
+    },
+    "dependencies": [
+      "@aws-sdk/client-s3",
+      "@aws-sdk/s3-request-presigner",
+      "@nestjs/common",
+      "@nestjs/core",
+      "@nestjs/jwt",
+      "@nestjs/passport",
+      "@nestjs/platform-express",
+      "@nestjs/swagger",
+      "@nestjs/testing",
+      "@prisma/client",
+      "@types/cookie-parser",
+      "@types/multer",
+      "bcrypt",
+      "bullmq",
+      "class-transformer",
+      "class-validator",
+      "cookie-parser",
+      "exceljs",
+      "ioredis",
+      "multer",
+      "passport",
+      "passport-jwt",
+      "reflect-metadata",
+      "rxjs",
+      "uuid"
+    ],
+    "devDependencies": [
+      "@nestjs/cli",
+      "@types/bcrypt",
+      "@types/express",
+      "@types/jest",
+      "@types/node",
+      "@types/passport-jwt",
+      "@types/uuid",
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser",
+      "eslint",
+      "jest",
+      "prisma",
+      "ts-jest",
+      "ts-node",
+      "typescript"
+    ]
+  },
+  {
+    "path": "./apps/e2e/package.json",
+    "name": "@vexel/e2e",
+    "private": true,
+    "scripts": {
+      "test": "playwright test --project=operator --project=admin --grep-invert='@nightly'",
+      "test:local": "playwright test --project=operator --project=admin --grep-invert='@nightly'",
+      "test:headed": "playwright test --headed --project=operator --grep-invert='@nightly'",
+      "test:ui": "playwright test --ui",
+      "test:public": "OPERATOR_BASE=https://vexel.alshifalab.pk ADMIN_BASE=https://vexel.alshifalab.pk playwright test --project=operator --grep-invert='@nightly'",
+      "e2e:smoke": "playwright test --grep='@smoke' --project=operator --project=admin",
+      "e2e:auth": "playwright test --grep='@auth' --project=operator --project=admin",
+      "e2e:admin": "playwright test --project=admin",
+      "e2e:operator": "playwright test --project=operator --grep='@operator'",
+      "e2e:lims": "playwright test --project=operator --grep='@lims'",
+      "e2e:documents": "playwright test --project=operator --grep='@documents'",
+      "e2e:tenancy": "playwright test --grep='@tenancy'",
+      "e2e:security": "playwright test --grep='@security'",
+      "e2e:nightly": "playwright test --project=operator --project=admin",
+      "e2e:headed": "playwright test --headed --grep-invert='@nightly'",
+      "e2e:debug": "PWDEBUG=1 playwright test --headed --project=operator",
+      "e2e:report": "playwright show-report",
+      "report": "playwright show-report"
+    },
+    "dependencies": [],
+    "devDependencies": [
+      "@playwright/test",
+      "@types/node",
+      "typescript"
+    ]
+  },
+  {
+    "path": "./apps/mobile/package.json",
+    "name": "@vexel/mobile",
+    "private": true,
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web",
+      "lint": "expo lint",
+      "typecheck": "tsc --noEmit"
+    },
+    "dependencies": [
+      "expo",
+      "expo-constants",
+      "expo-router",
+      "expo-status-bar",
+      "react",
+      "react-native",
+      "react-native-safe-area-context",
+      "react-native-screens"
+    ],
+    "devDependencies": [
+      "@types/react",
+      "babel-preset-expo",
+      "eslint-config-expo",
+      "typescript"
+    ]
+  },
+  {
+    "path": "./apps/operator/package.json",
+    "name": "@vexel/operator",
+    "private": true,
+    "scripts": {
+      "dev": "next dev -p 3000",
+      "build": "next build",
+      "start": "next start -p 3000",
+      "lint": "next lint",
+      "ui:color-lint": "bash -c 'result=$(grep -rn \"#[0-9a-fA-F]\\{3,8\\}\\|bg-\\[#\\|text-\\[#\" src --include=\"*.tsx\" --include=\"*.ts\" | grep -v globals.css | grep -v \"components/sidebar.tsx\" | grep -v \"app/(protected)/encounters/\"); if [ -n \"$result\" ]; then echo \"Hard-coded colors found:\"; echo \"$result\"; exit 1; fi; echo \"No hard-coded hex colors found.\"; exit 0'"
+    },
+    "dependencies": [
+      "@radix-ui/react-alert-dialog",
+      "@radix-ui/react-checkbox",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-label",
+      "@radix-ui/react-select",
+      "@radix-ui/react-separator",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-tooltip",
+      "@tanstack/react-query",
+      "@vexel/sdk",
+      "@vexel/theme",
+      "@vexel/ui-system",
+      "autoprefixer",
+      "class-variance-authority",
+      "clsx",
+      "lucide-react",
+      "next",
+      "next-themes",
+      "postcss",
+      "react",
+      "react-dom",
+      "sonner",
+      "tailwind-merge",
+      "tailwindcss",
+      "uuid"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "@types/react",
+      "@types/react-dom",
+      "@types/uuid",
+      "typescript"
+    ]
+  },
+  {
+    "path": "./apps/worker/package.json",
+    "name": "@vexel/worker",
+    "private": true,
+    "scripts": {
+      "build": "tsc",
+      "dev": "ts-node src/main.ts",
+      "start": "node dist/main.js"
+    },
+    "dependencies": [
+      "@aws-sdk/client-s3",
+      "@prisma/client",
+      "bullmq",
+      "ioredis"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "prisma",
+      "ts-node",
+      "typescript"
+    ]
+  },
+  {
+    "path": "./package.json",
+    "name": "vexel",
+    "private": true,
+    "scripts": {
+      "build": "turbo run build",
+      "dev": "turbo run dev",
+      "lint": "turbo run lint",
+      "mcp:playwright": "./scripts/playwright-mcp.sh",
+      "mcp:playwright:install-runtime-libs": "./scripts/playwright-runtime-libs.sh",
+      "mcp:playwright:install-browsers": "pnpm mcp:playwright:install-runtime-libs && pnpm --filter @vexel/e2e exec playwright install chromium",
+      "ui:color-lint": "node scripts/ui-color-lint.mjs",
+      "sdk:generate": "pnpm --filter @vexel/contracts sdk:generate",
+      "check:admin-openapi-parity": "node scripts/check-admin-openapi-parity.js",
+      "mock:api": "docker compose --profile mock up mock-api mock-gateway",
+      "dev:ui-mock": "NEXT_PUBLIC_API_URL=http://127.0.0.1:9031 turbo run dev --filter=@vexel/admin --filter=@vexel/operator",
+      "dev:full": "docker compose up -d",
+      "mock:smoke": "node scripts/mock-smoke.js"
+    },
+    "dependencies": [
+      "@prisma/client"
+    ],
+    "devDependencies": [
+      "@playwright/mcp",
+      "eslint",
+      "eslint-config-next",
+      "prisma",
+      "turbo"
+    ]
+  },
+  {
+    "path": "./packages/contracts/package.json",
+    "name": "@vexel/contracts",
+    "private": true,
+    "scripts": {
+      "sdk:generate": "openapi-typescript openapi.yaml -o ../sdk/src/generated/api.d.ts && node scripts/generate-client.js"
+    },
+    "dependencies": [],
+    "devDependencies": [
+      "openapi-typescript"
+    ]
+  },
+  {
+    "path": "./packages/sdk/package.json",
+    "name": "@vexel/sdk",
+    "private": true,
+    "scripts": {
+      "build": "tsc --noEmit",
+      "test": "jest"
+    },
+    "dependencies": [
+      "openapi-fetch"
+    ],
+    "devDependencies": [
+      "openapi-typescript",
+      "typescript"
+    ]
+  },
+  {
+    "path": "./packages/theme/package.json",
+    "name": "@vexel/theme",
+    "private": true,
+    "scripts": {},
+    "dependencies": [
+      "class-variance-authority",
+      "clsx",
+      "tailwind-merge"
+    ],
+    "devDependencies": []
+  },
+  {
+    "path": "./packages/ui-system/package.json",
+    "name": "@vexel/ui-system",
+    "private": true,
+    "scripts": {},
+    "dependencies": [
+      "class-variance-authority",
+      "clsx",
+      "tailwind-merge"
+    ],
+    "devDependencies": []
+  },
+  {
+    "path": "./scripts/mock-gateway/package.json",
+    "name": "mock-gateway",
+    "private": null,
+    "scripts": {},
+    "dependencies": [],
+    "devDependencies": []
+  }
+]

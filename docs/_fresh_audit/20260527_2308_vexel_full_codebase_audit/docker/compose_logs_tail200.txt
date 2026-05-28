@@ -1,0 +1,615 @@
+redis-1  | 1:C 27 May 2026 20:39:03.109 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis-1  | 1:C 27 May 2026 20:39:03.110 * Redis version=7.4.8, bits=64, commit=00000000, modified=0, pid=1, just started
+redis-1  | 1:C 27 May 2026 20:39:03.110 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+redis-1  | 1:M 27 May 2026 20:39:03.111 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+redis-1  | 1:M 27 May 2026 20:39:03.111 * monotonic clock: POSIX clock_gettime
+pdf-1    | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1    |       Setting HTTP status code 200.
+pdf-1    | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1    |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1    | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+redis-1  | 1:M 27 May 2026 20:39:03.113 * Running mode=standalone, port=6379.
+redis-1  | 1:M 27 May 2026 20:39:03.114 * Server initialized
+redis-1  | 1:M 27 May 2026 20:39:03.114 * Ready to accept connections tcp
+redis-1  | 1:M 27 May 2026 20:47:42.064 * 100 changes in 300 seconds. Saving...
+redis-1  | 1:M 27 May 2026 20:47:42.065 * Background saving started by pid 644
+redis-1  | 644:C 27 May 2026 20:47:42.072 * DB saved on disk
+redis-1  | 644:C 27 May 2026 20:47:42.072 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1  | 1:M 27 May 2026 20:47:42.166 * Background saving terminated with success
+redis-1  | 1:M 27 May 2026 20:52:43.082 * 100 changes in 300 seconds. Saving...
+redis-1  | 1:M 27 May 2026 20:52:43.083 * Background saving started by pid 1009
+redis-1  | 1009:C 27 May 2026 20:52:43.090 * DB saved on disk
+pdf-1    |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1    | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1    |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1788ms
+pdf-1    | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1    |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1    | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1    |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1    | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1    |       Setting HTTP status code 200.
+pdf-1    | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1    |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1    | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1    |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1    | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1    |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1709ms
+pdf-1    | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1    |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1    | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1    |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+postgres-1  | 
+postgres-1  | PostgreSQL Database directory appears to contain a database; Skipping initialization
+redis-1     | 1009:C 27 May 2026 20:52:43.091 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 20:52:43.184 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 21:03:42.075 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 21:03:42.076 * Background saving started by pid 1796
+redis-1     | 1796:C 27 May 2026 21:03:42.084 * DB saved on disk
+redis-1     | 1796:C 27 May 2026 21:03:42.085 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 21:03:42.177 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 21:16:12.114 * 100 changes in 300 seconds. Saving...
+admin-1  |    ▲ Next.js 15.5.18
+postgres-1  | 
+postgres-1  | 2026-05-27 20:39:04.012 UTC [1] LOG:  starting PostgreSQL 16.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+postgres-1  | 2026-05-27 20:39:04.013 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+pdf-1       |       Setting HTTP status code 200.
+admin-1     |    - Local:        http://674dcf51ec5f:3001
+postgres-1  | 2026-05-27 20:39:04.013 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+postgres-1  | 2026-05-27 20:39:04.017 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+admin-1     |    - Network:      http://674dcf51ec5f:3001
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+admin-1     | 
+admin-1     |  ✓ Starting...
+admin-1     |  ✓ Ready in 550ms
+operator-1  |    ▲ Next.js 15.5.15
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+postgres-1  | 2026-05-27 20:39:04.052 UTC [28] LOG:  database system shutdown was interrupted; last known up at 2026-05-14 13:36:56 UTC
+postgres-1  | 2026-05-27 20:39:04.209 UTC [28] LOG:  database system was not properly shut down; automatic recovery in progress
+postgres-1  | 2026-05-27 20:39:04.255 UTC [28] LOG:  redo starts at 0/88C4EC8
+postgres-1  | 2026-05-27 20:39:04.291 UTC [28] LOG:  invalid record length at 0/88C6198: expected at least 24, got 0
+postgres-1  | 2026-05-27 20:39:04.291 UTC [28] LOG:  redo done at 0/88C6120 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.05 s
+postgres-1  | 2026-05-27 20:39:04.302 UTC [26] LOG:  checkpoint starting: end-of-recovery immediate wait
+postgres-1  | 2026-05-27 20:39:04.336 UTC [26] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.024 s, sync=0.003 s, total=0.036 s; sync files=4, longest=0.001 s, average=0.001 s; distance=4 kB, estimate=4 kB; lsn=0/88C6198, redo lsn=0/88C6198
+operator-1  |    - Local:        http://fa907fd270ca:3000
+operator-1  |    - Network:      http://fa907fd270ca:3000
+postgres-1  | 2026-05-27 20:39:04.343 UTC [1] LOG:  database system is ready to accept connections
+operator-1  | 
+postgres-1  | 2026-05-27 20:44:04.436 UTC [26] LOG:  checkpoint starting: time
+operator-1  |  ✓ Starting...
+postgres-1  | 2026-05-27 20:44:05.296 UTC [26] LOG:  checkpoint complete: wrote 9 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.817 s, sync=0.021 s, total=0.860 s; sync files=8, longest=0.019 s, average=0.003 s; distance=40 kB, estimate=40 kB; lsn=0/88D0480, redo lsn=0/88D0448
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.8046ms
+postgres-1  | 2026-05-27 20:49:04.395 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 20:49:04.528 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.109 s, sync=0.003 s, total=0.133 s; sync files=2, longest=0.003 s, average=0.002 s; distance=6 kB, estimate=37 kB; lsn=0/88D1D38, redo lsn=0/88D1D00
+operator-1  |  ✓ Ready in 588ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+postgres-1  | 2026-05-27 20:54:04.628 UTC [26] LOG:  checkpoint starting: time
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1552ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+postgres-1  | 2026-05-27 20:54:26.221 UTC [26] LOG:  checkpoint complete: wrote 216 buffers (1.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=21.573 s, sync=0.008 s, total=21.593 s; sync files=59, longest=0.003 s, average=0.001 s; distance=1309 kB, estimate=1309 kB; lsn=0/8A1A860, redo lsn=0/8A19288
+postgres-1  | 2026-05-27 20:59:04.315 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 20:59:04.430 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.116 s; sync files=2, longest=0.002 s, average=0.002 s; distance=7 kB, estimate=1179 kB; lsn=0/8A1B170, redo lsn=0/8A1B138
+postgres-1  | 2026-05-27 21:04:04.521 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:04:04.635 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=8 kB, estimate=1062 kB; lsn=0/8A1D2E0, redo lsn=0/8A1D2A8
+postgres-1  | 2026-05-27 21:09:04.735 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:09:05.455 UTC [26] LOG:  checkpoint complete: wrote 8 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.705 s, sync=0.006 s, total=0.720 s; sync files=6, longest=0.005 s, average=0.001 s; distance=32 kB, estimate=959 kB; lsn=0/8A253D8, redo lsn=0/8A253A0
+postgres-1  | 2026-05-27 21:14:04.526 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:14:04.641 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.001 s, total=0.116 s; sync files=2, longest=0.001 s, average=0.001 s; distance=3 kB, estimate=863 kB; lsn=0/8A26200, redo lsn=0/8A261C8
+postgres-1  | 2026-05-27 21:19:04.739 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:19:04.855 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.116 s; sync files=2, longest=0.002 s, average=0.002 s; distance=4 kB, estimate=777 kB; lsn=0/8A272E0, redo lsn=0/8A272A8
+postgres-1  | 2026-05-27 21:24:04.938 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:24:05.052 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=4 kB, estimate=700 kB; lsn=0/8A28670, redo lsn=0/8A28638
+redis-1     | 1:M 27 May 2026 21:16:12.115 * Background saving started by pid 2698
+redis-1     | 2698:C 27 May 2026 21:16:12.122 * DB saved on disk
+redis-1     | 2698:C 27 May 2026 21:16:12.123 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 21:16:12.216 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 21:29:12.089 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 21:29:12.090 * Background saving started by pid 3626
+redis-1     | 3626:C 27 May 2026 21:29:12.097 * DB saved on disk
+redis-1     | 3626:C 27 May 2026 21:29:12.098 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 21:29:12.191 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 21:41:42.107 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 21:41:42.108 * Background saving started by pid 4519
+redis-1     | 4519:C 27 May 2026 21:41:42.116 * DB saved on disk
+postgres-1  | 2026-05-27 21:29:04.148 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:29:04.263 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=5 kB, estimate=630 kB; lsn=0/8A29CF0, redo lsn=0/8A29CB8
+postgres-1  | 2026-05-27 21:34:04.361 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:34:05.081 UTC [26] LOG:  checkpoint complete: wrote 8 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.706 s, sync=0.006 s, total=0.721 s; sync files=6, longest=0.004 s, average=0.001 s; distance=29 kB, estimate=570 kB; lsn=0/8A31408, redo lsn=0/8A313D0
+postgres-1  | 2026-05-27 21:39:04.181 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:39:04.296 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=3 kB, estimate=514 kB; lsn=0/8A32100, redo lsn=0/8A320C8
+postgres-1  | 2026-05-27 21:44:04.393 UTC [26] LOG:  checkpoint starting: time
+redis-1     | 4519:C 27 May 2026 21:41:42.117 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 21:41:42.209 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 21:55:12.187 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 21:55:12.188 * Background saving started by pid 5484
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.2368ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+redis-1     | 5484:C 27 May 2026 21:55:12.195 * DB saved on disk
+redis-1     | 5484:C 27 May 2026 21:55:12.196 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+postgres-1  | 2026-05-27 21:44:04.507 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.114 s; sync files=2, longest=0.002 s, average=0.002 s; distance=3 kB, estimate=463 kB; lsn=0/8A330B0, redo lsn=0/8A33078
+postgres-1  | 2026-05-27 21:49:04.605 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:49:04.718 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.002 s, total=0.114 s; sync files=2, longest=0.001 s, average=0.001 s; distance=4 kB, estimate=417 kB; lsn=0/8A34310, redo lsn=0/8A342D8
+postgres-1  | 2026-05-27 21:54:04.818 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:54:04.933 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.116 s; sync files=2, longest=0.002 s, average=0.002 s; distance=5 kB, estimate=375 kB; lsn=0/8A35860, redo lsn=0/8A35828
+postgres-1  | 2026-05-27 21:59:05.031 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 21:59:05.447 UTC [26] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.403 s, sync=0.003 s, total=0.416 s; sync files=5, longest=0.002 s, average=0.001 s; distance=29 kB, estimate=341 kB; lsn=0/8A3D050, redo lsn=0/8A3D018
+postgres-1  | 2026-05-27 22:04:05.545 UTC [26] LOG:  checkpoint starting: time
+redis-1     | 1:M 27 May 2026 21:55:12.289 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 22:08:12.216 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 22:08:12.217 * Background saving started by pid 6420
+redis-1     | 6420:C 27 May 2026 22:08:12.224 * DB saved on disk
+redis-1     | 6420:C 27 May 2026 22:08:12.225 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 22:08:12.318 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 22:21:42.231 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 22:21:42.231 * Background saving started by pid 7393
+redis-1     | 7393:C 27 May 2026 22:21:42.238 * DB saved on disk
+redis-1     | 7393:C 27 May 2026 22:21:42.238 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 22:21:42.332 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 22:34:42.212 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 22:34:42.213 * Background saving started by pid 8329
+redis-1     | 8329:C 27 May 2026 22:34:42.220 * DB saved on disk
+redis-1     | 8329:C 27 May 2026 22:34:42.221 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 22:34:42.313 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 22:47:42.331 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 22:47:42.332 * Background saving started by pid 9265
+redis-1     | 9265:C 27 May 2026 22:47:42.339 * DB saved on disk
+postgres-1  | 2026-05-27 22:04:05.661 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.005 s, total=0.116 s; sync files=2, longest=0.004 s, average=0.003 s; distance=3 kB, estimate=307 kB; lsn=0/8A3DC70, redo lsn=0/8A3DC38
+postgres-1  | 2026-05-27 22:09:05.753 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:09:05.867 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=3 kB, estimate=277 kB; lsn=0/8A3EBB0, redo lsn=0/8A3EB78
+redis-1     | 9265:C 27 May 2026 22:47:42.339 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.2304ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+redis-1     | 1:M 27 May 2026 22:47:42.433 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 22:59:12.293 * 100 changes in 300 seconds. Saving...
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1967ms
+redis-1     | 1:M 27 May 2026 22:59:12.294 * Background saving started by pid 10085
+redis-1     | 10085:C 27 May 2026 22:59:12.301 * DB saved on disk
+redis-1     | 10085:C 27 May 2026 22:59:12.302 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 22:59:12.395 * Background saving terminated with success
+redis-1     | 1:M 27 May 2026 23:12:12.368 * 100 changes in 300 seconds. Saving...
+redis-1     | 1:M 27 May 2026 23:12:12.368 * Background saving started by pid 11019
+redis-1     | 11019:C 27 May 2026 23:12:12.375 * DB saved on disk
+redis-1     | 11019:C 27 May 2026 23:12:12.376 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1     | 1:M 27 May 2026 23:12:12.469 * Background saving terminated with success
+worker-1    | 🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render, ops-backup
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+worker-1    | (node:1) Warning: NodeVersionSupportWarning: The AWS SDK for JavaScript (v3)
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+postgres-1  | 2026-05-27 22:14:05.948 UTC [26] LOG:  checkpoint starting: time
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+postgres-1  | 2026-05-27 22:14:06.063 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=4 kB, estimate=249 kB; lsn=0/8A3FD70, redo lsn=0/8A3FD38
+postgres-1  | 2026-05-27 22:19:05.128 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:19:05.243 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=5 kB, estimate=225 kB; lsn=0/8A41250, redo lsn=0/8A41218
+postgres-1  | 2026-05-27 22:24:05.336 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:24:05.751 UTC [26] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.403 s, sync=0.004 s, total=0.416 s; sync files=5, longest=0.004 s, average=0.001 s; distance=28 kB, estimate=205 kB; lsn=0/8A48618, redo lsn=0/8A485E0
+postgres-1  | 2026-05-27 22:29:05.851 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:29:05.967 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.004 s, total=0.117 s; sync files=2, longest=0.003 s, average=0.002 s; distance=2 kB, estimate=185 kB; lsn=0/8A491A0, redo lsn=0/8A49168
+postgres-1  | 2026-05-27 22:34:06.061 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:34:06.175 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=3 kB, estimate=167 kB; lsn=0/8A4A048, redo lsn=0/8A49FF8
+postgres-1  | 2026-05-27 22:39:06.265 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:39:06.381 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.116 s; sync files=2, longest=0.002 s, average=0.002 s; distance=4 kB, estimate=151 kB; lsn=0/8A4B170, redo lsn=0/8A4B138
+postgres-1  | 2026-05-27 22:44:06.467 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:44:06.581 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.114 s; sync files=2, longest=0.002 s, average=0.002 s; distance=5 kB, estimate=136 kB; lsn=0/8A4C5B8, redo lsn=0/8A4C580
+postgres-1  | 2026-05-27 22:49:06.676 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:49:06.793 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.117 s; sync files=2, longest=0.002 s, average=0.002 s; distance=5 kB, estimate=123 kB; lsn=0/8A4DCB8, redo lsn=0/8A4DC80
+postgres-1  | 2026-05-27 22:54:06.888 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:54:07.304 UTC [26] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.403 s, sync=0.004 s, total=0.416 s; sync files=5, longest=0.003 s, average=0.001 s; distance=26 kB, estimate=113 kB; lsn=0/8A54528, redo lsn=0/8A544F0
+postgres-1  | 2026-05-27 22:59:06.404 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 22:59:06.519 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=3 kB, estimate=102 kB; lsn=0/8A55330, redo lsn=0/8A552F8
+postgres-1  | 2026-05-27 23:04:06.618 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 23:04:06.734 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.116 s; sync files=2, longest=0.002 s, average=0.002 s; distance=4 kB, estimate=92 kB; lsn=0/8A563E8, redo lsn=0/8A563B0
+postgres-1  | 2026-05-27 23:09:06.833 UTC [26] LOG:  checkpoint starting: time
+minio-1     | MinIO Object Storage Server
+minio-1     | Copyright: 2015-2026 MinIO, Inc.
+minio-1     | License: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html
+postgres-1  | 2026-05-27 23:09:06.947 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.114 s; sync files=2, longest=0.003 s, average=0.002 s; distance=4 kB, estimate=83 kB; lsn=0/8A57790, redo lsn=0/8A57758
+worker-1    | versions published after the first week of January 2027
+postgres-1  | 2026-05-27 23:14:07.042 UTC [26] LOG:  checkpoint starting: time
+worker-1    | will require node >=22. You are running node v20.20.2.
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+minio-1     | Version: RELEASE.2025-09-07T16-13-09Z (go1.24.6 linux/amd64)
+minio-1     | 
+minio-1     | API: https://vexel.alshifalab.pk 
+minio-1     | WebUI: http://172.25.0.2:9001 http://127.0.0.1:9001  
+minio-1     | 
+minio-1     | Docs: https://docs.min.io
+worker-1    | 
+postgres-1  | 2026-05-27 23:14:07.157 UTC [26] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=5 kB, estimate=76 kB; lsn=0/8A58E20, redo lsn=0/8A58DE8
+postgres-1  | 2026-05-27 23:19:07.204 UTC [26] LOG:  checkpoint starting: time
+postgres-1  | 2026-05-27 23:19:07.621 UTC [26] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.404 s, sync=0.002 s, total=0.417 s; sync files=5, longest=0.002 s, average=0.001 s; distance=30 kB, estimate=71 kB; lsn=0/8A606C8, redo lsn=0/8A60690
+worker-1    | To continue receiving updates to AWS services, bug fixes,
+worker-1    | and security updates please upgrade to node >=22.
+worker-1    | 
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.2074ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+worker-1    | More information can be found at: https://a.co/c895JFp
+worker-1    | (Use `node --trace-warnings ...` to show where the warning was created)
+worker-1    | ✅ Worker connected to Redis
+worker-1    | ✅ Storage bucket 'vexel-documents' exists
+worker-1    | [document-render] correlationId=44112671-83fe-4c52-8ded-91b8860f6b58 docId=07861822-c2d3-4334-8205-b4eeb0aae1f6 fetch_doc_ms=31 type=RECEIPT
+worker-1    | [document-render] correlationId=4fe49ad4-4563-474f-b732-c6e4ddad2226 docId=c39871cf-6ee2-4640-b493-a83cbc9f1f46 fetch_doc_ms=5 type=LAB_REPORT
+worker-1    | [document-render] correlationId=44112671-83fe-4c52-8ded-91b8860f6b58 docId=07861822-c2d3-4334-8205-b4eeb0aae1f6 pdf_render_ms=3102 bytes=86276
+worker-1    | [document-render] correlationId=4fe49ad4-4563-474f-b732-c6e4ddad2226 docId=c39871cf-6ee2-4640-b493-a83cbc9f1f46 pdf_render_ms=2796 bytes=75218
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1656ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1591ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+worker-1    | [document-render] correlationId=44112671-83fe-4c52-8ded-91b8860f6b58 docId=07861822-c2d3-4334-8205-b4eeb0aae1f6 storage_upload_ms=96 key=system/07861822-c2d3-4334-8205-b4eeb0aae1f6/report.pdf
+worker-1    | [document-render] correlationId=4fe49ad4-4563-474f-b732-c6e4ddad2226 docId=c39871cf-6ee2-4640-b493-a83cbc9f1f46 storage_upload_ms=81 key=system/c39871cf-6ee2-4640-b493-a83cbc9f1f46/report.pdf
+worker-1    | [document-render] correlationId=44112671-83fe-4c52-8ded-91b8860f6b58 docId=07861822-c2d3-4334-8205-b4eeb0aae1f6 auto_published type=RECEIPT total_ms=3286
+worker-1    | [document-render] Job 1 completed
+worker-1    | [document-render] correlationId=4fe49ad4-4563-474f-b732-c6e4ddad2226 docId=c39871cf-6ee2-4640-b493-a83cbc9f1f46 auto_published type=LAB_REPORT total_ms=2968
+worker-1    | [document-render] Job 2 completed
+worker-1    | [document-render] correlationId=2ad89370-5143-43a5-b5e8-eed241b30ea2 docId=bc41d14c-1df0-47a3-9c86-40b333aceece fetch_doc_ms=34 type=RECEIPT
+worker-1    | [document-render] correlationId=2ad89370-5143-43a5-b5e8-eed241b30ea2 docId=bc41d14c-1df0-47a3-9c86-40b333aceece pdf_render_ms=154 bytes=88109
+worker-1    | [document-render] correlationId=2ad89370-5143-43a5-b5e8-eed241b30ea2 docId=bc41d14c-1df0-47a3-9c86-40b333aceece storage_upload_ms=31 key=system/bc41d14c-1df0-47a3-9c86-40b333aceece/report.pdf
+worker-1    | [document-render] correlationId=2ad89370-5143-43a5-b5e8-eed241b30ea2 docId=bc41d14c-1df0-47a3-9c86-40b333aceece auto_published type=RECEIPT total_ms=273
+worker-1    | [document-render] Job 3 completed
+worker-1    | [document-render] correlationId=ba3ee5c7-f980-40e4-b19c-209f56c3746b docId=30b8aa08-f837-4ee0-9cca-5fcc76d2ede5 fetch_doc_ms=6 type=LAB_REPORT
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.2177ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+worker-1    | [document-render] correlationId=ba3ee5c7-f980-40e4-b19c-209f56c3746b docId=30b8aa08-f837-4ee0-9cca-5fcc76d2ede5 pdf_render_ms=120 bytes=75213
+worker-1    | [document-render] correlationId=ba3ee5c7-f980-40e4-b19c-209f56c3746b docId=30b8aa08-f837-4ee0-9cca-5fcc76d2ede5 storage_upload_ms=32 key=system/30b8aa08-f837-4ee0-9cca-5fcc76d2ede5/report.pdf
+worker-1    | [document-render] correlationId=ba3ee5c7-f980-40e4-b19c-209f56c3746b docId=30b8aa08-f837-4ee0-9cca-5fcc76d2ede5 auto_published type=LAB_REPORT total_ms=218
+worker-1    | [document-render] Job 4 completed
+worker-1    | [document-render] correlationId=0d4d73d0-cf9d-457b-a371-eb520d440d7e docId=f962d312-f966-4e56-938e-97f8a5750fdf fetch_doc_ms=5 type=RECEIPT
+worker-1    | [document-render] correlationId=0d4d73d0-cf9d-457b-a371-eb520d440d7e docId=f962d312-f966-4e56-938e-97f8a5750fdf pdf_render_ms=213 bytes=89308
+worker-1    | [document-render] correlationId=0d4d73d0-cf9d-457b-a371-eb520d440d7e docId=f962d312-f966-4e56-938e-97f8a5750fdf storage_upload_ms=34 key=system/f962d312-f966-4e56-938e-97f8a5750fdf/report.pdf
+worker-1    | [document-render] correlationId=afc887e2-3ae6-4d69-b38b-f8ca143e37ee docId=ceb6e0a9-b4c0-45d8-a7f3-fd45ad10a3f9 fetch_doc_ms=21 type=LAB_REPORT
+worker-1    | [document-render] correlationId=0d4d73d0-cf9d-457b-a371-eb520d440d7e docId=f962d312-f966-4e56-938e-97f8a5750fdf auto_published type=RECEIPT total_ms=302
+worker-1    | [document-render] Job 5 completed
+worker-1    | [document-render] correlationId=afc887e2-3ae6-4d69-b38b-f8ca143e37ee docId=ceb6e0a9-b4c0-45d8-a7f3-fd45ad10a3f9 pdf_render_ms=81 bytes=76328
+worker-1    | [document-render] correlationId=afc887e2-3ae6-4d69-b38b-f8ca143e37ee docId=ceb6e0a9-b4c0-45d8-a7f3-fd45ad10a3f9 storage_upload_ms=26 key=system/ceb6e0a9-b4c0-45d8-a7f3-fd45ad10a3f9/report.pdf
+worker-1    | [document-render] correlationId=afc887e2-3ae6-4d69-b38b-f8ca143e37ee docId=ceb6e0a9-b4c0-45d8-a7f3-fd45ad10a3f9 auto_published type=LAB_REPORT total_ms=277
+worker-1    | [document-render] Job 6 completed
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1851ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1976ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.2592ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.2468ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1709ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.1824ms
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditEventsController {/api/audit-events}:[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/audit-events, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mRolesController {/api/roles}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles/permissions, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles/:id, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mJobsController {/api/jobs}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/jobs, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/jobs/failed, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/jobs/failed-count, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/jobs/:id\:retry, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPatientsController {/api/patients}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/patients, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/patients, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/patients/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/patients/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEncountersController {/api/encounters}:[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:order-lab, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:collect-specimen, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:receive-specimen, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:result, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:verify, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:publish-report, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:cancel, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id/financials, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:collect-due, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:apply-discount, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDocumentsController {/api/documents}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/receipt\:generate, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/report\:generate, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/:id\:publish, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/:id/download, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/:id/render, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mResultsController {/api/results}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/pending, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/submitted, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/:orderedTestId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/:orderedTestId\:save, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/:orderedTestId\:submit, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/:orderedTestId\:submit-and-verify, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSampleCollectionController {/api}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sample-collection/worklist, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:encounterId\:collect-specimens, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:encounterId\:postpone-specimen, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:encounterId\:receive-specimens, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mVerificationController {/api/verification}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/verification/encounters/pending, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/verification/encounters/:encounterId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/verification/encounters/:encounterId\:verify, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/verification/encounters/:encounterId\:return-for-correction, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOpdController {/api/opd}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/doctors, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/doctors/:doctorId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/doctors, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/doctors/:doctorId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/createRegistration, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/recordIntake, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/publishPrescription, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/finalizeEncounter, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/cancelEncounter, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/generateReceipt, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId/prescription, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId/prescription/file, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId/receipt, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId/receipt/file, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/schedules, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/schedules, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/schedules/:scheduleId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/schedules/:scheduleId, DELETE} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/availability, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/reschedule, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/check-in, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/start-consultation, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/complete, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/cancel, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/no-show, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/mark-waiting, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/start-consultation, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/complete, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/cancel, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/vitals, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/vitals, POST} route[39m[38;5;3m +8ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note/sign, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription/sign, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription/mark-printed, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/payments, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/issue, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/void, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/payments, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/receipt, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppointmentsController {/api/opd}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:reschedule, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:check-in, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:start-consultation, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:complete, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:cancel, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:mark-no-show, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId\:mark-waiting, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId\:start-consultation, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId\:complete, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId\:cancel, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/vitals, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/vitals, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note\:sign, POST} route[39m[38;5;3m +2ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription\:sign, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription\:mark-printed, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBillingController {/api/opd/billing}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices, GET} route[39m[38;5;3m +2ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/payments, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId\:issue, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId\:void, POST} route[39m[38;5;3m +3ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId\:record-payment, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId\:generate-receipt, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOpsController {/api/ops}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/dashboard, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/runs, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/runs/:id, GET} route[39m[38;5;3m +2ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/runs/:id/logs, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/backups/full\:run, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/backups/tenant\:export, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/restores/full\:dryRun, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/restores/full\:run, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/healthcheck\:run, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/schedules, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/schedules\:create, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/schedules/:id\:update, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/schedules/:id\:toggle, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets\:create, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets/:id\:update, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets/:id\:toggle, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets/:id\:test, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAccountController {/api}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/account/me, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/account/me, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/account/change-password, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/navigation, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/landing, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/admin/templates}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/clone, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/new-version, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/activate, POST} route[39m[38;5;3m +4ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/archive, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/preview, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/layout, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/layout, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplateBlueprintsController {/api/admin/template-blueprints}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/template-blueprints, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/template-blueprints/provision-defaults, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTestTemplateMapsController {/api/admin/catalog/tests}:[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/templates, GET} route[39m[38;5;3m +2ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/templates, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTestTemplateMapsController {/api/catalog/tests}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/templates, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/templates, PUT} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/27/2026, 8:39:27 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +449ms[39m
+api-1       | 🚀 Vexel API running on port 3000

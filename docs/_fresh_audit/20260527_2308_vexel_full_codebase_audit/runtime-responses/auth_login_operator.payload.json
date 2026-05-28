@@ -1,0 +1,23 @@
+{
+  "tokenType": "Bearer",
+  "expiresIn": 3600,
+  "jwtPayload": {
+    "sub": "a3e45944-1031-4bcd-9980-54093c672750",
+    "email": "operator@demo.vexel.pk",
+    "tenantId": "system",
+    "isSuperAdmin": false,
+    "roles": [
+      "operator"
+    ],
+    "permissions": [
+      "catalog.read",
+      "patient.manage",
+      "encounter.manage",
+      "result.enter",
+      "document.generate",
+      "account.profile.read-self",
+      "account.profile.update-self",
+      "account.password.change-self"
+    ]
+  }
+}

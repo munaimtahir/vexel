@@ -1,0 +1,6 @@
+total 88
+drwxrwxr-x  3 munaim munaim  4096 Mar  6 21:18 .
+drwxrwxr-x  9 munaim munaim  4096 May 27 20:42 ..
+drwxrwxr-x 28 munaim munaim  4096 Mar 29 22:24 migrations
+-rw-rw-r--  1 munaim munaim 46793 Mar 29 22:24 schema.prisma
+-rw-rw-r--  1 munaim munaim 26058 Mar 29 22:27 seed.ts

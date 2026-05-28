@@ -1,0 +1,125 @@
+
+> vexel@0.1.0 lint /home/munaim/srv/apps/vexel
+> turbo run lint
+
+• turbo 2.8.10
+• Packages in scope: @vexel/admin, @vexel/api, @vexel/contracts, @vexel/e2e, @vexel/mobile, @vexel/operator, @vexel/sdk, @vexel/theme, @vexel/ui-system, @vexel/worker
+• Running lint in 10 packages
+• Remote caching disabled
+@vexel/api:lint: cache miss, executing 9c8e08e289e4a26e
+@vexel/mobile:lint: cache miss, executing c06a06c6ab25f60e
+@vexel/admin:lint: cache hit, replaying logs 80a27630b7bf3e06
+@vexel/admin:lint: 
+@vexel/admin:lint: 
+@vexel/admin:lint: > @vexel/admin@0.1.0 lint /home/munaim/srv/apps/vexel/apps/admin
+@vexel/admin:lint: > next lint
+@vexel/admin:lint: 
+@vexel/admin:lint: [33m`next lint` is deprecated and will be removed in Next.js 16.
+@vexel/admin:lint: [39mFor new projects, use [1mcreate-next-app[22m to choose your preferred linter.
+@vexel/admin:lint: For existing projects, migrate to the ESLint CLI:
+@vexel/admin:lint: [1mnpx @next/codemod@canary next-lint-to-eslint-cli .[22m
+@vexel/admin:lint: 
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/audit/page.tsx[39m
+@vexel/admin:lint: [33m40[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/panels/page.tsx[39m
+@vexel/admin:lint: [33m43[39m:[33m32[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/parameters/page.tsx[39m
+@vexel/admin:lint: [33m39[39m:[33m32[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/reference-ranges/page.tsx[39m
+@vexel/admin:lint: [33m95[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: [33m326[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useMemo has a missing dependency: 'getTestName'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/sample-types/page.tsx[39m
+@vexel/admin:lint: [33m36[39m:[33m32[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/catalog/tests/page.tsx[39m
+@vexel/admin:lint: [33m60[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/opd/providers/page.tsx[39m
+@vexel/admin:lint: [33m102[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/opd/schedules/page.tsx[39m
+@vexel/admin:lint: [33m137[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'loadProviders'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: [33m145[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'loadSchedules'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/ops/backups/page.tsx[39m
+@vexel/admin:lint: [33m56[39m:[33m50[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36m./src/app/(protected)/templates/page.tsx[39m
+@vexel/admin:lint: [33m51[39m:[33m32[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/admin:lint: 
+@vexel/admin:lint: [36minfo[39m  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+@vexel/operator:lint: cache hit, replaying logs 6d50b7e37d31c8c9
+@vexel/operator:lint: 
+@vexel/operator:lint: 
+@vexel/operator:lint: > @vexel/operator@0.1.0 lint /home/munaim/srv/apps/vexel/apps/operator
+@vexel/operator:lint: > next lint
+@vexel/operator:lint: 
+@vexel/operator:lint: [33m`next lint` is deprecated and will be removed in Next.js 16.
+@vexel/operator:lint: [39mFor new projects, use [1mcreate-next-app[22m to choose your preferred linter.
+@vexel/operator:lint: For existing projects, migrate to the ESLint CLI:
+@vexel/operator:lint: [1mnpx @next/codemod@canary next-lint-to-eslint-cli .[22m
+@vexel/operator:lint: 
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/encounters/[id]/page.tsx[39m
+@vexel/operator:lint: [33m70[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has missing dependencies: 'fetchDocuments' and 'fetchEncounter'. Either include them or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: [33m81[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has missing dependencies: 'reportDoc' and 'startPolling'. Either include them or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/encounters/[id]/publish/page.tsx[39m
+@vexel/operator:lint: [33m67[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has missing dependencies: 'fetchDocument' and 'startPolling'. Either include them or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/encounters/[id]/reports/page.tsx[39m
+@vexel/operator:lint: [33m38[39m:[33m37[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/encounters/[id]/verify/page.tsx[39m
+@vexel/operator:lint: [33m41[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'startPolling'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/results/[orderedTestId]/page.tsx[39m
+@vexel/operator:lint: [33m147[39m:[33m9[39m  [33m[1mWarning[22m[39m: The 'saveCurrentValues' function makes the dependencies of useCallback Hook (at line 278) change on every render. To fix this, wrap the definition of 'saveCurrentValues' in its own useCallback() Hook.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: [33m203[39m:[33m9[39m  [33m[1mWarning[22m[39m: The 'handleSubmit' function makes the dependencies of useCallback Hook (at line 278) change on every render. To fix this, wrap the definition of 'handleSubmit' in its own useCallback() Hook.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: [33m228[39m:[33m9[39m  [33m[1mWarning[22m[39m: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 231) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: [33m228[39m:[33m9[39m  [33m[1mWarning[22m[39m: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 235) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: [33m246[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'localValues'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx[39m
+@vexel/operator:lint: [33m225[39m:[33m9[39m  [33m[1mWarning[22m[39m: The 'saveTest' function makes the dependencies of useCallback Hook (at line 348) change on every render. To fix this, wrap the definition of 'saveTest' in its own useCallback() Hook.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: [33m256[39m:[33m9[39m  [33m[1mWarning[22m[39m: The 'handleSubmit' function makes the dependencies of useCallback Hook (at line 348) change on every render. To fix this, wrap the definition of 'handleSubmit' in its own useCallback() Hook.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: [33m315[39m:[33m9[39m  [33m[1mWarning[22m[39m: The 'parameters' logical expression could make the dependencies of useMemo Hook (at line 318) change on every render. To fix this, wrap the initialization of 'parameters' in its own useMemo() Hook.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36m./src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx[39m
+@vexel/operator:lint: [33m120[39m:[33m6[39m  [33m[1mWarning[22m[39m: React Hook useEffect has a missing dependency: 'loadDetail'. Either include it or remove the dependency array.  [90m[1mreact-hooks/exhaustive-deps[22m[39m
+@vexel/operator:lint: 
+@vexel/operator:lint: [36minfo[39m  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+@vexel/api:lint: 
+@vexel/api:lint: > @vexel/api@0.1.0 lint /home/munaim/srv/apps/vexel/apps/api
+@vexel/api:lint: > eslint "{src,test}/**/*.ts"
+@vexel/api:lint: 
+@vexel/mobile:lint: 
+@vexel/mobile:lint: > @vexel/mobile@1.0.0 lint /home/munaim/srv/apps/vexel/apps/mobile
+@vexel/mobile:lint: > expo lint
+@vexel/mobile:lint: 
+@vexel/mobile:lint: Using legacy ESLint config. Consider upgrading to flat config.
+@vexel/mobile:lint: 
+@vexel/mobile:lint: /home/munaim/srv/apps/vexel/apps/mobile/app/(tabs)/_layout.tsx
+@vexel/mobile:lint:   1:26  error  Unable to resolve path to module '@expo/vector-icons'  import/no-unresolved
+@vexel/mobile:lint: 
+@vexel/mobile:lint: /home/munaim/srv/apps/vexel/apps/mobile/app/(tabs)/index.tsx
+@vexel/mobile:lint:   1:40  error  Unable to resolve path to module '@expo/vector-icons'  import/no-unresolved
+@vexel/mobile:lint: 
+@vexel/mobile:lint: ✖ 2 problems (2 errors, 0 warnings)
+@vexel/mobile:lint: 
+@vexel/mobile:lint:  ELIFECYCLE  Command failed with exit code 1.
+@vexel/mobile:lint: ERROR: command finished with error: command (/home/munaim/srv/apps/vexel/apps/mobile) /home/munaim/.local/share/pnpm/.tools/@pnpm+exe/9.15.4/bin/pnpm run lint exited (1)
+@vexel/mobile#lint: command (/home/munaim/srv/apps/vexel/apps/mobile) /home/munaim/.local/share/pnpm/.tools/@pnpm+exe/9.15.4/bin/pnpm run lint exited (1)
+
+ Tasks:    2 successful, 4 total
+Cached:    2 cached, 4 total
+  Time:    5.223s 
+Failed:    @vexel/mobile#lint
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Command failed with exit code 1.

@@ -1,0 +1,4 @@
+packages/sdk/src/index.ts:5: * No direct fetch/axios calls to backend endpoints are allowed.
+packages/sdk/README.md:26:- **NEVER** import axios or fetch directly in Next.js apps.
+apps/admin/src/lib/api-client.ts:5: * Uses @vexel/sdk only. No direct fetch/axios to backend endpoints.
+apps/operator/src/lib/api-client.ts:3: * IMPORTANT: Uses @vexel/sdk only. No direct fetch/axios.

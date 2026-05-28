@@ -1,0 +1,1 @@
+Admin/OpenAPI parity check PASS. Checked 163 endpoint references across 61 files.

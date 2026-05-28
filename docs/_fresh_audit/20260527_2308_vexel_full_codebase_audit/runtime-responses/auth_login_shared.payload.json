@@ -1,0 +1,16 @@
+{
+  "tokenType": "Bearer",
+  "expiresIn": 3600,
+  "jwtPayload": {
+    "sub": "6a52b18d-d0a4-4013-b924-4c2e85b0c9a9",
+    "email": "shared@example.com",
+    "tenantId": "system",
+    "isSuperAdmin": false,
+    "roles": [],
+    "permissions": [
+      "account.profile.read-self",
+      "account.profile.update-self",
+      "account.password.change-self"
+    ]
+  }
+}

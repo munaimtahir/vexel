@@ -1,0 +1,11 @@
+apps/operator/next-env.d.ts:6:// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+apps/operator/Dockerfile:15:ARG NEXT_PUBLIC_API_URL=http://127.0.0.1:9021
+apps/admin/next-env.d.ts:6:// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+apps/admin/Dockerfile:15:ARG NEXT_PUBLIC_API_URL=http://127.0.0.1:9021
+apps/admin/src/app/globals.css:5:@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap');
+apps/operator/src/app/globals.css:5:@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap');
+apps/operator/src/lib/api-client.ts:7:const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:9021';
+apps/admin/src/app/(protected)/ops/storage/page.tsx:23:    { key: 'endpoint', label: 'Endpoint URL (optional)', placeholder: 'https://s3.amazonaws.com' },
+apps/admin/src/app/(protected)/branding/page.tsx:174:              placeholder="https://..." hint="Used in both lab report and receipt headers when logo layout is selected." />
+apps/admin/src/app/(protected)/branding/page.tsx:209:              placeholder="https://... (stamp, signature, or logo image)"
+apps/admin/src/lib/api-client.ts:9:const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:9021';

@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-correlation-id: audit-verify2-1779925257-16586
+Content-Type: application/json; charset=utf-8
+Content-Length: 129
+ETag: W/"81-DoLxJ5lNcDNJ1VorjcDgBPbUsiM"
+Date: Wed, 27 May 2026 23:40:57 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+

@@ -1,0 +1,2 @@
+✨ openapi-typescript 7.13.0
+🚀 openapi.yaml → docs/_fresh_audit/20260527_2308_vexel_full_codebase_audit/contracts/openapi/sdk_expected_api.d.ts [769.3ms]
