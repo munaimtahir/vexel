@@ -1,17 +1,32 @@
 name: Manual E2E Smoke and Release CI
 
-on:
+'on':
   workflow_dispatch:
-    inputs:
-      reason:
-        description: 'Reason for running manual CI verification'
-        required: false
-        default: 'Routine post-development validation'
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9.15.4'
+  DATABASE_URL: postgresql://vexel:vexel_password_2026@localhost:5433/vexel_dev
+  REDIS_URL: redis://localhost:6380
+  JWT_SECRET: vexel-dev-secret-change-in-production
+  TENANCY_DEV_HEADER_ENABLED: 'true'
+  NEXT_PUBLIC_API_URL: http://127.0.0.1:9021
+  ADMIN_BASE_URL: http://127.0.0.1:9030
+  OPERATOR_BASE_URL: http://127.0.0.1:9032
+  PDF_BASE_URL: http://127.0.0.1:9022
+  API_HEALTH_URL: http://127.0.0.1:9021/health
+  API_DEEP_HEALTH_URL: http://127.0.0.1:9021/health/deep
+  PDF_HEALTH_URL: http://127.0.0.1:9022/health
+  PLAYWRIGHT_BASE_URL: http://127.0.0.1:9032
 
 jobs:
   validate:
-    name: Build & E2E Validation
+    name: Manual MVP E2E Smoke Validation
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     services:
       postgres:
@@ -39,23 +54,90 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
-          version: 9.15.4
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Enable Corepack
+        shell: bash
+        run: |
+          corepack enable
+          pnpm --version
+
+      - name: Prepare evidence directories
+        id: evidence
+        shell: bash
+        run: |
+          STAMP="$(date -u +'%Y%m%d_%H%M')"
+          EVIDENCE_DIR="docs/_implementation/${STAMP}_manual_e2e_ci_playwright"
+          mkdir -p "$EVIDENCE_DIR" "$EVIDENCE_DIR/logs" "$EVIDENCE_DIR/docker"
+          echo "dir=$EVIDENCE_DIR" >> "$GITHUB_OUTPUT"
+          cat > "$EVIDENCE_DIR/01_WORKFLOW_CHANGE_SUMMARY.md" <<'EOF'
+          # Manual E2E CI Playwright Workflow Change Summary
+
+          This manual workflow validates the Vexel MVP smoke path after a development session.
+
+          Scope:
+          - API
+          - Worker
+          - PDF service
+          - Admin UI
+          - Operator UI
+          - Contracts
+          - SDK
+          - LIMS smoke workflow
+
+          Non-MVP exclusions:
+          - Mobile app is not a release gate.
+          - OPD is not a release gate.
+
+          Trigger policy:
+          - Manual only via `workflow_dispatch`.
+          - No `push` trigger.
+          - No `pull_request` trigger.
+          EOF
+          cat > "$EVIDENCE_DIR/03_EXPECTED_MANUAL_TRIGGER.md" <<'EOF'
+          # Expected Manual Trigger
+
+          Run from GitHub UI:
+
+          Actions → Manual E2E Smoke and Release CI → Run workflow
+
+          Or with GitHub CLI:
+
+          ```bash
+          gh workflow run manual-e2e.yml
+          ```
+          EOF
+          cat > "$EVIDENCE_DIR/04_ARTIFACTS_DOCUMENTATION.md" <<'EOF'
+          # Artifact Documentation
+
+          The workflow uploads available artifacts from:
+
+          - `playwright-report/`
+          - `test-results/`
+          - `blob-report/`
+          - `docs/_implementation/*_manual_e2e_ci_playwright/`
+          - Docker logs captured under the evidence directory
+          - Any generated `*.log` files
+
+          Playwright traces, screenshots, and videos are normally stored under `test-results/` when enabled by the Playwright config.
+          EOF
 
       - name: Get pnpm store directory
         shell: bash
         run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_ENV
+          echo "STORE_PATH=$(pnpm store path)" >> "$GITHUB_ENV"
 
       - name: Cache pnpm dependencies
         uses: actions/cache@v4
@@ -65,39 +147,262 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee "${{ steps.evidence.outputs.dir }}/logs/01_pnpm_install.log"
 
-      - name: Run Schema Generate
-        run: pnpm --filter @vexel/api exec prisma generate
-        env:
-          DATABASE_URL: postgresql://vexel:vexel_password_2026@localhost:5433/vexel_dev
+      - name: Install Playwright browsers
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm exec playwright install --with-deps 2>&1 | tee "${{ steps.evidence.outputs.dir }}/logs/02_playwright_install.log"
 
-      - name: Run Build
-        run: pnpm build
-        env:
-          DATABASE_URL: postgresql://vexel:vexel_password_2026@localhost:5433/vexel_dev
-          NEXT_PUBLIC_API_URL: http://127.0.0.1:9021
+      - name: Prisma generate
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter @vexel/api exec prisma generate 2>&1 | tee "${{ steps.evidence.outputs.dir }}/logs/03_prisma_generate.log"
 
-      - name: Run Linter
-        run: pnpm lint
+      - name: Build MVP workspace
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee "${{ steps.evidence.outputs.dir }}/logs/04_pnpm_build.log"
 
-      - name: Run SDK Tests
-        run: pnpm --filter @vexel/sdk test
+      - name: Run lint
+        shell: bash
+        run: |
+          set -o pipefail
+          if pnpm run | grep -Eq '^\s*lint'; then
+            pnpm lint 2>&1 | tee "${{ steps.evidence.outputs.dir }}/logs/05_pnpm_lint.log"
+          else
+            echo "No root lint script found; skipping lint." | tee "${{ steps.evidence.outputs.dir }}/logs/05_pnpm_lint.log"
+          fi
 
-      - name: Run API Tests
-        run: pnpm --filter @vexel/api test
-        env:
-          DATABASE_URL: postgresql://vexel:vexel_password_2026@localhost:5433/vexel_dev
-          REDIS_URL: redis://localhost:6380
-          JWT_SECRET: vexel-dev-secret-change-in-production
+      - name: Run SDK tests
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter @vexel/sdk test 2>&1 | tee "${{ steps.evidence.outputs.dir }}/logs/06_sdk_tests.log"
 
-      - name: Upload Logs and Assets on Failure
-        if: failure()
+      - name: Run API tests
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter @vexel/api test 2>&1 | tee "${{ steps.evidence.outputs.dir }}/logs/07_api_tests.log"
+
+      - name: Start E2E stack
+        shell: bash
+        run: |
+          set -o pipefail
+          COMPOSE_FILE=""
+          for candidate in \
+            docker-compose.e2e.yml \
+            docker-compose.e2e.yaml \
+            compose.e2e.yml \
+            compose.e2e.yaml \
+            docker-compose.yml \
+            docker-compose.yaml \
+            compose.yml \
+            compose.yaml; do
+            if [ -f "$candidate" ]; then
+              COMPOSE_FILE="$candidate"
+              break
+            fi
+          done
+
+          if [ -n "$COMPOSE_FILE" ]; then
+            echo "Using Docker Compose file: $COMPOSE_FILE" | tee "${{ steps.evidence.outputs.dir }}/logs/08_stack_start.log"
+            echo "$COMPOSE_FILE" > "${{ steps.evidence.outputs.dir }}/docker/compose_file_used.txt"
+            docker compose -f "$COMPOSE_FILE" up -d --build 2>&1 | tee -a "${{ steps.evidence.outputs.dir }}/logs/08_stack_start.log"
+          else
+            echo "No Docker Compose file found. Trying repository E2E/dev stack scripts if present." | tee "${{ steps.evidence.outputs.dir }}/logs/08_stack_start.log"
+            STACK_SCRIPT=""
+            for script_name in start:e2e e2e:start dev:e2e smoke:start; do
+              if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['$script_name'] ? 0 : 1)"; then
+                STACK_SCRIPT="$script_name"
+                break
+              fi
+            done
+
+            if [ -z "$STACK_SCRIPT" ]; then
+              echo "No Docker Compose file or root E2E stack startup script was found." | tee -a "${{ steps.evidence.outputs.dir }}/logs/08_stack_start.log"
+              echo "The workflow cannot safely invent app startup commands. Add a compose file or one of: start:e2e, e2e:start, dev:e2e, smoke:start." | tee -a "${{ steps.evidence.outputs.dir }}/logs/08_stack_start.log"
+              exit 1
+            fi
+
+            echo "Using root script: pnpm $STACK_SCRIPT" | tee -a "${{ steps.evidence.outputs.dir }}/logs/08_stack_start.log"
+            nohup pnpm "$STACK_SCRIPT" > "${{ steps.evidence.outputs.dir }}/logs/08_stack_process.log" 2>&1 &
+          fi
+
+      - name: Wait for MVP services
+        shell: bash
+        run: |
+          set -o pipefail
+          wait_for_url() {
+            local label="$1"
+            local url="$2"
+            local required="$3"
+            echo "Waiting for $label at $url" | tee -a "${{ steps.evidence.outputs.dir }}/logs/09_readiness.log"
+            for attempt in {1..60}; do
+              if curl -fsS "$url" >/dev/null 2>&1; then
+                echo "$label is reachable." | tee -a "${{ steps.evidence.outputs.dir }}/logs/09_readiness.log"
+                return 0
+              fi
+              sleep 2
+            done
+            if [ "$required" = "required" ]; then
+              echo "$label did not become reachable: $url" | tee -a "${{ steps.evidence.outputs.dir }}/logs/09_readiness.log"
+              return 1
+            fi
+            echo "$label was not reachable, but it is optional for this readiness probe: $url" | tee -a "${{ steps.evidence.outputs.dir }}/logs/09_readiness.log"
+            return 0
+          }
+
+          wait_for_url "API health" "$API_HEALTH_URL" required
+          wait_for_url "PDF health" "$PDF_HEALTH_URL" required
+          wait_for_url "Admin UI" "$ADMIN_BASE_URL" required
+          wait_for_url "Operator UI" "$OPERATOR_BASE_URL" required
+          wait_for_url "API deep health" "$API_DEEP_HEALTH_URL" optional
+
+      - name: Resolve Playwright smoke command
+        id: smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          COMMAND=""
+          for script_name in e2e:smoke smoke:e2e playwright:smoke test:e2e:smoke test:smoke; do
+            if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['$script_name'] ? 0 : 1)"; then
+              COMMAND="pnpm $script_name"
+              break
+            fi
+          done
+
+          if [ -z "$COMMAND" ]; then
+            for workspace in apps/e2e tests/e2e e2e; do
+              if [ -f "$workspace/package.json" ]; then
+                for script_name in e2e:smoke smoke:e2e playwright:smoke test:e2e:smoke test:smoke; do
+                  if node -e "const p=require('./$workspace/package.json'); process.exit(p.scripts && p.scripts['$script_name'] ? 0 : 1)"; then
+                    PKG_NAME="$(node -e "console.log(require('./$workspace/package.json').name || '')")"
+                    if [ -n "$PKG_NAME" ]; then
+                      COMMAND="pnpm --filter $PKG_NAME $script_name"
+                    else
+                      COMMAND="pnpm --dir $workspace $script_name"
+                    fi
+                    break 2
+                  fi
+                done
+              fi
+            done
+          fi
+
+          if [ -z "$COMMAND" ] && ls playwright.config.* >/dev/null 2>&1; then
+            COMMAND="pnpm exec playwright test --grep @smoke"
+          fi
+
+          if [ -z "$COMMAND" ]; then
+            echo "Could not resolve a Playwright smoke command from repository scripts or Playwright config." | tee "${{ steps.evidence.outputs.dir }}/logs/10_playwright_command_resolution.log"
+            echo "Add a real smoke script such as e2e:smoke, smoke:e2e, playwright:smoke, test:e2e:smoke, or test:smoke." | tee -a "${{ steps.evidence.outputs.dir }}/logs/10_playwright_command_resolution.log"
+            exit 1
+          fi
+
+          echo "command=$COMMAND" >> "$GITHUB_OUTPUT"
+          echo "$COMMAND" | tee "${{ steps.evidence.outputs.dir }}/playwright_smoke_command.txt"
+          echo "Resolved Playwright smoke command: $COMMAND" | tee "${{ steps.evidence.outputs.dir }}/logs/10_playwright_command_resolution.log"
+
+      - name: Run Playwright smoke suite
+        shell: bash
+        run: |
+          set -o pipefail
+          echo "Running: ${{ steps.smoke.outputs.command }}" | tee "${{ steps.evidence.outputs.dir }}/logs/11_playwright_smoke.log"
+          ${{ steps.smoke.outputs.command }} 2>&1 | tee -a "${{ steps.evidence.outputs.dir }}/logs/11_playwright_smoke.log"
+
+      - name: Capture Docker logs
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          if [ -f "${{ steps.evidence.outputs.dir }}/docker/compose_file_used.txt" ]; then
+            COMPOSE_FILE="$(cat "${{ steps.evidence.outputs.dir }}/docker/compose_file_used.txt")"
+            docker compose -f "$COMPOSE_FILE" ps > "${{ steps.evidence.outputs.dir }}/docker/compose_ps.txt" 2>&1
+            docker compose -f "$COMPOSE_FILE" logs --no-color > "${{ steps.evidence.outputs.dir }}/docker/compose_logs.txt" 2>&1
+          else
+            docker ps -a > "${{ steps.evidence.outputs.dir }}/docker/docker_ps.txt" 2>&1
+            docker logs postgres 2> "${{ steps.evidence.outputs.dir }}/docker/postgres_logs.txt" || true
+            docker logs redis 2> "${{ steps.evidence.outputs.dir }}/docker/redis_logs.txt" || true
+          fi
+
+      - name: Write final verdict document
+        if: always()
+        shell: bash
+        run: |
+          STATUS="${{ job.status }}"
+          cat > "${{ steps.evidence.outputs.dir }}/02_COMMANDS_RUN.md" <<EOF
+          # Commands Run
+
+          - pnpm install --frozen-lockfile
+          - pnpm exec playwright install --with-deps
+          - pnpm --filter @vexel/api exec prisma generate
+          - pnpm build
+          - pnpm lint, when available
+          - pnpm --filter @vexel/sdk test
+          - pnpm --filter @vexel/api test
+          - Docker Compose stack startup, when a compose file is present
+          - Service readiness checks for API, PDF, Admin UI, Operator UI, and optional deep health
+          - Playwright smoke command resolved at runtime from repository scripts/config
+          EOF
+          cat > "${{ steps.evidence.outputs.dir }}/05_FINAL_VERDICT.md" <<EOF
+          # Final Verdict
+
+          Workflow job status: ${STATUS}
+
+          Verdict rules:
+          - GO: workflow completes successfully and Playwright smoke passes.
+          - CONDITIONAL GO: workflow syntax is complete but manual GitHub run was not executed locally.
+          - NO-GO: workflow fails before completing MVP smoke verification.
+
+          This workflow is manual-only and intentionally excludes non-MVP mobile and OPD gates.
+          EOF
+
+      - name: Upload Playwright report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ci-test-failure-reports
+          name: playwright-html-report
+          if-no-files-found: warn
           path: |
+            playwright-report/
+            **/playwright-report/
+
+      - name: Upload Playwright traces screenshots videos and test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results-traces-screenshots-videos
+          if-no-files-found: warn
+          path: |
+            test-results/
             **/test-results/
-            **/logs/
+            blob-report/
+            **/blob-report/
+
+      - name: Upload Docker logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-logs
+          if-no-files-found: warn
+          path: |
+            ${{ steps.evidence.outputs.dir }}/docker/
+
+      - name: Upload command logs and evidence documents
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-e2e-ci-evidence
+          if-no-files-found: warn
+          path: |
+            ${{ steps.evidence.outputs.dir }}/
             **/*.log
