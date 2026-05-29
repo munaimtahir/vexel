@@ -28,7 +28,9 @@ This is preferred over JWT-only because:
 POST /api/auth/login
 Body: { email, password }
 
-→ Find user by email (status: active)
+→ Resolve tenant from Host/domain (fallback to x-tenant-id in dev)
+→ Verify tenant context is resolved
+→ Find user by email, tenantId, and status: 'active' (never by email alone)
 → bcrypt.compare(password, passwordHash)
 → Sign JWT with { sub, email, tenantId, roles, isSuperAdmin }
 → Generate opaque UUID refresh token
