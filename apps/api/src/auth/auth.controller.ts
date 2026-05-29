@@ -9,6 +9,8 @@ import { Request, Response } from 'express';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { getTenantId } from '../common/tenant-context';
+
 const REFRESH_COOKIE = 'vexel_refresh';
 
 function refreshCookieOptions(secure: boolean, domain?: string) {
@@ -31,11 +33,16 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login' })
   async login(
+    @Req() req: Request,
     @Body() body: { email: string; password: string },
     @Headers(CORRELATION_ID_HEADER) correlationId: string,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const result = await this.authService.login(body.email, body.password, correlationId);
+    const tenantId = getTenantId(req);
+    if (!tenantId) {
+      throw new UnauthorizedException('Tenant context not resolved');
+    }
+    const result = await this.authService.login(body.email, body.password, tenantId, correlationId);
     const domain = process.env.AUTH_COOKIE_DOMAIN;
     const secure = process.env.NODE_ENV === 'production';
     response.cookie(REFRESH_COOKIE, result.refreshToken, refreshCookieOptions(secure, domain));
@@ -71,7 +78,7 @@ export class AuthController {
     @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
     const user = (req as any).user;
-    await this.authService.logout(user.userId, correlationId);
+    await this.authService.logout(user.userId, user.tenantId, correlationId);
     response.clearCookie(REFRESH_COOKIE, { path: '/api/auth' });
   }
 }

@@ -1,0 +1,1 @@
+{"status":"ok","latencyMs":19,"services":{"api":"ok","db":"ok","redis":"ok","worker":"ok","pdf":"ok","storage":"ok","queue":"ok"},"details":{"dbLatencyMs":9,"dbError":null,"redisLatencyMs":17,"redisError":null,"queueDepth":0,"workerLastHeartbeatAt":"2026-05-28T23:32:50.715Z","pdfLatencyMs":13,"pdfHttpStatus":200,"pdfError":null,"storageError":null,"failedJobsCount":0}}

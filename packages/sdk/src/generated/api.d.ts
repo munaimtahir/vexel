@@ -55,6 +55,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/health/deep": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Deep system health check */
+        get: operations["getDeepHealth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -1513,6 +1530,23 @@ export interface paths {
         };
         /** List audit events (with filters) */
         get: operations["listAuditEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/system-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Query structured category-wise system logs */
+        get: operations["getSystemLogs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5363,6 +5397,31 @@ export interface operations {
             };
         };
     };
+    getDeepHealth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deep system health is healthy */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        status?: string;
+                        latencyMs?: number;
+                        services?: Record<string, never>;
+                        details?: Record<string, never>;
+                    };
+                };
+            };
+        };
+    };
     login: {
         parameters: {
             query?: never;
@@ -8689,6 +8748,50 @@ export interface operations {
                     "application/json": {
                         data?: components["schemas"]["AuditEvent"][];
                         pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    getSystemLogs: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                category?: string;
+                level?: string;
+                correlationId?: string;
+                tenantId?: string;
+                search?: string;
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description System logs list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: {
+                            id?: string;
+                            timestamp?: string;
+                            category?: string;
+                            level?: string;
+                            message?: string;
+                            correlationId?: string;
+                            tenantId?: string;
+                            metadata?: Record<string, never>;
+                        }[];
+                        total?: number;
+                        page?: number;
+                        limit?: number;
                     };
                 };
             };

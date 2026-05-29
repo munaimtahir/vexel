@@ -20,8 +20,15 @@ describe('HealthService', () => {
             : null,
         ),
       },
+      jobRun: {
+        count: jest.fn().mockResolvedValue(0),
+      },
+      $queryRaw: jest.fn().mockResolvedValue([{ 1: 1 }]),
     };
-    return { service: new HealthService(prisma as any), prisma };
+    const storageService = {
+      ensureBucket: jest.fn().mockResolvedValue(undefined),
+    };
+    return { service: new HealthService(prisma as any, storageService as any), prisma, storageService };
   }
 
   beforeEach(() => {
@@ -107,5 +114,22 @@ describe('HealthService', () => {
 
     expect(result.status).toBe('degraded');
     expect(result.services.pdf).toBe('down');
+  });
+
+  it('should run deep health probes and return successfully', async () => {
+    ((global as any).fetch as jest.Mock).mockResolvedValueOnce({ ok: true, status: 200 });
+    redisCtor.mockImplementation(() => ({
+      connect: jest.fn().mockResolvedValue(undefined),
+      ping: jest.fn().mockResolvedValue('PONG'),
+      llen: jest.fn().mockResolvedValue(0),
+      disconnect: jest.fn(),
+    }));
+    const { service } = makeService(new Date());
+
+    const result = await service.getDeepHealth();
+    expect(result.status).toBe('ok');
+    expect(result.services.db).toBe('ok');
+    expect(result.services.redis).toBe('ok');
+    expect(result.services.storage).toBe('ok');
   });
 });

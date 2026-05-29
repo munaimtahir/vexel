@@ -1,0 +1,12 @@
+{
+  "module": "LIMS",
+  "workflow": [
+    { "status": "registered", "action": "register", "endpoint": "POST /encounters" },
+    { "status": "lab_ordered", "action": "order-lab", "endpoint": "POST /encounters/{id}:order-lab" },
+    { "status": "specimen_collected", "action": "collect-specimen", "endpoint": "POST /encounters/{id}:collect-specimens" },
+    { "status": "specimen_received", "action": "receive-specimen", "endpoint": "POST /encounters/{id}:receive-specimens" },
+    { "status": "resulted", "action": "enter-result", "endpoint": "POST /results/tests/{id}:save" },
+    { "status": "verified", "action": "verify", "endpoint": "POST /verification/encounters/{id}:verify" },
+    { "status": "published", "action": "publish", "endpoint": "POST /encounters/{id}:publish-report" }
+  ]
+}

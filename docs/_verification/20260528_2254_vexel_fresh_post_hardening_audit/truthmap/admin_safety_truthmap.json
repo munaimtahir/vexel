@@ -1,0 +1,9 @@
+{
+  "safety_mandate": "Admin cannot mutate LIMS state",
+  "verified": true,
+  "evidence": [
+    { "endpoint": "POST /verification/encounters/{id}:verify", "used_by": "operator", "admin_access": false },
+    { "endpoint": "POST /results/tests/{id}:save", "used_by": "operator", "admin_access": false },
+    { "endpoint": "POST /encounters", "used_by": "operator", "admin_access": false }
+  ]
+}

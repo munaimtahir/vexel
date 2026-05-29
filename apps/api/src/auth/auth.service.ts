@@ -29,9 +29,12 @@ export class AuthService {
     private readonly auditService: AuditService,
   ) { }
 
-  async login(email: string, password: string, correlationId?: string) {
+  async login(email: string, password: string, tenantId: string, correlationId?: string) {
+    if (!tenantId) {
+      throw new UnauthorizedException('Tenant context not resolved');
+    }
     const user = await this.prisma.user.findFirst({
-      where: { email, status: 'active' },
+      where: { email, tenantId, status: 'active' },
       include: {
         userRoles: { include: { role: { include: { rolePermissions: true } } } },
         tenant: true,
@@ -109,12 +112,16 @@ export class AuthService {
 
     if (!matchedRecord) throw new UnauthorizedException('Invalid or expired refresh token');
 
+    const user = matchedRecord.user;
+    if (!user || user.status !== 'active') {
+      throw new UnauthorizedException('User is inactive or disabled');
+    }
+
     await this.prisma.refreshToken.update({
       where: { id: matchedRecord.id },
       data: { revokedAt: now },
     });
 
-    const user = matchedRecord.user;
     const roles = user.userRoles.map((ur) => ur.role.name);
     const permissions = Array.from(new Set([
       ...user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
@@ -150,13 +157,13 @@ export class AuthService {
     return { accessToken, refreshToken: newRefreshRaw, expiresIn: 3600, tokenType: 'Bearer' };
   }
 
-  async logout(userId: string, correlationId?: string): Promise<void> {
+  async logout(userId: string, tenantId: string, correlationId?: string): Promise<void> {
     await this.prisma.refreshToken.updateMany({
       where: { userId, revokedAt: null },
       data: { revokedAt: new Date() },
     });
     await this.auditService.log({
-      tenantId: 'system',
+      tenantId,
       actorUserId: userId,
       action: 'auth.logout',
       correlationId,

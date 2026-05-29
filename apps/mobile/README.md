@@ -1,5 +1,9 @@
 # Vexel Mobile (Expo)
 
+> [!NOTE]
+> **NON-MVP / FUTURE MODULE**
+> The mobile app is classified as non-MVP and is excluded from current MVP release gates and validation workflows to ensure focused LIMS web platform delivery.
+
 Quickstart (Ubuntu):
 
 ```bash

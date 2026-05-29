@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "build": "turbo run build --filter=!@vexel/mobile",
+    "dev": "turbo run dev --filter=!@vexel/mobile",
+    "lint": "turbo run lint --filter=!@vexel/mobile",
     "mcp:playwright": "./scripts/playwright-mcp.sh",
     "mcp:playwright:install-runtime-libs": "./scripts/playwright-runtime-libs.sh",
     "mcp:playwright:install-browsers": "pnpm mcp:playwright:install-runtime-libs && pnpm --filter @vexel/e2e exec playwright install chromium",

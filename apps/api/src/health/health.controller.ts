@@ -29,4 +29,10 @@ export class HealthController {
   async getPdfHealth() {
     return this.healthService.getPdfHealth();
   }
+
+  @Get('deep')
+  @ApiOperation({ summary: 'Deep system health check' })
+  async getDeepHealth() {
+    return this.healthService.getDeepHealth();
+  }
 }

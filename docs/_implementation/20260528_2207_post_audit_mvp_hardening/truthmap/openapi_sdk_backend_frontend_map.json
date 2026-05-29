@@ -1,0 +1,2597 @@
+{
+  "generatedAt": "2026-05-27T23:21:07.431983Z",
+  "openapi_path_count": 201,
+  "truthmap_call_count": 282,
+  "missing_openapi_match_count": 7,
+  "calls": [
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/account/page.tsx",
+      "line": 34,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/account/me",
+      "openapi_operationId": "getMyAccountProfile"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/account/page.tsx",
+      "line": 59,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/account/me",
+      "openapi_operationId": "updateMyAccountProfile"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/account/page.tsx",
+      "line": 83,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/account/change-password",
+      "openapi_operationId": "changeMyAccountPassword"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/audit/page.tsx",
+      "line": 21,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/audit-events",
+      "openapi_operationId": "listAuditEvents"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/branding/page.tsx",
+      "line": 106,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/me",
+      "openapi_operationId": "getMe"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/branding/page.tsx",
+      "line": 106,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants",
+      "openapi_operationId": "listTenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/branding/page.tsx",
+      "line": 119,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants/{tenantId}/config",
+      "openapi_operationId": "getTenantConfig"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/branding/page.tsx",
+      "line": 127,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/tenants/{tenantId}/config",
+      "openapi_operationId": "updateTenantConfig"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/import-export/page.tsx",
+      "line": 110,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/import/workbook",
+      "openapi_operationId": "importCatalogWorkbook"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/import-export/page.tsx",
+      "line": 148,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/export-jobs",
+      "openapi_operationId": "createExportJob"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/page.tsx",
+      "line": 16,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/sample-types",
+      "openapi_operationId": "listSampleTypes"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/page.tsx",
+      "line": 17,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters",
+      "openapi_operationId": "listParameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/page.tsx",
+      "line": 18,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests",
+      "openapi_operationId": "listCatalogTests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/page.tsx",
+      "line": 19,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/panels",
+      "openapi_operationId": "listCatalogPanels"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 37,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/panels",
+      "openapi_operationId": "listCatalogPanels"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 48,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/panels/{panelId}/tests",
+      "openapi_operationId": "listPanelTests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 55,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests",
+      "openapi_operationId": "listCatalogTests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 62,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/panels/next-id",
+      "openapi_operationId": "getNextPanelId"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 92,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/panels/{id}",
+      "openapi_operationId": null
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 94,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/panels",
+      "openapi_operationId": "createCatalogPanel"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 104,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/panels/{id}",
+      "openapi_operationId": null
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 125,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/panels/{panelId}/tests",
+      "openapi_operationId": "addPanelTest"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 137,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/panels/{panelId}/tests/{testId}",
+      "openapi_operationId": "removePanelTest"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 33,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters",
+      "openapi_operationId": "listParameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 44,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters/next-id",
+      "openapi_operationId": "getNextParameterId"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 83,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/catalog/parameters/{parameterId}",
+      "openapi_operationId": "updateParameter"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 85,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/parameters",
+      "openapi_operationId": "createParameter"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx",
+      "line": 95,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/parameters/{parameterId}",
+      "openapi_operationId": "deleteParameter"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 77,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/reference-ranges",
+      "openapi_operationId": "listReferenceRanges"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 87,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters",
+      "openapi_operationId": "listParameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 88,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests",
+      "openapi_operationId": "listCatalogTests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 102,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/reference-ranges",
+      "openapi_operationId": "listReferenceRanges"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 179,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/catalog/reference-ranges/{id}",
+      "openapi_operationId": "updateReferenceRange"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 181,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/reference-ranges",
+      "openapi_operationId": "createReferenceRange"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx",
+      "line": 193,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/reference-ranges/{id}",
+      "openapi_operationId": "deleteReferenceRange"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/sample-types",
+      "openapi_operationId": "listSampleTypes"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 41,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/sample-types/next-id",
+      "openapi_operationId": "getNextSampleTypeId"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 70,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/sample-types/{id}",
+      "openapi_operationId": "updateSampleType"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 72,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/sample-types",
+      "openapi_operationId": "createSampleType"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx",
+      "line": 82,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/sample-types/{id}",
+      "openapi_operationId": "deleteSampleType"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 52,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests",
+      "openapi_operationId": "listCatalogTests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 67,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/operator/catalog/tests/top",
+      "openapi_operationId": "operatorCatalogTestsTop"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 84,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests/{testId}/parameters",
+      "openapi_operationId": "listTestParameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 91,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/parameters",
+      "openapi_operationId": "listParameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 98,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests",
+      "openapi_operationId": "listCatalogTests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 103,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests/{testId}/parameters",
+      "openapi_operationId": "listTestParameters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 124,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests/next-id",
+      "openapi_operationId": "getNextTestId"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 168,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/tests/{id}",
+      "openapi_operationId": null
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 170,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/tests",
+      "openapi_operationId": "createCatalogTest"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 188,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/tests/{id}",
+      "openapi_operationId": null
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 209,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/catalog/tests/{testId}/parameters",
+      "openapi_operationId": "addTestParameter"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 221,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/catalog/tests/{testId}/parameters/{parameterId}",
+      "openapi_operationId": "removeTestParameter"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 239,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/tests/{testId}/parameters/{parameterId}",
+      "openapi_operationId": "updateTestParameterMapping"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 243,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/catalog/tests/{testId}/parameters/{parameterId}",
+      "openapi_operationId": "updateTestParameterMapping"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 274,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/operator/catalog/tests/search",
+      "openapi_operationId": "operatorCatalogTestsSearch"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 319,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/admin/catalog/tests/top",
+      "openapi_operationId": "adminSetCatalogTopTests"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 66,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/health",
+      "openapi_operationId": "getHealth"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 67,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs/failed-count",
+      "openapi_operationId": "getFailedJobsCount"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 68,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/audit-events",
+      "openapi_operationId": "listAuditEvents"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 69,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients",
+      "openapi_operationId": "listPatients"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 70,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters",
+      "openapi_operationId": "listEncounters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 71,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 72,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs",
+      "openapi_operationId": "listJobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 73,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs",
+      "openapi_operationId": "listJobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 74,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs",
+      "openapi_operationId": "listJobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 75,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs/failed",
+      "openapi_operationId": "listFailedJobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 76,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/audit-events",
+      "openapi_operationId": "listAuditEvents"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/dashboard/page.tsx",
+      "line": 77,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants",
+      "openapi_operationId": "listTenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/documents/page.tsx",
+      "line": 31,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/documents/page.tsx",
+      "line": 48,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/documents/{id}:publish",
+      "openapi_operationId": "publishDocument"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/encounters/page.tsx",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters",
+      "openapi_operationId": "listEncounters"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 83,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/me",
+      "openapi_operationId": "getMe"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 84,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants",
+      "openapi_operationId": "listTenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 85,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/feature-flags/definitions",
+      "openapi_operationId": "getFeatureFlagDefinitions"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 101,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants/{tenantId}/feature-flags",
+      "openapi_operationId": "getTenantFeatureFlags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 117,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/tenants/{tenantId}/feature-flags",
+      "openapi_operationId": "setTenantFeatureFlags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/feature-flags/page.tsx",
+      "line": 138,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/tenants/{tenantId}/feature-flags",
+      "openapi_operationId": "setTenantFeatureFlags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 26,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs",
+      "openapi_operationId": "listJobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/jobs/failed",
+      "openapi_operationId": "listFailedJobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 28,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/import-jobs",
+      "openapi_operationId": "listImportJobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 29,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/export-jobs",
+      "openapi_operationId": "listExportJobs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 50,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/jobs/${pendingRetry.id}:retry",
+      "openapi_operationId": null
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 52,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/documents/{id}:publish",
+      "openapi_operationId": "publishDocument"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx",
+      "line": 109,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/doctors",
+      "openapi_operationId": "listOpdDoctors"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx",
+      "line": 150,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/doctors",
+      "openapi_operationId": "createOpdDoctor"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx",
+      "line": 191,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/opd/doctors/{doctorId}",
+      "openapi_operationId": "updateOpdDoctor"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx",
+      "line": 228,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/opd/doctors/{doctorId}",
+      "openapi_operationId": "updateOpdDoctor"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/me",
+      "openapi_operationId": "getMe"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants",
+      "openapi_operationId": "listTenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 42,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants/{tenantId}/feature-flags",
+      "openapi_operationId": "getTenantFeatureFlags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 77,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/tenants/{tenantId}/feature-flags",
+      "openapi_operationId": "setTenantFeatureFlags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx",
+      "line": 94,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/tenants/{tenantId}/feature-flags",
+      "openapi_operationId": "setTenantFeatureFlags"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/[providerId]/page.tsx",
+      "line": 24,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers/{providerId}",
+      "openapi_operationId": "getOpdProvider"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 85,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers",
+      "openapi_operationId": "listOpdProviders"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 118,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/providers",
+      "openapi_operationId": "createOpdProvider"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 150,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/opd/providers/{providerId}",
+      "openapi_operationId": "updateOpdProvider"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 167,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/opd/providers/{providerId}",
+      "openapi_operationId": null
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 104,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers",
+      "openapi_operationId": "listOpdProviders"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 122,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers/{providerId}/schedules",
+      "openapi_operationId": "listOpdProviderSchedules"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 153,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/providers/{providerId}/schedules",
+      "openapi_operationId": "createOpdProviderSchedule"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 178,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/opd/providers/{providerId}/schedules/{scheduleId}",
+      "openapi_operationId": "updateOpdProviderSchedule"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx",
+      "line": 196,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/opd/providers/{providerId}/schedules/{scheduleId}",
+      "openapi_operationId": "deleteOpdProviderSchedule"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/backups/new/page.tsx",
+      "line": 22,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/storage-targets",
+      "openapi_operationId": "listOpsStorageTargets"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/backups/new/page.tsx",
+      "line": 36,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/backups/full:run",
+      "openapi_operationId": "runFullBackup"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/backups/page.tsx",
+      "line": 50,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs",
+      "openapi_operationId": "listOpsRuns"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/logs/page.tsx",
+      "line": 38,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs",
+      "openapi_operationId": "listOpsRuns"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/logs/page.tsx",
+      "line": 54,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs/{id}/logs",
+      "openapi_operationId": "getOpsRunLogs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/logs/page.tsx",
+      "line": 74,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs/{id}",
+      "openapi_operationId": "getOpsRun"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/logs/page.tsx",
+      "line": 75,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs/{id}/logs",
+      "openapi_operationId": "getOpsRunLogs"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/page.tsx",
+      "line": 52,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/dashboard",
+      "openapi_operationId": "getOpsDashboard"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/page.tsx",
+      "line": 62,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/backups/full:run",
+      "openapi_operationId": "runFullBackup"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/page.tsx",
+      "line": 74,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/healthcheck:run",
+      "openapi_operationId": "runHealthcheck"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 46,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs",
+      "openapi_operationId": "listOpsRuns"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 47,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs",
+      "openapi_operationId": "listOpsRuns"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 65,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/restores/full:dryRun",
+      "openapi_operationId": "runRestoreFullDryRun"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 75,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs/{id}",
+      "openapi_operationId": "getOpsRun"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/restore/page.tsx",
+      "line": 96,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/restores/full:run",
+      "openapi_operationId": "runRestoreFull"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx",
+      "line": 40,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/schedules",
+      "openapi_operationId": "listOpsSchedules"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx",
+      "line": 41,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/storage-targets",
+      "openapi_operationId": "listOpsStorageTargets"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx",
+      "line": 53,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/schedules/{id}:toggle",
+      "openapi_operationId": "toggleOpsSchedule"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx",
+      "line": 64,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/schedules:create",
+      "openapi_operationId": "createOpsSchedule"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/storage/page.tsx",
+      "line": 53,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/storage-targets",
+      "openapi_operationId": "listOpsStorageTargets"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/storage/page.tsx",
+      "line": 77,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/storage-targets:create",
+      "openapi_operationId": "createOpsStorageTarget"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/storage/page.tsx",
+      "line": 101,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/storage-targets/{id}:test",
+      "openapi_operationId": "testOpsStorageTarget"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/storage/page.tsx",
+      "line": 115,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/storage-targets/{id}:toggle",
+      "openapi_operationId": "toggleOpsStorageTarget"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/tenants/page.tsx",
+      "line": 40,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/ops/runs",
+      "openapi_operationId": "listOpsRuns"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/ops/tenants/page.tsx",
+      "line": 54,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/ops/backups/tenant:export",
+      "openapi_operationId": "runTenantExport"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/patients/page.tsx",
+      "line": 20,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients",
+      "openapi_operationId": "listPatients"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 26,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/roles",
+      "openapi_operationId": "listRoles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/roles/permissions",
+      "openapi_operationId": "listPermissions"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 39,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/roles",
+      "openapi_operationId": "createRole"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 60,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/roles/{roleId}",
+      "openapi_operationId": "updateRole"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/roles/page.tsx",
+      "line": 69,
+      "sdk_call": "client.DELETE",
+      "method": "DELETE",
+      "path": "/roles/{roleId}",
+      "openapi_operationId": "deleteRole"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/system/health/page.tsx",
+      "line": 15,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/health",
+      "openapi_operationId": "getHealth"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/system/health/page.tsx",
+      "line": 16,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/health/worker",
+      "openapi_operationId": "getWorkerHealth"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/system/health/page.tsx",
+      "line": 17,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/health/pdf",
+      "openapi_operationId": "getPdfHealth"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 397,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/templates/{templateId}",
+      "openapi_operationId": "getPrintTemplate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 414,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/admin/templates/{templateId}",
+      "openapi_operationId": "updatePrintTemplate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 440,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/activate",
+      "openapi_operationId": "activatePrintTemplate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 444,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/archive",
+      "openapi_operationId": "archivePrintTemplate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx",
+      "line": 448,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/new-version",
+      "openapi_operationId": "createTemplateNewVersion"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/[id]/preview/page.tsx",
+      "line": 21,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/preview",
+      "openapi_operationId": "previewPrintTemplate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/new/page.tsx",
+      "line": 42,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/template-blueprints",
+      "openapi_operationId": "listTemplateBlueprints"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/new/page.tsx",
+      "line": 45,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/templates",
+      "openapi_operationId": "listPrintTemplates"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/new/page.tsx",
+      "line": 70,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates",
+      "openapi_operationId": "createPrintTemplate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/page.tsx",
+      "line": 39,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/templates",
+      "openapi_operationId": "listPrintTemplates"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/page.tsx",
+      "line": 59,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/activate",
+      "openapi_operationId": "activatePrintTemplate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/page.tsx",
+      "line": 61,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/templates/{templateId}/archive",
+      "openapi_operationId": "archivePrintTemplate"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/templates/page.tsx",
+      "line": 121,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/admin/template-blueprints/provision-defaults",
+      "openapi_operationId": "provisionDefaultTemplates"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 27,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/tenants",
+      "openapi_operationId": "listTenants"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 37,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/tenants",
+      "openapi_operationId": "createTenant"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 56,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/tenants/{tenantId}",
+      "openapi_operationId": "updateTenant"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 68,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/tenants/{tenantId}",
+      "openapi_operationId": "updateTenant"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/tenants/page.tsx",
+      "line": 87,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/tenants/{tenantId}:enable-lims",
+      "openapi_operationId": "enableLimsForTenant"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 38,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/users",
+      "openapi_operationId": "listUsers"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 39,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/roles",
+      "openapi_operationId": "listRoles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 52,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/users",
+      "openapi_operationId": "createUser"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 61,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/users/{userId}",
+      "openapi_operationId": "updateUser"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 76,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/users/{userId}",
+      "openapi_operationId": "updateUser"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 86,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/users/{userId}/roles",
+      "openapi_operationId": "getUserRoles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/users/page.tsx",
+      "line": 99,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/users/{userId}/roles",
+      "openapi_operationId": "setUserRoles"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/login/page.tsx",
+      "line": 22,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/auth/login",
+      "openapi_operationId": "login"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/lib/use-auth.ts",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/me",
+      "openapi_operationId": "getMe"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/account/page.tsx",
+      "line": 58,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/account/me",
+      "openapi_operationId": "getMyAccountProfile"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/account/page.tsx",
+      "line": 59,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/admin/navigation",
+      "openapi_operationId": "getAdminNavigationSummary"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/account/page.tsx",
+      "line": 92,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/account/me",
+      "openapi_operationId": "updateMyAccountProfile"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/account/page.tsx",
+      "line": 117,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/account/change-password",
+      "openapi_operationId": "changeMyAccountPassword"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx",
+      "line": 38,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx",
+      "line": 40,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/catalog/tests",
+      "openapi_operationId": "listCatalogTests"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx",
+      "line": 64,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:order-lab",
+      "openapi_operationId": "orderLab"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx",
+      "line": 33,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx",
+      "line": 44,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx",
+      "line": 92,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:cancel",
+      "openapi_operationId": "cancelEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx",
+      "line": 29,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx",
+      "line": 51,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx",
+      "line": 74,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents/{id}/download",
+      "openapi_operationId": "downloadDocument"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx",
+      "line": 95,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:publish-report",
+      "openapi_operationId": "publishEncounterReport"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/receive/page.tsx",
+      "line": 25,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/receive/page.tsx",
+      "line": 40,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:receive-specimen",
+      "openapi_operationId": "receiveSpecimenLegacy"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/reports/page.tsx",
+      "line": 23,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/reports/page.tsx",
+      "line": 25,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/results/page.tsx",
+      "line": 33,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/results/page.tsx",
+      "line": 69,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:result",
+      "openapi_operationId": "enterResult"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx",
+      "line": 38,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx",
+      "line": 54,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:collect-specimen",
+      "openapi_operationId": "collectSpecimen"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx",
+      "line": 66,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:receive-specimen",
+      "openapi_operationId": "receiveSpecimenLegacy"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx",
+      "line": 47,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:verify",
+      "openapi_operationId": "verifyEncounterLegacy"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx",
+      "line": 60,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}",
+      "openapi_operationId": "getEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/new/page.tsx",
+      "line": 17,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients",
+      "openapi_operationId": "listPatients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/new/page.tsx",
+      "line": 31,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters",
+      "openapi_operationId": "createEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/encounters/page.tsx",
+      "line": 19,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters",
+      "openapi_operationId": "listEncounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/patients/new/page.tsx",
+      "line": 40,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/patients",
+      "openapi_operationId": "createPatient"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/patients/page.tsx",
+      "line": 17,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients",
+      "openapi_operationId": "listPatients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 92,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters",
+      "openapi_operationId": "listEncounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 119,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters/{encounterId}/financials",
+      "openapi_operationId": "getEncounterFinancials"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 144,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:collect-due",
+      "openapi_operationId": "collectDue"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 170,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:apply-discount",
+      "openapi_operationId": "applyDiscount"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/payments/page.tsx",
+      "line": 194,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:cancel",
+      "openapi_operationId": "cancelEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/print/[id]/page.tsx",
+      "line": 54,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents/{id}/download",
+      "openapi_operationId": "downloadDocument"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/print/[id]/page.tsx",
+      "line": 74,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents/{id}/render",
+      "openapi_operationId": "renderDocument"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 126,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients",
+      "openapi_operationId": "listPatients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 184,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/operator/catalog/tests/top",
+      "openapi_operationId": "operatorCatalogTestsTop"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 211,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/operator/catalog/tests/search",
+      "openapi_operationId": "operatorCatalogTestsSearch"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 328,
+      "sdk_call": "client.PATCH",
+      "method": "PATCH",
+      "path": "/patients/{patientId}",
+      "openapi_operationId": "updatePatient"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 332,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/patients",
+      "openapi_operationId": "createPatient"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 365,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/patients",
+      "openapi_operationId": "createPatient"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 372,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters",
+      "openapi_operationId": "createEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 381,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:order-lab",
+      "openapi_operationId": "orderLab"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 402,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/documents/receipt:generate",
+      "openapi_operationId": "generateReceipt"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx",
+      "line": 433,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/reports/page.tsx",
+      "line": 98,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/reports/page.tsx",
+      "line": 141,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients",
+      "openapi_operationId": "listPatients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/reports/page.tsx",
+      "line": 155,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters",
+      "openapi_operationId": "listEncounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/reports/page.tsx",
+      "line": 201,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents/{id}/download",
+      "openapi_operationId": "downloadDocument"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx",
+      "line": 112,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/{orderedTestId}",
+      "openapi_operationId": "getOrderedTestDetail"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx",
+      "line": 158,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:save",
+      "openapi_operationId": "saveTestResults"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx",
+      "line": 190,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/pending",
+      "openapi_operationId": "getPendingTests"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx",
+      "line": 212,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:submit",
+      "openapi_operationId": "submitTestResults"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 159,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/pending",
+      "openapi_operationId": "getPendingTests"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 161,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/submitted",
+      "openapi_operationId": "getSubmittedTests"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 185,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/{orderedTestId}",
+      "openapi_operationId": "getOrderedTestDetail"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 212,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/{orderedTestId}",
+      "openapi_operationId": "getOrderedTestDetail"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 239,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:save",
+      "openapi_operationId": "saveTestResults"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx",
+      "line": 264,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:submit",
+      "openapi_operationId": "submitTestResults"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/page.tsx",
+      "line": 117,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/pending",
+      "openapi_operationId": "getPendingTests"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/page.tsx",
+      "line": 118,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/submitted",
+      "openapi_operationId": "getSubmittedTests"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/results/page.tsx",
+      "line": 180,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/results/tests/{orderedTestId}:submit",
+      "openapi_operationId": "submitTestResults"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 106,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/sample-collection/worklist",
+      "openapi_operationId": "getSampleCollectionWorklist"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 138,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:collect-specimens",
+      "openapi_operationId": "collectSpecimens"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 160,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:postpone-specimen",
+      "openapi_operationId": "postponeSpecimen"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 182,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:receive-specimens",
+      "openapi_operationId": "receiveSpecimens"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx",
+      "line": 239,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/encounters/{encounterId}:receive-specimens",
+      "openapi_operationId": "receiveSpecimens"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx",
+      "line": 85,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/{encounterId}",
+      "openapi_operationId": "getVerificationEncounterDetail"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx",
+      "line": 100,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/pending",
+      "openapi_operationId": "getVerificationQueue"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx",
+      "line": 143,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx",
+      "line": 179,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/verification/encounters/{encounterId}:verify",
+      "openapi_operationId": "verifyEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/page.tsx",
+      "line": 85,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/pending",
+      "openapi_operationId": "getVerificationQueue"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/page.tsx",
+      "line": 96,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/{encounterId}",
+      "openapi_operationId": "getVerificationEncounterDetail"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/page.tsx",
+      "line": 156,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/verification/encounters/{encounterId}:verify",
+      "openapi_operationId": "verifyEncounter"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/verification/page.tsx",
+      "line": 176,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/verification/encounters/{encounterId}:return-for-correction",
+      "openapi_operationId": "returnEncounterForCorrection"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 63,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/results/tests/pending",
+      "openapi_operationId": "getPendingTests"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 64,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/verification/encounters/pending",
+      "openapi_operationId": "getVerificationQueue"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 65,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 66,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx",
+      "line": 67,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/encounters",
+      "openapi_operationId": "listEncounters"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx",
+      "line": 56,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/appointments/{appointmentId}",
+      "openapi_operationId": "getOpdAppointment"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx",
+      "line": 144,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/visits",
+      "openapi_operationId": "createOpdVisit"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx",
+      "line": 57,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers",
+      "openapi_operationId": "listOpdProviders"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx",
+      "line": 82,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers/{providerId}/availability",
+      "openapi_operationId": "getOpdProviderAvailability"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx",
+      "line": 135,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/appointments",
+      "openapi_operationId": "createOpdAppointment"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx",
+      "line": 47,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/billing/invoices/{invoiceId}",
+      "openapi_operationId": "getOpdInvoice"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx",
+      "line": 68,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/billing/invoices/{invoiceId}/payments",
+      "openapi_operationId": "listOpdInvoicePayments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx",
+      "line": 149,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/billing/invoices/{invoiceId}/payments",
+      "openapi_operationId": null
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/new/page.tsx",
+      "line": 75,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/billing/invoices",
+      "openapi_operationId": "createOpdInvoice"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/page.tsx",
+      "line": 45,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/billing/invoices",
+      "openapi_operationId": "listOpdInvoices"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx",
+      "line": 83,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/encounters/{encounterId}",
+      "openapi_operationId": "getOpdEncounterKmvp"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx",
+      "line": 121,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/encounters/{encounterId}/prescription/file",
+      "openapi_operationId": "downloadOpdEncounterPrescriptionFile"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx",
+      "line": 156,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/commands/publishPrescription",
+      "openapi_operationId": "publishOpdPrescriptionCommand"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/intake/page.tsx",
+      "line": 47,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/encounters/{encounterId}",
+      "openapi_operationId": "getOpdEncounterKmvp"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/[id]/intake/page.tsx",
+      "line": 91,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/commands/recordIntake",
+      "openapi_operationId": "recordOpdIntakeCommand"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx",
+      "line": 76,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/doctors",
+      "openapi_operationId": "listOpdDoctors"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx",
+      "line": 99,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/patients",
+      "openapi_operationId": "listPatients"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx",
+      "line": 134,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/patients",
+      "openapi_operationId": "createPatient"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx",
+      "line": 165,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/commands/createRegistration",
+      "openapi_operationId": "createOpdRegistrationCommand"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/encounters/page.tsx",
+      "line": 52,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/encounters",
+      "openapi_operationId": "listOpdEncountersKmvp"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/providers/[providerId]/availability/page.tsx",
+      "line": 31,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers/{providerId}/availability",
+      "openapi_operationId": "getOpdProviderAvailability"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 75,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits/{visitId}/vitals",
+      "openapi_operationId": "listOpdVisitVitals"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 93,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits/{visitId}/clinical-note",
+      "openapi_operationId": "getOpdVisitClinicalNote"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 130,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits/{visitId}/prescription",
+      "openapi_operationId": "getOpdVisitPrescription"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 175,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits/{visitId}",
+      "openapi_operationId": "getOpdVisit"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 271,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/opd/visits/{visitId}/clinical-note",
+      "openapi_operationId": "upsertOpdVisitClinicalNote"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx",
+      "line": 327,
+      "sdk_call": "client.PUT",
+      "method": "PUT",
+      "path": "/opd/visits/{visitId}/prescription",
+      "openapi_operationId": "upsertOpdVisitPrescription"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/new/page.tsx",
+      "line": 34,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/providers",
+      "openapi_operationId": "listOpdProviders"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/visits/new/page.tsx",
+      "line": 54,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/opd/visits",
+      "openapi_operationId": "createOpdVisit"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/worklist/page.tsx",
+      "line": 63,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/appointments",
+      "openapi_operationId": "listOpdAppointments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/worklist/page.tsx",
+      "line": 95,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/opd/visits",
+      "openapi_operationId": "listOpdVisits"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/login/page.tsx",
+      "line": 27,
+      "sdk_call": "client.POST",
+      "method": "POST",
+      "path": "/auth/login",
+      "openapi_operationId": "login"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/hooks/use-document-polling.ts",
+      "line": 20,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/hooks/use-document-polling.ts",
+      "line": 30,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/documents",
+      "openapi_operationId": "listDocuments"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/hooks/use-feature-flags.ts",
+      "line": 35,
+      "sdk_call": "client.GET",
+      "method": "GET",
+      "path": "/feature-flags/resolved",
+      "openapi_operationId": "getResolvedFeatureFlags"
+    }
+  ],
+  "calls_missing_openapi_match": [
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 92,
+      "method": "PATCH",
+      "path": "/catalog/panels/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx",
+      "line": 104,
+      "method": "DELETE",
+      "path": "/catalog/panels/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 168,
+      "method": "PATCH",
+      "path": "/catalog/tests/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx",
+      "line": 188,
+      "method": "DELETE",
+      "path": "/catalog/tests/{id}"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/jobs/page.tsx",
+      "line": 50,
+      "method": "POST",
+      "path": "/jobs/${pendingRetry.id}:retry"
+    },
+    {
+      "app": "admin",
+      "file": "apps/admin/src/app/(protected)/opd/providers/page.tsx",
+      "line": 167,
+      "method": "DELETE",
+      "path": "/opd/providers/{providerId}"
+    },
+    {
+      "app": "operator",
+      "file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx",
+      "line": 149,
+      "method": "POST",
+      "path": "/opd/billing/invoices/{invoiceId}/payments"
+    }
+  ]
+}

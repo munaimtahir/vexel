@@ -1,0 +1,287 @@
+{"file": "apps/operator/src/app/(protected)/lims/reports/page.tsx:      const { data, error", "method": "GET", "path": '/documents' as any}
+{"file": "apps/operator/src/app/(protected)/lims/reports/page.tsx:      const { data, error", "method": "GET", "path": '/patients' as any}
+{"file": "apps/operator/src/app/(protected)/lims/reports/page.tsx", "method": "GET", "path": '/encounters' as any}
+{"file": "apps/operator/src/app/(protected)/lims/reports/page.tsx", "method": "GET", "path": '/documents/{id}/download'}
+{"file": "apps/operator/src/app/(protected)/lims/verification/page.tsx:      const { data, error", "method": "GET", "path": '/verification/encounters/pending'}
+{"file": "apps/operator/src/app/(protected)/lims/verification/page.tsx:          const { data", "method": "GET", "path": '/verification/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/verification/page.tsx:      const { error", "method": "POST", "path": '/verification/encounters/{encounterId}:verify'}
+{"file": "apps/operator/src/app/(protected)/lims/verification/page.tsx:      const { error", "method": "POST", "path": '/verification/encounters/{encounterId}:return-for-correction'}
+{"file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx:      const { data, error", "method": "GET", "path": '/verification/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx", "method": "GET", "path": '/verification/encounters/pending'}
+{"file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx", "method": "GET", "path": '/documents'}
+{"file": "apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx:      const { error", "method": "POST", "path": '/verification/encounters/{encounterId}:verify'}
+{"file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx:      const { data, error", "method": "GET", "path": '/results/tests/{orderedTestId}'}
+{"file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx:      const { data, error", "method": "POST", "path": '/results/tests/{orderedTestId}:save'}
+{"file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx", "method": "GET", "path": '/results/tests/pending'}
+{"file": "apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx:      const { data, error", "method": "POST", "path": '/results/tests/{orderedTestId}:submit'}
+{"file": "apps/operator/src/app/(protected)/lims/results/page.tsx", "method": "GET", "path": '/results/tests/pending'}
+{"file": "apps/operator/src/app/(protected)/lims/results/page.tsx", "method": "GET", "path": '/results/tests/submitted'}
+{"file": "apps/operator/src/app/(protected)/lims/results/page.tsx:        const { error", "method": "POST", "path": '/results/tests/{orderedTestId}:submit'}
+{"file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx", "method": "GET", "path": '/results/tests/pending'}
+{"file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx", "method": "GET", "path": '/results/tests/submitted'}
+{"file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx", "method": "GET", "path": '/results/tests/{orderedTestId}'}
+{"file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx", "method": "GET", "path": '/results/tests/{orderedTestId}'}
+{"file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx:      const { error", "method": "POST", "path": '/results/tests/{orderedTestId}:save'}
+{"file": "apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx:      const { error", "method": "POST", "path": '/results/tests/{orderedTestId}:submit'}
+{"file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx:      const { data, error", "method": "GET", "path": '/sample-collection/worklist'}
+{"file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx:      const { error", "method": "POST", "path": '/encounters/{encounterId}:collect-specimens'}
+{"file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx:      const { error", "method": "POST", "path": '/encounters/{encounterId}:postpone-specimen'}
+{"file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx:      const { error", "method": "POST", "path": '/encounters/{encounterId}:receive-specimens'}
+{"file": "apps/operator/src/app/(protected)/lims/sample-collection/page.tsx", "method": "POST", "path": '/encounters/{encounterId}:receive-specimens'}
+{"file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx", "method": "GET", "path": '/results/tests/pending'}
+{"file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx", "method": "GET", "path": '/verification/encounters/pending'}
+{"file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx", "method": "GET", "path": '/documents' as any}
+{"file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx", "method": "GET", "path": '/documents' as any}
+{"file": "apps/operator/src/app/(protected)/lims/worklist/page.tsx", "method": "GET", "path": '/encounters' as any}
+{"file": "apps/operator/src/app/(protected)/lims/payments/page.tsx:      const { data: listData, error", "method": "GET", "path": '/encounters'}
+{"file": "apps/operator/src/app/(protected)/lims/payments/page.tsx:    const { data, error", "method": "GET", "path": '/encounters/{encounterId}/financials'}
+{"file": "apps/operator/src/app/(protected)/lims/payments/page.tsx:      const { data, error", "method": "POST", "path": '/encounters/{encounterId}:collect-due'}
+{"file": "apps/operator/src/app/(protected)/lims/payments/page.tsx:      const { data, error", "method": "POST", "path": '/encounters/{encounterId}:apply-discount'}
+{"file": "apps/operator/src/app/(protected)/lims/payments/page.tsx:      const { data, error", "method": "POST", "path": '/encounters/{encounterId}:cancel'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx", "method": "GET", "path": '/patients'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx", "method": "GET", "path": '/operator/catalog/tests/top'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx", "method": "GET", "path": '/operator/catalog/tests/search'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx", "method": "PATCH", "path": '/patients/{patientId}'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:        const { data: pt, error", "method": "POST", "path": '/patients'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:        const { data: pt, error", "method": "POST", "path": '/patients'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:      const { data: enc, error", "method": "POST", "path": '/encounters'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:        const { data", "method": "POST", "path": '/encounters/{encounterId}:order-lab'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx", "method": "POST", "path": '/documents/receipt:generate'}
+{"file": "apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:            const { data", "method": "GET", "path": '/documents' as any}
+{"file": "apps/operator/src/app/(protected)/lims/patients/page.tsx", "method": "GET", "path": '/patients'}
+{"file": "apps/operator/src/app/(protected)/lims/patients/new/page.tsx:      const { data, error", "method": "POST", "path": '/patients'}
+apps/operator/src/app/(protected)/lims/print/[id]/page.tsx:      const { data } = await (api.GET as any)(`/documents/${docId}`, {});
+{"file": "apps/operator/src/app/(protected)/lims/print/[id]/page.tsx:      const { data, error", "method": "GET", "path": '/documents/{id}/download'}
+{"file": "apps/operator/src/app/(protected)/lims/print/[id]/page.tsx:      const { data, error", "method": "GET", "path": '/documents/{id}/render'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/receive/page.tsx", "method": "GET", "path": '/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/receive/page.tsx:      const { error", "method": "POST", "path": '/encounters/{encounterId}:receive-specimen'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/reports/page.tsx", "method": "GET", "path": '/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/reports/page.tsx", "method": "GET", "path": '/documents'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx", "method": "GET", "path": '/documents'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx", "method": "GET", "path": '/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx:      const { data, error", "method": "POST", "path": '/encounters/{encounterId}:publish-report'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx", "method": "GET", "path": '/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx:      const { error", "method": "POST", "path": '/encounters/{encounterId}:collect-specimen'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx", "method": "POST", "path": '/encounters/{encounterId}:receive-specimen'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx:    const { data, error", "method": "GET", "path": '/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx", "method": "GET", "path": '/documents'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx:      const { error", "method": "POST", "path": '/encounters/{encounterId}:cancel'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/results/page.tsx", "method": "GET", "path": '/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/results/page.tsx:        const { error", "method": "POST", "path": '/encounters/{encounterId}:result'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx", "method": "GET", "path": '/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx:      const { error", "method": "POST", "path": '/encounters/{encounterId}:verify'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx", "method": "GET", "path": '/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx", "method": "GET", "path": '/catalog/tests'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx:        const { error", "method": "POST", "path": '/encounters/{encounterId}:order-lab'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/page.tsx", "method": "GET", "path": '/encounters'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/new/page.tsx", "method": "GET", "path": '/patients'}
+{"file": "apps/operator/src/app/(protected)/lims/encounters/new/page.tsx:      const { data, error", "method": "POST", "path": '/encounters'}
+{"file": "apps/operator/src/app/(protected)/account/page.tsx", "method": "GET", "path": '/account/me'}
+{"file": "apps/operator/src/app/(protected)/account/page.tsx", "method": "GET", "path": '/admin/navigation'}
+{"file": "apps/operator/src/app/(protected)/account/page.tsx:      const { data, error", "method": "PATCH", "path": '/account/me'}
+{"file": "apps/operator/src/app/(protected)/account/page.tsx:      const { error", "method": "POST", "path": '/account/change-password'}
+{"file": "apps/operator/src/app/(protected)/opd/worklist/page.tsx", "method": "GET", "path": '/opd/appointments'}
+{"file": "apps/operator/src/app/(protected)/opd/worklist/page.tsx", "method": "GET", "path": '/opd/visits'}
+{"file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx:      const { data, error", "method": "GET", "path": '/opd/billing/invoices/{invoiceId}' as any}
+{"file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx:      const { data, error", "method": "GET", "path": '/opd/billing/invoices/{invoiceId}/payments' as any}
+{"file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx:    const { error", "method": "POST", "path": path as any}
+{"file": "apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx:      const { data, error", "method": "POST", "path": '/opd/billing/invoices/{invoiceId}/payments' as any}
+{"file": "apps/operator/src/app/(protected)/opd/billing/page.tsx:        const { data, error", "method": "GET", "path": '/opd/billing/invoices' as any}
+{"file": "apps/operator/src/app/(protected)/opd/billing/new/page.tsx:      const { data, error", "method": "POST", "path": '/opd/billing/invoices' as any}
+{"file": "apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx:      const { data, error", "method": "GET", "path": '/opd/appointments/{appointmentId}'}
+{"file": "apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx:    const { error", "method": "POST", "path": path as any}
+{"file": "apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx:      const { data, error", "method": "POST", "path": '/opd/visits'}
+{"file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx", "method": "GET", "path": '/opd/providers' as any}
+{"file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx:      const { data, error", "method": "GET", "path": '/opd/providers/{providerId}/availability' as any}
+{"file": "apps/operator/src/app/(protected)/opd/appointments/new/page.tsx:      const { data, error", "method": "POST", "path": '/opd/appointments'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/[id]/intake/page.tsx:        const { data, error", "method": "GET", "path": '/opd/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/[id]/intake/page.tsx:      const { error", "method": "POST", "path": '/opd/commands/recordIntake'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx:        const { data, error", "method": "GET", "path": '/opd/encounters/{encounterId}'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx:      const { data, error", "method": "GET", "path": '/opd/encounters/{encounterId}/prescription/file'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx:      const { data, error", "method": "POST", "path": '/opd/commands/publishPrescription'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/page.tsx:        const { data, error", "method": "GET", "path": '/opd/encounters'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx", "method": "GET", "path": '/opd/doctors'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx:      const { data, error", "method": "GET", "path": '/patients'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx:    const { data, error", "method": "POST", "path": '/patients'}
+{"file": "apps/operator/src/app/(protected)/opd/encounters/new/page.tsx:      const { data, error", "method": "POST", "path": '/opd/commands/createRegistration'}
+{"file": "apps/operator/src/app/(protected)/opd/visits/new/page.tsx", "method": "GET", "path": '/opd/providers' as any}
+{"file": "apps/operator/src/app/(protected)/opd/visits/new/page.tsx:      const { data, error", "method": "POST", "path": '/opd/visits' as any}
+{"file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:    const { data, error", "method": "GET", "path": '/opd/visits/{visitId}/vitals' as any}
+{"file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:    const { data, error", "method": "GET", "path": '/opd/visits/{visitId}/clinical-note' as any}
+{"file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:    const { data, error", "method": "GET", "path": '/opd/visits/{visitId}/prescription' as any}
+{"file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:      const { data, error", "method": "GET", "path": '/opd/visits/{visitId}'}
+{"file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:    const { error", "method": "POST", "path": path as any}
+{"file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:      const { error", "method": "PUT", "path": '/opd/visits/{visitId}/clinical-note' as any}
+{"file": "apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:      const { error", "method": "PUT", "path": '/opd/visits/{visitId}/prescription' as any}
+{"file": "apps/operator/src/app/(protected)/opd/providers/[providerId]/availability/page.tsx:      const { data, error", "method": "GET", "path": '/opd/providers/{providerId}/availability' as any}
+{"file": "apps/operator/src/app/login/page.tsx:      const { data, error", "method": "POST", "path": '/auth/login'}
+{"file": "apps/operator/src/hooks/use-feature-flags.ts", "method": "GET", "path": '/feature-flags/resolved'}
+{"file": "apps/operator/src/hooks/use-document-polling.ts", "method": "GET", "path": '/documents'}
+{"file": "apps/operator/src/hooks/use-document-polling.ts", "method": "GET", "path": '/documents'}
+apps/operator/src/hooks/use-current-user.ts:    const { data, error, response } = await (api.GET as any)('/me');
+{"file": "apps/admin/src/lib/use-auth.ts", "method": "GET", "path": '/me'}
+{"file": "apps/admin/src/app/(protected)/branding/page.tsx", "method": "GET", "path": '/tenants'}
+{"file": "apps/admin/src/app/(protected)/branding/page.tsx", "method": "GET", "path": '/tenants/{tenantId}/config' as any}
+{"file": "apps/admin/src/app/(protected)/branding/page.tsx", "method": "PATCH", "path": '/tenants/{tenantId}/config' as any}
+{"file": "apps/admin/src/app/(protected)/account/page.tsx:      const { data, error", "method": "GET", "path": '/account/me'}
+{"file": "apps/admin/src/app/(protected)/account/page.tsx:      const { data, error", "method": "PATCH", "path": '/account/me'}
+{"file": "apps/admin/src/app/(protected)/account/page.tsx:      const { error", "method": "POST", "path": '/account/change-password'}
+{"file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx", "method": "GET", "path": '/opd/providers' as any}
+{"file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx:    const { data, error", "method": "GET", "path": '/opd/providers/{providerId}/schedules' as any}
+{"file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx:    const { error", "method": "POST", "path": '/opd/providers/{providerId}/schedules' as any}
+{"file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx:    const { error", "method": "PATCH", "path": '/opd/providers/{providerId}/schedules/{scheduleId}' as any}
+{"file": "apps/admin/src/app/(protected)/opd/schedules/page.tsx:    const { error", "method": "DELETE", "path": '/opd/providers/{providerId}/schedules/{scheduleId}' as any}
+{"file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx", "method": "GET", "path": '/tenants'}
+{"file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx:    const { data, error", "method": "GET", "path": '/tenants/{tenantId}/feature-flags' as any}
+{"file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx:    const { error", "method": "PUT", "path": '/tenants/{tenantId}/feature-flags' as any}
+{"file": "apps/admin/src/app/(protected)/opd/feature-flags/page.tsx:    const { error", "method": "PUT", "path": '/tenants/{tenantId}/feature-flags' as any}
+{"file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx:      const { data, error", "method": "GET", "path": '/opd/doctors'}
+{"file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx:      const { error", "method": "POST", "path": '/opd/doctors'}
+{"file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx:      const { error", "method": "PATCH", "path": '/opd/doctors/{doctorId}'}
+{"file": "apps/admin/src/app/(protected)/opd/doctors/page.tsx", "method": "PATCH", "path": '/opd/doctors/{doctorId}'}
+{"file": "apps/admin/src/app/(protected)/opd/providers/page.tsx:    const { data, error", "method": "GET", "path": '/opd/providers' as any}
+{"file": "apps/admin/src/app/(protected)/opd/providers/page.tsx:    const { error", "method": "POST", "path": '/opd/providers' as any}
+{"file": "apps/admin/src/app/(protected)/opd/providers/page.tsx:    const { error", "method": "PATCH", "path": '/opd/providers/{providerId}' as any}
+{"file": "apps/admin/src/app/(protected)/opd/providers/page.tsx:    const { error", "method": "DELETE", "path": '/opd/providers/{providerId}' as any}
+{"file": "apps/admin/src/app/(protected)/opd/providers/[providerId]/page.tsx:        const { data, error", "method": "GET", "path": '/opd/providers/{providerId}' as any}
+{"file": "apps/admin/src/app/(protected)/audit/page.tsx", "method": "GET", "path": '/audit-events'}
+{"file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx", "method": "GET", "path": '/catalog/reference-ranges' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx", "method": "GET", "path": '/catalog/parameters' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx", "method": "GET", "path": '/catalog/tests' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx", "method": "GET", "path": '/catalog/reference-ranges' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx", "method": "PUT", "path": '/catalog/reference-ranges/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx", "method": "POST", "path": '/catalog/reference-ranges' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx", "method": "DELETE", "path": '/catalog/reference-ranges/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/page.tsx", "method": "GET", "path": '/catalog/sample-types' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/page.tsx", "method": "GET", "path": '/catalog/parameters' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/page.tsx", "method": "GET", "path": '/catalog/tests' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/page.tsx", "method": "GET", "path": '/catalog/panels' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx", "method": "GET", "path": '/catalog/sample-types' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx", "method": "GET", "path": '/catalog/sample-types/next-id' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx", "method": "PATCH", "path": '/catalog/sample-types/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx", "method": "POST", "path": '/catalog/sample-types' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/sample-types/page.tsx", "method": "DELETE", "path": '/catalog/sample-types/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "GET", "path": '/catalog/tests' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "GET", "path": '/operator/catalog/tests/top' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "GET", "path": '/catalog/tests/{testId}/parameters' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "GET", "path": '/catalog/parameters' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "GET", "path": '/catalog/tests' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "GET", "path": '/catalog/tests/{testId}/parameters' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "GET", "path": '/catalog/tests/next-id' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "PATCH", "path": '/catalog/tests/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "POST", "path": '/catalog/tests' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "DELETE", "path": '/catalog/tests/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "POST", "path": '/catalog/tests/{testId}/parameters' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "DELETE", "path": '/catalog/tests/{testId}/parameters/{parameterId}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "PATCH", "path": '/catalog/tests/{testId}/parameters/{parameterId}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "PATCH", "path": '/catalog/tests/{testId}/parameters/{parameterId}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "GET", "path": '/operator/catalog/tests/search' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/tests/page.tsx", "method": "PUT", "path": '/admin/catalog/tests/top' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/import-export/page.tsx", "method": "GET", "path": url as any}
+{"file": "apps/admin/src/app/(protected)/catalog/import-export/page.tsx", "method": "GET", "path": path as any}
+{"file": "apps/admin/src/app/(protected)/catalog/import-export/page.tsx", "method": "POST", "path": '/catalog/import/workbook' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/import-export/page.tsx", "method": "POST", "path": '/catalog/export-jobs' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "GET", "path": '/catalog/panels' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "GET", "path": '/catalog/panels/{panelId}/tests' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "GET", "path": '/catalog/tests' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "GET", "path": '/catalog/panels/next-id' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "PATCH", "path": '/catalog/panels/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "POST", "path": '/catalog/panels' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "DELETE", "path": '/catalog/panels/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "POST", "path": '/catalog/panels/{panelId}/tests' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/panels/page.tsx", "method": "DELETE", "path": '/catalog/panels/{panelId}/tests/{testId}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx", "method": "GET", "path": '/catalog/parameters' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx", "method": "GET", "path": '/catalog/parameters/next-id' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx", "method": "PUT", "path": '/catalog/parameters/{parameterId}' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx", "method": "POST", "path": '/catalog/parameters' as any}
+{"file": "apps/admin/src/app/(protected)/catalog/parameters/page.tsx", "method": "DELETE", "path": '/catalog/parameters/{parameterId}' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": route.path as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/health'}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/jobs/failed-count'}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/audit-events'}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/patients' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/encounters' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/documents' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/jobs' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/jobs' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/jobs' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/jobs/failed' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/audit-events' as any}
+{"file": "apps/admin/src/app/(protected)/dashboard/page.tsx", "method": "GET", "path": '/tenants' as any}
+{"file": "apps/admin/src/app/(protected)/tenants/page.tsx", "method": "GET", "path": '/tenants'}
+{"file": "apps/admin/src/app/(protected)/tenants/page.tsx", "method": "POST", "path": '/tenants'}
+{"file": "apps/admin/src/app/(protected)/tenants/page.tsx", "method": "PATCH", "path": '/tenants/{tenantId}' as any}
+{"file": "apps/admin/src/app/(protected)/tenants/page.tsx", "method": "PATCH", "path": '/tenants/{tenantId}' as any}
+{"file": "apps/admin/src/app/(protected)/tenants/page.tsx", "method": "POST", "path": '/tenants/{tenantId}:enable-lims'}
+{"file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx", "method": "GET", "path": '/ops/schedules'}
+{"file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx", "method": "GET", "path": '/ops/storage-targets'}
+{"file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx", "method": "POST", "path": '/ops/schedules/{id}:toggle' as any}
+{"file": "apps/admin/src/app/(protected)/ops/schedules/page.tsx", "method": "POST", "path": '/ops/schedules:create'}
+{"file": "apps/admin/src/app/(protected)/ops/storage/page.tsx", "method": "GET", "path": '/ops/storage-targets'}
+{"file": "apps/admin/src/app/(protected)/ops/storage/page.tsx", "method": "POST", "path": '/ops/storage-targets:create'}
+{"file": "apps/admin/src/app/(protected)/ops/storage/page.tsx", "method": "POST", "path": '/ops/storage-targets/{id}:test' as any}
+{"file": "apps/admin/src/app/(protected)/ops/storage/page.tsx", "method": "POST", "path": '/ops/storage-targets/{id}:toggle' as any}
+{"file": "apps/admin/src/app/(protected)/ops/page.tsx", "method": "GET", "path": '/ops/dashboard'}
+{"file": "apps/admin/src/app/(protected)/ops/page.tsx", "method": "POST", "path": '/ops/backups/full:run'}
+{"file": "apps/admin/src/app/(protected)/ops/page.tsx", "method": "POST", "path": '/ops/healthcheck:run'}
+{"file": "apps/admin/src/app/(protected)/ops/backups/page.tsx", "method": "GET", "path": '/ops/runs'}
+{"file": "apps/admin/src/app/(protected)/ops/backups/new/page.tsx", "method": "GET", "path": '/ops/storage-targets'}
+{"file": "apps/admin/src/app/(protected)/ops/backups/new/page.tsx", "method": "POST", "path": '/ops/backups/full:run'}
+{"file": "apps/admin/src/app/(protected)/ops/tenants/page.tsx", "method": "GET", "path": '/ops/runs'}
+{"file": "apps/admin/src/app/(protected)/ops/tenants/page.tsx", "method": "POST", "path": '/ops/backups/tenant:export'}
+{"file": "apps/admin/src/app/(protected)/ops/restore/page.tsx", "method": "GET", "path": '/ops/runs'}
+{"file": "apps/admin/src/app/(protected)/ops/restore/page.tsx", "method": "GET", "path": '/ops/runs'}
+{"file": "apps/admin/src/app/(protected)/ops/restore/page.tsx", "method": "POST", "path": '/ops/restores/full:dryRun'}
+{"file": "apps/admin/src/app/(protected)/ops/restore/page.tsx", "method": "GET", "path": '/ops/runs/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/ops/restore/page.tsx", "method": "POST", "path": '/ops/restores/full:run'}
+{"file": "apps/admin/src/app/(protected)/ops/logs/page.tsx", "method": "GET", "path": '/ops/runs'}
+{"file": "apps/admin/src/app/(protected)/ops/logs/page.tsx", "method": "GET", "path": '/ops/runs/{id}/logs' as any}
+{"file": "apps/admin/src/app/(protected)/ops/logs/page.tsx", "method": "GET", "path": '/ops/runs/{id}' as any}
+{"file": "apps/admin/src/app/(protected)/ops/logs/page.tsx", "method": "GET", "path": '/ops/runs/{id}/logs' as any}
+{"file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx", "method": "GET", "path": '/admin/templates/{templateId}' as any}
+{"file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx", "method": "PATCH", "path": '/admin/templates/{templateId}' as any}
+{"file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx", "method": "POST", "path": '/admin/templates/{templateId}/activate' as any}
+{"file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx", "method": "POST", "path": '/admin/templates/{templateId}/archive' as any}
+{"file": "apps/admin/src/app/(protected)/templates/[id]/page.tsx", "method": "POST", "path": '/admin/templates/{templateId}/new-version' as any}
+{"file": "apps/admin/src/app/(protected)/templates/[id]/preview/page.tsx:      const { data, error", "method": "POST", "path": '/admin/templates/{templateId}/preview' as any}
+{"file": "apps/admin/src/app/(protected)/templates/page.tsx", "method": "GET", "path": '/admin/templates' as any}
+{"file": "apps/admin/src/app/(protected)/templates/page.tsx", "method": "POST", "path": '/admin/templates/{templateId}/activate' as any}
+{"file": "apps/admin/src/app/(protected)/templates/page.tsx", "method": "POST", "path": '/admin/templates/{templateId}/archive' as any}
+{"file": "apps/admin/src/app/(protected)/templates/page.tsx", "method": "POST", "path": '/admin/template-blueprints/provision-defaults' as any}
+{"file": "apps/admin/src/app/(protected)/templates/new/page.tsx", "method": "GET", "path": '/admin/template-blueprints' as any}
+{"file": "apps/admin/src/app/(protected)/templates/new/page.tsx", "method": "GET", "path": '/admin/templates' as any}
+{"file": "apps/admin/src/app/(protected)/templates/new/page.tsx", "method": "POST", "path": '/admin/templates' as any}
+{"file": "apps/admin/src/app/(protected)/feature-flags/page.tsx", "method": "GET", "path": '/me' as any}
+{"file": "apps/admin/src/app/(protected)/feature-flags/page.tsx", "method": "GET", "path": '/tenants' as any}
+{"file": "apps/admin/src/app/(protected)/feature-flags/page.tsx", "method": "GET", "path": '/feature-flags/definitions' as any}
+{"file": "apps/admin/src/app/(protected)/feature-flags/page.tsx", "method": "GET", "path": '/tenants/{tenantId}/feature-flags' as any}
+{"file": "apps/admin/src/app/(protected)/feature-flags/page.tsx", "method": "PUT", "path": '/tenants/{tenantId}/feature-flags' as any}
+{"file": "apps/admin/src/app/(protected)/feature-flags/page.tsx", "method": "PUT", "path": '/tenants/{tenantId}/feature-flags' as any}
+{"file": "apps/admin/src/app/(protected)/system/health/page.tsx", "method": "GET", "path": '/health'}
+{"file": "apps/admin/src/app/(protected)/system/health/page.tsx", "method": "GET", "path": '/health/worker'}
+{"file": "apps/admin/src/app/(protected)/system/health/page.tsx", "method": "GET", "path": '/health/pdf'}
+{"file": "apps/admin/src/app/(protected)/system/logs/page.tsx", "method": "GET", "path": '/system-logs' as any}
+{"file": "apps/admin/src/app/(protected)/patients/page.tsx", "method": "GET", "path": '/patients' as any}
+{"file": "apps/admin/src/app/(protected)/users/page.tsx", "method": "GET", "path": '/users'}
+{"file": "apps/admin/src/app/(protected)/users/page.tsx", "method": "GET", "path": '/roles'}
+{"file": "apps/admin/src/app/(protected)/users/page.tsx:    const { error", "method": "POST", "path": '/users'}
+{"file": "apps/admin/src/app/(protected)/users/page.tsx", "method": "PATCH", "path": '/users/{userId}' as any}
+{"file": "apps/admin/src/app/(protected)/users/page.tsx:    const { error", "method": "PATCH", "path": '/users/{userId}' as any}
+{"file": "apps/admin/src/app/(protected)/users/page.tsx", "method": "GET", "path": '/users/{userId}/roles' as any}
+{"file": "apps/admin/src/app/(protected)/users/page.tsx", "method": "PUT", "path": '/users/{userId}/roles' as any}
+{"file": "apps/admin/src/app/(protected)/encounters/page.tsx", "method": "GET", "path": '/encounters' as any}
+{"file": "apps/admin/src/app/(protected)/documents/page.tsx", "method": "GET", "path": '/documents' as any}
+{"file": "apps/admin/src/app/(protected)/documents/page.tsx", "method": "POST", "path": '/documents/{id}:publish' as any}
+{"file": "apps/admin/src/app/(protected)/roles/page.tsx", "method": "GET", "path": '/roles'}
+{"file": "apps/admin/src/app/(protected)/roles/page.tsx", "method": "GET", "path": '/roles/permissions'}
+{"file": "apps/admin/src/app/(protected)/roles/page.tsx", "method": "POST", "path": '/roles'}
+{"file": "apps/admin/src/app/(protected)/roles/page.tsx:    const { error", "method": "PATCH", "path": '/roles/{roleId}' as any}
+{"file": "apps/admin/src/app/(protected)/roles/page.tsx", "method": "DELETE", "path": '/roles/{roleId}' as any}
+{"file": "apps/admin/src/app/(protected)/jobs/page.tsx", "method": "GET", "path": '/jobs' as any}
+{"file": "apps/admin/src/app/(protected)/jobs/page.tsx", "method": "GET", "path": '/jobs/failed' as any}
+{"file": "apps/admin/src/app/(protected)/jobs/page.tsx", "method": "GET", "path": '/catalog/import-jobs' as any}
+{"file": "apps/admin/src/app/(protected)/jobs/page.tsx", "method": "GET", "path": '/catalog/export-jobs' as any}
+{"file": "apps/admin/src/app/(protected)/jobs/page.tsx", "method": "GET", "path": '/documents' as any}
+{"file": "apps/admin/src/app/(protected)/jobs/page.tsx", "method": "POST", "path": `/jobs/${pendingRetry.id}:retry` as any}
+{"file": "apps/admin/src/app/(protected)/jobs/page.tsx", "method": "POST", "path": '/documents/{id}:publish' as any}
+{"file": "apps/admin/src/app/login/page.tsx:      const { data, error", "method": "POST", "path": '/auth/login'}

@@ -1,0 +1,5 @@
+{
+  "status": "PENDING",
+  "note": "This file will enumerate the LIMS workflow steps and map each step to frontend route/action, SDK call, OpenAPI operation, backend command, and runtime verification results."
+}
+

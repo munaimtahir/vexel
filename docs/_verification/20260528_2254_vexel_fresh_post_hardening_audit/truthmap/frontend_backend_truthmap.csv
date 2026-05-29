@@ -1,0 +1,287 @@
+apps/operator/src/app/(protected)/lims/reports/page.tsx:      const { data, error,GET,'/documents' as any
+apps/operator/src/app/(protected)/lims/reports/page.tsx:      const { data, error,GET,'/patients' as any
+apps/operator/src/app/(protected)/lims/reports/page.tsx,GET,'/encounters' as any
+apps/operator/src/app/(protected)/lims/reports/page.tsx,GET,'/documents/{id}/download'
+apps/operator/src/app/(protected)/lims/verification/page.tsx:      const { data, error,GET,'/verification/encounters/pending'
+apps/operator/src/app/(protected)/lims/verification/page.tsx:          const { data,GET,'/verification/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/verification/page.tsx:      const { error,POST,'/verification/encounters/{encounterId}:verify'
+apps/operator/src/app/(protected)/lims/verification/page.tsx:      const { error,POST,'/verification/encounters/{encounterId}:return-for-correction'
+apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx:      const { data, error,GET,'/verification/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx,GET,'/verification/encounters/pending'
+apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx,GET,'/documents'
+apps/operator/src/app/(protected)/lims/verification/encounters/[encounterId]/page.tsx:      const { error,POST,'/verification/encounters/{encounterId}:verify'
+apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx:      const { data, error,GET,'/results/tests/{orderedTestId}'
+apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx:      const { data, error,POST,'/results/tests/{orderedTestId}:save'
+apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx,GET,'/results/tests/pending'
+apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx:      const { data, error,POST,'/results/tests/{orderedTestId}:submit'
+apps/operator/src/app/(protected)/lims/results/page.tsx,GET,'/results/tests/pending'
+apps/operator/src/app/(protected)/lims/results/page.tsx,GET,'/results/tests/submitted'
+apps/operator/src/app/(protected)/lims/results/page.tsx:        const { error,POST,'/results/tests/{orderedTestId}:submit'
+apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx,GET,'/results/tests/pending'
+apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx,GET,'/results/tests/submitted'
+apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx,GET,'/results/tests/{orderedTestId}'
+apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx,GET,'/results/tests/{orderedTestId}'
+apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx:      const { error,POST,'/results/tests/{orderedTestId}:save'
+apps/operator/src/app/(protected)/lims/results/encounters/[encounterId]/page.tsx:      const { error,POST,'/results/tests/{orderedTestId}:submit'
+apps/operator/src/app/(protected)/lims/sample-collection/page.tsx:      const { data, error,GET,'/sample-collection/worklist'
+apps/operator/src/app/(protected)/lims/sample-collection/page.tsx:      const { error,POST,'/encounters/{encounterId}:collect-specimens'
+apps/operator/src/app/(protected)/lims/sample-collection/page.tsx:      const { error,POST,'/encounters/{encounterId}:postpone-specimen'
+apps/operator/src/app/(protected)/lims/sample-collection/page.tsx:      const { error,POST,'/encounters/{encounterId}:receive-specimens'
+apps/operator/src/app/(protected)/lims/sample-collection/page.tsx,POST,'/encounters/{encounterId}:receive-specimens'
+apps/operator/src/app/(protected)/lims/worklist/page.tsx,GET,'/results/tests/pending'
+apps/operator/src/app/(protected)/lims/worklist/page.tsx,GET,'/verification/encounters/pending'
+apps/operator/src/app/(protected)/lims/worklist/page.tsx,GET,'/documents' as any
+apps/operator/src/app/(protected)/lims/worklist/page.tsx,GET,'/documents' as any
+apps/operator/src/app/(protected)/lims/worklist/page.tsx,GET,'/encounters' as any
+apps/operator/src/app/(protected)/lims/payments/page.tsx:      const { data: listData, error,GET,'/encounters'
+apps/operator/src/app/(protected)/lims/payments/page.tsx:    const { data, error,GET,'/encounters/{encounterId}/financials'
+apps/operator/src/app/(protected)/lims/payments/page.tsx:      const { data, error,POST,'/encounters/{encounterId}:collect-due'
+apps/operator/src/app/(protected)/lims/payments/page.tsx:      const { data, error,POST,'/encounters/{encounterId}:apply-discount'
+apps/operator/src/app/(protected)/lims/payments/page.tsx:      const { data, error,POST,'/encounters/{encounterId}:cancel'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx,GET,'/patients'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx,GET,'/operator/catalog/tests/top'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx,GET,'/operator/catalog/tests/search'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx,PATCH,'/patients/{patientId}'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:        const { data: pt, error,POST,'/patients'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:        const { data: pt, error,POST,'/patients'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:      const { data: enc, error,POST,'/encounters'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:        const { data,POST,'/encounters/{encounterId}:order-lab'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx,POST,'/documents/receipt:generate'
+apps/operator/src/app/(protected)/lims/registrations/new/page.tsx:            const { data,GET,'/documents' as any
+apps/operator/src/app/(protected)/lims/patients/page.tsx,GET,'/patients'
+apps/operator/src/app/(protected)/lims/patients/new/page.tsx:      const { data, error,POST,'/patients'
+apps/operator/src/app/(protected)/lims/print/[id]/page.tsx:      const { data } = await (api.GET as any)(`/documents/${docId}`, {});
+apps/operator/src/app/(protected)/lims/print/[id]/page.tsx:      const { data, error,GET,'/documents/{id}/download'
+apps/operator/src/app/(protected)/lims/print/[id]/page.tsx:      const { data, error,GET,'/documents/{id}/render'
+apps/operator/src/app/(protected)/lims/encounters/[id]/receive/page.tsx,GET,'/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/encounters/[id]/receive/page.tsx:      const { error,POST,'/encounters/{encounterId}:receive-specimen'
+apps/operator/src/app/(protected)/lims/encounters/[id]/reports/page.tsx,GET,'/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/encounters/[id]/reports/page.tsx,GET,'/documents'
+apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx,GET,'/documents'
+apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx,GET,'/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/encounters/[id]/publish/page.tsx:      const { data, error,POST,'/encounters/{encounterId}:publish-report'
+apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx,GET,'/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx:      const { error,POST,'/encounters/{encounterId}:collect-specimen'
+apps/operator/src/app/(protected)/lims/encounters/[id]/sample/page.tsx,POST,'/encounters/{encounterId}:receive-specimen'
+apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx:    const { data, error,GET,'/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx,GET,'/documents'
+apps/operator/src/app/(protected)/lims/encounters/[id]/page.tsx:      const { error,POST,'/encounters/{encounterId}:cancel'
+apps/operator/src/app/(protected)/lims/encounters/[id]/results/page.tsx,GET,'/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/encounters/[id]/results/page.tsx:        const { error,POST,'/encounters/{encounterId}:result'
+apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx,GET,'/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/encounters/[id]/verify/page.tsx:      const { error,POST,'/encounters/{encounterId}:verify'
+apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx,GET,'/encounters/{encounterId}'
+apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx,GET,'/catalog/tests'
+apps/operator/src/app/(protected)/lims/encounters/[id]/order/page.tsx:        const { error,POST,'/encounters/{encounterId}:order-lab'
+apps/operator/src/app/(protected)/lims/encounters/page.tsx,GET,'/encounters'
+apps/operator/src/app/(protected)/lims/encounters/new/page.tsx,GET,'/patients'
+apps/operator/src/app/(protected)/lims/encounters/new/page.tsx:      const { data, error,POST,'/encounters'
+apps/operator/src/app/(protected)/account/page.tsx,GET,'/account/me'
+apps/operator/src/app/(protected)/account/page.tsx,GET,'/admin/navigation'
+apps/operator/src/app/(protected)/account/page.tsx:      const { data, error,PATCH,'/account/me'
+apps/operator/src/app/(protected)/account/page.tsx:      const { error,POST,'/account/change-password'
+apps/operator/src/app/(protected)/opd/worklist/page.tsx,GET,'/opd/appointments'
+apps/operator/src/app/(protected)/opd/worklist/page.tsx,GET,'/opd/visits'
+apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx:      const { data, error,GET,'/opd/billing/invoices/{invoiceId}' as any
+apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx:      const { data, error,GET,'/opd/billing/invoices/{invoiceId}/payments' as any
+apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx:    const { error,POST,path as any
+apps/operator/src/app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx:      const { data, error,POST,'/opd/billing/invoices/{invoiceId}/payments' as any
+apps/operator/src/app/(protected)/opd/billing/page.tsx:        const { data, error,GET,'/opd/billing/invoices' as any
+apps/operator/src/app/(protected)/opd/billing/new/page.tsx:      const { data, error,POST,'/opd/billing/invoices' as any
+apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx:      const { data, error,GET,'/opd/appointments/{appointmentId}'
+apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx:    const { error,POST,path as any
+apps/operator/src/app/(protected)/opd/appointments/[id]/page.tsx:      const { data, error,POST,'/opd/visits'
+apps/operator/src/app/(protected)/opd/appointments/new/page.tsx,GET,'/opd/providers' as any
+apps/operator/src/app/(protected)/opd/appointments/new/page.tsx:      const { data, error,GET,'/opd/providers/{providerId}/availability' as any
+apps/operator/src/app/(protected)/opd/appointments/new/page.tsx:      const { data, error,POST,'/opd/appointments'
+apps/operator/src/app/(protected)/opd/encounters/[id]/intake/page.tsx:        const { data, error,GET,'/opd/encounters/{encounterId}'
+apps/operator/src/app/(protected)/opd/encounters/[id]/intake/page.tsx:      const { error,POST,'/opd/commands/recordIntake'
+apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx:        const { data, error,GET,'/opd/encounters/{encounterId}'
+apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx:      const { data, error,GET,'/opd/encounters/{encounterId}/prescription/file'
+apps/operator/src/app/(protected)/opd/encounters/[id]/doctor/page.tsx:      const { data, error,POST,'/opd/commands/publishPrescription'
+apps/operator/src/app/(protected)/opd/encounters/page.tsx:        const { data, error,GET,'/opd/encounters'
+apps/operator/src/app/(protected)/opd/encounters/new/page.tsx,GET,'/opd/doctors'
+apps/operator/src/app/(protected)/opd/encounters/new/page.tsx:      const { data, error,GET,'/patients'
+apps/operator/src/app/(protected)/opd/encounters/new/page.tsx:    const { data, error,POST,'/patients'
+apps/operator/src/app/(protected)/opd/encounters/new/page.tsx:      const { data, error,POST,'/opd/commands/createRegistration'
+apps/operator/src/app/(protected)/opd/visits/new/page.tsx,GET,'/opd/providers' as any
+apps/operator/src/app/(protected)/opd/visits/new/page.tsx:      const { data, error,POST,'/opd/visits' as any
+apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:    const { data, error,GET,'/opd/visits/{visitId}/vitals' as any
+apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:    const { data, error,GET,'/opd/visits/{visitId}/clinical-note' as any
+apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:    const { data, error,GET,'/opd/visits/{visitId}/prescription' as any
+apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:      const { data, error,GET,'/opd/visits/{visitId}'
+apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:    const { error,POST,path as any
+apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:      const { error,PUT,'/opd/visits/{visitId}/clinical-note' as any
+apps/operator/src/app/(protected)/opd/visits/[visitId]/page.tsx:      const { error,PUT,'/opd/visits/{visitId}/prescription' as any
+apps/operator/src/app/(protected)/opd/providers/[providerId]/availability/page.tsx:      const { data, error,GET,'/opd/providers/{providerId}/availability' as any
+apps/operator/src/app/login/page.tsx:      const { data, error,POST,'/auth/login'
+apps/operator/src/hooks/use-feature-flags.ts,GET,'/feature-flags/resolved'
+apps/operator/src/hooks/use-document-polling.ts,GET,'/documents'
+apps/operator/src/hooks/use-document-polling.ts,GET,'/documents'
+apps/operator/src/hooks/use-current-user.ts:    const { data, error, response } = await (api.GET as any)('/me');
+apps/admin/src/lib/use-auth.ts,GET,'/me'
+apps/admin/src/app/(protected)/branding/page.tsx,GET,'/tenants'
+apps/admin/src/app/(protected)/branding/page.tsx,GET,'/tenants/{tenantId}/config' as any
+apps/admin/src/app/(protected)/branding/page.tsx,PATCH,'/tenants/{tenantId}/config' as any
+apps/admin/src/app/(protected)/account/page.tsx:      const { data, error,GET,'/account/me'
+apps/admin/src/app/(protected)/account/page.tsx:      const { data, error,PATCH,'/account/me'
+apps/admin/src/app/(protected)/account/page.tsx:      const { error,POST,'/account/change-password'
+apps/admin/src/app/(protected)/opd/schedules/page.tsx,GET,'/opd/providers' as any
+apps/admin/src/app/(protected)/opd/schedules/page.tsx:    const { data, error,GET,'/opd/providers/{providerId}/schedules' as any
+apps/admin/src/app/(protected)/opd/schedules/page.tsx:    const { error,POST,'/opd/providers/{providerId}/schedules' as any
+apps/admin/src/app/(protected)/opd/schedules/page.tsx:    const { error,PATCH,'/opd/providers/{providerId}/schedules/{scheduleId}' as any
+apps/admin/src/app/(protected)/opd/schedules/page.tsx:    const { error,DELETE,'/opd/providers/{providerId}/schedules/{scheduleId}' as any
+apps/admin/src/app/(protected)/opd/feature-flags/page.tsx,GET,'/tenants'
+apps/admin/src/app/(protected)/opd/feature-flags/page.tsx:    const { data, error,GET,'/tenants/{tenantId}/feature-flags' as any
+apps/admin/src/app/(protected)/opd/feature-flags/page.tsx:    const { error,PUT,'/tenants/{tenantId}/feature-flags' as any
+apps/admin/src/app/(protected)/opd/feature-flags/page.tsx:    const { error,PUT,'/tenants/{tenantId}/feature-flags' as any
+apps/admin/src/app/(protected)/opd/doctors/page.tsx:      const { data, error,GET,'/opd/doctors'
+apps/admin/src/app/(protected)/opd/doctors/page.tsx:      const { error,POST,'/opd/doctors'
+apps/admin/src/app/(protected)/opd/doctors/page.tsx:      const { error,PATCH,'/opd/doctors/{doctorId}'
+apps/admin/src/app/(protected)/opd/doctors/page.tsx,PATCH,'/opd/doctors/{doctorId}'
+apps/admin/src/app/(protected)/opd/providers/page.tsx:    const { data, error,GET,'/opd/providers' as any
+apps/admin/src/app/(protected)/opd/providers/page.tsx:    const { error,POST,'/opd/providers' as any
+apps/admin/src/app/(protected)/opd/providers/page.tsx:    const { error,PATCH,'/opd/providers/{providerId}' as any
+apps/admin/src/app/(protected)/opd/providers/page.tsx:    const { error,DELETE,'/opd/providers/{providerId}' as any
+apps/admin/src/app/(protected)/opd/providers/[providerId]/page.tsx:        const { data, error,GET,'/opd/providers/{providerId}' as any
+apps/admin/src/app/(protected)/audit/page.tsx,GET,'/audit-events'
+apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx,GET,'/catalog/reference-ranges' as any
+apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx,GET,'/catalog/parameters' as any
+apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx,GET,'/catalog/tests' as any
+apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx,GET,'/catalog/reference-ranges' as any
+apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx,PUT,'/catalog/reference-ranges/{id}' as any
+apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx,POST,'/catalog/reference-ranges' as any
+apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx,DELETE,'/catalog/reference-ranges/{id}' as any
+apps/admin/src/app/(protected)/catalog/page.tsx,GET,'/catalog/sample-types' as any
+apps/admin/src/app/(protected)/catalog/page.tsx,GET,'/catalog/parameters' as any
+apps/admin/src/app/(protected)/catalog/page.tsx,GET,'/catalog/tests' as any
+apps/admin/src/app/(protected)/catalog/page.tsx,GET,'/catalog/panels' as any
+apps/admin/src/app/(protected)/catalog/sample-types/page.tsx,GET,'/catalog/sample-types' as any
+apps/admin/src/app/(protected)/catalog/sample-types/page.tsx,GET,'/catalog/sample-types/next-id' as any
+apps/admin/src/app/(protected)/catalog/sample-types/page.tsx,PATCH,'/catalog/sample-types/{id}' as any
+apps/admin/src/app/(protected)/catalog/sample-types/page.tsx,POST,'/catalog/sample-types' as any
+apps/admin/src/app/(protected)/catalog/sample-types/page.tsx,DELETE,'/catalog/sample-types/{id}' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,GET,'/catalog/tests' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,GET,'/operator/catalog/tests/top' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,GET,'/catalog/tests/{testId}/parameters' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,GET,'/catalog/parameters' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,GET,'/catalog/tests' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,GET,'/catalog/tests/{testId}/parameters' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,GET,'/catalog/tests/next-id' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,PATCH,'/catalog/tests/{id}' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,POST,'/catalog/tests' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,DELETE,'/catalog/tests/{id}' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,POST,'/catalog/tests/{testId}/parameters' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,DELETE,'/catalog/tests/{testId}/parameters/{parameterId}' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,PATCH,'/catalog/tests/{testId}/parameters/{parameterId}' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,PATCH,'/catalog/tests/{testId}/parameters/{parameterId}' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,GET,'/operator/catalog/tests/search' as any
+apps/admin/src/app/(protected)/catalog/tests/page.tsx,PUT,'/admin/catalog/tests/top' as any
+apps/admin/src/app/(protected)/catalog/import-export/page.tsx,GET,url as any
+apps/admin/src/app/(protected)/catalog/import-export/page.tsx,GET,path as any
+apps/admin/src/app/(protected)/catalog/import-export/page.tsx,POST,'/catalog/import/workbook' as any
+apps/admin/src/app/(protected)/catalog/import-export/page.tsx,POST,'/catalog/export-jobs' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,GET,'/catalog/panels' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,GET,'/catalog/panels/{panelId}/tests' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,GET,'/catalog/tests' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,GET,'/catalog/panels/next-id' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,PATCH,'/catalog/panels/{id}' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,POST,'/catalog/panels' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,DELETE,'/catalog/panels/{id}' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,POST,'/catalog/panels/{panelId}/tests' as any
+apps/admin/src/app/(protected)/catalog/panels/page.tsx,DELETE,'/catalog/panels/{panelId}/tests/{testId}' as any
+apps/admin/src/app/(protected)/catalog/parameters/page.tsx,GET,'/catalog/parameters' as any
+apps/admin/src/app/(protected)/catalog/parameters/page.tsx,GET,'/catalog/parameters/next-id' as any
+apps/admin/src/app/(protected)/catalog/parameters/page.tsx,PUT,'/catalog/parameters/{parameterId}' as any
+apps/admin/src/app/(protected)/catalog/parameters/page.tsx,POST,'/catalog/parameters' as any
+apps/admin/src/app/(protected)/catalog/parameters/page.tsx,DELETE,'/catalog/parameters/{parameterId}' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,route.path as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/health'
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/jobs/failed-count'
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/audit-events'
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/patients' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/encounters' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/documents' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/jobs' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/jobs' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/jobs' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/jobs/failed' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/audit-events' as any
+apps/admin/src/app/(protected)/dashboard/page.tsx,GET,'/tenants' as any
+apps/admin/src/app/(protected)/tenants/page.tsx,GET,'/tenants'
+apps/admin/src/app/(protected)/tenants/page.tsx,POST,'/tenants'
+apps/admin/src/app/(protected)/tenants/page.tsx,PATCH,'/tenants/{tenantId}' as any
+apps/admin/src/app/(protected)/tenants/page.tsx,PATCH,'/tenants/{tenantId}' as any
+apps/admin/src/app/(protected)/tenants/page.tsx,POST,'/tenants/{tenantId}:enable-lims'
+apps/admin/src/app/(protected)/ops/schedules/page.tsx,GET,'/ops/schedules'
+apps/admin/src/app/(protected)/ops/schedules/page.tsx,GET,'/ops/storage-targets'
+apps/admin/src/app/(protected)/ops/schedules/page.tsx,POST,'/ops/schedules/{id}:toggle' as any
+apps/admin/src/app/(protected)/ops/schedules/page.tsx,POST,'/ops/schedules:create'
+apps/admin/src/app/(protected)/ops/storage/page.tsx,GET,'/ops/storage-targets'
+apps/admin/src/app/(protected)/ops/storage/page.tsx,POST,'/ops/storage-targets:create'
+apps/admin/src/app/(protected)/ops/storage/page.tsx,POST,'/ops/storage-targets/{id}:test' as any
+apps/admin/src/app/(protected)/ops/storage/page.tsx,POST,'/ops/storage-targets/{id}:toggle' as any
+apps/admin/src/app/(protected)/ops/page.tsx,GET,'/ops/dashboard'
+apps/admin/src/app/(protected)/ops/page.tsx,POST,'/ops/backups/full:run'
+apps/admin/src/app/(protected)/ops/page.tsx,POST,'/ops/healthcheck:run'
+apps/admin/src/app/(protected)/ops/backups/page.tsx,GET,'/ops/runs'
+apps/admin/src/app/(protected)/ops/backups/new/page.tsx,GET,'/ops/storage-targets'
+apps/admin/src/app/(protected)/ops/backups/new/page.tsx,POST,'/ops/backups/full:run'
+apps/admin/src/app/(protected)/ops/tenants/page.tsx,GET,'/ops/runs'
+apps/admin/src/app/(protected)/ops/tenants/page.tsx,POST,'/ops/backups/tenant:export'
+apps/admin/src/app/(protected)/ops/restore/page.tsx,GET,'/ops/runs'
+apps/admin/src/app/(protected)/ops/restore/page.tsx,GET,'/ops/runs'
+apps/admin/src/app/(protected)/ops/restore/page.tsx,POST,'/ops/restores/full:dryRun'
+apps/admin/src/app/(protected)/ops/restore/page.tsx,GET,'/ops/runs/{id}' as any
+apps/admin/src/app/(protected)/ops/restore/page.tsx,POST,'/ops/restores/full:run'
+apps/admin/src/app/(protected)/ops/logs/page.tsx,GET,'/ops/runs'
+apps/admin/src/app/(protected)/ops/logs/page.tsx,GET,'/ops/runs/{id}/logs' as any
+apps/admin/src/app/(protected)/ops/logs/page.tsx,GET,'/ops/runs/{id}' as any
+apps/admin/src/app/(protected)/ops/logs/page.tsx,GET,'/ops/runs/{id}/logs' as any
+apps/admin/src/app/(protected)/templates/[id]/page.tsx,GET,'/admin/templates/{templateId}' as any
+apps/admin/src/app/(protected)/templates/[id]/page.tsx,PATCH,'/admin/templates/{templateId}' as any
+apps/admin/src/app/(protected)/templates/[id]/page.tsx,POST,'/admin/templates/{templateId}/activate' as any
+apps/admin/src/app/(protected)/templates/[id]/page.tsx,POST,'/admin/templates/{templateId}/archive' as any
+apps/admin/src/app/(protected)/templates/[id]/page.tsx,POST,'/admin/templates/{templateId}/new-version' as any
+apps/admin/src/app/(protected)/templates/[id]/preview/page.tsx:      const { data, error,POST,'/admin/templates/{templateId}/preview' as any
+apps/admin/src/app/(protected)/templates/page.tsx,GET,'/admin/templates' as any
+apps/admin/src/app/(protected)/templates/page.tsx,POST,'/admin/templates/{templateId}/activate' as any
+apps/admin/src/app/(protected)/templates/page.tsx,POST,'/admin/templates/{templateId}/archive' as any
+apps/admin/src/app/(protected)/templates/page.tsx,POST,'/admin/template-blueprints/provision-defaults' as any
+apps/admin/src/app/(protected)/templates/new/page.tsx,GET,'/admin/template-blueprints' as any
+apps/admin/src/app/(protected)/templates/new/page.tsx,GET,'/admin/templates' as any
+apps/admin/src/app/(protected)/templates/new/page.tsx,POST,'/admin/templates' as any
+apps/admin/src/app/(protected)/feature-flags/page.tsx,GET,'/me' as any
+apps/admin/src/app/(protected)/feature-flags/page.tsx,GET,'/tenants' as any
+apps/admin/src/app/(protected)/feature-flags/page.tsx,GET,'/feature-flags/definitions' as any
+apps/admin/src/app/(protected)/feature-flags/page.tsx,GET,'/tenants/{tenantId}/feature-flags' as any
+apps/admin/src/app/(protected)/feature-flags/page.tsx,PUT,'/tenants/{tenantId}/feature-flags' as any
+apps/admin/src/app/(protected)/feature-flags/page.tsx,PUT,'/tenants/{tenantId}/feature-flags' as any
+apps/admin/src/app/(protected)/system/health/page.tsx,GET,'/health'
+apps/admin/src/app/(protected)/system/health/page.tsx,GET,'/health/worker'
+apps/admin/src/app/(protected)/system/health/page.tsx,GET,'/health/pdf'
+apps/admin/src/app/(protected)/system/logs/page.tsx,GET,'/system-logs' as any
+apps/admin/src/app/(protected)/patients/page.tsx,GET,'/patients' as any
+apps/admin/src/app/(protected)/users/page.tsx,GET,'/users'
+apps/admin/src/app/(protected)/users/page.tsx,GET,'/roles'
+apps/admin/src/app/(protected)/users/page.tsx:    const { error,POST,'/users'
+apps/admin/src/app/(protected)/users/page.tsx,PATCH,'/users/{userId}' as any
+apps/admin/src/app/(protected)/users/page.tsx:    const { error,PATCH,'/users/{userId}' as any
+apps/admin/src/app/(protected)/users/page.tsx,GET,'/users/{userId}/roles' as any
+apps/admin/src/app/(protected)/users/page.tsx,PUT,'/users/{userId}/roles' as any
+apps/admin/src/app/(protected)/encounters/page.tsx,GET,'/encounters' as any
+apps/admin/src/app/(protected)/documents/page.tsx,GET,'/documents' as any
+apps/admin/src/app/(protected)/documents/page.tsx,POST,'/documents/{id}:publish' as any
+apps/admin/src/app/(protected)/roles/page.tsx,GET,'/roles'
+apps/admin/src/app/(protected)/roles/page.tsx,GET,'/roles/permissions'
+apps/admin/src/app/(protected)/roles/page.tsx,POST,'/roles'
+apps/admin/src/app/(protected)/roles/page.tsx:    const { error,PATCH,'/roles/{roleId}' as any
+apps/admin/src/app/(protected)/roles/page.tsx,DELETE,'/roles/{roleId}' as any
+apps/admin/src/app/(protected)/jobs/page.tsx,GET,'/jobs' as any
+apps/admin/src/app/(protected)/jobs/page.tsx,GET,'/jobs/failed' as any
+apps/admin/src/app/(protected)/jobs/page.tsx,GET,'/catalog/import-jobs' as any
+apps/admin/src/app/(protected)/jobs/page.tsx,GET,'/catalog/export-jobs' as any
+apps/admin/src/app/(protected)/jobs/page.tsx,GET,'/documents' as any
+apps/admin/src/app/(protected)/jobs/page.tsx,POST,`/jobs/${pendingRetry.id}:retry` as any
+apps/admin/src/app/(protected)/jobs/page.tsx,POST,'/documents/{id}:publish' as any
+apps/admin/src/app/login/page.tsx:      const { data, error,POST,'/auth/login'

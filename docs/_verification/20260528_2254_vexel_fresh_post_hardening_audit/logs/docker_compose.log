@@ -1,0 +1,851 @@
+admin-1  |    ▲ Next.js 15.5.18
+admin-1  |    - Local:        http://bb0ed184c621:3001
+admin-1  |    - Network:      http://bb0ed184c621:3001
+admin-1  | 
+admin-1  |  ✓ Starting...
+admin-1  |  ✓ Ready in 471ms
+postgres-1  | 
+postgres-1  | PostgreSQL Database directory appears to contain a database; Skipping initialization
+postgres-1  | 
+postgres-1  | 2026-05-29 01:09:42.510 UTC [1] LOG:  starting PostgreSQL 16.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+postgres-1  | 2026-05-29 01:09:42.510 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-1  | 2026-05-29 01:09:42.511 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-1  | 2026-05-29 01:09:42.624 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-1  | 2026-05-29 01:09:42.863 UTC [29] LOG:  database system was shut down at 2026-05-29 01:00:40 UTC
+postgres-1  | 2026-05-29 01:09:43.240 UTC [1] LOG:  database system is ready to accept connections
+worker-1    | 🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render, ops-backup
+worker-1    | (node:1) Warning: NodeVersionSupportWarning: The AWS SDK for JavaScript (v3)
+worker-1    | versions published after the first week of January 2027
+worker-1    | will require node >=22. You are running node v20.20.2.
+worker-1    | 
+worker-1    | To continue receiving updates to AWS services, bug fixes,
+worker-1    | and security updates please upgrade to node >=22.
+worker-1    | 
+worker-1    | More information can be found at: https://a.co/c895JFp
+worker-1    | (Use `node --trace-warnings ...` to show where the warning was created)
+worker-1    | ✅ Worker connected to Redis
+worker-1    | ✅ Storage bucket 'vexel-documents' exists
+worker-1    | [document-render] correlationId=2164d75e-28fc-4f35-9695-df79c2e7cf7d docId=b3360107-a7dc-41b5-b229-591e16fcaee1 fetch_doc_ms=48 type=RECEIPT
+worker-1    | [document-render] correlationId=1ed1da50-1540-4fc5-bc4c-3ecb253387e5 docId=042d958c-377a-4cab-a9de-01e124cdd69d fetch_doc_ms=9 type=LAB_REPORT
+worker-1    | [document-render] correlationId=1ed1da50-1540-4fc5-bc4c-3ecb253387e5 docId=042d958c-377a-4cab-a9de-01e124cdd69d pdf_render_ms=2695 bytes=75655
+worker-1    | [document-render] correlationId=2164d75e-28fc-4f35-9695-df79c2e7cf7d docId=b3360107-a7dc-41b5-b229-591e16fcaee1 pdf_render_ms=3093 bytes=85350
+worker-1    | [document-render] correlationId=1ed1da50-1540-4fc5-bc4c-3ecb253387e5 docId=042d958c-377a-4cab-a9de-01e124cdd69d storage_upload_ms=79 key=system/042d958c-377a-4cab-a9de-01e124cdd69d/report.pdf
+worker-1    | [document-render] correlationId=2164d75e-28fc-4f35-9695-df79c2e7cf7d docId=b3360107-a7dc-41b5-b229-591e16fcaee1 storage_upload_ms=65 key=system/b3360107-a7dc-41b5-b229-591e16fcaee1/report.pdf
+worker-1    | [document-render] correlationId=1ed1da50-1540-4fc5-bc4c-3ecb253387e5 docId=042d958c-377a-4cab-a9de-01e124cdd69d auto_published type=LAB_REPORT total_ms=2909
+worker-1    | [document-render] Job 2 completed
+worker-1    | [document-render] correlationId=2164d75e-28fc-4f35-9695-df79c2e7cf7d docId=b3360107-a7dc-41b5-b229-591e16fcaee1 auto_published type=RECEIPT total_ms=3373
+worker-1    | [document-render] Job 1 completed
+worker-1    | [document-render] correlationId=bee2d08e-afbb-4c20-a1dc-48ed12d87414 docId=eb68ac6c-b02b-4d5f-a997-be23b1a559f5 fetch_doc_ms=7 type=RECEIPT
+worker-1    | [document-render] correlationId=bee2d08e-afbb-4c20-a1dc-48ed12d87414 docId=eb68ac6c-b02b-4d5f-a997-be23b1a559f5 pdf_render_ms=416 bytes=87671
+worker-1    | [document-render] correlationId=bee2d08e-afbb-4c20-a1dc-48ed12d87414 docId=eb68ac6c-b02b-4d5f-a997-be23b1a559f5 storage_upload_ms=89 key=system/eb68ac6c-b02b-4d5f-a997-be23b1a559f5/report.pdf
+worker-1    | [document-render] correlationId=bee2d08e-afbb-4c20-a1dc-48ed12d87414 docId=eb68ac6c-b02b-4d5f-a997-be23b1a559f5 auto_published type=RECEIPT total_ms=566
+worker-1    | [document-render] Job 3 completed
+worker-1    | [document-render] correlationId=1b0e76bd-240e-4a46-b416-78c1e141128c docId=dae3f6cb-bf63-4811-be8d-3b068313f89e fetch_doc_ms=10 type=LAB_REPORT
+worker-1    | [document-render] correlationId=1b0e76bd-240e-4a46-b416-78c1e141128c docId=dae3f6cb-bf63-4811-be8d-3b068313f89e pdf_render_ms=122 bytes=75384
+worker-1    | [document-render] correlationId=1b0e76bd-240e-4a46-b416-78c1e141128c docId=dae3f6cb-bf63-4811-be8d-3b068313f89e storage_upload_ms=49 key=system/dae3f6cb-bf63-4811-be8d-3b068313f89e/report.pdf
+worker-1    | [document-render] correlationId=1b0e76bd-240e-4a46-b416-78c1e141128c docId=dae3f6cb-bf63-4811-be8d-3b068313f89e auto_published type=LAB_REPORT total_ms=266
+worker-1    | [document-render] Job 4 completed
+worker-1    | [document-render] correlationId=7528192c-1552-4b34-a268-c92f47828427 docId=aa5def7e-8b71-42a4-a9d2-eb81a5139f77 fetch_doc_ms=6 type=RECEIPT
+worker-1    | [document-render] correlationId=7528192c-1552-4b34-a268-c92f47828427 docId=aa5def7e-8b71-42a4-a9d2-eb81a5139f77 pdf_render_ms=163 bytes=88861
+worker-1    | [document-render] correlationId=7528192c-1552-4b34-a268-c92f47828427 docId=aa5def7e-8b71-42a4-a9d2-eb81a5139f77 storage_upload_ms=25 key=system/aa5def7e-8b71-42a4-a9d2-eb81a5139f77/report.pdf
+worker-1    | [document-render] correlationId=7528192c-1552-4b34-a268-c92f47828427 docId=aa5def7e-8b71-42a4-a9d2-eb81a5139f77 auto_published type=RECEIPT total_ms=246
+worker-1    | [document-render] Job 5 completed
+worker-1    | [document-render] correlationId=7ee2b606-21ca-4e89-a221-ffb70fe3bc23 docId=3a5c7baa-a17a-46aa-9ee9-5c51bac21da3 fetch_doc_ms=7 type=RECEIPT
+worker-1    | [document-render] correlationId=7ee2b606-21ca-4e89-a221-ffb70fe3bc23 docId=3a5c7baa-a17a-46aa-9ee9-5c51bac21da3 pdf_render_ms=165 bytes=87563
+worker-1    | [document-render] correlationId=7ee2b606-21ca-4e89-a221-ffb70fe3bc23 docId=3a5c7baa-a17a-46aa-9ee9-5c51bac21da3 storage_upload_ms=107 key=system/3a5c7baa-a17a-46aa-9ee9-5c51bac21da3/report.pdf
+worker-1    | [document-render] correlationId=7ee2b606-21ca-4e89-a221-ffb70fe3bc23 docId=3a5c7baa-a17a-46aa-9ee9-5c51bac21da3 auto_published type=RECEIPT total_ms=331
+worker-1    | [document-render] Job 6 completed
+worker-1    | [document-render] correlationId=904bc218-fb39-41ac-9e11-c8aaca529c88 docId=77b73058-8329-4f60-b854-598b21890699 fetch_doc_ms=6 type=LAB_REPORT
+worker-1    | [document-render] correlationId=904bc218-fb39-41ac-9e11-c8aaca529c88 docId=77b73058-8329-4f60-b854-598b21890699 pdf_render_ms=131 bytes=75553
+worker-1    | [document-render] correlationId=904bc218-fb39-41ac-9e11-c8aaca529c88 docId=77b73058-8329-4f60-b854-598b21890699 storage_upload_ms=36 key=system/77b73058-8329-4f60-b854-598b21890699/report.pdf
+worker-1    | [document-render] correlationId=904bc218-fb39-41ac-9e11-c8aaca529c88 docId=77b73058-8329-4f60-b854-598b21890699 auto_published type=LAB_REPORT total_ms=207
+worker-1    | [document-render] Job 7 completed
+worker-1    | [document-render] correlationId=1780017101474-gbg2iv8 docId=d2b30ea2-1e60-4690-becd-7a3617d5e774 fetch_doc_ms=4 type=LAB_REPORT
+worker-1    | [document-render] correlationId=1780017101474-gbg2iv8 docId=d2b30ea2-1e60-4690-becd-7a3617d5e774 pdf_render_ms=103 bytes=76678
+worker-1    | [document-render] correlationId=1780017101474-gbg2iv8 docId=d2b30ea2-1e60-4690-becd-7a3617d5e774 storage_upload_ms=28 key=system/d2b30ea2-1e60-4690-becd-7a3617d5e774/report.pdf
+worker-1    | [document-render] correlationId=1780017101474-gbg2iv8 docId=d2b30ea2-1e60-4690-becd-7a3617d5e774 auto_published type=LAB_REPORT total_ms=168
+worker-1    | [document-render] Job 8 completed
+worker-1    | [document-render] correlationId=f929732c-754e-443c-ae29-a688f14a800c docId=7d9ae4ab-d73d-4ec0-8bee-d16f3e368039 fetch_doc_ms=6 type=RECEIPT
+worker-1    | [document-render] correlationId=f929732c-754e-443c-ae29-a688f14a800c docId=7d9ae4ab-d73d-4ec0-8bee-d16f3e368039 pdf_render_ms=133 bytes=85459
+worker-1    | [document-render] correlationId=f929732c-754e-443c-ae29-a688f14a800c docId=7d9ae4ab-d73d-4ec0-8bee-d16f3e368039 storage_upload_ms=33 key=system/7d9ae4ab-d73d-4ec0-8bee-d16f3e368039/report.pdf
+worker-1    | [document-render] correlationId=f929732c-754e-443c-ae29-a688f14a800c docId=7d9ae4ab-d73d-4ec0-8bee-d16f3e368039 auto_published type=RECEIPT total_ms=221
+worker-1    | [document-render] Job 9 completed
+worker-1    | [document-render] correlationId=f19d3049-88d7-47f0-96a1-900431e15345 docId=cc8752b4-a475-4a7b-b63a-9925b643ae3e fetch_doc_ms=16 type=LAB_REPORT
+worker-1    | [document-render] correlationId=f19d3049-88d7-47f0-96a1-900431e15345 docId=cc8752b4-a475-4a7b-b63a-9925b643ae3e pdf_render_ms=146 bytes=74940
+worker-1    | [document-render] correlationId=f19d3049-88d7-47f0-96a1-900431e15345 docId=cc8752b4-a475-4a7b-b63a-9925b643ae3e storage_upload_ms=36 key=system/cc8752b4-a475-4a7b-b63a-9925b643ae3e/report.pdf
+worker-1    | [document-render] correlationId=f19d3049-88d7-47f0-96a1-900431e15345 docId=cc8752b4-a475-4a7b-b63a-9925b643ae3e auto_published type=LAB_REPORT total_ms=243
+worker-1    | [document-render] Job 10 completed
+worker-1    | [document-render] correlationId=a02496e4-5df6-4cf1-9f6c-f15738520db1 docId=13c03b37-11ab-4a81-aadb-fb4929a401df fetch_doc_ms=8 type=RECEIPT
+worker-1    | [document-render] correlationId=a02496e4-5df6-4cf1-9f6c-f15738520db1 docId=13c03b37-11ab-4a81-aadb-fb4929a401df pdf_render_ms=125 bytes=88097
+worker-1    | [document-render] correlationId=a02496e4-5df6-4cf1-9f6c-f15738520db1 docId=13c03b37-11ab-4a81-aadb-fb4929a401df storage_upload_ms=21 key=system/13c03b37-11ab-4a81-aadb-fb4929a401df/report.pdf
+worker-1    | [document-render] correlationId=a02496e4-5df6-4cf1-9f6c-f15738520db1 docId=13c03b37-11ab-4a81-aadb-fb4929a401df auto_published type=RECEIPT total_ms=182
+worker-1    | [document-render] Job 11 completed
+worker-1    | [document-render] correlationId=ca1a333e-277c-4731-9630-2a8ede1d23af docId=0a9d26cf-5b76-449c-af99-f21c38f3815c fetch_doc_ms=6 type=LAB_REPORT
+worker-1    | [document-render] correlationId=ca1a333e-277c-4731-9630-2a8ede1d23af docId=0a9d26cf-5b76-449c-af99-f21c38f3815c pdf_render_ms=102 bytes=75636
+worker-1    | [document-render] correlationId=ca1a333e-277c-4731-9630-2a8ede1d23af docId=0a9d26cf-5b76-449c-af99-f21c38f3815c storage_upload_ms=27 key=system/0a9d26cf-5b76-449c-af99-f21c38f3815c/report.pdf
+worker-1    | [document-render] correlationId=ca1a333e-277c-4731-9630-2a8ede1d23af docId=0a9d26cf-5b76-449c-af99-f21c38f3815c auto_published type=LAB_REPORT total_ms=181
+worker-1    | [document-render] Job 12 completed
+pdf-1       | warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+pdf-1       |       Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:8080'.
+pdf-1       | info: Microsoft.Hosting.Lifetime[14]
+pdf-1       |       Now listening on: http://[::]:8080
+pdf-1       | info: Microsoft.Hosting.Lifetime[0]
+pdf-1       |       Application started. Press Ctrl+C to shut down.
+pdf-1       | info: Microsoft.Hosting.Lifetime[0]
+pdf-1       |       Hosting environment: Production
+pdf-1       | info: Microsoft.Hosting.Lifetime[0]
+pdf-1       |       Content root path: /app
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 400.0429ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 6.3368ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.5341ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.4533ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.9068ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.6714ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.7471ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+redis-1     | 1:C 29 May 2026 01:09:41.352 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis-1     | 1:C 29 May 2026 01:09:41.352 * Redis version=7.4.8, bits=64, commit=00000000, modified=0, pid=1, just started
+redis-1     | 1:C 29 May 2026 01:09:41.352 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+redis-1     | 1:M 29 May 2026 01:09:41.354 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+redis-1     | 1:M 29 May 2026 01:09:41.354 * monotonic clock: POSIX clock_gettime
+redis-1     | 1:M 29 May 2026 01:09:41.362 * Running mode=standalone, port=6379.
+redis-1     | 1:M 29 May 2026 01:09:41.363 * Server initialized
+redis-1     | 1:M 29 May 2026 01:09:41.364 * Ready to accept connections tcp
+api-1       | 🔄 Running Prisma migrations...
+api-1       | Prisma schema loaded from prisma/schema.prisma
+api-1       | Datasource "db": PostgreSQL database "vexel", schema "public" at "postgres:5432"
+api-1       | 
+api-1       | 26 migrations found in prisma/migrations
+api-1       | 
+api-1       | 
+api-1       | No pending migrations to apply.
+api-1       | npm notice
+api-1       | npm notice New major version of npm available! 10.8.2 -> 11.16.0
+api-1       | npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.16.0
+api-1       | npm notice To update run: npm install -g npm@11.16.0
+api-1       | npm notice
+api-1       | 🌱 Running seed...
+api-1       | 🌱 Seeding database...
+operator-1  |    ▲ Next.js 15.5.18
+operator-1  |    - Local:        http://e501bb475d0d:3000
+operator-1  |    - Network:      http://e501bb475d0d:3000
+operator-1  | 
+operator-1  |  ✓ Starting...
+operator-1  |  ✓ Ready in 1614ms
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.5517ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.5538ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.4650ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1684
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1782
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 2688.9252ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 3057.1482ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.5806ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1684
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 384.0716ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1782
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 118.3747ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1686
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 157.8393ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1684
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+minio-1     | MinIO Object Storage Server
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+minio-1     | Copyright: 2015-2026 MinIO, Inc.
+minio-1     | License: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html
+minio-1     | Version: RELEASE.2025-09-07T16-13-09Z (go1.24.6 linux/amd64)
+minio-1     | 
+minio-1     | API: https://vexel.alshifalab.pk 
+minio-1     | WebUI: http://172.25.0.3:9001 http://127.0.0.1:9001  
+minio-1     | 
+minio-1     | Docs: https://docs.min.io
+api-1       | ✅ System tenant: system
+api-1       | ✅ Feature flags seeded
+api-1       | ✅ super-admin role: e41b81fc-c575-4c7e-8df2-42ae9ec96776
+api-1       | ✅ tenant-admin role: fca018a5-a80f-4cb7-8aa2-e8e844cf0f5e
+api-1       | ✅ Super-admin user: admin@vexel.system
+api-1       |    Password: Admin@vexel123!
+api-1       | ✅ Demo roles: operator, verifier, opd-operator, opd-doctor, opd-finance
+api-1       | ✅ Demo user: operator@demo.vexel.pk  password: Operator@demo123!
+api-1       | ✅ Demo user: verifier@demo.vexel.pk  password: Verifier@demo123!
+api-1       | ✅ Catalog seeded (sample types, tests, parameters, mappings, ranges)
+api-1       | ✅ Default DocumentTemplates seeded
+api-1       | ✅ Template blueprints seeded
+api-1       | ✅ System tenant PrintTemplate seeded
+api-1       | 
+api-1       | 🎉 Seed complete
+api-1       | 🚀 Starting API...
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +68ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStorageModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRbacModule dependencies initialized[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTenantModule dependencies initialized[39m[38;5;3m +9ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +10ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSystemLogsModule dependencies initialized[39m[38;5;3m +3ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +2ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJobsModule dependencies initialized[39m[38;5;3m +2ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPatientsModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppointmentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTemplatesModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpsModule dependencies initialized[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAccountModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFeatureFlagsModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRolesModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDocumentsModule dependencies initialized[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSampleCollectionModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEncountersModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mVerificationModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpdModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBillingModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCatalogModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mResultsModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:03 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTenantsModule dependencies initialized[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/health}:[39m[38;5;3m +813ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health, GET} route[39m[38;5;3m +3ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health/worker, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health/pdf, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health/deep, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/refresh, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mMeController {/api/me}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/me, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSystemLogsController {/api/system-logs}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/system-logs, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, PATCH} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id/roles, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id/roles, PUT} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTenantsController {/api/tenants}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants/:id, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants/:id/config, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants/:id/config, PATCH} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants/:id/feature-flags, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants/:id/feature-flags, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants/:tenantId\:enable-lims, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/tenants/:tenantId/service-health, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFeatureFlagsController {/api/feature-flags}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/feature-flags/definitions, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/feature-flags/resolved, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/feature-flags, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/feature-flags/:key, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogController {/api/catalog}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/sample-types, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/sample-types, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/sample-types/next-id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/sample-types/:id, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/sample-types/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/sample-types/:id, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/next-id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:id, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/definition, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:id, DELETE} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/parameters, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/parameters, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/parameters/bulk, PUT} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/parameters/:parameterId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/parameters/:parameterId, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/next-id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/:panelId/definition, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/:panelId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/:panelId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/:panelId, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/:panelId/tests, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/:panelId/tests, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/:panelId/tests/bulk, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/panels/:panelId/tests/:testId, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/parameters, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/parameters, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/parameters/next-id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/parameters/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/parameters/:id, PUT} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/parameters/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/parameters/:id, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/reference-ranges, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/reference-ranges, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/reference-ranges/:id, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/reference-ranges/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/reference-ranges/:id, DELETE} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/templates/workbook.xlsx, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/templates/parameters.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/templates/sample-types.csv, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/templates/tests.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/templates/test-parameters.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/templates/panels.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/templates/panel-tests.csv, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/templates/reference-ranges.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import/workbook, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/export, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/export/workbook.xlsx, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogController {/api/admin/catalog}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/sample-types, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/sample-types, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/sample-types/next-id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/sample-types/:id, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/sample-types/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/sample-types/:id, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/next-id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/definition, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:id, DELETE} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/parameters, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/parameters, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/parameters/bulk, PUT} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/parameters/:parameterId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/parameters/:parameterId, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/next-id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/:panelId/definition, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/:panelId, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/:panelId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/:panelId, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/:panelId/tests, GET} route[39m[38;5;3m +0ms[39m
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 158.4295ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1782
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/:panelId/tests, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/:panelId/tests/bulk, PUT} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/panels/:panelId/tests/:testId, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/parameters, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/parameters, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/parameters/next-id, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/parameters/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/parameters/:id, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/parameters/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/parameters/:id, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/reference-ranges, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/reference-ranges, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/reference-ranges/:id, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/reference-ranges/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/reference-ranges/:id, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/templates/workbook.xlsx, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/templates/parameters.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/templates/sample-types.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/templates/tests.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/templates/test-parameters.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/templates/panels.csv, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/templates/panel-tests.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/templates/reference-ranges.csv, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import/workbook, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/export, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/export/workbook.xlsx, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogJobsController {/api/catalog}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import-jobs, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import-jobs, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import-jobs/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import-jobs/:id\:validate, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import-jobs/:id\:apply, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import-jobs/:id/errors, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/import-jobs/:id\:retry, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/export-jobs, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/export-jobs, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/export-jobs/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/export-jobs/:id/download, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogJobsController {/api/admin/catalog}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import-jobs, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import-jobs, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import-jobs/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import-jobs/:id\:validate, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import-jobs/:id\:apply, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import-jobs/:id/errors, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/import-jobs/:id\:retry, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/export-jobs, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/export-jobs, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/export-jobs/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/export-jobs/:id/download, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogOperatorController {/api/operator/catalog/tests}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/operator/catalog/tests/search, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/operator/catalog/tests/top, GET} route[39m[38;5;3m +0ms[39m
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.6160ms
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 126.9778ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1783
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 99.8595ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogAdminTopController {/api/admin/catalog/tests}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/top, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditEventsController {/api/audit-events}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/audit-events, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mRolesController {/api/roles}:[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles/permissions, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles/:id, PATCH} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/roles/:id, DELETE} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mJobsController {/api/jobs}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/jobs, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/jobs/failed, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/jobs/failed-count, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/jobs/:id\:retry, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPatientsController {/api/patients}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/patients, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/patients, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/patients/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/patients/:id, PATCH} route[39m[38;5;3m +0ms[39m
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 4.3747ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1674
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 123.9689ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1777
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 143.5642ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEncountersController {/api/encounters}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:order-lab, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:collect-specimen, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:receive-specimen, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:result, POST} route[39m[38;5;3m +0ms[39m
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1680
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 122.5251ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 POST http://pdf:8080/render - application/json 1780
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: POST /render'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:verify, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:publish-report, POST} route[39m[38;5;3m +0ms[39m
+pdf-1       |       Request finished HTTP/1.1 POST http://pdf:8080/render - 200 - application/pdf 98.9554ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.8533ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.7427ms
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:cancel, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id/financials, GET} route[39m[38;5;3m +1ms[39m
+pdf-1       |       Request starting HTTP/1.1 GET http://localhost:8080/health/pdf - - -
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+pdf-1       |       Executing endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+pdf-1       |       Setting HTTP status code 200.
+pdf-1       | info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+pdf-1       |       Writing value of type '<>f__AnonymousType0`3' as Json.
+pdf-1       | info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+pdf-1       |       Executed endpoint 'HTTP: GET /health/pdf'
+pdf-1       | info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+pdf-1       |       Request finished HTTP/1.1 GET http://localhost:8080/health/pdf - 200 - application/json;+charset=utf-8 0.6836ms
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:collect-due, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:id\:apply-discount, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDocumentsController {/api/documents}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/receipt\:generate, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/report\:generate, POST} route[39m[38;5;3m +2ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/:id, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/:id\:publish, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/:id/download, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/documents/:id/render, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mResultsController {/api/results}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/pending, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/submitted, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/:orderedTestId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/:orderedTestId\:save, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/:orderedTestId\:submit, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/results/tests/:orderedTestId\:submit-and-verify, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSampleCollectionController {/api}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sample-collection/worklist, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:encounterId\:collect-specimens, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:encounterId\:postpone-specimen, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/encounters/:encounterId\:receive-specimens, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mVerificationController {/api/verification}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/verification/encounters/pending, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/verification/encounters/:encounterId, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/verification/encounters/:encounterId\:verify, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/verification/encounters/:encounterId\:return-for-correction, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOpdController {/api/opd}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/doctors, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/doctors/:doctorId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/doctors, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/doctors/:doctorId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/createRegistration, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/recordIntake, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/publishPrescription, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/finalizeEncounter, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/cancelEncounter, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/commands/generateReceipt, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId/prescription, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId/prescription/file, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId/receipt, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/encounters/:encounterId/receipt/file, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId, DELETE} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/schedules, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/schedules, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/schedules/:scheduleId, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/schedules/:scheduleId, DELETE} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/providers/:providerId/availability, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/reschedule, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/check-in, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/start-consultation, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/complete, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/cancel, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId/no-show, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/mark-waiting, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/start-consultation, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/complete, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/cancel, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/vitals, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/vitals, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note/sign, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription, PUT} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription/sign, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription/mark-printed, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/payments, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/issue, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/void, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/payments, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/receipt, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppointmentsController {/api/opd}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:reschedule, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:check-in, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:start-consultation, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:complete, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:cancel, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/appointments/:appointmentId\:mark-no-show, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId\:mark-waiting, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId\:start-consultation, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId\:complete, POST} route[39m[38;5;3m +2ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId\:cancel, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/vitals, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/vitals, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/clinical-note\:sign, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription\:sign, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/visits/:visitId/prescription\:mark-printed, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBillingController {/api/opd/billing}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId/payments, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId\:issue, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId\:void, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId\:record-payment, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/opd/billing/invoices/:invoiceId\:generate-receipt, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOpsController {/api/ops}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/dashboard, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/runs, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/runs/:id, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/runs/:id/logs, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/backups/full\:run, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/backups/tenant\:export, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/restores/full\:dryRun, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/restores/full\:run, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/healthcheck\:run, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/schedules, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/schedules\:create, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/schedules/:id\:update, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/schedules/:id\:toggle, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets\:create, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets/:id\:update, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets/:id\:toggle, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ops/storage-targets/:id\:test, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAccountController {/api}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/account/me, GET} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/account/me, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/account/change-password, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/navigation, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/landing, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/admin/templates}:[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id, PATCH} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/clone, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/new-version, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/activate, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/archive, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/preview, POST} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/layout, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/templates/:id/layout, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplateBlueprintsController {/api/admin/template-blueprints}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/template-blueprints, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/template-blueprints/provision-defaults, POST} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTestTemplateMapsController {/api/admin/catalog/tests}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/templates, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/admin/catalog/tests/:testId/templates, PUT} route[39m[38;5;3m +1ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTestTemplateMapsController {/api/catalog/tests}:[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/templates, GET} route[39m[38;5;3m +0ms[39m
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:04 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/catalog/tests/:testId/templates, PUT} route[39m[38;5;3m +0ms[39m
+api-1       | (node:1) Warning: NodeVersionSupportWarning: The AWS SDK for JavaScript (v3)
+api-1       | versions published after the first week of January 2027
+api-1       | will require node >=22. You are running node v20.20.2.
+api-1       | 
+api-1       | To continue receiving updates to AWS services, bug fixes,
+api-1       | and security updates please upgrade to node >=22.
+api-1       | 
+api-1       | More information can be found at: https://a.co/c895JFp
+api-1       | (Use `node --trace-warnings ...` to show where the warning was created)
+api-1       | [32m[Nest] 1  - [39m05/29/2026, 1:10:05 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +389ms[39m
+api-1       | 🚀 Vexel API running on port 3000

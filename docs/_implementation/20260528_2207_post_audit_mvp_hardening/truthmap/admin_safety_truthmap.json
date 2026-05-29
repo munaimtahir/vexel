@@ -1,0 +1,5 @@
+{
+  "status": "PENDING",
+  "note": "This file will map Admin UI actions to backend endpoints and classify whether any action mutates workflow state, and whether it is command-only + audited."
+}
+

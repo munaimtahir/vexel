@@ -3560,6 +3560,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/HealthStatus'
 
+  /health/deep:
+    get:
+      operationId: getDeepHealth
+      summary: Deep system health check
+      security: []
+      tags: [Health]
+      responses:
+        "200":
+          description: Deep system health is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  latencyMs:
+                    type: number
+                  services:
+                    type: object
+                  details:
+                    type: object
+
   # ─── Auth ─────────────────────────────────────────────────────────────────
   /auth/login:
     post:
@@ -6611,6 +6634,81 @@ paths:
                       $ref: '#/components/schemas/AuditEvent'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
+
+  # ─── System Logs ──────────────────────────────────────────────────────────
+  /system-logs:
+    get:
+      operationId: getSystemLogs
+      summary: Query structured category-wise system logs
+      tags: [SystemLogs]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: level
+          in: query
+          schema:
+            type: string
+        - name: correlationId
+          in: query
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: System logs list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        timestamp:
+                          type: string
+                        category:
+                          type: string
+                        level:
+                          type: string
+                        message:
+                          type: string
+                        correlationId:
+                          type: string
+                        tenantId:
+                          type: string
+                        metadata:
+                          type: object
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
 
   # ─── Jobs ─────────────────────────────────────────────────────────────────
   /jobs:

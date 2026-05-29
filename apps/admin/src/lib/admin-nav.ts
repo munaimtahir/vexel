@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Users, ShieldCheck, FlaskConical, UserRound, FileText,
   Palette, ToggleLeft, ClipboardList, Briefcase, ScrollText, Activity,
-  Building2, Stethoscope, CalendarDays, HardDrive, LayoutTemplate, type LucideIcon,
+  Building2, Stethoscope, CalendarDays, HardDrive, LayoutTemplate, Terminal, type LucideIcon,
 } from 'lucide-react';
 import { hasAnyPermission, type CurrentAdminUser } from '@/lib/rbac';
 
@@ -148,6 +148,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     href: '/system/health',
     label: 'System Health',
     icon: Activity,
+    requiredPermissions: ['admin.app.access', 'ops.view', 'tenant.read'],
+  },
+  {
+    href: '/system/logs',
+    label: 'System Logs',
+    icon: Terminal,
     requiredPermissions: ['admin.app.access', 'ops.view', 'tenant.read'],
   },
 ];

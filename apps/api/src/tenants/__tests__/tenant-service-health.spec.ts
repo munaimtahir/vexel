@@ -74,12 +74,14 @@ function buildMockPrisma(overrides: Record<string, any> = {}) {
 
 // Mock IORedis to avoid real network calls
 jest.mock('ioredis', () => {
-  return jest.fn().mockImplementation(() => ({
+  const mock = jest.fn().mockImplementation(() => ({
     connect: jest.fn().mockResolvedValue(undefined),
     ping: jest.fn().mockResolvedValue('PONG'),
     llen: jest.fn().mockResolvedValue(0),
     disconnect: jest.fn(),
   }));
+  (mock as any).default = mock;
+  return mock;
 });
 
 // Mock fetch for PDF probe

@@ -26,12 +26,14 @@ import { BillingModule } from './billing/billing.module';
 import { OpsModule } from './ops/ops.module';
 import { AccountModule } from './account/account.module';
 import { TemplatesModule } from './templates/templates.module';
+import { SystemLogsModule } from './logs/system-logs.module';
 
 @Module({
   imports: [
     PrismaModule,
     HealthModule,
     AuthModule,
+    SystemLogsModule,
     TenantModule,
     UsersModule,
     TenantsModule,

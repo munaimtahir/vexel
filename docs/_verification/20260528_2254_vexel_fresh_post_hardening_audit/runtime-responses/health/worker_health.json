@@ -1,0 +1,1 @@
+{"status":"ok","services":{"worker":"ok","redis":"ok"},"details":{"redisLatencyMs":7,"redisError":null,"workerLastHeartbeatAt":"2026-05-28T23:33:20.716Z"}}
