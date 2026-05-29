@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-05-29T03:36:32.720Z",
+  "services": {
+    "api": {
+      "url": "http://127.0.0.1:9021/api/health",
+      "ok": true
+    },
+    "operator": {
+      "url": "http://127.0.0.1:9024",
+      "ok": true,
+      "status": 200
+    },
+    "admin": {
+      "url": "https://vexel.alshifalab.pk/admin",
+      "ok": true,
+      "status": 200
+    }
+  }
+}

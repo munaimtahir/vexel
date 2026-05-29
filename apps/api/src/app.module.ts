@@ -1,4 +1,5 @@
 import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CorrelationIdMiddleware } from './common/correlation-id.middleware';
 import { TenantResolverMiddleware } from './tenant/tenant-resolver.middleware';
 import { PrismaModule } from './prisma/prisma.module';
@@ -27,6 +28,7 @@ import { OpsModule } from './ops/ops.module';
 import { AccountModule } from './account/account.module';
 import { TemplatesModule } from './templates/templates.module';
 import { SystemLogsModule } from './logs/system-logs.module';
+import { SystemLogsInterceptor } from './common/system-logs.interceptor';
 
 @Module({
   imports: [
@@ -56,6 +58,12 @@ import { SystemLogsModule } from './logs/system-logs.module';
     OpsModule,
     AccountModule,
     TemplatesModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: SystemLogsInterceptor,
+    },
   ],
 })
 export class AppModule implements NestModule {

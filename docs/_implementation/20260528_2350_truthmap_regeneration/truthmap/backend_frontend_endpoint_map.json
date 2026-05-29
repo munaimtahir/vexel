@@ -1,0 +1,1374 @@
+{
+  "GET /me": [
+    {
+      "app": "admin",
+      "file": "lib/use-auth.ts"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/branding/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/feature-flags/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/feature-flags/page.tsx"
+    }
+  ],
+  "GET /tenants": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/branding/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/feature-flags/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/tenants/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/feature-flags/page.tsx"
+    }
+  ],
+  "GET /tenants/{tenantId}/config": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/branding/page.tsx"
+    }
+  ],
+  "PATCH /tenants/{tenantId}/config": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/branding/page.tsx"
+    }
+  ],
+  "GET /account/me": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/account/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/account/page.tsx"
+    }
+  ],
+  "PATCH /account/me": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/account/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/account/page.tsx"
+    }
+  ],
+  "POST /account/change-password": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/account/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/account/page.tsx"
+    }
+  ],
+  "GET /opd/providers": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/schedules/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/providers/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/appointments/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/visits/new/page.tsx"
+    }
+  ],
+  "GET /opd/providers/{providerId}/schedules": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/schedules/page.tsx"
+    }
+  ],
+  "POST /opd/providers/{providerId}/schedules": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/schedules/page.tsx"
+    }
+  ],
+  "PATCH /opd/providers/{providerId}/schedules/{scheduleId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/schedules/page.tsx"
+    }
+  ],
+  "DELETE /opd/providers/{providerId}/schedules/{scheduleId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/schedules/page.tsx"
+    }
+  ],
+  "GET /tenants/{tenantId}/feature-flags": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/feature-flags/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/feature-flags/page.tsx"
+    }
+  ],
+  "PUT /tenants/{tenantId}/feature-flags": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/feature-flags/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/feature-flags/page.tsx"
+    }
+  ],
+  "GET /opd/doctors": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/doctors/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/new/page.tsx"
+    }
+  ],
+  "POST /opd/doctors": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/doctors/page.tsx"
+    }
+  ],
+  "PATCH /opd/doctors/{doctorId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/doctors/page.tsx"
+    }
+  ],
+  "POST /opd/providers": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/providers/page.tsx"
+    }
+  ],
+  "PATCH /opd/providers/{providerId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/providers/page.tsx"
+    }
+  ],
+  "GET /opd/providers/{providerId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/opd/providers/[providerId]/page.tsx"
+    }
+  ],
+  "GET /audit-events": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/audit/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    }
+  ],
+  "GET /catalog/sample-types": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/sample-types/page.tsx"
+    }
+  ],
+  "GET /catalog/parameters": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/reference-ranges/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/parameters/page.tsx"
+    }
+  ],
+  "GET /catalog/tests": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/reference-ranges/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/order/page.tsx"
+    }
+  ],
+  "GET /catalog/panels": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    }
+  ],
+  "GET /catalog/reference-ranges": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/reference-ranges/page.tsx"
+    }
+  ],
+  "PUT /catalog/reference-ranges/{id}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/reference-ranges/page.tsx"
+    }
+  ],
+  "POST /catalog/reference-ranges": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/reference-ranges/page.tsx"
+    }
+  ],
+  "DELETE /catalog/reference-ranges/{id}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/reference-ranges/page.tsx"
+    }
+  ],
+  "GET /catalog/sample-types/next-id": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/sample-types/page.tsx"
+    }
+  ],
+  "PATCH /catalog/sample-types/{id}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/sample-types/page.tsx"
+    }
+  ],
+  "POST /catalog/sample-types": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/sample-types/page.tsx"
+    }
+  ],
+  "DELETE /catalog/sample-types/{id}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/sample-types/page.tsx"
+    }
+  ],
+  "GET /operator/catalog/tests/top": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    }
+  ],
+  "GET /catalog/tests/{testId}/parameters": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "GET /catalog/tests/next-id": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "PATCH /catalog/tests/{testId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "POST /catalog/tests": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "DELETE /catalog/tests/{testId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "POST /catalog/tests/{testId}/parameters": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "DELETE /catalog/tests/{testId}/parameters/{parameterId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "PATCH /catalog/tests/{testId}/parameters/{parameterId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "GET /operator/catalog/tests/search": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    }
+  ],
+  "PUT /admin/catalog/tests/top": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/tests/page.tsx"
+    }
+  ],
+  "POST /catalog/import/workbook": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/import-export/page.tsx"
+    }
+  ],
+  "POST /catalog/export-jobs": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/import-export/page.tsx"
+    }
+  ],
+  "GET /catalog/panels/{panelId}/tests": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    }
+  ],
+  "GET /catalog/panels/next-id": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    }
+  ],
+  "PATCH /catalog/panels/{panelId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    }
+  ],
+  "POST /catalog/panels": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    }
+  ],
+  "DELETE /catalog/panels/{panelId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    }
+  ],
+  "POST /catalog/panels/{panelId}/tests": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    }
+  ],
+  "DELETE /catalog/panels/{panelId}/tests/{testId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/panels/page.tsx"
+    }
+  ],
+  "GET /catalog/parameters/next-id": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/parameters/page.tsx"
+    }
+  ],
+  "PUT /catalog/parameters/{parameterId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/parameters/page.tsx"
+    }
+  ],
+  "POST /catalog/parameters": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/parameters/page.tsx"
+    }
+  ],
+  "DELETE /catalog/parameters/{parameterId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/catalog/parameters/page.tsx"
+    }
+  ],
+  "GET /health": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/system/health/page.tsx"
+    }
+  ],
+  "GET /jobs/failed-count": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    }
+  ],
+  "GET /patients": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/patients/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/reports/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/patients/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/new/page.tsx"
+    }
+  ],
+  "GET /encounters": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/encounters/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/reports/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/worklist/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/payments/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/page.tsx"
+    }
+  ],
+  "GET /documents": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/documents/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/jobs/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/reports/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/verification/encounters/[encounterId]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/worklist/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/reports/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/publish/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "hooks/use-document-polling.ts"
+    }
+  ],
+  "GET /jobs": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/jobs/page.tsx"
+    }
+  ],
+  "GET /jobs/failed": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/dashboard/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/jobs/page.tsx"
+    }
+  ],
+  "POST /tenants": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/tenants/page.tsx"
+    }
+  ],
+  "PATCH /tenants/{tenantId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/tenants/page.tsx"
+    }
+  ],
+  "POST /tenants/{tenantId}:enable-lims": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/tenants/page.tsx"
+    }
+  ],
+  "GET /ops/dashboard": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/page.tsx"
+    }
+  ],
+  "POST /ops/backups/full:run": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/backups/new/page.tsx"
+    }
+  ],
+  "POST /ops/healthcheck:run": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/page.tsx"
+    }
+  ],
+  "GET /ops/schedules": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/schedules/page.tsx"
+    }
+  ],
+  "GET /ops/storage-targets": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/schedules/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/storage/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/backups/new/page.tsx"
+    }
+  ],
+  "POST /ops/schedules/{id}:toggle": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/schedules/page.tsx"
+    }
+  ],
+  "POST /ops/schedules:create": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/schedules/page.tsx"
+    }
+  ],
+  "POST /ops/storage-targets:create": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/storage/page.tsx"
+    }
+  ],
+  "POST /ops/storage-targets/{id}:test": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/storage/page.tsx"
+    }
+  ],
+  "POST /ops/storage-targets/{id}:toggle": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/storage/page.tsx"
+    }
+  ],
+  "GET /ops/runs": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/backups/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/tenants/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/restore/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/logs/page.tsx"
+    }
+  ],
+  "POST /ops/backups/tenant:export": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/tenants/page.tsx"
+    }
+  ],
+  "POST /ops/restores/full:dryRun": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/restore/page.tsx"
+    }
+  ],
+  "GET /ops/runs/{id}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/restore/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/logs/page.tsx"
+    }
+  ],
+  "POST /ops/restores/full:run": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/restore/page.tsx"
+    }
+  ],
+  "GET /ops/runs/{id}/logs": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/ops/logs/page.tsx"
+    }
+  ],
+  "GET /admin/templates": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/new/page.tsx"
+    }
+  ],
+  "POST /admin/templates/{templateId}/activate": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/[id]/page.tsx"
+    }
+  ],
+  "POST /admin/templates/{templateId}/archive": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/[id]/page.tsx"
+    }
+  ],
+  "POST /admin/template-blueprints/provision-defaults": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/page.tsx"
+    }
+  ],
+  "GET /admin/templates/{templateId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/[id]/page.tsx"
+    }
+  ],
+  "PATCH /admin/templates/{templateId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/[id]/page.tsx"
+    }
+  ],
+  "POST /admin/templates/{templateId}/new-version": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/[id]/page.tsx"
+    }
+  ],
+  "POST /admin/templates/{templateId}/preview": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/[id]/preview/page.tsx"
+    }
+  ],
+  "GET /admin/template-blueprints": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/new/page.tsx"
+    }
+  ],
+  "POST /admin/templates": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/templates/new/page.tsx"
+    }
+  ],
+  "GET /feature-flags/definitions": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/feature-flags/page.tsx"
+    }
+  ],
+  "GET /health/worker": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/system/health/page.tsx"
+    }
+  ],
+  "GET /health/pdf": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/system/health/page.tsx"
+    }
+  ],
+  "GET /system-logs": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/system/logs/page.tsx"
+    }
+  ],
+  "GET /users": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/users/page.tsx"
+    }
+  ],
+  "GET /roles": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/users/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/roles/page.tsx"
+    }
+  ],
+  "POST /users": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/users/page.tsx"
+    }
+  ],
+  "PATCH /users/{userId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/users/page.tsx"
+    }
+  ],
+  "GET /users/{userId}/roles": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/users/page.tsx"
+    }
+  ],
+  "PUT /users/{userId}/roles": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/users/page.tsx"
+    }
+  ],
+  "POST /documents/{id}:publish": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/documents/page.tsx"
+    },
+    {
+      "app": "admin",
+      "file": "app/(protected)/jobs/page.tsx"
+    }
+  ],
+  "GET /roles/permissions": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/roles/page.tsx"
+    }
+  ],
+  "POST /roles": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/roles/page.tsx"
+    }
+  ],
+  "PATCH /roles/{roleId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/roles/page.tsx"
+    }
+  ],
+  "DELETE /roles/{roleId}": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/roles/page.tsx"
+    }
+  ],
+  "GET /catalog/import-jobs": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/jobs/page.tsx"
+    }
+  ],
+  "GET /catalog/export-jobs": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/jobs/page.tsx"
+    }
+  ],
+  "POST /jobs/{jobId}:retry": [
+    {
+      "app": "admin",
+      "file": "app/(protected)/jobs/page.tsx"
+    }
+  ],
+  "POST /auth/login": [
+    {
+      "app": "admin",
+      "file": "app/login/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/login/page.tsx"
+    }
+  ],
+  "GET /documents/{id}/download": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/reports/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/print/[id]/page.tsx"
+    }
+  ],
+  "GET /verification/encounters/pending": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/verification/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/verification/encounters/[encounterId]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/worklist/page.tsx"
+    }
+  ],
+  "GET /verification/encounters/{encounterId}": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/verification/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/verification/encounters/[encounterId]/page.tsx"
+    }
+  ],
+  "POST /verification/encounters/{encounterId}:verify": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/verification/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/verification/encounters/[encounterId]/page.tsx"
+    }
+  ],
+  "POST /verification/encounters/{encounterId}:return-for-correction": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/verification/page.tsx"
+    }
+  ],
+  "GET /results/tests/pending": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/[orderedTestId]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/encounters/[encounterId]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/worklist/page.tsx"
+    }
+  ],
+  "GET /results/tests/submitted": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/encounters/[encounterId]/page.tsx"
+    }
+  ],
+  "POST /results/tests/{orderedTestId}:submit": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/[orderedTestId]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/encounters/[encounterId]/page.tsx"
+    }
+  ],
+  "GET /results/tests/{orderedTestId}": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/[orderedTestId]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/encounters/[encounterId]/page.tsx"
+    }
+  ],
+  "POST /results/tests/{orderedTestId}:save": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/[orderedTestId]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/results/encounters/[encounterId]/page.tsx"
+    }
+  ],
+  "GET /sample-collection/worklist": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/sample-collection/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:collect-specimens": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/sample-collection/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:postpone-specimen": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/sample-collection/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:receive-specimens": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/sample-collection/page.tsx"
+    }
+  ],
+  "GET /encounters/{encounterId}/financials": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/payments/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:collect-due": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/payments/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:apply-discount": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/payments/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:cancel": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/payments/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/page.tsx"
+    }
+  ],
+  "PATCH /patients/{patientId}": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    }
+  ],
+  "POST /patients": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/patients/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/new/page.tsx"
+    }
+  ],
+  "POST /encounters": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/new/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:order-lab": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/order/page.tsx"
+    }
+  ],
+  "POST /documents/receipt:generate": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/registrations/new/page.tsx"
+    }
+  ],
+  "GET /documents/{id}/render": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/print/[id]/page.tsx"
+    }
+  ],
+  "GET /encounters/{encounterId}": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/receive/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/reports/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/publish/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/sample/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/results/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/verify/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/order/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:receive-specimen": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/receive/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/sample/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:publish-report": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/publish/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:collect-specimen": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/sample/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:result": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/results/page.tsx"
+    }
+  ],
+  "POST /encounters/{encounterId}:verify": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/lims/encounters/[id]/verify/page.tsx"
+    }
+  ],
+  "GET /admin/navigation": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/account/page.tsx"
+    }
+  ],
+  "GET /opd/appointments": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/worklist/page.tsx"
+    }
+  ],
+  "GET /opd/visits": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/worklist/page.tsx"
+    }
+  ],
+  "GET /opd/billing/invoices": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/billing/page.tsx"
+    }
+  ],
+  "GET /opd/billing/invoices/{invoiceId}": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx"
+    }
+  ],
+  "GET /opd/billing/invoices/{invoiceId}/payments": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/billing/invoices/[invoiceId]/page.tsx"
+    }
+  ],
+  "POST /opd/billing/invoices": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/billing/new/page.tsx"
+    }
+  ],
+  "GET /opd/appointments/{appointmentId}": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/appointments/[id]/page.tsx"
+    }
+  ],
+  "POST /opd/visits": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/appointments/[id]/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/visits/new/page.tsx"
+    }
+  ],
+  "GET /opd/providers/{providerId}/availability": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/appointments/new/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/providers/[providerId]/availability/page.tsx"
+    }
+  ],
+  "POST /opd/appointments": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/appointments/new/page.tsx"
+    }
+  ],
+  "GET /opd/encounters": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/page.tsx"
+    }
+  ],
+  "GET /opd/encounters/{encounterId}": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/[id]/intake/page.tsx"
+    },
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/[id]/doctor/page.tsx"
+    }
+  ],
+  "POST /opd/commands/recordIntake": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/[id]/intake/page.tsx"
+    }
+  ],
+  "GET /opd/encounters/{encounterId}/prescription/file": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/[id]/doctor/page.tsx"
+    }
+  ],
+  "POST /opd/commands/publishPrescription": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/[id]/doctor/page.tsx"
+    }
+  ],
+  "POST /opd/commands/createRegistration": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/encounters/new/page.tsx"
+    }
+  ],
+  "GET /opd/visits/{visitId}/vitals": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/visits/[visitId]/page.tsx"
+    }
+  ],
+  "GET /opd/visits/{visitId}/clinical-note": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/visits/[visitId]/page.tsx"
+    }
+  ],
+  "GET /opd/visits/{visitId}/prescription": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/visits/[visitId]/page.tsx"
+    }
+  ],
+  "GET /opd/visits/{visitId}": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/visits/[visitId]/page.tsx"
+    }
+  ],
+  "PUT /opd/visits/{visitId}/clinical-note": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/visits/[visitId]/page.tsx"
+    }
+  ],
+  "PUT /opd/visits/{visitId}/prescription": [
+    {
+      "app": "operator",
+      "file": "app/(protected)/opd/visits/[visitId]/page.tsx"
+    }
+  ],
+  "GET /feature-flags/resolved": [
+    {
+      "app": "operator",
+      "file": "hooks/use-feature-flags.ts"
+    }
+  ]
+}
