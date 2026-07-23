@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * finalize-evidence.mjs
- * Post-run script: copies Playwright artifacts into OUT/e2e_runs/YYYYMMDD_HHMM/
+ * Post-run script: copies Playwright artifacts into docs/_audit/DEPLOY_RUNS/YYYYMMDD_HHMM/
  * and produces timings.json, console_errors.log, network_summary.json.
  *
  * Run after playwright test completes.
@@ -19,7 +19,7 @@ const now = new Date();
 const pad = (n) => String(n).padStart(2, '0');
 const ts = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
 
-const OUT_DIR = path.join(REPO_ROOT, 'OUT', 'e2e_runs', ts);
+const OUT_DIR = path.join(REPO_ROOT, 'docs', '_audit', 'DEPLOY_RUNS', ts);
 fs.mkdirSync(OUT_DIR, { recursive: true });
 fs.mkdirSync(path.join(OUT_DIR, 'traces'), { recursive: true });
 

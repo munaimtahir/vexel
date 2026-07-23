@@ -2,6 +2,10 @@ node_modules/
 .next/
 dist/
 .turbo/
+.playwright-cli/
+docs/_audit/DEPLOY_RUNS/
+apps/e2e/playwright-report/
+apps/e2e/test-results/
 *.env.local
 .env
 

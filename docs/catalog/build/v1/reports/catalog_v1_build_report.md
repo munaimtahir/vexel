@@ -1,7 +1,7 @@
 # Catalog v1 build report
 
 ## Source pack
-- `VEXEL_CATALOG_BUILD_PACK.zip`
+- `docs/catalog/source/catalog-build-pack.zip`
 - Raw inputs extracted to `docs/catalog/build/v1/raw/`
 - Normalized outputs written to `docs/catalog/build/v1/normalized/`
 

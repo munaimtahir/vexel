@@ -1,9 +1,11 @@
 const fs = require('fs');
+const path = require('path');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-    const text = fs.readFileSync('/home/munaim/srv/apps/vexel/VEXEL_CATALOG_TEST_PARAMETERS_MAPPING.csv', 'utf-8');
+    const mappingPath = path.resolve(__dirname, '../resources/catalog/test-parameters-mapping.csv');
+    const text = fs.readFileSync(mappingPath, 'utf-8');
     const lines = text.split('\n').filter(l => l.trim()).slice(1);
     let imported = 0;
     let skipped = 0;

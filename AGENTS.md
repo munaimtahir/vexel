@@ -2,9 +2,11 @@
 
 ---
 
-## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-02-24)
+## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-07-23)
 
-### Current State: LIMS Operator UI LIVE. Active bug fixing + UX improvements session completed.
+### Current State: Pilot-readiness audit completed. Deployment is currently unverified and should be treated as unavailable until the stack and public endpoint are revalidated.
+
+The current source of truth is [`docs/audits/20260723_pilot_readiness/`](docs/audits/20260723_pilot_readiness/). Older PASS/GO reports are historical local-stack evidence, not proof of current production availability.
 
 ### Addendum (2026-02-26) — CI + coverage audit
 - CI failures were fixed and revalidated locally: UI color lint PASS, API unit tests PASS (`9/9`), Playwright E2E PASS (`25/25`).
@@ -27,7 +29,7 @@
   - `pnpm install --frozen-lockfile`
   - `pnpm mcp:playwright:install-browsers`
 
-**Live URL:** https://vexel.alshifalab.pk  
+**Intended URL:** https://vexel.alshifalab.pk (availability must be revalidated before use)
 **Repo:** `git@github.com:munaimtahir/vexel.git` (SSH auth)  
 **HEAD commit:** `2287b59` on `main`  
 **Server:** `/home/munaim/srv/apps/vexel/`
@@ -43,24 +45,24 @@
 Operator permissions: `catalog.read, patient.manage, encounter.manage, result.enter, document.generate`  
 Verifier permissions: `catalog.read, encounter.manage, result.enter, result.verify, document.generate, document.publish`
 
-#### Live endpoints verified ✅
-- `https://vexel.alshifalab.pk/` → Operator landing page → auto-redirects to `/lims/worklist`
-- `https://vexel.alshifalab.pk/lims/registrations/new` → Patient registration (active workflow)
-- `https://vexel.alshifalab.pk/admin/login` → Admin app (200)
-- `https://vexel.alshifalab.pk/api/health` → `{"status":"ok"}`
-- `https://vexel.alshifalab.pk/api/auth/login` → JWT token on valid credentials
+#### Endpoint expectations (not currently verified)
+- Expected: `https://vexel.alshifalab.pk/` → Operator landing page → auto-redirects to `/lims/worklist`
+- Expected: `https://vexel.alshifalab.pk/lims/registrations/new` → Patient registration
+- Expected: `https://vexel.alshifalab.pk/admin/login` → Admin app
+- Expected: `https://vexel.alshifalab.pk/api/health` → `{"status":"ok"}`
+- Expected: `https://vexel.alshifalab.pk/api/auth/login` → JWT token on valid credentials
 
 #### Stack (Docker Compose)
 | Service | Port | Image | Status |
 |---------|------|-------|--------|
-| postgres | 127.0.0.1:5433 | postgres:16-alpine | healthy |
-| redis | 127.0.0.1:6380 | redis:7-alpine | healthy |
-| api (NestJS) | 127.0.0.1:9021 | vexel-api | healthy |
-| pdf (.NET QuestPDF) | 127.0.0.1:9022 | vexel-pdf | healthy |
-| admin (Next.js) | 127.0.0.1:9023 | vexel-admin | running (unhealthy = healthcheck misconfigured, actually serves ✅) |
-| operator (Next.js) | 127.0.0.1:9024 | vexel-operator | running (unhealthy = healthcheck misconfigured, actually serves ✅) |
-| minio | 127.0.0.1:9025 (console) | minio/minio | healthy |
-| worker (BullMQ) | internal | vexel-worker | running |
+| postgres | 127.0.0.1:5433 | postgres:16-alpine | Revalidate |
+| redis | 127.0.0.1:6380 | redis:7-alpine | Revalidate |
+| api (NestJS) | 127.0.0.1:9021 | vexel-api | Revalidate |
+| pdf (.NET QuestPDF) | 127.0.0.1:9022 | vexel-pdf | Revalidate |
+| admin (Next.js) | 127.0.0.1:9023 | vexel-admin | Revalidate |
+| operator (Next.js) | 127.0.0.1:9024 | vexel-operator | Revalidate |
+| minio | 127.0.0.1:9025 (console) | minio/minio | Revalidate |
+| worker (BullMQ) | internal | vexel-worker | Revalidate |
 
 **To restart stack after VPS reboot:** `cd /home/munaim/srv/apps/vexel && docker compose up -d`
 
