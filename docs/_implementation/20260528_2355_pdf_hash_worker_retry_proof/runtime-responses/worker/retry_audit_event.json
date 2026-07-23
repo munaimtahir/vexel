@@ -1,0 +1,119 @@
+{
+  "data": [
+    {
+      "id": "a268d4b6-23e7-4f11-aab1-fa0283158bfd",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "document.auto_published",
+      "entityType": "Document",
+      "entityId": "8a0a98ac-213f-41b4-9a5e-c13628d5c86b",
+      "correlationId": "b8a68da7-38f3-44de-93cf-673c6899a090",
+      "before": null,
+      "after": {
+        "type": "RECEIPT"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-29T04:44:49.377Z"
+    },
+    {
+      "id": "06b3f84c-86bc-4114-93f3-4bc402e700c8",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "document.rendered",
+      "entityType": "Document",
+      "entityId": "8a0a98ac-213f-41b4-9a5e-c13628d5c86b",
+      "correlationId": "b8a68da7-38f3-44de-93cf-673c6899a090",
+      "before": null,
+      "after": {
+        "pdfHash": "928037aa24ca490e8bfeb9271abcb990d6a217c2d7444effa3ad92ac79deb0b2",
+        "storageKey": "system/8a0a98ac-213f-41b4-9a5e-c13628d5c86b/report.pdf"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-29T04:44:49.324Z"
+    },
+    {
+      "id": "39160833-5935-485f-b3ae-4bd903b0eed2",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "document.render_failed",
+      "entityType": "Document",
+      "entityId": "8a0a98ac-213f-41b4-9a5e-c13628d5c86b",
+      "correlationId": "b8a68da7-38f3-44de-93cf-673c6899a090",
+      "before": null,
+      "after": {
+        "errorMessage": "PDF service returned 422: {\"error\":\"UNSUPPORTED_TEMPLATE_KEY\",\"templateKey\":\"invalid_template_xyz\"}"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-29T04:42:18.725Z"
+    },
+    {
+      "id": "78c0c825-294d-4002-bd51-836128ae4861",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "document.render_failed",
+      "entityType": "Document",
+      "entityId": "8a0a98ac-213f-41b4-9a5e-c13628d5c86b",
+      "correlationId": "b8a68da7-38f3-44de-93cf-673c6899a090",
+      "before": null,
+      "after": {
+        "errorMessage": "PDF service returned 422: {\"error\":\"UNSUPPORTED_TEMPLATE_KEY\",\"templateKey\":\"invalid_template_xyz\"}"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-29T04:37:39.509Z"
+    },
+    {
+      "id": "ae5a95b6-974b-49a5-b8bc-52e37ae0e941",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "document.render_failed",
+      "entityType": "Document",
+      "entityId": "8a0a98ac-213f-41b4-9a5e-c13628d5c86b",
+      "correlationId": "b8a68da7-38f3-44de-93cf-673c6899a090",
+      "before": null,
+      "after": {
+        "errorMessage": "PDF service returned 422: {\"error\":\"UNSUPPORTED_TEMPLATE_KEY\",\"templateKey\":\"invalid_template_xyz\"}"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-29T04:37:35.389Z"
+    },
+    {
+      "id": "b6c19c83-c87d-46f8-880a-7e4043cd0577",
+      "tenantId": "system",
+      "actorUserId": null,
+      "action": "document.render_failed",
+      "entityType": "Document",
+      "entityId": "8a0a98ac-213f-41b4-9a5e-c13628d5c86b",
+      "correlationId": "b8a68da7-38f3-44de-93cf-673c6899a090",
+      "before": null,
+      "after": {
+        "errorMessage": "PDF service returned 422: {\"error\":\"UNSUPPORTED_TEMPLATE_KEY\",\"templateKey\":\"invalid_template_xyz\"}"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-29T04:37:33.282Z"
+    },
+    {
+      "id": "e6d6783c-4963-4c86-8509-dec9ec523917",
+      "tenantId": "system",
+      "actorUserId": "0ae99a77-5d72-4fb0-bb25-95a08eebd8b8",
+      "action": "document.generate",
+      "entityType": "Document",
+      "entityId": "8a0a98ac-213f-41b4-9a5e-c13628d5c86b",
+      "correlationId": "b8a68da7-38f3-44de-93cf-673c6899a090",
+      "before": null,
+      "after": {
+        "type": "RECEIPT",
+        "status": "RENDERING",
+        "templateId": "efc162aa-65d1-4888-9223-e6d0a6930193",
+        "payloadHash": "228e8f90eb0eb81fe012e39b4f18779e86051f62858b82156d96ba6738e87fe6"
+      },
+      "metadata": null,
+      "createdAt": "2026-05-29T04:37:33.241Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 7,
+    "totalPages": 1
+  }
+}

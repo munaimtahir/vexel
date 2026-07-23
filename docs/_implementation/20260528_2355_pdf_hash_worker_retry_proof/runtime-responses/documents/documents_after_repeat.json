@@ -1,0 +1,163 @@
+[
+  {
+    "id": "20210ffc-cf0a-41ab-9d4e-28ec00d2f29e",
+    "tenantId": "system",
+    "type": "LAB_REPORT",
+    "templateId": "315a2296-3e84-4c36-b36a-e3725fc58e9a",
+    "payloadJson": {
+      "tests": [
+        {
+          "testCode": "UREA",
+          "testName": "Urea",
+          "department": "Clinical Chemistry",
+          "parameters": [
+            {
+              "unit": "mg/dL",
+              "value": "10.5",
+              "parameterCode": "13d61c27-0306-4815-a0be-c78cba2a156d",
+              "parameterName": "Urea"
+            }
+          ],
+          "printAlone": false
+        }
+      ],
+      "issuedAt": "2026-05-29T04:31:20.451Z",
+      "patientAge": "36Y",
+      "patientDob": "1990-01-01",
+      "patientMrn": "PT-26-0629",
+      "tenantName": "Al Shifa Laboratory",
+      "encounterId": "594a02c7-02ee-47b0-88ec-51a5a75b7f5f",
+      "patientName": "Audit Proof",
+      "reportFooter": "This report is electronically generated from the LIMS and does not require a signature. Results are valid for the submitted specimen only and should be interpreted by the treating physician in clinical context.",
+      "reportHeader": "Circular Road Jaranwala  . 041-4312286",
+      "reportNumber": "RPT-594A02C7",
+      "reportStatus": "Verified",
+      "templateCode": "general_table_v1",
+      "encounterCode": "SYS-2605-031",
+      "patientGender": "male",
+      "templateFamily": "GENERAL_TABLE",
+      "templateVersion": 1,
+      "sampleReceivedAt": "2026-05-29T04:31:19.912Z",
+      "reportHeaderLayout": "classic"
+    },
+    "payloadHash": "41528e5d71f256d95dd47f36463568e65d18536ff8af46c5bec98ef88723c9de",
+    "pdfHash": null,
+    "storageKey": null,
+    "status": "RENDERING",
+    "version": 1,
+    "sourceRef": "594a02c7-02ee-47b0-88ec-51a5a75b7f5f",
+    "sourceType": "ENCOUNTER",
+    "errorMessage": null,
+    "publishedAt": null,
+    "createdBy": "0ae99a77-5d72-4fb0-bb25-95a08eebd8b8",
+    "createdAt": "2026-05-29T04:33:29.576Z",
+    "updatedAt": "2026-05-29T04:33:29.605Z"
+  },
+  {
+    "id": "0099d8f8-a9a3-4a25-8c24-6db565d5eb4d",
+    "tenantId": "system",
+    "type": "LAB_REPORT",
+    "templateId": "315a2296-3e84-4c36-b36a-e3725fc58e9a",
+    "payloadJson": {
+      "tests": [
+        {
+          "testCode": "UREA",
+          "testName": "Urea",
+          "department": "Clinical Chemistry",
+          "parameters": [
+            {
+              "unit": "mg/dL",
+              "value": "10.5",
+              "parameterCode": "13d61c27-0306-4815-a0be-c78cba2a156d",
+              "parameterName": "Urea"
+            }
+          ],
+          "printAlone": false
+        }
+      ],
+      "issuedAt": "2026-05-29T04:31:19.109Z",
+      "patientAge": "36Y",
+      "patientDob": "1990-01-01",
+      "patientMrn": "PT-26-0629",
+      "tenantName": "Al Shifa Laboratory",
+      "encounterId": "594a02c7-02ee-47b0-88ec-51a5a75b7f5f",
+      "patientName": "Audit Proof",
+      "reportFooter": "This report is electronically generated from the LIMS and does not require a signature. Results are valid for the submitted specimen only and should be interpreted by the treating physician in clinical context.",
+      "reportHeader": "Circular Road Jaranwala  . 041-4312286",
+      "reportNumber": "RPT-594A02C7",
+      "reportStatus": "Verified",
+      "templateCode": "general_table_v1",
+      "encounterCode": "SYS-2605-031",
+      "patientGender": "male",
+      "templateFamily": "GENERAL_TABLE",
+      "templateVersion": 1,
+      "sampleReceivedAt": "2026-05-29T04:31:19.912Z",
+      "reportHeaderLayout": "classic"
+    },
+    "payloadHash": "a69ca16a4aa997919e9d3a83a12b78457a52efd33b3ad866f640bac50549d8de",
+    "pdfHash": "f2d371b1367a38a2390e586db2a771eb5e008807f4ef01a5f7f9ebd6ebf5922a",
+    "storageKey": "system/0099d8f8-a9a3-4a25-8c24-6db565d5eb4d/report.pdf",
+    "status": "PUBLISHED",
+    "version": 1,
+    "sourceRef": "594a02c7-02ee-47b0-88ec-51a5a75b7f5f",
+    "sourceType": "ENCOUNTER",
+    "errorMessage": null,
+    "publishedAt": "2026-05-29T04:31:22.935Z",
+    "createdBy": "0ae99a77-5d72-4fb0-bb25-95a08eebd8b8",
+    "createdAt": "2026-05-29T04:31:20.438Z",
+    "updatedAt": "2026-05-29T04:31:22.935Z"
+  },
+  {
+    "id": "6e3ae2df-5aee-43ba-943b-6405e2ff9cc9",
+    "tenantId": "system",
+    "type": "RECEIPT",
+    "templateId": "tpl-receipt-v1-system",
+    "payloadJson": {
+      "tax": 0,
+      "items": [
+        {
+          "total": 300,
+          "quantity": 1,
+          "unitPrice": 300,
+          "description": "Urea"
+        }
+      ],
+      "discount": 0,
+      "issuedAt": "2026-05-29T04:31:19.109Z",
+      "subtotal": 300,
+      "grandTotal": 300,
+      "patientAge": "36Y",
+      "patientMrn": "PT-26-0629",
+      "tenantName": "Al Shifa Laboratory",
+      "encounterId": "594a02c7-02ee-47b0-88ec-51a5a75b7f5f",
+      "patientName": "Audit Proof",
+      "labOrderCode": "41ad6f87-fac0-4da0-a4ca-ad1b2d424479",
+      "reportFooter": "This report is electronically generated from the LIMS and does not require a signature. Results are valid for the submitted specimen only and should be interpreted by the treating physician in clinical context.",
+      "reportHeader": "Circular Road Jaranwala  . 041-4312286",
+      "encounterCode": "SYS-2605-031",
+      "patientGender": "male",
+      "paymentMethod": "Cash",
+      "receiptNumber": "RCP-41AD6F87",
+      "paymentComments": "",
+      "patientDemographics": {
+        "mrn": "PT-26-0629",
+        "gender": "male",
+        "mobile": "0300-9998877",
+        "ageDisplay": "36Y",
+        "displayName": "Audit Proof"
+      }
+    },
+    "payloadHash": "75f1ff71ed201d466bac0dabaa1f933e876812f4c909e845c264da4d9043482c",
+    "pdfHash": "8a5d5229c1377f1cc561bfea3881193bbfb3410eefc8e5c72799e28fd7dbc53e",
+    "storageKey": "system/6e3ae2df-5aee-43ba-943b-6405e2ff9cc9/report.pdf",
+    "status": "PUBLISHED",
+    "version": 1,
+    "sourceRef": "594a02c7-02ee-47b0-88ec-51a5a75b7f5f",
+    "sourceType": "ENCOUNTER",
+    "errorMessage": null,
+    "publishedAt": "2026-05-29T04:31:22.912Z",
+    "createdBy": "0ae99a77-5d72-4fb0-bb25-95a08eebd8b8",
+    "createdAt": "2026-05-29T04:31:19.841Z",
+    "updatedAt": "2026-05-29T04:31:22.913Z"
+  }
+]

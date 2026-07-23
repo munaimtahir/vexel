@@ -1,0 +1,16 @@
+[
+  {
+    "type": "LAB_REPORT",
+    "id": "0099d8f8-a9a3-4a25-8c24-6db565d5eb4d",
+    "storedHash": "f2d371b1367a38a2390e586db2a771eb5e008807f4ef01a5f7f9ebd6ebf5922a",
+    "computedHash": "f2d371b1367a38a2390e586db2a771eb5e008807f4ef01a5f7f9ebd6ebf5922a",
+    "match": true
+  },
+  {
+    "type": "RECEIPT",
+    "id": "6e3ae2df-5aee-43ba-943b-6405e2ff9cc9",
+    "storedHash": "8a5d5229c1377f1cc561bfea3881193bbfb3410eefc8e5c72799e28fd7dbc53e",
+    "computedHash": "8a5d5229c1377f1cc561bfea3881193bbfb3410eefc8e5c72799e28fd7dbc53e",
+    "match": true
+  }
+]

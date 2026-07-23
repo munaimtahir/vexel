@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "id": "177469f5-3bb1-49aa-846b-26ca38ff6584",
+      "category": "pdf",
+      "level": "warn",
+      "message": "QuestPDF container responded with high memory warning (85% utilization).",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:04:37.501Z"
+    },
+    {
+      "id": "f95e9e1b-e8af-4473-bec9-b8c41665d639",
+      "category": "pdf",
+      "level": "info",
+      "message": "QuestPDF service connected and templates cached successfully.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T02:58:27.501Z"
+    }
+  ],
+  "total": 2,
+  "page": 1,
+  "limit": 20
+}

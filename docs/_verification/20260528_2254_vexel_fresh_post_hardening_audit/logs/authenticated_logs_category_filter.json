@@ -1,0 +1,61 @@
+{
+  "data": [
+    {
+      "id": "24bd2a2f-0b3f-4871-9928-69d09293057e",
+      "timestamp": "2026-05-29T04:29:47.974Z",
+      "category": "auth",
+      "level": "info",
+      "message": "HTTP POST /api/auth/login successful",
+      "correlationId": "2dcac25e-d78f-4515-abf7-386c68dc267c",
+      "metadata": {
+        "method": "POST",
+        "url": "/api/auth/login"
+      }
+    },
+    {
+      "id": "e45f0f3a-78b0-4e47-bd1c-3ac3581ba954",
+      "timestamp": "2026-05-29T03:36:40.553Z",
+      "category": "auth",
+      "level": "info",
+      "message": "HTTP POST /api/auth/login successful",
+      "correlationId": "1780025800055-q3qpswx",
+      "metadata": {
+        "method": "POST",
+        "url": "/api/auth/login"
+      }
+    },
+    {
+      "id": "c9fa71d1-99cf-4bd1-b903-902a55f096eb",
+      "timestamp": "2026-05-29T03:27:27.214Z",
+      "category": "auth",
+      "level": "info",
+      "message": "HTTP POST /api/auth/login successful",
+      "correlationId": "1780025246470-3k3zjmh",
+      "metadata": {
+        "method": "POST",
+        "url": "/api/auth/login"
+      }
+    },
+    {
+      "id": "7b3d28c6-f59a-4da0-800e-e3f1342c1e10",
+      "category": "auth",
+      "level": "warn",
+      "message": "Failed login attempt for user operator@demo.vexel.pk from IP 198.51.100.42.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:05:07.501Z"
+    },
+    {
+      "id": "2d8bcc85-909f-43e6-a486-03dd048bbefa",
+      "category": "auth",
+      "level": "info",
+      "message": "Super Admin session initialized for user admin@vexel.pk.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T02:59:17.501Z"
+    }
+  ],
+  "total": 5,
+  "page": 1,
+  "limit": 20
+}

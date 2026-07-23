@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "id": "7b3d28c6-f59a-4da0-800e-e3f1342c1e10",
+      "category": "auth",
+      "level": "warn",
+      "message": "Failed login attempt for user operator@demo.vexel.pk from IP 198.51.100.42.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:05:07.501Z"
+    },
+    {
+      "id": "177469f5-3bb1-49aa-846b-26ca38ff6584",
+      "category": "pdf",
+      "level": "warn",
+      "message": "QuestPDF container responded with high memory warning (85% utilization).",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:04:37.501Z"
+    }
+  ],
+  "total": 2,
+  "page": 1,
+  "limit": 20
+}

@@ -1,0 +1,142 @@
+{
+  "data": [
+    {
+      "id": "bcf33f91-80f8-4a59-9ae8-bdb86f1f36db",
+      "category": "worker",
+      "level": "error",
+      "message": "Failed to process job 'render-pdf' for encounter 'ENC-20260226-0002': storage connection timed out.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:05:37.501Z"
+    },
+    {
+      "id": "7b3d28c6-f59a-4da0-800e-e3f1342c1e10",
+      "category": "auth",
+      "level": "warn",
+      "message": "Failed login attempt for user operator@demo.vexel.pk from IP 198.51.100.42.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:05:07.501Z"
+    },
+    {
+      "id": "177469f5-3bb1-49aa-846b-26ca38ff6584",
+      "category": "pdf",
+      "level": "warn",
+      "message": "QuestPDF container responded with high memory warning (85% utilization).",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:04:37.501Z"
+    },
+    {
+      "id": "6d0e3bf8-e84e-4704-82cd-508abed07f30",
+      "category": "documents",
+      "level": "info",
+      "message": "Document 'DOC-889812' rendered successfully: pdfHash computed.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:04:17.501Z"
+    },
+    {
+      "id": "fb282850-1559-4e49-87aa-a87932aa8ab7",
+      "category": "workflow",
+      "level": "info",
+      "message": "Encounter 'ENC-20260226-0001' state updated to 'SAMPLE_COLLECTED'.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:03:27.501Z"
+    },
+    {
+      "id": "4b45ff31-109b-4f30-bd28-08e7a9a80726",
+      "category": "feature_flags",
+      "level": "info",
+      "message": "Feature flag 'module.lims' enabled for tenant 'system'.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:02:37.501Z"
+    },
+    {
+      "id": "0f13866e-bd85-4b18-9911-139b355a0e43",
+      "category": "admin",
+      "level": "info",
+      "message": "Admin configuration updated: default price list synchronized.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:01:47.501Z"
+    },
+    {
+      "id": "15360ecb-c492-449b-932e-e771de44db32",
+      "category": "catalog",
+      "level": "info",
+      "message": "Catalog loaded with 103 active test definitions.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:00:57.501Z"
+    },
+    {
+      "id": "bc9ac8d5-c388-47be-b1b4-87680c345e70",
+      "category": "tenancy",
+      "level": "info",
+      "message": "Tenant context resolved for tenant 'system'.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T03:00:07.501Z"
+    },
+    {
+      "id": "2d8bcc85-909f-43e6-a486-03dd048bbefa",
+      "category": "auth",
+      "level": "info",
+      "message": "Super Admin session initialized for user admin@vexel.pk.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T02:59:17.501Z"
+    },
+    {
+      "id": "f95e9e1b-e8af-4473-bec9-b8c41665d639",
+      "category": "pdf",
+      "level": "info",
+      "message": "QuestPDF service connected and templates cached successfully.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T02:58:27.501Z"
+    },
+    {
+      "id": "9872b7a1-4360-45af-ba46-5b26d3890239",
+      "category": "worker",
+      "level": "info",
+      "message": "BullMQ worker listening on queue 'documents'.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T02:57:57.501Z"
+    },
+    {
+      "id": "17ec2c1a-ce46-49e8-881a-b98e1dd9ac8f",
+      "category": "queue",
+      "level": "info",
+      "message": "BullMQ connection to Redis established at redis://redis:6379.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T02:57:37.501Z"
+    },
+    {
+      "id": "1be9ecdc-8842-443c-b270-fc3db8928514",
+      "category": "health",
+      "level": "info",
+      "message": "System health check passed: database, redis, and minio are online.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T02:56:47.501Z"
+    },
+    {
+      "id": "9c9c1083-bb60-47b2-9a6a-b9265bf0a26d",
+      "category": "system",
+      "level": "info",
+      "message": "Vexel API server bootstrapped successfully, running on port 3000.",
+      "correlationId": "8f47b93a-86c2-498c-9563-ff92a071ece5",
+      "tenantId": "system",
+      "timestamp": "2026-05-29T02:55:57.501Z"
+    }
+  ],
+  "total": 15,
+  "page": 1,
+  "limit": 20
+}

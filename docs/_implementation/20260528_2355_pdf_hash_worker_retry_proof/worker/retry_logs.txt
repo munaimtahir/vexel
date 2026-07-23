@@ -1,0 +1,44 @@
+worker-1  | 🚀 Vexel Worker running. Queues: jobs, catalog-import, catalog-export, document-render, ops-backup
+worker-1  | (node:1) Warning: NodeVersionSupportWarning: The AWS SDK for JavaScript (v3)
+worker-1  | versions published after the first week of January 2027
+worker-1  | will require node >=22. You are running node v20.20.2.
+worker-1  | 
+worker-1  | To continue receiving updates to AWS services, bug fixes,
+worker-1  | and security updates please upgrade to node >=22.
+worker-1  | 
+worker-1  | More information can be found at: https://a.co/c895JFp
+worker-1  | (Use `node --trace-warnings ...` to show where the warning was created)
+worker-1  | ✅ Worker connected to Redis
+worker-1  | ✅ Storage bucket 'vexel-documents' exists
+worker-1  | [document-render] correlationId=6877a1e6-2bf9-4bcb-847d-e7567411a4a9 docId=6e3ae2df-5aee-43ba-943b-6405e2ff9cc9 fetch_doc_ms=106 type=RECEIPT
+worker-1  | [document-render] correlationId=c6318c9a-708a-45af-9642-08b54e36836d docId=0099d8f8-a9a3-4a25-8c24-6db565d5eb4d fetch_doc_ms=4 type=LAB_REPORT
+worker-1  | [document-render] correlationId=6877a1e6-2bf9-4bcb-847d-e7567411a4a9 docId=6e3ae2df-5aee-43ba-943b-6405e2ff9cc9 pdf_render_ms=2825 bytes=87076
+worker-1  | [document-render] correlationId=c6318c9a-708a-45af-9642-08b54e36836d docId=0099d8f8-a9a3-4a25-8c24-6db565d5eb4d pdf_render_ms=2415 bytes=75960
+worker-1  | [document-render] correlationId=6877a1e6-2bf9-4bcb-847d-e7567411a4a9 docId=6e3ae2df-5aee-43ba-943b-6405e2ff9cc9 storage_upload_ms=53 key=system/6e3ae2df-5aee-43ba-943b-6405e2ff9cc9/report.pdf
+worker-1  | [document-render] correlationId=c6318c9a-708a-45af-9642-08b54e36836d docId=0099d8f8-a9a3-4a25-8c24-6db565d5eb4d storage_upload_ms=31 key=system/0099d8f8-a9a3-4a25-8c24-6db565d5eb4d/report.pdf
+worker-1  | [document-render] correlationId=6877a1e6-2bf9-4bcb-847d-e7567411a4a9 docId=6e3ae2df-5aee-43ba-943b-6405e2ff9cc9 auto_published type=RECEIPT total_ms=3023
+worker-1  | [document-render] Job 1 completed
+worker-1  | [document-render] correlationId=c6318c9a-708a-45af-9642-08b54e36836d docId=0099d8f8-a9a3-4a25-8c24-6db565d5eb4d auto_published type=LAB_REPORT total_ms=2522
+worker-1  | [document-render] Job 2 completed
+worker-1  | [document-render] correlationId=0a08f32d-90f8-413b-adca-d2f4a9947a1d docId=20210ffc-cf0a-41ab-9d4e-28ec00d2f29e fetch_doc_ms=10 type=LAB_REPORT
+worker-1  | [document-render] correlationId=0a08f32d-90f8-413b-adca-d2f4a9947a1d docId=20210ffc-cf0a-41ab-9d4e-28ec00d2f29e pdf_render_ms=115 bytes=75960
+worker-1  | [document-render] correlationId=0a08f32d-90f8-413b-adca-d2f4a9947a1d docId=20210ffc-cf0a-41ab-9d4e-28ec00d2f29e storage_upload_ms=20 key=system/20210ffc-cf0a-41ab-9d4e-28ec00d2f29e/report.pdf
+worker-1  | [document-render] correlationId=0a08f32d-90f8-413b-adca-d2f4a9947a1d docId=20210ffc-cf0a-41ab-9d4e-28ec00d2f29e auto_published type=LAB_REPORT total_ms=192
+worker-1  | [document-render] Job 3 completed
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b fetch_doc_ms=14 type=RECEIPT
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b FAILED total_ms=64 error=PDF service returned 422: {"error":"UNSUPPORTED_TEMPLATE_KEY","templateKey":"invalid_template_xyz"}
+worker-1  | [document-render] Job 4 failed: PDF service returned 422: {"error":"UNSUPPORTED_TEMPLATE_KEY","templateKey":"invalid_template_xyz"}
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b fetch_doc_ms=8 type=RECEIPT
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b FAILED total_ms=75 error=PDF service returned 422: {"error":"UNSUPPORTED_TEMPLATE_KEY","templateKey":"invalid_template_xyz"}
+worker-1  | [document-render] Job 4 failed: PDF service returned 422: {"error":"UNSUPPORTED_TEMPLATE_KEY","templateKey":"invalid_template_xyz"}
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b fetch_doc_ms=4 type=RECEIPT
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b FAILED total_ms=33 error=PDF service returned 422: {"error":"UNSUPPORTED_TEMPLATE_KEY","templateKey":"invalid_template_xyz"}
+worker-1  | [document-render] Job 4 failed: PDF service returned 422: {"error":"UNSUPPORTED_TEMPLATE_KEY","templateKey":"invalid_template_xyz"}
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b fetch_doc_ms=10 type=RECEIPT
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b FAILED total_ms=35 error=PDF service returned 422: {"error":"UNSUPPORTED_TEMPLATE_KEY","templateKey":"invalid_template_xyz"}
+worker-1  | [document-render] Job 4 failed: PDF service returned 422: {"error":"UNSUPPORTED_TEMPLATE_KEY","templateKey":"invalid_template_xyz"}
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b fetch_doc_ms=13 type=RECEIPT
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b pdf_render_ms=26 bytes=59390
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b storage_upload_ms=21 key=system/8a0a98ac-213f-41b4-9a5e-c13628d5c86b/report.pdf
+worker-1  | [document-render] correlationId=b8a68da7-38f3-44de-93cf-673c6899a090 docId=8a0a98ac-213f-41b4-9a5e-c13628d5c86b auto_published type=RECEIPT total_ms=131
+worker-1  | [document-render] Job 4 completed

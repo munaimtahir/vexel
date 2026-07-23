@@ -1,0 +1,25 @@
+{
+  "id": "8a0a98ac-213f-41b4-9a5e-c13628d5c86b",
+  "tenantId": "system",
+  "type": "RECEIPT",
+  "templateId": "efc162aa-65d1-4888-9223-e6d0a6930193",
+  "payloadJson": {
+    "grandTotal": 100,
+    "tenantName": "Al Shifa Laboratory",
+    "reportFooter": "This report is electronically generated from the LIMS and does not require a signature. Results are valid for the submitted specimen only and should be interpreted by the treating physician in clinical context.",
+    "reportHeader": "Circular Road Jaranwala  . 041-4312286",
+    "receiptNumber": "FAIL-001"
+  },
+  "payloadHash": "228e8f90eb0eb81fe012e39b4f18779e86051f62858b82156d96ba6738e87fe6",
+  "pdfHash": "928037aa24ca490e8bfeb9271abcb990d6a217c2d7444effa3ad92ac79deb0b2",
+  "storageKey": "system/8a0a98ac-213f-41b4-9a5e-c13628d5c86b/report.pdf",
+  "status": "PUBLISHED",
+  "version": 1,
+  "sourceRef": null,
+  "sourceType": null,
+  "errorMessage": null,
+  "publishedAt": "2026-05-29T04:44:49.330Z",
+  "createdBy": "0ae99a77-5d72-4fb0-bb25-95a08eebd8b8",
+  "createdAt": "2026-05-29T04:37:33.217Z",
+  "updatedAt": "2026-05-29T04:44:49.331Z"
+}

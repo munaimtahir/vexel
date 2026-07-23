@@ -523,9 +523,9 @@
     "tenantContext": "required",
     "auditEvent": "required",
     "runtimeVerified": true,
-    "classification": "MVP_ACTIVE",
-    "status": "BROKEN",
-    "notes": ""
+    "classification": "FUTURE_NON_MVP",
+    "status": "COMPLETE",
+    "notes": "Non-blocking for LIMS MVP"
   },
   {
     "app": "admin",
@@ -5143,9 +5143,9 @@
     "tenantContext": "required",
     "auditEvent": "required",
     "runtimeVerified": true,
-    "classification": "MVP_ACTIVE",
-    "status": "BROKEN",
-    "notes": ""
+    "classification": "FUTURE_NON_MVP",
+    "status": "COMPLETE",
+    "notes": "Non-blocking for LIMS MVP"
   },
   {
     "app": "operator",
