@@ -1221,6 +1221,7 @@ model CashTransaction {
   labOrderId  String?
   type        String   // PAYMENT | DISCOUNT | REFUND | DUE_RECEIVED | CANCELLATION_REFUND
   amount      Decimal  @db.Decimal(10,2) // always positive; type gives direction
+  paymentMode String   @default("CASH") // CASH | CARD | BANK_TRANSFER | ONLINE | CHEQUE — not meaningful for DISCOUNT rows
   actorUserId String
   reason      String?  // required for DISCOUNT, CANCELLATION_REFUND
   correlationId String?

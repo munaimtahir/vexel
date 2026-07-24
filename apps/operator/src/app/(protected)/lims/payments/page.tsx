@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DataTable, type DataTableColumn } from '@vexel/ui-system';
 
 type FinancialsData = {
@@ -32,6 +33,7 @@ type FinancialsData = {
     id: string;
     type: string;
     amount: number;
+    paymentMode?: string | null;
     actorUserId: string;
     reason?: string | null;
     createdAt: string;
@@ -64,6 +66,7 @@ export default function PaymentsPage() {
   // Action states
   const [showCollectDue, setShowCollectDue] = useState(false);
   const [collectAmount, setCollectAmount] = useState('');
+  const [collectPaymentMode, setCollectPaymentMode] = useState('CASH');
   const [collectLoading, setCollectLoading] = useState(false);
   const [collectError, setCollectError] = useState('');
 
@@ -143,12 +146,13 @@ export default function PaymentsPage() {
       // @ts-ignore
       const { data, error: apiErr } = await api.POST('/encounters/{encounterId}:collect-due', {
         params: { path: { encounterId: financials.encounter.id } },
-        body: { amount } as any,
+        body: { amount, paymentMode: collectPaymentMode } as any,
       });
       if (apiErr) { setCollectError((apiErr as any)?.message ?? 'Failed to collect due'); return; }
-      setActionSuccess(`Collected PKR ${amount.toLocaleString()}`);
+      setActionSuccess(`Collected PKR ${amount.toLocaleString()} (${collectPaymentMode})`);
       setShowCollectDue(false);
       setCollectAmount('');
+      setCollectPaymentMode('CASH');
       await refreshFinancials();
     } catch {
       setCollectError('Request failed');
@@ -364,6 +368,19 @@ export default function PaymentsPage() {
                     className="w-40"
                   />
                 </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Payment Mode</Label>
+                  <Select value={collectPaymentMode} onValueChange={setCollectPaymentMode}>
+                    <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="CASH">Cash</SelectItem>
+                      <SelectItem value="CARD">Card</SelectItem>
+                      <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
+                      <SelectItem value="ONLINE">Online</SelectItem>
+                      <SelectItem value="CHEQUE">Cheque</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Button onClick={handleCollectDue} disabled={collectLoading} className="bg-primary hover:bg-primary/90">
                   {collectLoading ? 'Saving…' : 'Confirm'}
                 </Button>
@@ -446,6 +463,9 @@ export default function PaymentsPage() {
                       <Badge variant={(TRANSACTION_VARIANT[tx.type] ?? 'secondary') as any} className="mr-2">
                         {TRANSACTION_LABELS[tx.type] ?? tx.type}
                       </Badge>
+                      {tx.paymentMode && tx.type !== 'DISCOUNT' && (
+                        <span className="text-xs text-muted-foreground mr-2">{tx.paymentMode.replace(/_/g, ' ')}</span>
+                      )}
                       {tx.reason && <span className="text-sm text-muted-foreground">{tx.reason}</span>}
                     </div>
                     <div className="flex gap-5 items-center">

@@ -4121,6 +4121,8 @@ export interface components {
             /** @enum {string} */
             type?: "PAYMENT" | "DISCOUNT" | "REFUND" | "DUE_RECEIVED" | "CANCELLATION_REFUND";
             amount?: number;
+            /** @enum {string} */
+            paymentMode?: "CASH" | "CARD" | "BANK_TRANSFER" | "ONLINE" | "CHEQUE";
             actorUserId?: string;
             reason?: string | null;
             /** Format: date-time */
@@ -9858,6 +9860,11 @@ export interface operations {
                 "application/json": {
                     amount: number;
                     labOrderId?: string;
+                    /**
+                     * @default CASH
+                     * @enum {string}
+                     */
+                    paymentMode?: "CASH" | "CARD" | "BANK_TRANSFER" | "ONLINE" | "CHEQUE";
                 };
             };
         };

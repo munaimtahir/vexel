@@ -548,8 +548,9 @@ export class EncountersService {
     return { encounter, transactions };
   }
 
-  async collectDue(tenantId: string, encounterId: string, body: { amount: number; labOrderId?: string }, actorUserId: string, correlationId?: string) {
+  async collectDue(tenantId: string, encounterId: string, body: { amount: number; labOrderId?: string; paymentMode?: string }, actorUserId: string, correlationId?: string) {
     await this.assertLimsEnabled(tenantId);
+    if (!(body.amount > 0)) throw new ConflictException('amount must be greater than 0');
     const encounter = await this.prisma.encounter.findFirst({ where: { id: encounterId, tenantId, moduleType: 'LIMS' } as any });
     if (!encounter) throw new NotFoundException('Encounter not found');
 
@@ -569,29 +570,33 @@ export class EncountersService {
       await this.prisma.labOrder.update({
         where: { id: labOrder.id },
         data: {
-          amountPaid: { increment: new (require('@prisma/client/runtime/library').Decimal)(String(body.amount)) },
-          dueAmount: new (require('@prisma/client/runtime/library').Decimal)(String(newDue)),
+          amountPaid: { increment: new Decimal(String(body.amount)) },
+          dueAmount: new Decimal(String(newDue)),
         },
       });
     }
 
+    const paymentMode = body.paymentMode ?? 'CASH';
     await this.prisma.cashTransaction.create({
       data: {
         tenantId, encounterId,
         labOrderId: labOrder?.id ?? null,
         type: 'DUE_RECEIVED',
-        amount: new (require('@prisma/client/runtime/library').Decimal)(String(body.amount)),
+        amount: new Decimal(String(body.amount)),
+        paymentMode,
         actorUserId,
         correlationId: correlationId ?? null,
       },
     });
 
-    await this.audit.log({ tenantId, actorUserId, action: 'encounter.collect-due', entityType: 'Encounter', entityId: encounterId, after: { amount: body.amount }, correlationId });
+    await this.audit.log({ tenantId, actorUserId, action: 'encounter.collect-due', entityType: 'Encounter', entityId: encounterId, after: { amount: body.amount, paymentMode }, correlationId });
     return { success: true, dueAmount: newDue };
   }
 
   async applyDiscount(tenantId: string, encounterId: string, body: { discountAmount: number; reason: string; labOrderId?: string }, actorUserId: string, correlationId?: string) {
     await this.assertLimsEnabled(tenantId);
+    if (!(body.discountAmount > 0)) throw new ConflictException('discountAmount must be greater than 0');
+    if (!body.reason || !body.reason.trim()) throw new ConflictException('reason is required for a discount');
     const encounter = await this.prisma.encounter.findFirst({ where: { id: encounterId, tenantId, moduleType: 'LIMS' } as any });
     if (!encounter) throw new NotFoundException('Encounter not found');
 
@@ -607,7 +612,6 @@ export class EncountersService {
     if (labOrder) {
       newPayable = Math.max(0, Number(labOrder.payableAmount ?? labOrder.totalAmount ?? 0) - body.discountAmount);
       newDue = Math.max(0, newPayable - Number(labOrder.amountPaid ?? 0));
-      const { Decimal } = require('@prisma/client/runtime/library');
       await this.prisma.labOrder.update({
         where: { id: labOrder.id },
         data: {
@@ -623,7 +627,7 @@ export class EncountersService {
         tenantId, encounterId,
         labOrderId: labOrder?.id ?? null,
         type: 'DISCOUNT',
-        amount: new (require('@prisma/client/runtime/library').Decimal)(String(body.discountAmount)),
+        amount: new Decimal(String(body.discountAmount)),
         actorUserId,
         reason: body.reason,
         correlationId: correlationId ?? null,

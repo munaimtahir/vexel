@@ -22,51 +22,34 @@ const RECEIPT_LAYOUTS = [
   { value: 'thermal', label: 'Thermal — 80mm roll (coming soon)' },
 ];
 
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '8px 10px', border: '1px solid hsl(var(--border))',
-  borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box',
-  background: 'hsl(var(--background))', color: 'hsl(var(--foreground))',
-};
-const selectStyle: React.CSSProperties = {
-  ...inputStyle, cursor: 'pointer',
-};
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px',
-  color: 'hsl(var(--foreground))',
-};
-const hintStyle: React.CSSProperties = {
-  fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '4px',
-};
-const sectionStyle: React.CSSProperties = {
-  background: 'hsl(var(--card))', padding: '20px 24px', borderRadius: '8px',
-  boxShadow: 'var(--shadow-sm)', marginBottom: '16px',
-};
-const sectionTitle: React.CSSProperties = {
-  fontSize: '14px', fontWeight: 700, color: 'hsl(var(--foreground))',
-  marginBottom: '16px', paddingBottom: '8px',
-  borderBottom: '1px solid hsl(var(--border))',
-};
+const inputClass =
+  'w-full box-border px-2.5 py-2 border border-border rounded-md text-[13px] bg-background text-foreground';
+const selectClass = `${inputClass} cursor-pointer`;
+const labelClass = 'block text-[13px] font-medium mb-1.5 text-foreground';
+const hintClass = 'text-[11px] text-muted-foreground mt-1';
+const sectionClass = 'bg-card px-6 py-5 rounded-lg shadow-sm mb-4';
+const sectionTitleClass = 'text-sm font-bold text-foreground mb-4 pb-2 border-b border-border';
 
 function Field({ label, hint, value, onChange, placeholder, type = 'text' }: {
   label: string; hint?: string; value: string; onChange: (v: string) => void;
   placeholder?: string; type?: string;
 }) {
   return (
-    <div style={{ marginBottom: '14px' }}>
-      <label style={labelStyle}>{label}</label>
+    <div className="mb-3.5">
+      <label className={labelClass}>{label}</label>
       {type === 'textarea' ? (
         <textarea
           value={value} onChange={e => onChange(e.target.value)}
           placeholder={placeholder} rows={2}
-          style={{ ...inputStyle, resize: 'vertical' }}
+          className={`${inputClass} resize-y`}
         />
       ) : (
         <input
           type={type} value={value} onChange={e => onChange(e.target.value)}
-          placeholder={placeholder} style={inputStyle}
+          placeholder={placeholder} className={inputClass}
         />
       )}
-      {hint && <p style={hintStyle}>{hint}</p>}
+      {hint && <p className={hintClass}>{hint}</p>}
     </div>
   );
 }
@@ -77,12 +60,12 @@ function Select({ label, hint, value, onChange, options }: {
   options: { value: string; label: string }[];
 }) {
   return (
-    <div style={{ marginBottom: '14px' }}>
-      <label style={labelStyle}>{label}</label>
-      <select value={value} onChange={e => onChange(e.target.value)} style={selectStyle}>
+    <div className="mb-3.5">
+      <label className={labelClass}>{label}</label>
+      <select value={value} onChange={e => onChange(e.target.value)} className={selectClass}>
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
-      {hint && <p style={hintStyle}>{hint}</p>}
+      {hint && <p className={hintClass}>{hint}</p>}
     </div>
   );
 }
@@ -132,28 +115,28 @@ export default function BrandingPage() {
   const selectedTenant = tenants.find(t => t.id === tenantId);
 
   return (
-    <div style={{ maxWidth: '680px' }}>
-      <h1 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '4px', color: 'hsl(var(--foreground))' }}>
+    <div className="max-w-[680px]">
+      <h1 className="text-[22px] font-bold mb-1 text-foreground">
         Branding &amp; PDF Layout
       </h1>
-      <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px' }}>
+      <p className="text-[13px] text-muted-foreground mb-5">
         Configure how your lab name, logo, and document layouts appear on printed receipts and lab reports.
       </p>
 
       {tenants.length > 1 && (
-        <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <label style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>Tenant:</label>
-          <select value={tenantId} onChange={e => setTenantId(e.target.value)} style={{ ...selectStyle, width: 'auto' }}>
+        <div className="mb-4 flex items-center gap-2.5">
+          <label className="text-[13px] text-muted-foreground">Tenant:</label>
+          <select value={tenantId} onChange={e => setTenantId(e.target.value)} className={`${selectClass} w-auto`}>
             {tenants.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
         </div>
       )}
       {selectedTenant && (
-        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px' }}>
+        <p className="text-[13px] text-muted-foreground mb-4">
           Configuring: <strong>{selectedTenant.name}</strong>
         </p>
       )}
-      <div style={{ marginBottom: '16px' }}>
+      <div className="mb-4">
         <TenantScopeBanner
           mode="explicit"
           pageLabel="Branding & Config"
@@ -166,8 +149,8 @@ export default function BrandingPage() {
       {loading ? <p>Loading...</p> : (
         <form onSubmit={handleSave}>
           {/* ── General Branding ─────────────────────────────── */}
-          <div style={sectionStyle}>
-            <p style={sectionTitle}>🏥 General Branding</p>
+          <div className={sectionClass}>
+            <p className={sectionTitleClass}>🏥 General Branding</p>
             <Field label="Lab / Brand Name" value={get('brandName')} onChange={set('brandName')}
               placeholder="e.g. City Diagnostics Lab" />
             <Field label="Logo URL" value={get('logoUrl')} onChange={set('logoUrl')}
@@ -175,8 +158,8 @@ export default function BrandingPage() {
             <Field label="Primary Color" value={get('primaryColor')} onChange={set('primaryColor')}
               placeholder="e.g. brand-primary-blue" hint="Used in the web app UI (not in PDFs)." />
             {get('primaryColor') && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '12px' }}>
-                <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: get('primaryColor'), border: '1px solid hsl(var(--border))' }} />
+              <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                <div className="w-5 h-5 rounded border border-border" style={{ background: get('primaryColor') }} />
                 Preview: {get('primaryColor')}
               </div>
             )}
@@ -187,8 +170,8 @@ export default function BrandingPage() {
           </div>
 
           {/* ── Lab Report — Header ────────────────────────────── */}
-          <div style={sectionStyle}>
-            <p style={sectionTitle}>📋 Lab Report — Header</p>
+          <div className={sectionClass}>
+            <p className={sectionTitleClass}>📋 Lab Report — Header</p>
             <Field label="Address / Contact Line" value={get('reportHeader')} onChange={set('reportHeader')}
               placeholder="123 Main St, Karachi | 021-111-2222"
               hint="Printed below the lab name in the report header." type="textarea" />
@@ -199,8 +182,8 @@ export default function BrandingPage() {
           </div>
 
           {/* ── Lab Report — Footer ────────────────────────────── */}
-          <div style={sectionStyle}>
-            <p style={sectionTitle}>📋 Lab Report — Footer</p>
+          <div className={sectionClass}>
+            <p className={sectionTitleClass}>📋 Lab Report — Footer</p>
             <Field label="Footer Text" value={get('reportFooter')} onChange={set('reportFooter')}
               placeholder="Results are valid for 30 days. Verified by Pathologist."
               type="textarea"
@@ -215,9 +198,9 @@ export default function BrandingPage() {
           </div>
 
           {/* ── Receipt — Header ──────────────────────────────── */}
-          <div style={sectionStyle}>
-            <p style={sectionTitle}>🧾 Receipt — Header</p>
-            <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '12px' }}>
+          <div className={sectionClass}>
+            <p className={sectionTitleClass}>🧾 Receipt — Header</p>
+            <p className="text-xs text-muted-foreground mb-3">
               The receipt uses the same <strong>lab name</strong>, <strong>logo</strong>, and <strong>address</strong> as the lab report.
               Choose a layout style below.
             </p>
@@ -228,9 +211,9 @@ export default function BrandingPage() {
           </div>
 
           {/* ── Receipt — Footer ──────────────────────────────── */}
-          <div style={sectionStyle}>
-            <p style={sectionTitle}>🧾 Receipt — Footer</p>
-            <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '12px' }}>
+          <div className={sectionClass}>
+            <p className={sectionTitleClass}>🧾 Receipt — Footer</p>
+            <p className="text-xs text-muted-foreground mb-3">
               The receipt uses the same <strong>footer text</strong> and <strong>footer image</strong> as the lab report.
               Set the content in the Lab Report footer section above, then choose the layout here.
             </p>
@@ -245,12 +228,12 @@ export default function BrandingPage() {
           </div>
 
           {/* ── Save ─────────────────────────────────────────── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
+          <div className="flex items-center gap-3 mt-2">
             <button type="submit" disabled={saving}
-              style={{ padding: '10px 24px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
+              className="px-6 py-2.5 bg-primary text-primary-foreground border-none rounded-md cursor-pointer text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
-            {saved && <span style={{ color: 'hsl(var(--status-success-fg))', fontSize: '14px' }}>✓ Saved successfully</span>}
+            {saved && <span className="text-[hsl(var(--status-success-fg))] text-sm">✓ Saved successfully</span>}
           </div>
         </form>
       )}
