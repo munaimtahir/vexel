@@ -14,3 +14,5 @@ runtime/data/
 runtime/backups/
 runtime/env/
 runtime/_evidence/
+runtime/health-check.log
+runtime/health-check.state

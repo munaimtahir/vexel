@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: vexel
       POSTGRES_PASSWORD: vexel
@@ -17,6 +18,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     ports:
       - "127.0.0.1:6380:6379"
     healthcheck:
@@ -27,6 +29,7 @@ services:
 
   minio:
     image: minio/minio:latest
+    restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: vexel
@@ -48,6 +51,7 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -82,6 +86,7 @@ services:
     build:
       context: .
       dockerfile: apps/worker/Dockerfile
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -112,6 +117,7 @@ services:
     build:
       context: ./apps/pdf
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "127.0.0.1:9022:8080"
     healthcheck:
@@ -127,6 +133,7 @@ services:
       dockerfile: apps/admin/Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://vexel.alshifalab.pk}
+    restart: unless-stopped
     depends_on:
       api:
         condition: service_healthy
@@ -144,6 +151,7 @@ services:
       dockerfile: apps/operator/Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://vexel.alshifalab.pk}
+    restart: unless-stopped
     ports:
       - "127.0.0.1:9024:3000"
     environment:

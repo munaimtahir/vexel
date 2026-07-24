@@ -2,11 +2,13 @@
 
 ---
 
-## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-07-23)
+## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-07-24)
 
-### Current State: Pilot-readiness audit completed. Deployment is currently unverified and should be treated as unavailable until the stack and public endpoint are revalidated.
+### Current State: Docker stack is back up and revalidated on internal ports (Phase 0 of the pilot-readiness plan). Public URL routing (`vexel.alshifalab.pk` via Caddy) is out of scope for this workstream and still needs separate action — do not assume the public URL works just because the internal stack is healthy.
 
 The current source of truth is [`docs/audits/20260723_pilot_readiness/`](docs/audits/20260723_pilot_readiness/). Older PASS/GO reports are historical local-stack evidence, not proof of current production availability.
+
+**2026-07-24 revalidation:** the stack had been down (all containers `Exited`) for ~7 weeks after a Redis boot-race with no restart policy. Fixed: all core services (`postgres`, `redis`, `minio`, `api`, `worker`, `pdf`, `admin`, `operator`) now have `restart: unless-stopped` in `docker-compose.yml`. Rebuilt all 5 Vexel images fresh from current `main` and brought the stack up. Internal health confirmed: `GET http://127.0.0.1:9021/api/health` → `200 {"status":"ok"}`, demo operator login returns a valid JWT, Admin (`/admin/login`) returns `200`, Operator root returns `307` (expected redirect to `/lims/worklist`). **Database is not empty**: 2 tenants, 630 patients, 573 encounters — inspected and this is clearly accumulated E2E/smoke-test fixture data (names like "SmokeTenant Block", "LeakTest Patient", emails like `e2e-*@test.vexel.internal`), not production pilot data, with one exception flagged separately (a patient record that doesn't match the obvious test-fixture naming pattern — worth a human glance before any destructive testing). Caddy was intentionally not touched per explicit instruction — routing `vexel.alshifalab.pk` to the revived stack is a separate, out-of-scope action.
 
 ### Addendum (2026-02-26) — CI + coverage audit
 - CI failures were fixed and revalidated locally: UI color lint PASS, API unit tests PASS (`9/9`), Playwright E2E PASS (`25/25`).
@@ -45,24 +47,23 @@ The current source of truth is [`docs/audits/20260723_pilot_readiness/`](docs/au
 Operator permissions: `catalog.read, patient.manage, encounter.manage, result.enter, document.generate`  
 Verifier permissions: `catalog.read, encounter.manage, result.enter, result.verify, document.generate, document.publish`
 
-#### Endpoint expectations (not currently verified)
-- Expected: `https://vexel.alshifalab.pk/` → Operator landing page → auto-redirects to `/lims/worklist`
-- Expected: `https://vexel.alshifalab.pk/lims/registrations/new` → Patient registration
-- Expected: `https://vexel.alshifalab.pk/admin/login` → Admin app
-- Expected: `https://vexel.alshifalab.pk/api/health` → `{"status":"ok"}`
-- Expected: `https://vexel.alshifalab.pk/api/auth/login` → JWT token on valid credentials
+#### Endpoint expectations
+- Internal, verified 2026-07-24: `http://127.0.0.1:9021/api/health` → `200 {"status":"ok"}`; demo operator login → JWT; `http://127.0.0.1:9023/admin/login` → `200`; `http://127.0.0.1:9024/` → `307` (redirect to `/lims/worklist`, expected).
+- Public, **not yet verified**: `https://vexel.alshifalab.pk/*` — depends on Caddy routing being (re-)added, which is out of scope for this workstream. Do not assume these work until someone confirms the public route.
 
 #### Stack (Docker Compose)
 | Service | Port | Image | Status |
 |---------|------|-------|--------|
-| postgres | 127.0.0.1:5433 | postgres:16-alpine | Revalidate |
-| redis | 127.0.0.1:6380 | redis:7-alpine | Revalidate |
-| api (NestJS) | 127.0.0.1:9021 | vexel-api | Revalidate |
-| pdf (.NET QuestPDF) | 127.0.0.1:9022 | vexel-pdf | Revalidate |
-| admin (Next.js) | 127.0.0.1:9023 | vexel-admin | Revalidate |
-| operator (Next.js) | 127.0.0.1:9024 | vexel-operator | Revalidate |
-| minio | 127.0.0.1:9025 (console) | minio/minio | Revalidate |
-| worker (BullMQ) | internal | vexel-worker | Revalidate |
+| postgres | 127.0.0.1:5433 | postgres:16-alpine | Up, healthy (2026-07-24) |
+| redis | 127.0.0.1:6380 | redis:7-alpine | Up, healthy (2026-07-24) |
+| api (NestJS) | 127.0.0.1:9021 | vexel-api | Up, healthy (2026-07-24) |
+| pdf (.NET QuestPDF) | 127.0.0.1:9022 | vexel-pdf | Up, healthy (2026-07-24) |
+| admin (Next.js) | 127.0.0.1:9023 | vexel-admin | Up (2026-07-24) |
+| operator (Next.js) | 127.0.0.1:9024 | vexel-operator | Up (2026-07-24) |
+| minio | 127.0.0.1:9025 (console) | minio/minio | Up, healthy (2026-07-24) |
+| worker (BullMQ) | internal | vexel-worker | Up (2026-07-24) |
+
+All services now have `restart: unless-stopped` in `docker-compose.yml` (added 2026-07-24) so a crash self-heals instead of leaving the stack dark indefinitely, as happened for ~7 weeks prior to this revalidation.
 
 **To restart stack after VPS reboot:** `cd /home/munaim/srv/apps/vexel && docker compose up -d`
 
