@@ -48,6 +48,17 @@ services:
       start_period: 20s
 
   api:
+    # TEMPORARY WORKAROUND (2026-07-24): the Docker daemon on this host has a stuck
+    # name reservation for "vexel-api-1" pointing at a container ID that exists in
+    # no listing/inspect, confirmed independent of compose (a raw `docker create
+    # --name vexel-api-1 ...` hits the same conflict). A daemon restart would very
+    # likely clear it, but that affects every other tenant's containers on this
+    # shared host and is out of scope here — so the api service is pinned to a
+    # different container_name to avoid the poisoned name. Safe: other services
+    # reach it via the "api" service-name DNS alias (unaffected by container_name),
+    # not by this literal name. Revert to the default (no container_name override)
+    # once someone with daemon access confirms "vexel-api-1" is creatable again.
+    container_name: vexel-api-runtime
     build:
       context: ./apps/api
       dockerfile: Dockerfile

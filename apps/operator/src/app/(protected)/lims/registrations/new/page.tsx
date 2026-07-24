@@ -412,7 +412,12 @@ export default function NewRegistrationPage() {
               mobile: mobileValue || undefined,
             },
             items: selectedTests.map(t => ({ description: t.name, quantity: 1, unitPrice: t.price ?? 0, total: t.price ?? 0 })),
-            subtotal: total, tax: 0, grandTotal: total,
+            subtotal: total,
+            discount: discPKRNum,
+            tax: 0,
+            grandTotal: total - discPKRNum,
+            amountPaid: paidNum,
+            dueAmount: Math.max(0, (total - discPKRNum) - paidNum),
             sourceRef: encounterId, sourceType: 'ENCOUNTER',
           } as any,
         });

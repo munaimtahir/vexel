@@ -252,6 +252,13 @@ export class EncountersService {
       }
 
       const unitPrice = test?.price ? Number(test.price) : 0;
+      // Use the labOrder's own recorded financials (as submitted with the order),
+      // not a fresh unitPrice-only recompute — otherwise discount/paid/due are lost.
+      const subtotal = labOrder.totalAmount != null ? Number(labOrder.totalAmount) : unitPrice;
+      const discount = labOrder.discountAmount != null ? Number(labOrder.discountAmount) : 0;
+      const grandTotal = labOrder.payableAmount != null ? Number(labOrder.payableAmount) : subtotal - discount;
+      const amountPaid = labOrder.amountPaid != null ? Number(labOrder.amountPaid) : 0;
+      const dueAmount = labOrder.dueAmount != null ? Number(labOrder.dueAmount) : Math.max(0, grandTotal - amountPaid);
       const receiptPayload = {
         receiptNumber: `RCP-${labOrder.id.slice(0, 8).toUpperCase()}`,
         issuedAt: new Date().toISOString(),
@@ -267,10 +274,12 @@ export class EncountersService {
           unitPrice,
           total: unitPrice,
         }],
-        subtotal: unitPrice,
-        discount: 0,
+        subtotal,
+        discount,
         tax: 0,
-        grandTotal: unitPrice,
+        grandTotal,
+        amountPaid,
+        dueAmount,
         paymentMethod: 'Cash',
         paymentComments: '',
         encounterId,
