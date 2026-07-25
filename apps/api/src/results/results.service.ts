@@ -429,6 +429,14 @@ export class ResultsService {
       data: { resultStatus: 'SUBMITTED', submittedAt: now, submittedById: actorId },
     });
 
+    // Late-entry lock: once submitted, any parameter that already has a value
+    // is locked against further edits. Parameters left empty at submit time
+    // stay editable (e.g. a late-arriving analyte added afterward via :save).
+    await this.prisma.labResult.updateMany({
+      where: { labOrderId: orderedTestId, value: { not: '' } },
+      data: { locked: true },
+    });
+
     // Advance encounter status based on whether all orders are submitted
     const allOrders = await this.prisma.labOrder.findMany({
       where: { encounterId: order.encounterId, tenantId },

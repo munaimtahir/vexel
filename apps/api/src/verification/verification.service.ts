@@ -314,6 +314,11 @@ export class VerificationService {
         },
       });
 
+      await tx.labResult.updateMany({
+        where: { labOrderId: { in: submittedIds }, tenantId, verifiedAt: null },
+        data: { locked: false },
+      });
+
       await tx.encounter.update({
         where: { id: encounterId },
         data: { status: 'specimen_received' },
