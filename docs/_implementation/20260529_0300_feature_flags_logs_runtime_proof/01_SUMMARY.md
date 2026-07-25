@@ -1,7 +1,7 @@
 # 01. Summary of Runtime Validation Run
 
 ## Overview
-This runtime validation session establishes deterministic, authenticated proof for the feature flag resolution engine and the system logging architecture within the Vexel Health Platform. All tests were executed on the active production-grade environment at `https://vexel.alshifalab.pk`.
+This runtime validation session establishes deterministic, authenticated proof for the feature flag resolution engine and the system logging architecture within the Vexel Health Platform. All tests were executed directly against the running Docker Compose stack on the host (`http://127.0.0.1:9021` API, `9023`/`9024` frontends) — the same build deployed behind the `vexel.alshifalab.pk` Caddy reverse proxy, but not exercised through that public domain/proxy layer itself, which was out of scope for this session.
 
 ## Verification Scope
 1. **Authenticated Feature Flag Access**: Capture definitions and resolved states under active Super Admin JWT credentials. Validate dynamic updates.

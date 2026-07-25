@@ -59,9 +59,13 @@ export default function OperatorQueueDashboardPage() {
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
 
+      const canVerify = !!user?.permissions?.includes('result.verify');
+
       const [resultsRes, verifyRes, failedRes, publishedRes, encounterRes] = await Promise.all([
         api.GET('/results/tests/pending', { params: { query: { limit: 100 } as any } }),
-        api.GET('/verification/encounters/pending', { params: { query: { limit: 100, view: 'pending' as any } as any } }),
+        canVerify
+          ? api.GET('/verification/encounters/pending', { params: { query: { limit: 100, view: 'pending' as any } as any } })
+          : Promise.resolve({ data: { data: [] } } as any),
         api.GET('/documents' as any, { params: { query: { status: 'FAILED', docType: 'LAB_REPORT', limit: 100 } } }),
         api.GET('/documents' as any, { params: { query: { status: 'PUBLISHED', docType: 'LAB_REPORT', fromDate: startOfToday.toISOString(), limit: 100 } } }),
         api.GET('/encounters' as any, { params: { query: { limit: 100 } } }),
