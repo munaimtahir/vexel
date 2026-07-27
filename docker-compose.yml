@@ -59,6 +59,7 @@ services:
     # not by this literal name. Revert to the default (no container_name override)
     # once someone with daemon access confirms "vexel-api-1" is creatable again.
     container_name: vexel-api-runtime
+    image: vexel-api
     build:
       context: ./apps/api
       dockerfile: Dockerfile

@@ -41,11 +41,11 @@ export class ReportsService {
       }),
       this.prisma.patient.count({ where: { tenantId, ...(createdAt ? { createdAt } : {}) } }),
       (() => {
-        const conditions = [Prisma.sql`"tenant_id" = ${tenantId}`];
-        if (filters.from) conditions.push(Prisma.sql`"created_at" >= ${new Date(filters.from)}`);
-        if (filters.to) conditions.push(Prisma.sql`"created_at" <= ${new Date(filters.to)}`);
+        const conditions = [Prisma.sql`"tenantId" = ${tenantId}`];
+        if (filters.from) conditions.push(Prisma.sql`"createdAt" >= ${new Date(filters.from)}`);
+        if (filters.to) conditions.push(Prisma.sql`"createdAt" <= ${new Date(filters.to)}`);
         return this.prisma.$queryRaw<Array<{ day: Date; count: bigint }>>(Prisma.sql`
-          SELECT date_trunc('day', "created_at") AS day, COUNT(*)::bigint AS count
+          SELECT date_trunc('day', "createdAt") AS day, COUNT(*)::bigint AS count
           FROM "patients"
           WHERE ${Prisma.join(conditions, ' AND ')}
           GROUP BY day
