@@ -72,6 +72,9 @@ export enum Permission {
   DOCUMENT_GENERATE = 'document.generate',
   DOCUMENT_PUBLISH = 'document.publish',
 
+  // LIMS operational reports (MIS)
+  REPORTS_READ = 'reports.read',
+
   // Ops / Backup Management
   OPS_VIEW = 'ops.view',
   OPS_RUN_BACKUP = 'ops.run_backup',

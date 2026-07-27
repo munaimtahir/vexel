@@ -34,6 +34,7 @@ const SYSTEM_PERMISSIONS = [
   'branding.read', 'branding.write',
   'patient.manage', 'encounter.manage', 'result.enter', 'result.verify',
   'document.generate', 'document.publish',
+  'reports.read',
   'ops.view',
   'ops.run_backup',
   'ops.export_tenant',
@@ -157,6 +158,7 @@ export async function main() {
           'job.read', 'job.retry',
           'branding.read', 'branding.write',
           'templates.read', 'templates.write', 'templates.provision',
+          'reports.read',
           ...SELF_SERVICE_PERMISSIONS,
         ].map(p => ({ permission: p })),
       },
@@ -201,7 +203,7 @@ export async function main() {
       rolePermissions: {
         create: [
           'catalog.read', 'patient.manage', 'encounter.manage',
-          'result.enter', 'document.generate',
+          'result.enter', 'document.generate', 'reports.read',
           ...SELF_SERVICE_PERMISSIONS,
         ].map((p) => ({ permission: p })),
       },
@@ -218,7 +220,7 @@ export async function main() {
       rolePermissions: {
         create: [
           'catalog.read', 'encounter.manage', 'result.enter',
-          'result.verify', 'document.generate', 'document.publish',
+          'result.verify', 'document.generate', 'document.publish', 'reports.read',
           ...SELF_SERVICE_PERMISSIONS,
         ].map((p) => ({ permission: p })),
       },
@@ -292,6 +294,19 @@ export async function main() {
     },
   });
   console.log('✅ Demo roles: operator, verifier, opd-operator, opd-doctor, opd-finance');
+
+  // Backfill: grant newly-added permissions to already-existing roles.
+  // role.upsert's `update: {}` above doesn't touch rolePermissions, so a permission
+  // added to a role's seed list here only takes effect for brand-new roles unless
+  // we explicitly upsert it onto the role's existing rolePermissions here too.
+  for (const roleId of [superAdminRole.id, tenantAdminRole.id, operatorRole.id, verifierRole.id]) {
+    await prisma.rolePermission.upsert({
+      where: { roleId_permission: { roleId, permission: 'reports.read' } },
+      update: {},
+      create: { roleId, permission: 'reports.read' },
+    });
+  }
+  console.log('✅ Backfilled reports.read onto existing roles');
 
   // ── Demo users ─────────────────────────────────────────────────────────────
   const demoUsers = [

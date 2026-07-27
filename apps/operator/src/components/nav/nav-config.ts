@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, UserPlus, FlaskConical, BarChart2, CheckSquare, FileText, CreditCard, Stethoscope,
+  LayoutDashboard, UserPlus, FlaskConical, BarChart2, CheckSquare, FileText, CreditCard, Stethoscope, Activity,
 } from 'lucide-react';
 
 export type NavItem = {
@@ -16,6 +16,7 @@ export const LIMS_NAV: NavItem[] = [
   { label: 'Result Entry Board', href: '/lims/results', icon: BarChart2 },
   { label: 'Verification', href: '/lims/verification', icon: CheckSquare, featureFlag: 'lims.verification.enabled' },
   { label: 'Published Reports', href: '/lims/reports', icon: FileText },
+  { label: 'Operations Reports', href: '/lims/reports/operations', icon: Activity },
   { label: 'Payments', href: '/lims/payments', icon: CreditCard },
 ];
 

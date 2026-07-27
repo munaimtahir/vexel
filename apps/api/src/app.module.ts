@@ -27,6 +27,7 @@ import { BillingModule } from './billing/billing.module';
 import { OpsModule } from './ops/ops.module';
 import { AccountModule } from './account/account.module';
 import { TemplatesModule } from './templates/templates.module';
+import { ReportsModule } from './reports/reports.module';
 import { SystemLogsModule } from './logs/system-logs.module';
 import { SystemLogsInterceptor } from './common/system-logs.interceptor';
 
@@ -58,6 +59,7 @@ import { SystemLogsInterceptor } from './common/system-logs.interceptor';
     OpsModule,
     AccountModule,
     TemplatesModule,
+    ReportsModule,
   ],
   providers: [
     {

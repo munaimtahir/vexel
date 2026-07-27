@@ -8232,6 +8232,263 @@ paths:
         "404":
           $ref: '#/components/responses/NotFound'
 
+  # ─── LIMS Operational Reports (MIS) ───────────────────────────────────────
+
+  /reports/registrations:
+    get:
+      operationId: getRegistrationsReport
+      summary: Date-range patient registration report (list + daily counts)
+      tags: [Reports]
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        "200":
+          description: Registration report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+                  dailyCounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          format: date-time
+                        count:
+                          type: integer
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /reports/patient-history/{patientId}:
+    get:
+      operationId: getPatientHistoryReport
+      summary: Cumulative visit/order/document history for one patient
+      tags: [Reports]
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Patient history report
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /reports/worklist-status:
+    get:
+      operationId: getWorklistStatusReport
+      summary: Lab order counts by status, plus a pending/aging list
+      tags: [Reports]
+      responses:
+        "200":
+          description: Worklist status report
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /reports/encounter-timeline/{encounterId}:
+    get:
+      operationId: getEncounterTimelineReport
+      summary: Full chronological workflow action log for one encounter
+      tags: [Reports]
+      parameters:
+        - name: encounterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Encounter timeline report
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /reports/staff-activity:
+    get:
+      operationId: getStaffActivityReport
+      summary: Staff activity summary (actions per user) over a date range
+      tags: [Reports]
+      parameters:
+        - name: actorUserId
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Staff activity report
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /reports/exceptions:
+    get:
+      operationId: getExceptionsReport
+      summary: Status-change/exception report (returns-for-correction, cancellations)
+      tags: [Reports]
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Exceptions report
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /reports/financial/daily-collection:
+    get:
+      operationId: getDailyCollectionReport
+      summary: Daily cash collection report, by payment mode
+      tags: [Reports]
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Daily collection report
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /reports/financial/outstanding-dues:
+    get:
+      operationId: getOutstandingDuesReport
+      summary: Outstanding/unpaid balances report
+      tags: [Reports]
+      responses:
+        "200":
+          description: Outstanding dues report
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
+  /reports/financial/discounts:
+    get:
+      operationId: getDiscountsReport
+      summary: Discounts-applied report over a date range
+      tags: [Reports]
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Discounts report
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+
   # ─── OPD Admin Config (Providers / Schedules) ────────────────────────────
 
   /opd/providers:
