@@ -350,7 +350,7 @@ export class ResultsService {
 
     for (const { parameterId, value } of values) {
       const existing = existingMap.get(parameterId);
-      if (existing?.locked) continue;
+      if ((existing as any)?.locked) continue;
 
       const param = paramMap.get(parameterId);
       const mapping = mappingMap.get(parameterId);
@@ -362,7 +362,7 @@ export class ResultsService {
         unit: null,
       };
 
-      const referenceRange = existing?.referenceRange ?? resolvedRange.referenceRange;
+      const referenceRange = (existing as any)?.referenceRange ?? resolvedRange.referenceRange;
       const unit = effectiveUnit ?? resolvedRange.unit;
       const flag = computeFlag(value, referenceRange);
 
@@ -370,7 +370,7 @@ export class ResultsService {
         tenantId,
         labOrderId: orderedTestId,
         parameterId,
-        parameterNameSnapshot: param?.name ?? null,
+        parameterNameSnapshot: (param as any)?.name ?? null,
         value,
         unit,
         referenceRange,
