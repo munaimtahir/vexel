@@ -7,7 +7,7 @@ import { test, expect } from '../fixtures/auth.fixture';
 
 test.describe('Operator — Patient management', () => {
   test('create patient via UI and see in list', async ({ authedPage: page }) => {
-    await page.goto('/patients/new');
+    await page.goto('/lims/patients/new');
 
     await expect(page.getByRole('main').getByRole('heading', { name: 'New Patient' })).toBeVisible();
 
@@ -36,7 +36,7 @@ test.describe('Operator — Patient management', () => {
   });
 
   test('patients list page loads with table headers', async ({ authedPage: page }) => {
-    await page.goto('/patients');
+    await page.goto('/lims/patients');
 
     await expect(page.getByRole('main').getByRole('heading', { name: 'Patients' })).toBeVisible();
     await expect(page.locator('text=Loading patients...')).not.toBeVisible({ timeout: 10_000 });
@@ -51,7 +51,7 @@ test.describe('Operator — Patient management', () => {
     const suffix = Date.now().toString(36).toUpperCase();
     const mrn = `DUP-${suffix}`;
 
-    await page.goto('/patients/new');
+    await page.goto('/lims/patients/new');
     await page.getByLabel('First Name *').fill('Dup');
     await page.getByLabel('Last Name *').fill('Patient');
     await page.getByLabel('MRN *').fill(mrn);
@@ -59,7 +59,7 @@ test.describe('Operator — Patient management', () => {
     await page.waitForURL('**/lims/patients', { timeout: 15_000 });
 
     // Attempt to create the same MRN again
-    await page.goto('/patients/new');
+    await page.goto('/lims/patients/new');
     await page.getByLabel('First Name *').fill('Dup');
     await page.getByLabel('Last Name *').fill('Patient');
     await page.getByLabel('MRN *').fill(mrn);

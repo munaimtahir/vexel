@@ -49,12 +49,11 @@ test.describe('Verification badge refetch regression', () => {
       timeout: 20_000,
     });
     await page.waitForURL('**/lims/verification', { timeout: 20_000 });
-    const search = page.getByPlaceholder(/Search by patient name or MRN/i);
+    const search = page.getByPlaceholder(/Search name \/ MR \/ mobile/i);
     await expect(search).toBeVisible({ timeout: 10_000 });
     if (encounterCode) {
       await search.fill(encounterCode);
-      await page.getByRole('button', { name: 'Search' }).click();
     }
-    await expect(page.getByText('No patients pending verification')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText('No verification encounters')).toBeVisible({ timeout: 10_000 });
   });
 });

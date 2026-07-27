@@ -59,7 +59,7 @@ test.describe('Operator — Full LIMS workflow', () => {
   test('enter results and submit, status updates to resulted', async ({ authedPage: page }) => {
     const { encounter } = await setupWorkflowEncounter();
 
-    await page.goto(`/encounters/${encounter.id}/results`);
+    await page.goto(`/lims/encounters/${encounter.id}/results`);
     await expect(page.getByRole('heading', { name: /Lab Order Results/i })).toBeVisible({ timeout: 10_000 });
 
     // Wait for form to load (spinner gone)
@@ -101,7 +101,7 @@ test.describe('Operator — Full LIMS workflow', () => {
       );
     }
 
-    await page.goto(`/encounters/${encounter.id}/verify`);
+    await page.goto(`/lims/encounters/${encounter.id}/verify`);
     await expect(page.locator('text=Loading encounter...')).not.toBeVisible({ timeout: 10_000 });
 
     // The verify page shows a "Verify & Publish" button to open confirmation modal
@@ -145,7 +145,7 @@ test.describe('Operator — Full LIMS workflow', () => {
     const verifyRes = await apiPostRaw(`/encounters/${encounter.id}:verify`, {}, accessToken);
     expect(verifyRes.status).toBeLessThan(300);
 
-    await page.goto(`/encounters/${encounter.id}/publish`);
+    await page.goto(`/lims/encounters/${encounter.id}/publish`);
     await expect(page.locator('text=Loading encounter...')).not.toBeVisible({ timeout: 10_000 });
 
     // Publish page heading (auto-generated report status page)

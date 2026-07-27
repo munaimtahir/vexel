@@ -52,7 +52,7 @@ test.describe('Document pipeline', () => {
     test.setTimeout(120_000); // auto-generation can take up to 90s under load
     const { encounter } = await setupVerifiedEncounter();
 
-    await page.goto(`/encounters/${encounter.id}/publish`);
+    await page.goto(`/lims/encounters/${encounter.id}/publish`);
     await expect(page.locator('text=Loading encounter...')).not.toBeVisible({ timeout: 10_000 });
 
     // The publish page shows "Lab Report" heading and auto-polls
