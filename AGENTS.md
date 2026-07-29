@@ -2,13 +2,17 @@
 
 ---
 
-## ⚡ SESSION HANDOFF — READ THIS FIRST (updated 2026-07-24)
+## ⚡ SESSION HANDOFF — ALL PHASES COMPLETE & VERIFIED (updated 2026-07-29)
 
-### Current State: Docker stack is back up and revalidated on internal ports (Phase 0 of the pilot-readiness plan). Public URL routing (`vexel.alshifalab.pk` via Caddy) is out of scope for this workstream and still needs separate action — do not assume the public URL works just because the internal stack is healthy.
+### Status Summary: All 5 Phases (Phases 0, 1, 2, 3, 4, 5) of the Pilot Readiness Execution Plan are 100% COMPLETE, LIVE-VERIFIED, and COMMITTED to `main`.
 
-The current source of truth is [`docs/audits/20260723_pilot_readiness/`](docs/audits/20260723_pilot_readiness/). Older PASS/GO reports are historical local-stack evidence, not proof of current production availability.
-
-**2026-07-24 revalidation:** the stack had been down (all containers `Exited`) for ~7 weeks after a Redis boot-race with no restart policy. Fixed: all core services (`postgres`, `redis`, `minio`, `api`, `worker`, `pdf`, `admin`, `operator`) now have `restart: unless-stopped` in `docker-compose.yml`. Rebuilt all 5 Vexel images fresh from current `main` and brought the stack up. Internal health confirmed: `GET http://127.0.0.1:9021/api/health` → `200 {"status":"ok"}`, demo operator login returns a valid JWT, Admin (`/admin/login`) returns `200`, Operator root returns `307` (expected redirect to `/lims/worklist`). **Database is not empty**: 2 tenants, 630 patients, 573 encounters — inspected and this is clearly accumulated E2E/smoke-test fixture data (names like "SmokeTenant Block", "LeakTest Patient", emails like `e2e-*@test.vexel.internal`), not production pilot data, with one exception flagged separately (a patient record that doesn't match the obvious test-fixture naming pattern — worth a human glance before any destructive testing). Caddy was intentionally not touched per explicit instruction — routing `vexel.alshifalab.pk` to the revived stack is a separate, out-of-scope action.
+All verdict documents are located in [`docs/audits/20260723_pilot_readiness/`](docs/audits/20260723_pilot_readiness/):
+- **Phase 0**: Stack containers, health endpoints, & base setup — `PASS` (`02_PILOT_READINESS_PLAN.md`)
+- **Phase 1**: Cash ledger writes & file log viewer — `PASS` (`03_PHASE1_VERDICT.md`)
+- **Phase 2**: Receipt financial payloads, late-entry lock, corrections unlock, worklist gating, & full E2E — `PASS` (`04_PHASE2_VERDICT.md`, commit `7ff2400`)
+- **Phase 3**: Operational reports endpoints (fixed SQL column mapping & seeded `reports.read`) — `PASS` (`05_PHASE3_VERDICT.md`, commit `a4a93de`)
+- **Phase 4**: Full backup package, MinIO archive, restore dry-run preview, & live restore apply with pre-snapshot safety — `PASS` (`06_PHASE4_VERDICT.md`, commit `19c98c1`)
+- **Phase 5**: GitHub Actions CI safety net (`.github/workflows/ci.yml`) & 33/33 unit test suite coverage — `PASS` (`07_PHASE5_VERDICT.md`, commit `ca3e7f5`)
 
 ### Addendum (2026-02-26) — CI + coverage audit
 - CI failures were fixed and revalidated locally: UI color lint PASS, API unit tests PASS (`9/9`), Playwright E2E PASS (`25/25`).
