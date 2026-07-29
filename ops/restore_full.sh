@@ -81,7 +81,8 @@ docker inspect vexel-postgres-1 --format '{{.State.Status}}' 2>/dev/null | grep 
 # --- 3. Restore database --------------------------------------------------
 [ -f "$WORK_DIR/db/vexel.dump" ] || error_exit "DB dump not found in package"
 
-echo "[$(date -Iseconds)] Dropping and recreating database..."
+echo "[$(date -Iseconds)] Terminating existing active connections and dropping database..."
+docker exec vexel-postgres-1 psql -U vexel postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'vexel' AND pid <> pg_backend_pid();" || true
 docker exec vexel-postgres-1 psql -U vexel postgres -c "DROP DATABASE IF EXISTS vexel;" \
   || error_exit "Failed to drop database"
 docker exec vexel-postgres-1 psql -U vexel postgres -c "CREATE DATABASE vexel OWNER vexel;" \
