@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-29T03:36:32.720Z",
+  "timestamp": "2026-07-27T19:40:25.417Z",
   "services": {
     "api": {
       "url": "http://127.0.0.1:9021/api/health",
@@ -11,7 +11,7 @@
       "status": 200
     },
     "admin": {
-      "url": "https://vexel.alshifalab.pk/admin",
+      "url": "http://127.0.0.1:9023/admin",
       "ok": true,
       "status": 200
     }
