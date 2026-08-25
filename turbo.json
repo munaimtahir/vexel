@@ -12,6 +12,10 @@
     "lint": {
       "outputs": []
     },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "sdk:generate": {
       "outputs": ["src/generated/**"]
     }

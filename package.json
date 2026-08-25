@@ -6,12 +6,14 @@
     "build": "turbo run build --filter=!@vexel/mobile",
     "dev": "turbo run dev --filter=!@vexel/mobile",
     "lint": "turbo run lint --filter=!@vexel/mobile",
+    "typecheck": "turbo run typecheck --filter=!@vexel/mobile",
     "mcp:playwright": "./scripts/playwright-mcp.sh",
     "mcp:playwright:install-runtime-libs": "./scripts/playwright-runtime-libs.sh",
     "mcp:playwright:install-browsers": "pnpm mcp:playwright:install-runtime-libs && pnpm --filter @vexel/e2e exec playwright install chromium",
     "ui:color-lint": "node scripts/ui-color-lint.mjs",
     "sdk:generate": "pnpm --filter @vexel/contracts sdk:generate",
     "check:admin-openapi-parity": "node scripts/check-admin-openapi-parity.js",
+    "check:sdk-freshness": "pnpm sdk:generate && git diff --exit-code --stat packages/sdk/src/generated",
     "mock:api": "docker compose --profile mock up mock-api mock-gateway",
     "dev:ui-mock": "NEXT_PUBLIC_API_URL=http://127.0.0.1:9031 turbo run dev --filter=@vexel/admin --filter=@vexel/operator",
     "dev:full": "docker compose up -d",
@@ -30,5 +32,10 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "ioredis": "^5.4.2"
+    }
   }
 }

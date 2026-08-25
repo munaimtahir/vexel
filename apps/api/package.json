@@ -13,7 +13,8 @@
     "prisma:seed": "ts-node prisma/seed.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -78,10 +79,5 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  },
-  "overrides": {
-    "bullmq": {
-      "ioredis": "$ioredis"
-    }
   }
 }

@@ -46,11 +46,26 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm --filter @vexel/api prisma:generate
 
-      - name: Lint workspace
+      - name: SDK freshness (openapi.yaml -> generated SDK)
+        run: pnpm check:sdk-freshness
+
+      - name: Lint workspace (includes SDK-only/no-fetch/no-axios/no-Prisma frontend rules, UI color-lint)
         run: pnpm lint
+
+      - name: UI color-lint (no hard-coded colors in Admin/Operator)
+        run: pnpm ui:color-lint
+
+      - name: Admin/Operator vs OpenAPI parity
+        run: pnpm check:admin-openapi-parity
 
       - name: Typecheck workspace
         run: pnpm typecheck
 
+      - name: Build workspace
+        run: pnpm build
+
       - name: Run API Unit Tests
         run: pnpm --filter @vexel/api test
+
+      - name: Run SDK Unit Tests
+        run: pnpm --filter @vexel/sdk test

@@ -4,6 +4,18 @@
     "no-restricted-globals": [
       "error",
       { "name": "fetch", "message": "Use @vexel/sdk API client instead of raw fetch(). See lib/api-client.ts" }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          { "name": "axios", "message": "Use @vexel/sdk API client instead of axios. See lib/api-client.ts" },
+          { "name": "@prisma/client", "message": "Frontends are API clients only — no direct Prisma/database access." }
+        ],
+        "patterns": [
+          { "group": ["@prisma/client/*"], "message": "Frontends are API clients only — no direct Prisma/database access." }
+        ]
+      }
     ]
   }
 }
