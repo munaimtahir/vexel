@@ -6,8 +6,13 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL ?? 'http://pdf:8080';
 
-// Auto-publish after render for document types that should not require a manual publish click.
-const AUTO_PUBLISH_TYPES = new Set(['RECEIPT', 'OPD_INVOICE_RECEIPT', 'LAB_REPORT', 'OPD_PRESCRIPTION']);
+// Auto-publish after render for document types with no Encounter workflow state tied to
+// publication. LAB_REPORT is deliberately excluded: it can only be published via the audited
+// POST /encounters/:id:publish-report command (apps/api/src/encounters/encounters.service.ts
+// publishReport), which is also the only place allowed to transition Encounter.status. The
+// worker must never publish a LAB_REPORT or touch Encounter directly — see CLAUDE.md's
+// command-only workflow state rule.
+const AUTO_PUBLISH_TYPES = new Set(['RECEIPT', 'OPD_INVOICE_RECEIPT', 'OPD_PRESCRIPTION']);
 
 interface RenderJobData {
   documentId: string;
@@ -190,24 +195,6 @@ export async function processDocumentRender(job: Job<RenderJobData>) {
         data: { status: 'PUBLISHED', publishedAt: new Date() },
       });
       await writeAudit(tenantId, 'document.auto_published', documentId, correlationId, { type: doc.type });
-
-      // Keep encounter state aligned when lab report gets auto-published post-verification.
-      if (doc.type === 'LAB_REPORT' && doc.sourceType === 'ENCOUNTER' && doc.sourceRef) {
-        await prisma.encounter.updateMany({
-          where: { id: doc.sourceRef, tenantId, status: { in: ['verified', 'published'] } as any },
-          data: { status: 'published' as any },
-        });
-        await prisma.auditEvent.create({
-          data: {
-            tenantId,
-            action: 'encounter.auto_publish_report',
-            entityType: 'Encounter',
-            entityId: doc.sourceRef,
-            correlationId,
-            after: { status: 'published', documentId } as any,
-          },
-        });
-      }
 
       console.log(`${logCtx} auto_published type=${doc.type} total_ms=${Date.now() - t0}`);
     } else {
