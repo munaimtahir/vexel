@@ -1,10 +1,31 @@
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
-import { cleanupExpiredArtifacts } from '../../../../worker/src/ops-backup.processor';
-
-const runtimeDir = process.env.VEXEL_RUNTIME_DIR ?? '/home/munaim/srv/apps/vexel/runtime';
+import type { cleanupExpiredArtifacts as CleanupFn } from '../../../../worker/src/ops-backup.processor';
 
 describe('Ops Worker retention cleanup', () => {
+  let runtimeDir: string;
+  let cleanupExpiredArtifacts: typeof CleanupFn;
+  const originalRuntimeDir = process.env.VEXEL_RUNTIME_DIR;
+
+  beforeEach(() => {
+    // Use a fresh temp directory per test — VEXEL_RUNTIME_DIR points at the real
+    // production runtime dir on deployed hosts, and a hardcoded fallback path
+    // tied to one machine breaks on any other host (including CI runners).
+    runtimeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vexel-ops-retention-test-'));
+    // The module reads VEXEL_RUNTIME_DIR into a module-level const at import
+    // time (used by cleanupExpiredArtifacts's "must be under runtime dir"
+    // safety guard), so the env var must be set before a fresh import.
+    process.env.VEXEL_RUNTIME_DIR = runtimeDir;
+    jest.resetModules();
+    ({ cleanupExpiredArtifacts } = require('../../../../worker/src/ops-backup.processor'));
+  });
+
+  afterEach(() => {
+    process.env.VEXEL_RUNTIME_DIR = originalRuntimeDir;
+    fs.rmSync(runtimeDir, { recursive: true, force: true });
+  });
+
   it('purges old backup artifacts and keeps current run untouched', async () => {
     const fullDir = path.join(runtimeDir, 'backups', 'full');
     fs.mkdirSync(fullDir, { recursive: true });
@@ -38,7 +59,7 @@ describe('Ops Worker retention cleanup', () => {
     try {
       await cleanupExpiredArtifacts(prisma, 'FULL', 'current-run', logStream);
     } finally {
-      logStream.end();
+      await new Promise<void>((resolve) => logStream.end(resolve));
     }
 
     expect(fs.existsSync(oldArtifact)).toBe(false);
