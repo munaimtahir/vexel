@@ -1,3 +1,4 @@
+import http from 'http';
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
 import { S3Client, CreateBucketCommand, HeadBucketCommand } from '@aws-sdk/client-s3';
@@ -91,8 +92,35 @@ async function writeHeartbeat() {
 writeHeartbeat();
 const heartbeatTimer = setInterval(writeHeartbeat, 30_000);
 
+// Liveness endpoint for Docker healthcheck — reports unhealthy if the
+// heartbeat hasn't been written in 3x its own interval (process stuck/dead).
+const HEALTH_PORT = process.env.WORKER_HEALTH_PORT ? Number(process.env.WORKER_HEALTH_PORT) : 3100;
+const healthServer = http.createServer(async (req, res) => {
+  if (req.url !== '/health') {
+    res.writeHead(404);
+    res.end();
+    return;
+  }
+  try {
+    const beat = await heartbeatPrisma.workerHeartbeat.findUnique({ where: { id: 'worker-singleton' } });
+    const staleMs = beat ? Date.now() - beat.lastBeatAt.getTime() : Infinity;
+    if (staleMs < 90_000) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'ok', lastBeatAt: beat?.lastBeatAt }));
+    } else {
+      res.writeHead(503, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'stale', staleMs }));
+    }
+  } catch (err: any) {
+    res.writeHead(503, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'error', message: err.message }));
+  }
+});
+healthServer.listen(HEALTH_PORT, () => console.log(`🩺 Worker health endpoint on :${HEALTH_PORT}/health`));
+
 process.on('SIGTERM', async () => {
   clearInterval(heartbeatTimer);
+  healthServer.close();
   await Promise.all([catalogImportWorker.close(), catalogExportWorker.close(), documentRenderWorker.close(), opsBackupWorker.close()]);
   process.exit(0);
 });
