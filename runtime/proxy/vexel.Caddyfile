@@ -1,8 +1,16 @@
 # Vexel Health Platform — Caddy virtual host rules
-# Source of truth for all vexel.alshifalab.pk routing.
-# This file is imported by the shared Caddyfile via:
-#   import overrides/*.Caddyfile
-# DO NOT duplicate these blocks in the shared Caddyfile.
+# Source of truth for the intended vexel.alshifalab.pk routing.
+#
+# IMPORTANT (as of 2026-08-27, see docs/ops/INCIDENTS.md): the live
+# /etc/caddy/Caddyfile on the shared host does NOT use an
+# `import overrides/*.Caddyfile` mechanism — that directory does not exist.
+# This block must be kept in sync MANUALLY as an inline block appended
+# directly to /etc/caddy/Caddyfile, the same way every other product on
+# that shared host is configured. A prior edit to the shared file (for an
+# unrelated product) silently dropped Vexel's block entirely with no
+# fallback, causing a real production outage — see the incident log for
+# the full story and the recommended follow-up (formalizing a real
+# overrides-import convention so this can't happen silently again).
 #
 # Ports (all bind to 127.0.0.1):
 #   9021 = API (NestJS, prefix /api/*)
@@ -13,8 +21,11 @@
 #
 # To add a new subdomain for a new tenant:
 #   1. Add a new host block below following the same pattern.
-#   2. Point reverse_proxy to the appropriate internal port.
-#   3. Run: sudo caddy reload --config /etc/caddy/Caddyfile
+#   2. Manually mirror this file's content into the live
+#      /etc/caddy/Caddyfile (append, do not use `import` — see above).
+#   3. Validate first: caddy adapt --config /etc/caddy/Caddyfile
+#   4. Get explicit human confirmation, then:
+#      sudo caddy reload --config /etc/caddy/Caddyfile
 
 # VEXEL MONOREPO
 vexel.alshifalab.pk {

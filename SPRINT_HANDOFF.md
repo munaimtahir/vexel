@@ -158,9 +158,14 @@ brief.**
   (PlayGrowth Copilot at `play.vexel.pk`, MedPrep, EasyUI Senior Launcher,
   radreport, bill, qcall, pgsims, fmu-platform — confirmed via
   `grep -i vexel /etc/caddy/Caddyfile` and reading the surrounding blocks).
-  Vexel's own routing lives cleanly isolated in an imported file at
-  `runtime/proxy/vexel.Caddyfile`, imported via `import overrides/*.Caddyfile`
-  in the shared Caddyfile — **but a `caddy reload` or bad `caddy adapt`
+  Vexel's routing is documented at `runtime/proxy/vexel.Caddyfile`, but as
+  of 2026-08-27 it is **not** actually imported into the live Caddyfile via
+  any `import overrides/*.Caddyfile` mechanism — that directory doesn't
+  exist on disk. It must be kept in sync manually as an inline block
+  appended to `/etc/caddy/Caddyfile`, same as every other product on this
+  shared host. This drifted silently once already and caused a real
+  production outage — see `docs/ops/INCIDENTS.md` (2026-08-27 entry) for
+  the full incident and fix. **A `caddy reload` or bad `caddy adapt`
   mistake risks other companies' live sites, not just Vexel's.**
   **Treat any Caddy reload as requiring explicit human confirmation
   immediately before you do it — every time, not just once.** You may
