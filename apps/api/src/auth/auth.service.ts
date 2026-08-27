@@ -7,14 +7,12 @@ import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import { SELF_SERVICE_PERMISSIONS } from '../rbac/permissions';
 
 export interface JwtPayload {
   sub: string;       // userId
   email: string;
   tenantId: string;
   roles: string[];
-  permissions: string[];
   isSuperAdmin: boolean;
 }
 
@@ -47,17 +45,12 @@ export class AuthService {
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
     const roles = user.userRoles.map((ur) => ur.role.name);
-    const permissions = Array.from(new Set([
-      ...user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
-      ...SELF_SERVICE_PERMISSIONS,
-    ]));
 
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       tenantId: user.tenantId,
       roles,
-      permissions,
       isSuperAdmin: user.isSuperAdmin,
     };
 
@@ -91,7 +84,7 @@ export class AuthService {
     };
   }
 
-  async refresh(refreshTokenRaw: string) {
+  async refresh(refreshTokenRaw: string, correlationId?: string) {
     const now = new Date();
     const candidates = await this.prisma.refreshToken.findMany({
       where: { revokedAt: null, expiresAt: { gt: now } },
@@ -123,17 +116,12 @@ export class AuthService {
     });
 
     const roles = user.userRoles.map((ur) => ur.role.name);
-    const permissions = Array.from(new Set([
-      ...user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission)),
-      ...SELF_SERVICE_PERMISSIONS,
-    ]));
 
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       tenantId: user.tenantId,
       roles,
-      permissions,
       isSuperAdmin: user.isSuperAdmin,
     };
 
@@ -152,6 +140,7 @@ export class AuthService {
       tenantId: user.tenantId,
       actorUserId: user.id,
       action: 'auth.token_refresh',
+      correlationId,
     });
 
     return { accessToken, refreshToken: newRefreshRaw, expiresIn: 3600, tokenType: 'Bearer' };

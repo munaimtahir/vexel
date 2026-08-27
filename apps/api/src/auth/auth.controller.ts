@@ -56,11 +56,12 @@ export class AuthController {
     @Body() body: { refreshToken?: string },
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
     const cookieToken = (req as any).cookies?.[REFRESH_COOKIE];
     const token = cookieToken || body.refreshToken;
     if (!token) throw new UnauthorizedException('Refresh token required');
-    const result = await this.authService.refresh(token);
+    const result = await this.authService.refresh(token, correlationId);
     const domain = process.env.AUTH_COOKIE_DOMAIN;
     const secure = process.env.NODE_ENV === 'production';
     response.cookie(REFRESH_COOKIE, result.refreshToken, refreshCookieOptions(secure, domain));
