@@ -64,6 +64,7 @@ services:
       context: ./apps/api
       dockerfile: Dockerfile
     restart: unless-stopped
+    init: true
     depends_on:
       postgres:
         condition: service_healthy
@@ -100,6 +101,7 @@ services:
       context: .
       dockerfile: apps/worker/Dockerfile
     restart: unless-stopped
+    init: true
     depends_on:
       postgres:
         condition: service_healthy
@@ -137,6 +139,7 @@ services:
       context: ./apps/pdf
       dockerfile: Dockerfile
     restart: unless-stopped
+    init: true
     ports:
       - "127.0.0.1:9022:8080"
     healthcheck:
@@ -153,6 +156,7 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://vexel.alshifalab.pk}
     restart: unless-stopped
+    init: true
     depends_on:
       api:
         condition: service_healthy
@@ -176,6 +180,7 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://vexel.alshifalab.pk}
     restart: unless-stopped
+    init: true
     ports:
       - "127.0.0.1:9024:3000"
     environment:
