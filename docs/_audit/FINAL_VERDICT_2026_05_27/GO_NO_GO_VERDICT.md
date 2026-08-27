@@ -1,5 +1,8 @@
 # Vexel Health Platform — Final GO/NO-GO Verdict
-**Audit Date:** 2026-05-27 20:35–21:15 UTC  
+
+> **OPD SUPERSESSION NOTICE (2026-08-27):** This historical verdict covers LIMS/platform scope only. Its `GO`/deployment-ready language is not OPD approval. OPD was explicitly deferred and is independently `NOT READY` unless every requirement in `docs/releases/OPD_RELEASE_SCOPE.md` has current passing evidence. See `docs/releases/OPD_RELEASE_LEDGER.md`.
+
+**Audit Date:** 2026-05-27 20:35–21:15 UTC
 **Repository:** munaimtahir/vexel@7e31b8d (HEAD → main)  
 **Auditor:** Comprehensive Platform Audit (Multi-Phase Verification)  
 **Strategy:** Single-Tenant Operating Mode with Structural Tenancy  
@@ -261,4 +264,3 @@ The 2026-02-23 MVP Release Gate Audit concluded **✅ READY FOR MVP**. This 2026
 **Platform Status: PRODUCTION READY**  
 **Strategy: Single-Tenant Operating Mode**  
 **Next Phase: Deployment to Production**
-

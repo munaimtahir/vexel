@@ -1,5 +1,8 @@
 # MVP Release Gate Audit
-**Conducted:** 2026-02-23  
+
+> **OPD SUPERSESSION NOTICE (2026-08-27):** This historical audit is for the Vexel Health LIMS MVP. Its passing gates do not establish OPD readiness. OPD has an independent authoritative scope and remains `NOT READY` pending current OPD-specific evidence in `docs/releases/OPD_RELEASE_LEDGER.md`.
+
+**Conducted:** 2026-02-23
 **Platform:** Vexel Health LIMS  
 **Stack:** API (NestJS) · Admin (Next.js) · Operator (Next.js) · Worker (BullMQ) · PDF (.NET QuestPDF) · PostgreSQL · Redis · MinIO  
 **Live URL:** https://vexel.alshifalab.pk
