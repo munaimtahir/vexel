@@ -25,6 +25,13 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | Quality gates | `docs/opd/OPD_TEST_EVIDENCE.md` | NOT PASSING |
 | Deployment/rollback/smoke | `docs/opd/OPD_DEPLOYMENT_EVIDENCE.md` | NOT PASSING |
 
+## Sprint execution log
+
+| Timestamp | Phase | Change / verification | Result | Commit |
+|---|---|---|---|---|
+| 2026-08-27 | Discovery / baseline | Repository inventory confirmed duplicate OPD runtime families and partial historical evidence | NOT READY | `bc215ac` |
+| 2026-08-27 | Domain hardening | Added tenant-scoped `TenantSequence` model and additive migration; replaced OPD encounter/invoice `count()+1` allocation with atomic upsert allocation | pending verification | working tree |
+
 ## Historical-only evidence
 
 The LIMS/platform verdicts and earlier OPD slice records under `docs/_audit/` remain unchanged historical records. They are excluded from this ledger's decision and cannot be cited as OPD production evidence.

@@ -66,6 +66,7 @@ model Tenant {
   opdPrescriptionsKmvp OpdEncounterPrescription[]
   opdPrescriptionItemsKmvp OpdPrescriptionItemKmvp[]
   opdCommandLogs       OpdCommandLog[]
+  sequences            TenantSequence[]
 
   @@map("tenants")
 }
@@ -1087,6 +1088,21 @@ model OpdCommandLog {
   @@unique([tenantId, commandName, idempotencyKey])
   @@index([tenantId, createdAt])
   @@map("opd_command_logs")
+}
+
+model TenantSequence {
+  id        String   @id @default(uuid())
+  tenantId  String
+  key       String
+  nextValue Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, key])
+  @@index([tenantId])
+  @@map("tenant_sequences")
 }
 
 // ─── Documents ────────────────────────────────────────────────────────────

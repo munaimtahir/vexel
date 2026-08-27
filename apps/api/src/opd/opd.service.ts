@@ -350,6 +350,19 @@ export class OpdService {
     return result;
   }
 
+  /**
+   * Allocates a tenant-local number without the count()+1 race. The update
+   * is atomic in PostgreSQL; the first allocated value is 1.
+   */
+  private async nextTenantSequence(tenantId: string, key: string): Promise<number> {
+    const row = await (this.prisma as any).tenantSequence.upsert({
+      where: { tenantId_key: { tenantId, key } },
+      create: { tenantId, key, nextValue: 2 },
+      update: { nextValue: { increment: 1 } },
+    });
+    return row.nextValue - 1;
+  }
+
   private async assertScheduleNoOverlap(
     tenantId: string,
     providerId: string,
@@ -1590,7 +1603,7 @@ export class OpdService {
     const discountAmount = lines.reduce((acc, l) => acc + Number(l.discountAmount), 0);
     const totalAmount = subtotalAmount - discountAmount;
 
-    const seq = (await (this.prisma as any).invoice.count({ where: { tenantId } })) + 1;
+    const seq = await this.nextTenantSequence(tenantId, 'OPD_INVOICE');
     const invoiceCode = buildCode('INV', seq);
 
     const invoice = await (this.prisma as any).invoice.create({
@@ -2048,7 +2061,7 @@ export class OpdService {
             status: 'registered',
           },
         });
-        const seq = (await (this.prisma as any).opdEncounter.count({ where: { tenantId } })) + 1;
+        const seq = await this.nextTenantSequence(tenantId, 'OPD_ENCOUNTER');
         const opd = await (this.prisma as any).opdEncounter.create({
           data: {
             tenantId,

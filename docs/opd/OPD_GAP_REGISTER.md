@@ -18,6 +18,6 @@
 | Tenant isolation | test-required | Service methods often accept tenant IDs, but complete relation/download/job isolation is not proven | Cross-tenant API, DB relation, document, and E2E tests |
 | Admin | incomplete | Doctors/providers/schedules/flags pages exist; complete clinic, billing, templates, audit, and retry surfaces are not proven | Admin parity and authorization evidence |
 | Operator | incomplete | OPD pages exist across both route families; complete canonical workflow and failure states are not proven | Canonical route inventory and browser E2E evidence |
-| Migrations | migration-required | Three additive OPD migrations created parallel tables; no verified reconciliation/retirement migration exists | Empty/representative DB migration and reconciliation tests |
+| Migrations | migration-required | Three additive OPD migrations created parallel tables; no verified reconciliation/retirement migration exists. Sequence allocation was count-based before this sprint | Empty/representative DB migration and reconciliation tests; concurrent sequence evidence |
 | Observability | operationally unready | OPD-specific job failure, retry, metrics, alert, and incident evidence is absent | Deployment/operations evidence and runbooks |
 | Release evidence | incomplete | Prior OPD slice evidence explicitly says runtime proof is partial | Current OPD evidence set and `OPD_RELEASE_LEDGER.md` |
