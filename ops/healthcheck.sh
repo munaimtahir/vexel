@@ -29,7 +29,9 @@ echo "=== Vexel Stack Health Check — $(date) ===" | tee -a "$LOG_FILE"
 echo ""
 
 echo "--- Containers ---"
-for CTR in vexel-api-1 vexel-worker-1 vexel-admin-1 vexel-operator-1 vexel-pdf-1 vexel-postgres-1 vexel-redis-1 vexel-minio-1; do
+# api is pinned to "vexel-api-runtime" (not the default "vexel-api-1") — see the
+# container_name comment in docker-compose.yml for the stuck-name-reservation reason.
+for CTR in vexel-api-runtime vexel-worker-1 vexel-admin-1 vexel-operator-1 vexel-pdf-1 vexel-postgres-1 vexel-redis-1 vexel-minio-1; do
   STATE=$(docker inspect "$CTR" --format '{{.State.Status}}' 2>/dev/null || echo "missing")
   if [ "$STATE" = "running" ]; then
     echo "  ✅  $CTR (running)"

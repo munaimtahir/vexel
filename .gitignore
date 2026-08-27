@@ -16,3 +16,4 @@ runtime/env/
 runtime/_evidence/
 runtime/health-check.log
 runtime/health-check.state
+runtime/health-check.public.state
