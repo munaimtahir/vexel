@@ -107,6 +107,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      minio:
+        condition: service_healthy
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://vexel:vexel@postgres:5432/vexel
@@ -181,6 +183,9 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://vexel.alshifalab.pk}
     restart: unless-stopped
     init: true
+    depends_on:
+      api:
+        condition: service_healthy
     ports:
       - "127.0.0.1:9024:3000"
     environment:
