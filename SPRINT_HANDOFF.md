@@ -9,10 +9,20 @@ left, and an exact resume plan. If you are that agent: read the whole thing
 before touching any code, running any command, or especially before touching
 Caddy or any live container.
 
-Current state as of this writing: `main` @ **`646d2b7`**, pushed to
-`origin/main`, working tree clean. Confirm this hasn't drifted
+Current state as of this writing (2026-08-27, later session): `main` @
+**`6df75f2`**, pushed to `origin/main`. Confirm this hasn't drifted
 (`git log --oneline -1` and `git status`) before you start — if it has,
 someone else already moved the work forward; re-read from there.
+
+**Since `646d2b7` (the state this document originally described), a full
+resume pass completed §5, §6b, §6d, and most of §6e/§6c below — see the
+new §4.6–§4.9 entries and the updated §6 status.** The single largest
+finding of that pass was a real, pre-existing production outage
+(`vexel.alshifalab.pk` unreachable — nothing to do with this sprint's own
+changes) — fixed with explicit human confirmation; full story in
+`docs/ops/INCIDENTS.md`. Remaining scope is essentially just §6a
+(production tenant domain onboarding — needs real DNS + a human) and the
+final §6f deliverables writeup.
 
 ---
 
@@ -418,9 +428,124 @@ delete it, just don't treat it as the primary reference going forward
 update the "supersedes" pointer here — whichever the user prefers when you
 ask).
 
+### 4.6 — `c5cf937` — JWT claims cleanup + refresh correlationId (§5 below, now done)
+
+Applied exactly the plan §5 had already specified: removed `permissions`
+from `JwtPayload` and both `sign()` calls in `auth.service.ts` (dead claim
+— `jwt.strategy.ts` already re-derives permissions live from DB on every
+request); added `correlationId` threading from `auth.controller.ts`'s
+`refresh` handler into `AuthService.refresh()`'s audit log call, mirroring
+`login`/`logout`. `apps/api` typecheck clean; full suite 33/33 suites,
+236/236 tests green.
+
+### 4.7 — `7c8b188` — `init: true` (tini) for api/worker/pdf/admin/operator
+
+Found half-applied as an uncommitted `docker-compose.yml` diff at resume
+time (4 of 5 services already live-recreated with it from before the
+session was interrupted; not yet committed, and `api` not yet recreated).
+Committed, then ran `docker compose up -d api worker pdf admin operator`
+to bring `api` in line with the rest. Purpose: tini as PID 1 gives proper
+signal forwarding/zombie reaping for the long-lived Node/dotnet processes;
+`postgres`/`redis`/`minio` use their own upstream images' init handling
+and were left alone. All 8 services confirmed healthy after.
+
+### 4.8 — `e56034a` — production outage: `vexel.alshifalab.pk` had zero live routes
+
+**The single highest-impact finding of this session, unrelated to any of
+this sprint's own prior changes.** While doing the §6b live-verification
+pass, `https://vexel.alshifalab.pk/api/health` failed the TLS handshake
+outright. Root-caused via Caddy's read-only admin API
+(`localhost:2019/config/...`) that the *live, running* Caddy config had
+**zero routes for the domain** — not a cert or DNS problem, a routing gap.
+`/etc/caddy/Caddyfile` had no `vexel.alshifalab.pk` block and no
+`import overrides/*.Caddyfile` (that directory never existed) — a backup
+from the day before still had Vexel's block; the current file didn't,
+almost certainly from an unrelated edit to the shared Caddyfile for one of
+the ~20 other products on this host. Fixed with **explicit human
+confirmation obtained in-session before the reload** (per the standing
+rule below): backed up the live Caddyfile, appended Vexel's block inline
+(matching how every other site in that file is structured — did not
+introduce the aspirational `overrides/` import mechanism, which is a
+larger separate follow-up), validated with `caddy adapt` first, reloaded,
+verified `200` on the public endpoint and no regression on other sites.
+Full writeup, rollback path, and follow-up recommendation:
+`docs/ops/INCIDENTS.md`. Updated `runtime/proxy/vexel.Caddyfile`'s header
+comment to stop asserting the import mechanism exists.
+
+### 4.9 — `f0afa30`, `6df75f2` — remaining §6b/§6d verification, all live
+
+- **Full LIMS path, live, on a brand-new record** (not just the pre-existing
+  DB rows): registered a patient, created an encounter, ordered a lab test,
+  collected+received specimen, entered a result, verified (confirmed
+  `409` on an invalid re-verify), confirmed the `LAB_REPORT` document
+  auto-generates and reaches `RENDERED` (**not** `PUBLISHED` — proves the
+  `da2047f` fix holds on a fresh record, not just a historical one),
+  manually published via `:publish-report` (idempotent — a second call
+  returns `200` without re-mutating), downloaded a valid PDF.
+- **Tenant isolation, live**: spoofed `x-tenant-id` header on an
+  authenticated request → explicit `403` (not silently ignored);
+  spoofed `Host` on login for a real user → `401` (tenant resolves from
+  Host at login time, user lookup fails in the wrong tenant); direct
+  object reference to another tenant's row by ID → `404`, not
+  `403`-with-existence-leak. `TENANCY_DEV_HEADER_ENABLED=false` confirmed
+  live — the dev `x-tenant-id` override is off in production, host-based
+  resolution is what's actually active.
+- Also ran the full Playwright `@smoke` project (`pnpm --filter @vexel/e2e
+  e2e:smoke`) after fixing a missing-browser-binaries issue
+  (`pnpm mcp:playwright:install-browsers`) — **41/41 passed**, including
+  its own independent document-publish and tenant-isolation specs. This
+  strongly suggests the "e2e workflow has a history of failing" note in
+  the original §6b was the same missing-browsers issue, not a real app
+  bug — but see §6b status below for the full-suite (`test`, not just
+  `:smoke`) result, run in the background during this same session.
+- **`ops/healthcheck.sh` fixed**: it checked for a container literally
+  named `vexel-api-1`, but `docker-compose.yml` pins `api` to
+  `vexel-api-runtime` (a documented stuck-daemon-name-reservation
+  workaround from 2026-07-24) — the script always failed that one check.
+  Fixed; now 19/19 passing.
+- **Uptime monitor gap fixed**: the scheduled cron monitor
+  (`ops/monitoring/health-check.sh`, every 5 min) only ever checked the
+  *internal* API endpoint, bypassing Caddy — confirmed via its own log
+  that it logged zero "down" transitions during the multi-day window the
+  public domain was actually unreachable (§4.8). Extended it to also
+  check the public endpoint. Documented both scripts in the new
+  `docs/ops/UPTIME_MONITORING.md` (neither had any doc before).
+- **Restore dry-run exercised live**, not just reviewed in code: took a
+  fresh `pg_dump` safety snapshot, confirmed both `ensureRestoreEnabled`
+  gates (API trigger side, worker processor side) correctly block even
+  the non-destructive dry-run while `VEXEL_ALLOW_RESTORE=false`
+  (production default, per `f90a849`), temporarily flipped it to `true`
+  in a controlled window, recreated `api`+`worker`, ran a real dry-run
+  against `vexel-full-20260729_143916.tar.gz` — got back a correct
+  restore plan with zero data mutation (encounter count unchanged:
+  696 before and after), then reverted the flag and recreated again,
+  confirmed it's enforced again (`409` on a repeat attempt) and all 8
+  services stayed healthy throughout.
+- **Compose boot-race gaps closed**: `worker` was missing a
+  `minio: condition: service_healthy` dependency despite using MinIO for
+  document storage; `operator` had no `depends_on` on `api` at all, unlike
+  `admin` which does — no apparent reason for the asymmetry. Fixed both,
+  then actually exercised a full `docker compose down && docker compose
+  up -d` (not just a per-service recreate) — watched the correct boot
+  order happen unprompted (data stores healthy → api/worker →
+  api healthy → admin/operator), all 8 services reached `healthy`,
+  `ops/healthcheck.sh` 19/19 after.
+- **Admin workflow-mutation audit (§6e)**: grepped all
+  `prisma.encounter.update`/`updateMany` call sites — every one is inside
+  `encounters.service.ts`, `results.service.ts`, or
+  `sample-collection.service.ts` (the legitimate command-service layer
+  backing dedicated command endpoints). No `apps/api/src/admin/` directory
+  exists — Admin is a pure frontend API client like Operator. Grepped
+  `apps/admin/src` for any direct API call mutating encounter status —
+  none found; Admin never touches workflow state outside SDK calls to the
+  same command endpoints Operator uses.
+
 ---
 
 ## 5. What's investigated but not yet applied
+
+**Status: DONE — see §4.6 (commit `c5cf937`).** This section is kept
+verbatim below as a record of the original investigation.
 
 ### JWT claims cleanup + refresh correlationId (brief item 4)
 
@@ -483,9 +608,15 @@ the best next task, small and self-contained.
 
 ## 6. What's not started — full remaining scope, with estimates
 
+**Status update: only §6a genuinely remains not-started (needs real DNS +
+a human decision) and §6f (deliverables writeup, in progress as part of
+this same pass). §6b, §6c, §6d, §6e are DONE — see §4.6–§4.9 above for
+what was actually done and verified; the subsections below are kept as
+the original scope record.**
+
 In descending order of size/risk:
 
-### 6a. Production tenant ingress (brief item 5) — **3–5 hours, needs a human**
+### 6a. Production tenant ingress (brief item 5) — **3–5 hours, needs a human** — STILL OPEN
 
 Needs: a documented tenant-domain onboarding process; the platform domain
 plus at least two isolated tenant domains/hostnames actually working;
@@ -502,7 +633,7 @@ once at the start of this workstream.** You can and should prepare config
 and validate it with `caddy adapt --config /etc/caddy/Caddyfile` (read-only
 syntax check) ahead of that confirmation.
 
-### 6b. Live two-tenant + full LIMS path E2E verification (brief item 6) — **1–2 hours, do this first**
+### 6b. Live two-tenant + full LIMS path E2E verification (brief item 6) — DONE, see §4.9
 
 Walk the complete path against the *running* stack, not just unit tests:
 registration → encounter creation → lab order → specimen collection/receipt
@@ -521,9 +652,9 @@ all. Don't assume it's fine; check `gh run view <that-run-id> --log-failed`
 and decide whether fixing it is in scope for this pass or a separate
 follow-up.
 
-### 6c. JWT/auth cleanup — **20–30 min** (see §5, already fully spec'd)
+### 6c. JWT/auth cleanup — DONE, see §4.6
 
-### 6d. Remaining ops hardening (brief item 7) — **1–2 hours**
+### 6d. Remaining ops hardening (brief item 7) — DONE, see §4.9
 
 Partially done already (health checks in §4.2, restore-flag default in
 §4.2). Still open:
@@ -539,7 +670,7 @@ Partially done already (health checks in §4.2, restore-flag default in
   (`docs/ops/DISASTER_RECOVERY.md` documents it: Admin → Ops → Restore →
   Dry Run) has not been exercised.
 
-### 6e. Admin workflow-mutation audit (brief item 6, Admin-specific) — **1 hour**
+### 6e. Admin workflow-mutation audit (brief item 6, Admin-specific) — DONE, see §4.9
 
 Confirm Admin never directly mutates LIMS workflow status anywhere, and
 that every Admin workflow action calls a command endpoint and writes an
@@ -559,14 +690,13 @@ blocking vs non-blocking), an updated `docs/ops/SMOKE_TESTS.md`, and a
 dated release-readiness report tied to the final commit SHA. Best done
 last, once 6a–6e are settled, since it draws on all of them.
 
-### Total estimated remaining work: **roughly 7–11 hours**
+### Actual remaining work after this pass: only §6a
 
-Dominated by 6a (needs real DNS/domains and a human checkpoint, not just
-engineering time) and 6b (live verification takes real wall-clock time to
-walk carefully). 6c is the only item that's both small and fully
-self-contained — good to knock out first if you want an early win, but 6b
-is higher-value if you only have time for one thing, since it's the actual
-proof the sprint's core compliance fix (§4.3) works.
+Everything estimated above except §6a is now done and verified — see
+§4.6–§4.9 and the closing deliverable:
+`docs/audits/2026-08-27_release_readiness_report.md` (final commit
+`90a6720`, all 13 validation gates green, full detail on what's done and
+what genuinely still needs a human + real DNS for §6a).
 
 ---
 
