@@ -8,6 +8,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { DocumentsService } from '../documents/documents.service';
+import { assertOpdTransition } from './opd-workflow';
 
 function parseBool(value: unknown): boolean | undefined {
   if (typeof value === 'boolean') return value;
@@ -2142,9 +2143,7 @@ export class OpdService {
           where: { id: body.opdEncounterId, tenantId },
         });
         if (!e) throw new NotFoundException('OPD encounter not found');
-        if (e.status !== 'DRAFT') {
-          throw new ConflictException(`Invalid transition ${e.status} -> READY_FOR_PRINT`);
-        }
+        assertOpdTransition(e.status, 'READY_FOR_PRINT');
 
         const hasMeaningfulVitals =
           body.bpSystolic != null ||
@@ -2230,9 +2229,7 @@ export class OpdService {
           },
         });
         if (!e) throw new NotFoundException('OPD encounter not found');
-        if (e.status !== 'READY_FOR_PRINT') {
-          throw new ConflictException(`Invalid transition ${e.status} -> COMPLETED`);
-        }
+        assertOpdTransition(e.status, 'COMPLETED');
         const historyNotes = String(body.historyNotes ?? '').trim();
         const examNotes = String(body.examNotes ?? '').trim();
         const assessment = String(body.assessment ?? '').trim();
@@ -2492,9 +2489,7 @@ export class OpdService {
           where: { id: body.opdEncounterId, tenantId },
         });
         if (!e) throw new NotFoundException('OPD encounter not found');
-        if (['CANCELLED', 'COMPLETED'].includes(e.status)) {
-          throw new ConflictException(`Invalid transition ${e.status} -> CANCELLED`);
-        }
+        assertOpdTransition(e.status, 'CANCELLED');
         const updated = await (this.prisma as any).opdEncounter.update({
           where: { id: e.id },
           data: {

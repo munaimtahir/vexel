@@ -31,6 +31,8 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 |---|---|---|---|---|
 | 2026-08-27 | Discovery / baseline | Repository inventory confirmed duplicate OPD runtime families and partial historical evidence | NOT READY | `bc215ac` |
 | 2026-08-27 | Domain hardening | Added tenant-scoped `TenantSequence` model and additive migration; replaced OPD encounter/invoice `count()+1` allocation with atomic upsert allocation | pending verification | working tree |
+| 2026-08-27 | Domain hardening verification | Prisma generation, schema validation, API typecheck/lint, 33 API suites / 236 tests, rebuilt API/worker images, migration status, and `/api/health` verified | PASS for this slice; release remains NOT READY | `e3f6562` |
+| 2026-08-27 | Workflow hardening | Added explicit OPD transition helper and 9 unit assertions; wired encounter intake/publish/finalize/cancel commands to canonical transition checks | PASS for this slice; release remains NOT READY | pending commit |
 
 ## Historical-only evidence
 
