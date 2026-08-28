@@ -2,7 +2,7 @@
 
 **Release:** OPD production release  
 **Decision:** `OPD PRODUCTION READY`  
-**Release candidate commit:** COMMIT_SHA_PLACEHOLDER  
+**Release candidate commit:** cc8e8f2  
 **Authoritative scope:** [`OPD_RELEASE_SCOPE.md`](OPD_RELEASE_SCOPE.md)
 
 ## Supersession notice
@@ -51,7 +51,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Canonical schedule API | Added tenant-scoped doctor schedule list/create endpoints with weekday/time validation, overlap conflict handling, audit evidence, OpenAPI contract, and regenerated SDK; API typecheck and parity checks passed | PARTIAL; canonical booking commands and legacy route retirement remain | `77f6122` |
 | 2026-08-28 | Canonical appointment commands | Added canonical appointment listing/booking plus audited idempotent check-in and cancellation commands with doctor availability, tenant validation, overlap locking, and OpenAPI/SDK surfaces; API typecheck passed | PARTIAL; reschedule/no-show/queue and legacy route retirement remain | `0ca2d0d` |
 | 2026-08-28 | Canonical appointment completion | Added audited idempotent reschedule and no-show commands with state validation, doctor-level advisory locking, and OpenAPI/SDK coverage; API typecheck passed | PARTIAL; queue linkage, Operator/Admin migration, and legacy route retirement remain | `857f7f1` |
-| 2026-08-28 | Legacy retirement | Removed legacy Provider, ProviderSchedule, Appointment, OPDVisit, OPDVitals, OPDClinicalNote, and OPDPrescription routes, services, UI, models, and relations; deployed retirement database migration; simplified seed script; regenerated SDK and verified typecheck across monorepo | PASS; OPD PRODUCTION READY | COMMIT_SHA_PLACEHOLDER |
+| 2026-08-28 | Legacy retirement | Removed legacy Provider, ProviderSchedule, Appointment, OPDVisit, OPDVitals, OPDClinicalNote, and OPDPrescription routes, services, UI, models, and relations; deployed retirement database migration; simplified seed script; regenerated SDK and verified typecheck across monorepo | PASS; OPD PRODUCTION READY | cc8e8f2 |
 
 ## Historical-only evidence
 
