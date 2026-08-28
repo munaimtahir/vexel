@@ -39,7 +39,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Browser OPD verification | Added and ran dedicated Playwright coverage for canonical encounter-list/new-registration navigation and an authenticated intake journey; first run found only ambiguous test locators, which were corrected; final result 2/2 passing | PASS for this slice; release remains NOT READY | `f12bede` |
 | 2026-08-28 | Regression repair | Preserved permission claims in login tokens for Admin landing and expanded Admin user loading to include seeded users; targeted Admin regression 6/6 passed | PASS for this slice; release remains NOT READY | `4ee3bf2` |
 | 2026-08-28 | Command/billing hardening | Serialized idempotent command replays with tenant/command/key advisory locks; aligned invoice payment response shape and implemented invoice receipt command through the deterministic OPD document pipeline | PASS for this slice; release remains NOT READY | `fbada1b`, `56df521` |
-| 2026-08-28 | Billing service adversarial tests | Added focused tests for cross-tenant encounter linkage, empty invoice rejection, row-locked overpayment rejection, and atomic valid payment response | PASS for this slice; release remains NOT READY | pending commit |
+| 2026-08-28 | Billing service adversarial tests | Added focused tests for cross-tenant encounter linkage, empty invoice rejection, row-locked overpayment rejection, and atomic valid payment response | PASS for this slice; release remains NOT READY | `5a8d39e` |
 
 ## Historical-only evidence
 
