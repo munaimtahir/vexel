@@ -30,9 +30,10 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | Timestamp | Phase | Change / verification | Result | Commit |
 |---|---|---|---|---|
 | 2026-08-27 | Discovery / baseline | Repository inventory confirmed duplicate OPD runtime families and partial historical evidence | NOT READY | `bc215ac` |
-| 2026-08-27 | Domain hardening | Added tenant-scoped `TenantSequence` model and additive migration; replaced OPD encounter/invoice `count()+1` allocation with atomic upsert allocation | pending verification | working tree |
+| 2026-08-27 | Domain hardening | Added tenant-scoped `TenantSequence` model and additive migration; replaced OPD encounter/invoice `count()+1` allocation with atomic upsert allocation | PASS for this slice; release remains NOT READY | `e3f6562` |
 | 2026-08-27 | Domain hardening verification | Prisma generation, schema validation, API typecheck/lint, 33 API suites / 236 tests, rebuilt API/worker images, migration status, and `/api/health` verified | PASS for this slice; release remains NOT READY | `e3f6562` |
-| 2026-08-27 | Workflow hardening | Added explicit OPD transition helper and 9 unit assertions; wired encounter intake/publish/finalize/cancel commands to canonical transition checks | PASS for this slice; release remains NOT READY | pending commit |
+| 2026-08-27 | Workflow hardening | Added explicit OPD transition helper and 9 unit assertions; wired encounter intake/publish/finalize/cancel commands to canonical transition checks | PASS for this slice; release remains NOT READY | `a357063` |
+| 2026-08-28 | Scheduling/billing hardening | Removed duplicate active appointments module; aligned OPD command routes with colon-style contract paths; added provider booking/reschedule locks, atomic appointment/payment sequences, tenant-safe invoice linkage, invoice validation, transactional overpayment-safe payments, and OPD least-privilege permission definitions | PASS for this slice; release remains NOT READY | `52f2288` |
 
 ## Historical-only evidence
 
