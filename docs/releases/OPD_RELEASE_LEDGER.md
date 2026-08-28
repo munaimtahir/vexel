@@ -15,14 +15,14 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 |---|---|---|
 | Canonical architecture and legacy retirement | `docs/opd/OPD_DOMAIN_DECISIONS.md`, `docs/opd/OPD_GAP_REGISTER.md` | NOT PASSING |
 | Scope and workflow | `docs/releases/OPD_RELEASE_SCOPE.md`, `docs/opd/OPD_CANONICAL_WORKFLOW.md` | NOT PASSING |
-| OpenAPI/SDK freshness and frontend parity | pending checked-in current-sprint artifacts | NOT PASSING |
+| OpenAPI/SDK freshness and frontend parity | `pnpm check:sdk-freshness`; `pnpm check:admin-openapi-parity` | PASS for current contract; release remains NOT READY |
 | Prisma migrations/reconciliation | pending additive migration and migration tests | NOT PASSING |
 | Tenant security/RBAC/ownership | `docs/opd/OPD_TENANCY_SECURITY_EVIDENCE.md` | NOT PASSING |
 | Clinical workflow | pending unit/integration/browser evidence | NOT PASSING |
-| Billing/concurrency | pending billing and concurrency evidence | NOT PASSING |
+| Billing/concurrency | `52f2288`, `56df521`; API and real-stack payment smoke evidence | PARTIAL; concurrent command/payment suite still required |
 | Deterministic documents/worker/PDF | `docs/opd/OPD_DOCUMENT_EVIDENCE.md` | NOT PASSING |
-| Admin/Operator surfaces | pending current-sprint parity and browser evidence | NOT PASSING |
-| Quality gates | `docs/opd/OPD_TEST_EVIDENCE.md` | NOT PASSING |
+| Admin/Operator surfaces | `f12bede`; OPD browser tests 2/2; Admin regression repair `4ee3bf2` | PARTIAL; full OPD journey coverage still required |
+| Quality gates | `docs/opd/OPD_TEST_EVIDENCE.md`; API 34 suites / 245 tests; repository browser 118 passed, 2 repaired, 3 skipped | PARTIAL; mandatory OPD gates remain |
 | Deployment/rollback/smoke | `docs/opd/OPD_DEPLOYMENT_EVIDENCE.md` | NOT PASSING |
 
 ## Sprint execution log
@@ -35,8 +35,11 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-27 | Workflow hardening | Added explicit OPD transition helper and 9 unit assertions; wired encounter intake/publish/finalize/cancel commands to canonical transition checks | PASS for this slice; release remains NOT READY | `a357063` |
 | 2026-08-28 | Scheduling/billing hardening | Removed duplicate active appointments module; aligned OPD command routes with colon-style contract paths; added provider booking/reschedule locks, atomic appointment/payment sequences, tenant-safe invoice linkage, invoice validation, transactional overpayment-safe payments, and OPD least-privilege permission definitions | PASS for this slice; release remains NOT READY | `52f2288` |
 | 2026-08-28 | Real-stack smoke verification | Rebuilt API/worker; Compose migration status up to date; API health 200; authenticated registration → paid invoice → intake → finalize flow passed; replayed registration was idempotent; invalid transition returned 409; receipt worker rendered/published a 58,027-byte PDF; cross-tenant context denied with 403 | PASS for this slice; release remains NOT READY | `0e2a27a` |
-| 2026-08-28 | Deployment seed repair | Added package metadata to the API runtime image and pinned the seed script compiler options; rebuilt API and reran the documented `npm run prisma:seed` successfully without an environment override | PASS for this slice; release remains NOT READY | working tree |
-| 2026-08-28 | Browser OPD verification | Added and ran dedicated Playwright coverage for canonical encounter-list/new-registration navigation and an authenticated intake journey; first run found only ambiguous test locators, which were corrected; final result 2/2 passing | PASS for this slice; release remains NOT READY | working tree |
+| 2026-08-28 | Deployment seed repair | Added package metadata to the API runtime image and pinned the seed script compiler options; rebuilt API and reran the documented `npm run prisma:seed` successfully without an environment override | PASS for this slice; release remains NOT READY | `5c4fa5f` |
+| 2026-08-28 | Browser OPD verification | Added and ran dedicated Playwright coverage for canonical encounter-list/new-registration navigation and an authenticated intake journey; first run found only ambiguous test locators, which were corrected; final result 2/2 passing | PASS for this slice; release remains NOT READY | `f12bede` |
+| 2026-08-28 | Regression repair | Preserved permission claims in login tokens for Admin landing and expanded Admin user loading to include seeded users; targeted Admin regression 6/6 passed | PASS for this slice; release remains NOT READY | `4ee3bf2` |
+| 2026-08-28 | Command/billing hardening | Serialized idempotent command replays with tenant/command/key advisory locks; aligned invoice payment response shape and implemented invoice receipt command through the deterministic OPD document pipeline | PASS for this slice; release remains NOT READY | `fbada1b`, `56df521` |
+| 2026-08-28 | Billing service adversarial tests | Added focused tests for cross-tenant encounter linkage, empty invoice rejection, row-locked overpayment rejection, and atomic valid payment response | PASS for this slice; release remains NOT READY | pending commit |
 
 ## Historical-only evidence
 
@@ -44,7 +47,7 @@ The LIMS/platform verdicts and earlier OPD slice records under `docs/_audit/` re
 
 ## Known limitations
 
-Canonical model consolidation, migration reconciliation, complete workflow implementation, least-privilege/ownership proof, concurrency proof, document runtime proof, browser E2E, and production-like deployment verification remain incomplete at ledger creation.
+Canonical model consolidation, migration reconciliation, complete workflow implementation, least-privilege/ownership proof, concurrency proof, full document/runtime proof, and fresh production-like deployment verification remain incomplete.
 
 ## Rollback posture
 
