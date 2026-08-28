@@ -80,20 +80,20 @@ export class OpdController {
   // ─── OPD KMVP Encounters + Commands ───────────────────────────────────────
 
   @Get('encounters')
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
   listEncounters(@Req() req: Request, @Query() q: any) {
     return this.svc.listEncounters(this.resolveTenantId(req), q);
   }
 
   @Get('encounters/:encounterId')
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
   getEncounter(@Req() req: Request, @Param('encounterId') encounterId: string) {
     return this.svc.getEncounter(this.resolveTenantId(req), encounterId);
   }
 
   @Post('commands/createRegistration')
   @HttpCode(HttpStatus.CREATED)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_ENCOUNTER_MANAGE)
   createRegistration(
     @Req() req: Request,
     @Body() body: any,
@@ -105,7 +105,7 @@ export class OpdController {
 
   @Post('commands/recordIntake')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_INTAKE_WRITE)
   recordIntake(
     @Req() req: Request,
     @Body() body: any,
@@ -117,7 +117,7 @@ export class OpdController {
 
   @Post('commands/publishPrescription')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_PRESCRIPTION_PUBLISH)
   publishPrescription(
     @Req() req: Request,
     @Body() body: any,
@@ -129,7 +129,7 @@ export class OpdController {
 
   @Post('commands/finalizeEncounter')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_ENCOUNTER_MANAGE)
   finalizeEncounter(
     @Req() req: Request,
     @Body() body: any,
@@ -141,7 +141,7 @@ export class OpdController {
 
   @Post('commands/cancelEncounter')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_ENCOUNTER_MANAGE)
   cancelEncounter(
     @Req() req: Request,
     @Body() body: any,
@@ -153,7 +153,7 @@ export class OpdController {
 
   @Post('commands/generateReceipt')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  @RequirePermissions(Permission.OPD_DOCUMENT_GENERATE)
   generateEncounterReceipt(
     @Req() req: Request,
     @Body() body: any,
@@ -359,7 +359,7 @@ export class OpdController {
     return this.svc.getAppointment(this.resolveTenantId(req), appointmentId);
   }
 
-  @Post('appointments/:appointmentId/reschedule')
+  @Post('appointments/:appointmentId\\:reschedule')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   rescheduleAppointment(
@@ -378,7 +378,7 @@ export class OpdController {
     );
   }
 
-  @Post('appointments/:appointmentId/check-in')
+  @Post('appointments/:appointmentId\\:check-in')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   checkInAppointment(
@@ -395,7 +395,7 @@ export class OpdController {
     );
   }
 
-  @Post('appointments/:appointmentId/start-consultation')
+  @Post('appointments/:appointmentId\\:start-consultation')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   startAppointmentConsultation(
@@ -412,7 +412,7 @@ export class OpdController {
     );
   }
 
-  @Post('appointments/:appointmentId/complete')
+  @Post('appointments/:appointmentId\\:complete')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   completeAppointment(
@@ -429,7 +429,7 @@ export class OpdController {
     );
   }
 
-  @Post('appointments/:appointmentId/cancel')
+  @Post('appointments/:appointmentId\\:cancel')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   cancelAppointment(
@@ -448,7 +448,7 @@ export class OpdController {
     );
   }
 
-  @Post('appointments/:appointmentId/no-show')
+  @Post('appointments/:appointmentId\\:mark-no-show')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   markNoShowAppointment(
@@ -491,7 +491,7 @@ export class OpdController {
     return this.svc.getVisit(this.resolveTenantId(req), visitId);
   }
 
-  @Post('visits/:visitId/mark-waiting')
+  @Post('visits/:visitId\\:mark-waiting')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   markVisitWaiting(
@@ -503,7 +503,7 @@ export class OpdController {
     return this.svc.markVisitWaiting(this.resolveTenantId(req), visitId, user.userId, correlationId);
   }
 
-  @Post('visits/:visitId/start-consultation')
+  @Post('visits/:visitId\\:start-consultation')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   startVisitConsultation(
@@ -515,7 +515,7 @@ export class OpdController {
     return this.svc.startVisitConsultation(this.resolveTenantId(req), visitId, user.userId, correlationId);
   }
 
-  @Post('visits/:visitId/complete')
+  @Post('visits/:visitId\\:complete')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   completeVisit(
@@ -527,7 +527,7 @@ export class OpdController {
     return this.svc.completeVisit(this.resolveTenantId(req), visitId, user.userId, correlationId);
   }
 
-  @Post('visits/:visitId/cancel')
+  @Post('visits/:visitId\\:cancel')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   cancelVisit(
@@ -582,7 +582,7 @@ export class OpdController {
     return this.svc.upsertClinicalNote(this.resolveTenantId(req), visitId, body, user.userId, correlationId);
   }
 
-  @Post('visits/:visitId/clinical-note/sign')
+  @Post('visits/:visitId\\:clinical-note/sign')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   signClinicalNote(
@@ -615,7 +615,7 @@ export class OpdController {
     return this.svc.upsertPrescription(this.resolveTenantId(req), visitId, body, user.userId, correlationId);
   }
 
-  @Post('visits/:visitId/prescription/sign')
+  @Post('visits/:visitId\\:prescription/sign')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   signPrescription(
@@ -627,7 +627,7 @@ export class OpdController {
     return this.svc.signPrescription(this.resolveTenantId(req), visitId, user.userId, correlationId);
   }
 
-  @Post('visits/:visitId/prescription/mark-printed')
+  @Post('visits/:visitId\\:prescription/mark-printed')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   markPrescriptionPrinted(
@@ -671,7 +671,7 @@ export class OpdController {
     return this.svc.listInvoicePayments(this.resolveTenantId(req), invoiceId);
   }
 
-  @Post('billing/invoices/:invoiceId/issue')
+  @Post('billing/invoices/:invoiceId\\:issue')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   issueInvoice(
@@ -683,7 +683,7 @@ export class OpdController {
     return this.svc.issueInvoice(this.resolveTenantId(req), invoiceId, user.userId, correlationId);
   }
 
-  @Post('billing/invoices/:invoiceId/void')
+  @Post('billing/invoices/:invoiceId\\:void')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   voidInvoice(
@@ -696,7 +696,7 @@ export class OpdController {
     return this.svc.voidInvoice(this.resolveTenantId(req), invoiceId, body, user.userId, correlationId);
   }
 
-  @Post('billing/invoices/:invoiceId/payments')
+  @Post('billing/invoices/:invoiceId\\:record-payment')
   @HttpCode(HttpStatus.CREATED)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   recordPayment(
@@ -709,7 +709,7 @@ export class OpdController {
     return this.svc.recordPayment(this.resolveTenantId(req), invoiceId, body, user.userId, correlationId);
   }
 
-  @Post('billing/invoices/:invoiceId/receipt')
+  @Post('billing/invoices/:invoiceId\\:generate-receipt')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   generateReceipt(

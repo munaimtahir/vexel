@@ -22,7 +22,6 @@ import { ResultsModule } from './results/results.module';
 import { SampleCollectionModule } from './sample-collection/sample-collection.module';
 import { VerificationModule } from './verification/verification.module';
 import { OpdModule } from './opd/opd.module';
-import { AppointmentsModule } from './appointments/appointments.module';
 import { BillingModule } from './billing/billing.module';
 import { OpsModule } from './ops/ops.module';
 import { AccountModule } from './account/account.module';
@@ -54,7 +53,6 @@ import { SystemLogsInterceptor } from './common/system-logs.interceptor';
     SampleCollectionModule,
     VerificationModule,
     OpdModule,
-    AppointmentsModule,
     BillingModule,
     OpsModule,
     AccountModule,

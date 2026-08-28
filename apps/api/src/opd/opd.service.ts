@@ -355,8 +355,8 @@ export class OpdService {
    * Allocates a tenant-local number without the count()+1 race. The update
    * is atomic in PostgreSQL; the first allocated value is 1.
    */
-  private async nextTenantSequence(tenantId: string, key: string): Promise<number> {
-    const row = await (this.prisma as any).tenantSequence.upsert({
+  private async nextTenantSequence(tenantId: string, key: string, client: any = this.prisma): Promise<number> {
+    const row = await client.tenantSequence.upsert({
       where: { tenantId_key: { tenantId, key } },
       create: { tenantId, key, nextValue: 2 },
       update: { nextValue: { increment: 1 } },
@@ -800,37 +800,50 @@ export class OpdService {
     const scheduledAt = new Date(body.scheduledAt);
     if (isNaN(scheduledAt.getTime())) throw new ConflictException('Invalid scheduledAt date');
 
-    if (body.providerId) {
-      const durationMinutes = Number(body.durationMinutes ?? 30);
-      const slotEnd = new Date(scheduledAt.getTime() + durationMinutes * 60000);
-      const conflicting = await (this.prisma as any).appointment.findFirst({
-        where: {
-          tenantId,
-          providerId: body.providerId,
-          status: { in: ['BOOKED', 'CHECKED_IN', 'IN_CONSULTATION'] },
-          scheduledAt: { lt: slotEnd },
-          AND: [{ scheduledAt: { gte: scheduledAt } }],
-        },
-      });
-      if (conflicting) throw new ConflictException('Appointment slot already booked for this provider');
+    const durationMinutes = Number(body.durationMinutes ?? 30);
+    if (!Number.isInteger(durationMinutes) || durationMinutes <= 0 || durationMinutes > 24 * 60) {
+      throw new ConflictException('durationMinutes must be a positive integer no greater than 1440');
     }
 
-    const seq = (await (this.prisma as any).appointment.count({ where: { tenantId } })) + 1;
-    const appointmentCode = buildCode('APT', seq);
-
-    const appointment = await (this.prisma as any).appointment.create({
-      data: {
-        tenantId,
-        patientId: body.patientId,
-        providerId: body.providerId ?? null,
-        appointmentCode,
-        status: 'BOOKED',
-        scheduledAt,
-        durationMinutes: Number(body.durationMinutes ?? 30),
-        reason: body.reason ?? null,
-        notes: body.notes ?? null,
-        bookedById: actorUserId,
-      },
+    const appointment = await (this.prisma as any).$transaction(async (tx: any) => {
+      if (!body.providerId) {
+        throw new ConflictException('providerId is required for a scheduled appointment');
+      }
+      if (body.providerId) {
+        // Serialize bookings for one provider so the overlap check and insert
+        // cannot race when two desks book the same slot concurrently.
+        await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${tenantId}:${body.providerId}`}, 0))`;
+        const slotEnd = new Date(scheduledAt.getTime() + durationMinutes * 60000);
+        const candidates = await tx.appointment.findMany({
+          where: {
+            tenantId,
+            providerId: body.providerId,
+            status: { in: ['BOOKED', 'CHECKED_IN', 'IN_CONSULTATION'] },
+            scheduledAt: { lt: slotEnd },
+          },
+        });
+        const slotStartMs = scheduledAt.getTime();
+        const conflicting = candidates.some((candidate: any) => {
+          const candidateEndMs = new Date(candidate.scheduledAt).getTime() + Number(candidate.durationMinutes) * 60000;
+          return candidateEndMs > slotStartMs;
+        });
+        if (conflicting) throw new ConflictException('Appointment slot already booked for this provider');
+      }
+      const seq = await this.nextTenantSequence(tenantId, 'OPD_APPOINTMENT', tx);
+      return tx.appointment.create({
+        data: {
+          tenantId,
+          patientId: body.patientId,
+          providerId: body.providerId,
+          appointmentCode: buildCode('APT', seq),
+          status: 'BOOKED',
+          scheduledAt,
+          durationMinutes,
+          reason: body.reason ?? null,
+          notes: body.notes ?? null,
+          bookedById: actorUserId,
+        },
+      });
     });
     await this.audit.log({
       tenantId,
@@ -861,23 +874,42 @@ export class OpdService {
     correlationId?: string,
   ) {
     await this.assertOpdEnabled(tenantId);
-    const a = await (this.prisma as any).appointment.findFirst({
-      where: { id: appointmentId, tenantId },
-    });
-    if (!a) throw new NotFoundException('Appointment not found');
-    if (!['BOOKED', 'CHECKED_IN'].includes(a.status)) {
-      throw new ConflictException(`Appointment in status ${a.status} cannot be rescheduled`);
-    }
     const scheduledAt = new Date(body.scheduledAt);
     if (isNaN(scheduledAt.getTime())) throw new ConflictException('Invalid scheduledAt date');
-
-    const updated = await (this.prisma as any).appointment.update({
-      where: { id: appointmentId },
-      data: {
-        scheduledAt,
-        ...(body.durationMinutes != null ? { durationMinutes: Number(body.durationMinutes) } : {}),
-        ...(body.reason !== undefined ? { reason: body.reason } : {}),
-      },
+    const durationMinutes = Number(body.durationMinutes ?? 30);
+    if (!Number.isInteger(durationMinutes) || durationMinutes <= 0 || durationMinutes > 24 * 60) {
+      throw new ConflictException('durationMinutes must be a positive integer no greater than 1440');
+    }
+    const { existing: a, updated } = await (this.prisma as any).$transaction(async (tx: any) => {
+      const existing = await tx.appointment.findFirst({ where: { id: appointmentId, tenantId } });
+      if (!existing) throw new NotFoundException('Appointment not found');
+      if (!['BOOKED', 'CHECKED_IN'].includes(existing.status)) {
+        throw new ConflictException(`Appointment in status ${existing.status} cannot be rescheduled`);
+      }
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${tenantId}:${existing.providerId}`}, 0))`;
+      const slotEnd = new Date(scheduledAt.getTime() + durationMinutes * 60000);
+      const candidates = await tx.appointment.findMany({
+        where: {
+          tenantId,
+          providerId: existing.providerId,
+          id: { not: appointmentId },
+          status: { in: ['BOOKED', 'CHECKED_IN', 'IN_CONSULTATION'] },
+          scheduledAt: { lt: slotEnd },
+        },
+      });
+      const conflict = candidates.some((candidate: any) =>
+        new Date(candidate.scheduledAt).getTime() + Number(candidate.durationMinutes) * 60000 > scheduledAt.getTime(),
+      );
+      if (conflict) throw new ConflictException('Appointment slot already booked for this provider');
+      const next = await tx.appointment.update({
+        where: { id: appointmentId },
+        data: {
+          scheduledAt,
+          durationMinutes,
+          ...(body.reason !== undefined ? { reason: body.reason } : {}),
+        },
+      });
+      return { existing, updated: next };
     });
     await this.audit.log({
       tenantId,
@@ -1584,12 +1616,28 @@ export class OpdService {
 
   async createInvoice(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
     await this.assertOpdEnabled(tenantId);
+    if (!Array.isArray(body?.lines) || body.lines.length === 0) {
+      throw new BadRequestException('At least one invoice line is required');
+    }
     const patient = await (this.prisma as any).patient.findFirst({
       where: { id: body.patientId, tenantId },
     });
     if (!patient) throw new NotFoundException('Patient not found');
 
-    const lines: any[] = (body.lines ?? []).map((l: any, idx: number) => ({
+    if (body.encounterId) {
+      const encounter = await (this.prisma as any).encounter.findFirst({
+        where: { id: body.encounterId, tenantId, patientId: body.patientId, moduleType: 'OPD' },
+      });
+      if (!encounter) throw new NotFoundException('OPD encounter not found');
+    }
+    if (body.visitId) {
+      const visit = await (this.prisma as any).oPDVisit.findFirst({
+        where: { id: body.visitId, tenantId, patientId: body.patientId },
+      });
+      if (!visit) throw new NotFoundException('OPD visit not found');
+    }
+
+    const lines: any[] = body.lines.map((l: any, idx: number) => ({
       tenantId,
       sortOrder: idx + 1,
       lineType: l.lineType ?? 'SERVICE',
@@ -1600,9 +1648,22 @@ export class OpdService {
       lineTotal: Number(l.quantity ?? 1) * Number(l.unitPrice) - Number(l.discountAmount ?? 0),
     }));
 
+    for (const line of lines) {
+      if (!line.description?.trim() || !Number.isFinite(line.quantity) || line.quantity <= 0) {
+        throw new BadRequestException('Invoice line description and positive quantity are required');
+      }
+      if (!Number.isFinite(line.unitPrice) || line.unitPrice < 0 || !Number.isFinite(line.discountAmount) || line.discountAmount < 0) {
+        throw new BadRequestException('Invoice line amounts must be valid non-negative numbers');
+      }
+      if (line.lineTotal < 0) throw new BadRequestException('Invoice line discount cannot exceed its gross amount');
+    }
+
     const subtotalAmount = lines.reduce((acc, l) => acc + l.quantity * l.unitPrice, 0);
     const discountAmount = lines.reduce((acc, l) => acc + Number(l.discountAmount), 0);
     const totalAmount = subtotalAmount - discountAmount;
+    if (!Number.isFinite(totalAmount) || totalAmount < 0) {
+      throw new BadRequestException('Invoice total cannot be negative');
+    }
 
     const seq = await this.nextTenantSequence(tenantId, 'OPD_INVOICE');
     const invoiceCode = buildCode('INV', seq);
@@ -1733,41 +1794,45 @@ export class OpdService {
     correlationId?: string,
   ) {
     await this.assertOpdEnabled(tenantId);
-    const inv = await (this.prisma as any).invoice.findFirst({
-      where: { id: invoiceId, tenantId },
-    });
-    if (!inv) throw new NotFoundException('Invoice not found');
-    if (!['ISSUED', 'PARTIALLY_PAID'].includes(inv.status)) {
-      throw new ConflictException(`Cannot record payment for invoice in status ${inv.status}`);
-    }
     const amount = Number(body.amount);
-    if (amount <= 0) throw new ConflictException('Payment amount must be positive');
-
-    const seq = (await (this.prisma as any).payment.count({ where: { tenantId } })) + 1;
-    const paymentCode = buildCode('PAY', seq);
-
-    const payment = await (this.prisma as any).payment.create({
-      data: {
-        tenantId,
-        invoiceId,
-        paymentCode,
-        status: 'POSTED',
-        method: body.method,
-        amount,
-        receivedAt: new Date(),
-        receivedById: actorUserId,
-        referenceNo: body.referenceNo ?? null,
-        note: body.notes ?? null,
-      },
-    });
-
-    const newAmountPaid = Number(inv.amountPaid) + amount;
-    const newAmountDue = Number(inv.totalAmount) - newAmountPaid;
-    const newStatus = newAmountDue <= 0 ? 'PAID' : 'PARTIALLY_PAID';
-
-    await (this.prisma as any).invoice.update({
-      where: { id: invoiceId },
-      data: { amountPaid: newAmountPaid, amountDue: Math.max(0, newAmountDue), status: newStatus },
+    if (!Number.isFinite(amount) || amount <= 0) throw new ConflictException('Payment amount must be positive');
+    const { inv, payment } = await (this.prisma as any).$transaction(async (tx: any) => {
+      // Lock the invoice row so concurrent cash-desk payments cannot both
+      // calculate a balance from the same stale amountPaid value.
+      const locked = await tx.invoice.findFirst({ where: { id: invoiceId, tenantId } });
+      if (!locked) throw new NotFoundException('Invoice not found');
+      await tx.$queryRaw`SELECT id FROM "invoices" WHERE id = ${invoiceId} AND "tenantId" = ${tenantId} FOR UPDATE`;
+      if (!['ISSUED', 'PARTIALLY_PAID'].includes(locked.status)) {
+        throw new ConflictException(`Cannot record payment for invoice in status ${locked.status}`);
+      }
+      const newAmountPaid = Number(locked.amountPaid) + amount;
+      const newAmountDue = Number(locked.totalAmount) - newAmountPaid;
+      if (newAmountDue < 0) throw new ConflictException('Payment exceeds invoice balance');
+      const seq = await this.nextTenantSequence(tenantId, 'OPD_PAYMENT', tx);
+      const createdPayment = await tx.payment.create({
+        data: {
+          tenantId,
+          invoiceId,
+          paymentCode: buildCode('PAY', seq),
+          status: 'POSTED',
+          method: body.method,
+          amount,
+          receivedAt: new Date(),
+          receivedById: actorUserId,
+          referenceNo: body.referenceNo ?? null,
+          note: body.notes ?? null,
+          correlationId: correlationId ?? null,
+        },
+      });
+      await tx.invoice.update({
+        where: { id: invoiceId },
+        data: {
+          amountPaid: newAmountPaid,
+          amountDue: newAmountDue,
+          status: newAmountDue === 0 ? 'PAID' : 'PARTIALLY_PAID',
+        },
+      });
+      return { inv: locked, payment: createdPayment };
     });
 
     await this.audit.log({
@@ -2053,6 +2118,11 @@ export class OpdService {
           where: { id: body.doctorId, tenantId, isActive: true },
         });
         if (!doctor) throw new NotFoundException('Active OPD doctor not found');
+        const immediatePayment = body.immediatePaymentAmount == null ? 0 : Number(body.immediatePaymentAmount);
+        const consultationFee = Number(doctor.consultationFee);
+        if (!Number.isFinite(immediatePayment) || immediatePayment < 0 || immediatePayment > consultationFee) {
+          throw new BadRequestException('immediatePaymentAmount must be between zero and the consultation fee');
+        }
 
         const encounter = await (this.prisma as any).encounter.create({
           data: {
@@ -2071,7 +2141,7 @@ export class OpdService {
             doctorId: body.doctorId,
             status: 'DRAFT',
             visitCode: buildCode('OPD', seq),
-            paymentStatus: body.immediatePaymentAmount != null && Number(body.immediatePaymentAmount) > 0 ? 'PAID' : 'UNPAID',
+            paymentStatus: 'UNPAID',
           },
         });
 
@@ -2093,13 +2163,13 @@ export class OpdService {
           actorUserId,
           correlationId,
         );
-        if (body.immediatePaymentAmount != null && Number(body.immediatePaymentAmount) > 0) {
+        if (immediatePayment > 0) {
           await this.issueInvoice(tenantId, inv.id, actorUserId, correlationId);
           await this.recordPayment(
             tenantId,
             inv.id,
             {
-              amount: Number(body.immediatePaymentAmount),
+              amount: immediatePayment,
               method: body.immediatePaymentMethod ?? 'CASH',
               referenceNo: body.immediatePaymentReferenceNo ?? null,
               notes: body.immediatePaymentNotes ?? null,
@@ -2107,6 +2177,10 @@ export class OpdService {
             actorUserId,
             correlationId,
           );
+          await (this.prisma as any).opdEncounter.update({
+            where: { id: opd.id },
+            data: { paymentStatus: immediatePayment === consultationFee ? 'PAID' : 'PARTIALLY_PAID' },
+          });
         }
         const result = {
           opdEncounter: this.mapKmvpEncounter(opd),

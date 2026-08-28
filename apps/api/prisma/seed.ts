@@ -41,6 +41,11 @@ const SYSTEM_PERMISSIONS = [
   'ops.configure_schedules',
   'ops.configure_storage',
   'templates.read', 'templates.write', 'templates.provision',
+  'opd.encounter.read', 'opd.encounter.manage', 'opd.intake.write',
+  'opd.clinical_note.write', 'opd.clinical_note.sign',
+  'opd.prescription.write', 'opd.prescription.publish',
+  'opd.billing.read', 'opd.billing.manage',
+  'opd.document.read', 'opd.document.generate', 'opd.document.publish',
 ];
 
 const SELF_SERVICE_PERMISSIONS = [
@@ -237,6 +242,8 @@ export async function main() {
         create: [
           'patient.manage',
           'encounter.manage',
+          'opd.encounter.read', 'opd.encounter.manage', 'opd.intake.write',
+          'opd.billing.read', 'opd.document.read', 'opd.document.generate',
           'opd.provider.read',
           'opd.schedule.read',
           'opd.appointment.manage',
@@ -260,6 +267,10 @@ export async function main() {
         create: [
           'patient.manage',
           'encounter.manage',
+          'opd.encounter.read', 'opd.encounter.manage', 'opd.intake.write',
+          'opd.clinical_note.write', 'opd.clinical_note.sign',
+          'opd.prescription.write', 'opd.prescription.publish',
+          'opd.document.read', 'opd.document.generate', 'opd.document.publish',
           'opd.provider.read',
           'opd.appointment.read',
           'opd.visit.manage',
@@ -284,6 +295,8 @@ export async function main() {
         create: [
           'patient.manage',
           'encounter.manage',
+          'opd.billing.read', 'opd.billing.manage',
+          'opd.document.read', 'opd.document.generate', 'opd.document.publish',
           'opd.invoice.manage',
           'opd.payment.manage',
           'document.generate',
@@ -305,6 +318,21 @@ export async function main() {
       update: {},
       create: { roleId, permission: 'reports.read' },
     });
+  }
+  for (const role of [opdOperatorRole, opdDoctorRole, opdFinanceRole]) {
+    for (const permission of [
+      'opd.encounter.read', 'opd.encounter.manage', 'opd.intake.write',
+      'opd.clinical_note.write', 'opd.clinical_note.sign',
+      'opd.prescription.write', 'opd.prescription.publish',
+      'opd.billing.read', 'opd.billing.manage',
+      'opd.document.read', 'opd.document.generate', 'opd.document.publish',
+    ]) {
+      await prisma.rolePermission.upsert({
+        where: { roleId_permission: { roleId: role.id, permission } },
+        update: {},
+        create: { roleId: role.id, permission },
+      });
+    }
   }
   console.log('✅ Backfilled reports.read onto existing roles');
 

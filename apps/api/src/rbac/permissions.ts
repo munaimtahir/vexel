@@ -87,6 +87,20 @@ export enum Permission {
   MODULE_ADMIN = 'module.admin',
   MODULE_OPERATOR = 'module.operator',
 
+  // OPD least-privilege permissions
+  OPD_ENCOUNTER_READ = 'opd.encounter.read',
+  OPD_ENCOUNTER_MANAGE = 'opd.encounter.manage',
+  OPD_INTAKE_WRITE = 'opd.intake.write',
+  OPD_CLINICAL_NOTE_WRITE = 'opd.clinical_note.write',
+  OPD_CLINICAL_NOTE_SIGN = 'opd.clinical_note.sign',
+  OPD_PRESCRIPTION_WRITE = 'opd.prescription.write',
+  OPD_PRESCRIPTION_PUBLISH = 'opd.prescription.publish',
+  OPD_BILLING_READ = 'opd.billing.read',
+  OPD_BILLING_MANAGE = 'opd.billing.manage',
+  OPD_DOCUMENT_READ = 'opd.document.read',
+  OPD_DOCUMENT_GENERATE = 'opd.document.generate',
+  OPD_DOCUMENT_PUBLISH = 'opd.document.publish',
+
   // Template Registry / Studio
   TEMPLATES_READ = 'templates.read',
   TEMPLATES_WRITE = 'templates.write',
