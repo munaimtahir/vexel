@@ -40,6 +40,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Regression repair | Preserved permission claims in login tokens for Admin landing and expanded Admin user loading to include seeded users; targeted Admin regression 6/6 passed | PASS for this slice; release remains NOT READY | `4ee3bf2` |
 | 2026-08-28 | Command/billing hardening | Serialized idempotent command replays with tenant/command/key advisory locks; aligned invoice payment response shape and implemented invoice receipt command through the deterministic OPD document pipeline | PASS for this slice; release remains NOT READY | `fbada1b`, `56df521` |
 | 2026-08-28 | Billing service adversarial tests | Added focused tests for cross-tenant encounter linkage, empty invoice rejection, row-locked overpayment rejection, and atomic valid payment response | PASS for this slice; release remains NOT READY | `5a8d39e` |
+| 2026-08-28 | Runtime receipt and deployment verification | Rebuilt API/worker; paid invoice receipt command returned 200 through deterministic pipeline; Compose config, service health, migration status, Prisma validation, correlation ID, and `admin.localhost` host resolution passed | PARTIAL; clean deployment/reconciliation/rollback/public proxy evidence remains required | `a0626a6` |
 
 ## Historical-only evidence
 
