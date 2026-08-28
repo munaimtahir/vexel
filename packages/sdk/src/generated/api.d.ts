@@ -2569,6 +2569,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/opd/canonical-appointments/{appointmentId}:reschedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reschedule a canonical OPD appointment */
+        post: operations["rescheduleCanonicalOpdAppointment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/canonical-appointments/{appointmentId}:no-show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark a canonical OPD appointment as no-show */
+        post: operations["markCanonicalOpdAppointmentNoShow"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/opd/appointments": {
         parameters: {
             query?: never;
@@ -11443,6 +11477,73 @@ export interface operations {
         };
         responses: {
             /** @description Appointment cancelled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            404: components["responses"]["NotFound"];
+            /** @description Invalid appointment transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rescheduleCanonicalOpdAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: date-time */
+                    scheduledAt: string;
+                    durationMinutes?: number;
+                    timezone?: string;
+                    reason?: string | null;
+                    idempotencyKey?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Appointment rescheduled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            404: components["responses"]["NotFound"];
+            /** @description Slot conflict or invalid appointment transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    markCanonicalOpdAppointmentNoShow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Appointment marked no-show */
             200: {
                 headers: {
                     [name: string]: unknown;

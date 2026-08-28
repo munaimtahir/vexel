@@ -124,6 +124,20 @@ export class OpdController {
     return this.svc.transitionCanonicalAppointment(this.resolveTenantId(req), appointmentId, 'CANCELLED', user.userId, body, correlationId);
   }
 
+  @Post('canonical-appointments/:appointmentId:reschedule')
+  @RequirePermissions(Permission.OPD_ENCOUNTER_MANAGE)
+  rescheduleCanonicalAppointment(@Req() req: Request, @Param('appointmentId') appointmentId: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.rescheduleCanonicalAppointment(this.resolveTenantId(req), appointmentId, body, user.userId, correlationId);
+  }
+
+  @Post('canonical-appointments/:appointmentId:no-show')
+  @RequirePermissions(Permission.OPD_ENCOUNTER_MANAGE)
+  noShowCanonicalAppointment(@Req() req: Request, @Param('appointmentId') appointmentId: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.transitionCanonicalAppointment(this.resolveTenantId(req), appointmentId, 'NO_SHOW', user.userId, body, correlationId);
+  }
+
   // ─── OPD KMVP Encounters + Commands ───────────────────────────────────────
 
   @Get('encounters')

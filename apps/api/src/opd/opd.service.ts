@@ -2062,6 +2062,27 @@ export class OpdService {
     });
   }
 
+  async rescheduleCanonicalAppointment(tenantId: string, appointmentId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    if (!body?.scheduledAt) throw new BadRequestException('scheduledAt is required');
+    const scheduledAt = new Date(body.scheduledAt);
+    if (Number.isNaN(scheduledAt.getTime())) throw new BadRequestException('scheduledAt must be a valid date-time');
+    const durationMinutes = Number(body.durationMinutes ?? 15);
+    return this.withCommandIdempotency(tenantId, 'RescheduleOpdAppointment', body?.idempotencyKey, { appointmentId, ...body }, async () => {
+      const updated = await (this.prisma as any).$transaction(async (tx: any) => {
+        const current = await tx.opdAppointment.findFirst({ where: { id: appointmentId, tenantId } });
+        if (!current) throw new NotFoundException('OPD appointment not found');
+        if (!['BOOKED', 'CHECKED_IN'].includes(current.status)) throw new ConflictException(`Cannot reschedule appointment in status ${current.status}`);
+        await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${tenantId}:opd-doctor:${current.doctorId}`}, 0))`;
+        const conflicts = await tx.opdAppointment.findMany({ where: { tenantId, doctorId: current.doctorId, id: { not: appointmentId }, status: { in: ['BOOKED', 'CHECKED_IN', 'IN_CONSULTATION'] }, scheduledAt: { lt: new Date(scheduledAt.getTime() + durationMinutes * 60000) } } });
+        if (conflicts.some((a: any) => new Date(a.scheduledAt).getTime() + Number(a.durationMinutes) * 60000 > scheduledAt.getTime())) throw new ConflictException('Appointment slot already booked for this doctor');
+        return tx.opdAppointment.update({ where: { id: appointmentId }, data: { scheduledAt, durationMinutes, ...(body.timezone ? { timezone: body.timezone } : {}), ...(body.reason !== undefined ? { reason: body.reason } : {}) } });
+      });
+      await this.audit.log({ tenantId, actorUserId, action: 'opd.canonical_appointment.rescheduled', entityType: 'OpdAppointment', entityId: appointmentId, after: this.mapCanonicalAppointment(updated), correlationId });
+      return this.mapCanonicalAppointment(updated);
+    });
+  }
+
   async listDoctors(tenantId: string, q: any) {
     await this.assertOpdEnabled(tenantId);
     await this.assertOpdFeatureEnabled(tenantId, 'module.opd.doctorProfiles');

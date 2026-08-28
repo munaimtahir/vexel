@@ -9108,6 +9108,49 @@ paths:
         "404": { $ref: '#/components/responses/NotFound' }
         "409": { description: Invalid appointment transition }
 
+  /opd/canonical-appointments/{appointmentId}:reschedule:
+    post:
+      operationId: rescheduleCanonicalOpdAppointment
+      summary: Reschedule a canonical OPD appointment
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scheduledAt]
+              properties:
+                scheduledAt: { type: string, format: date-time }
+                durationMinutes: { type: integer, minimum: 1, maximum: 1440 }
+                timezone: { type: string }
+                reason: { type: string, nullable: true }
+                idempotencyKey: { type: string }
+      responses:
+        "200": { description: Appointment rescheduled }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { description: Slot conflict or invalid appointment transition }
+
+  /opd/canonical-appointments/{appointmentId}:no-show:
+    post:
+      operationId: markCanonicalOpdAppointmentNoShow
+      summary: Mark a canonical OPD appointment as no-show
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Appointment marked no-show }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { description: Invalid appointment transition }
+
   # ─── OPD Appointments (workflow via commands only) ───────────────────────
 
   /opd/appointments:
