@@ -35,7 +35,7 @@ export default function UsersPage() {
   async function loadData() {
     const api = getApiClient(getToken() ?? undefined);
     const [usersRes, rolesRes] = await Promise.allSettled([
-      api.GET('/users'),
+      api.GET('/users', { params: { query: { page: 1, limit: 100 } } }),
       api.GET('/roles'),
     ]);
     if (usersRes.status === 'fulfilled') setUsers(usersRes.value.data?.data ?? []);

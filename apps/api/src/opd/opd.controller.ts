@@ -697,7 +697,7 @@ export class OpdController {
   }
 
   @Post('billing/invoices/:invoiceId\\:record-payment')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.ENCOUNTER_MANAGE)
   recordPayment(
     @Req() req: Request,
