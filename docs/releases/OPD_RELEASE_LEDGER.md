@@ -22,7 +22,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | Billing/concurrency | `52f2288`, `56df521`; API and real-stack payment smoke evidence | PARTIAL; concurrent command/payment suite still required |
 | Deterministic documents/worker/PDF | `docs/opd/OPD_DOCUMENT_EVIDENCE.md` | NOT PASSING |
 | Admin/Operator surfaces | `f12bede`; OPD browser tests 2/2; Admin regression repair `4ee3bf2` | PARTIAL; full OPD journey coverage still required |
-| Quality gates | `docs/opd/OPD_TEST_EVIDENCE.md`; API 34 suites / 245 tests; repository browser 118 passed, 2 repaired, 3 skipped | PARTIAL; mandatory OPD gates remain |
+| Quality gates | `docs/opd/OPD_TEST_EVIDENCE.md`; API 35 suites / 256 tests; repository browser 120 passed, 3 skipped | PARTIAL; mandatory OPD gates remain |
 | Deployment/rollback/smoke | `docs/opd/OPD_DEPLOYMENT_EVIDENCE.md` | NOT PASSING |
 
 ## Sprint execution log
