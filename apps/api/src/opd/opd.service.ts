@@ -1874,7 +1874,10 @@ export class OpdService {
     if (!encounter) throw new NotFoundException('OPD encounter for invoice not found');
     const generated = await this.generateEncounterReceipt(
       tenantId,
-      { opdEncounterId: encounter.id, idempotencyKey: `invoice:${invoiceId}` },
+      // Document identity is payload-based. Do not pin command idempotency to
+      // the invoice forever: a later valid payment must produce a new receipt
+      // payload/hash while same-payload retries still deduplicate.
+      { opdEncounterId: encounter.id },
       actorUserId,
       correlationId,
     );
