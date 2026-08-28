@@ -322,33 +322,39 @@ export class OpdService {
       return executor();
     }
     const key = idempotencyKey.trim();
-    const existing = await (this.prisma as any).opdCommandLog.findFirst({
-      where: { tenantId, commandName, idempotencyKey: key },
-    });
-    if (existing?.responseJson != null) {
-      return existing.responseJson as T;
-    }
-    const result = await executor();
-    try {
-      await (this.prisma as any).opdCommandLog.create({
-        data: {
-          tenantId,
-          commandName,
-          idempotencyKey: key,
-          requestJson,
-          responseJson: result as any,
-        },
+    // Serialize replays for the same tenant/command/key before executing the
+    // side effect. A unique constraint alone is insufficient: two requests
+    // can both perform the clinical write before the second insert loses.
+    return (this.prisma as any).$transaction(async (tx: any) => {
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${tenantId}:${commandName}:${key}`}, 0))`;
+      const existing = await tx.opdCommandLog.findFirst({
+        where: { tenantId, commandName, idempotencyKey: key },
       });
-    } catch (err: any) {
-      if (err?.code === 'P2002') {
-        const deduped = await (this.prisma as any).opdCommandLog.findFirst({
-          where: { tenantId, commandName, idempotencyKey: key },
-        });
-        if (deduped?.responseJson != null) return deduped.responseJson as T;
+      if (existing?.responseJson != null) {
+        return existing.responseJson as T;
       }
-      throw err;
-    }
-    return result;
+      const result = await executor();
+      try {
+        await tx.opdCommandLog.create({
+          data: {
+            tenantId,
+            commandName,
+            idempotencyKey: key,
+            requestJson,
+            responseJson: result as any,
+          },
+        });
+      } catch (err: any) {
+        if (err?.code === 'P2002') {
+          const deduped = await tx.opdCommandLog.findFirst({
+          where: { tenantId, commandName, idempotencyKey: key },
+          });
+          if (deduped?.responseJson != null) return deduped.responseJson as T;
+        }
+        throw err;
+      }
+      return result;
+    });
   }
 
   /**
