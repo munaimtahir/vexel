@@ -50,6 +50,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Canonical scheduling foundation | Added tenant-scoped `OpdSchedule` and `OpdAppointment` models, unique doctor-slot protection, canonical encounter appointment linkage, and additive migration; Prisma validation/generation/typecheck passed and migration applied successfully | PARTIAL; scheduling services/commands and legacy route retirement remain | `7699b8c` |
 | 2026-08-28 | Canonical schedule API | Added tenant-scoped doctor schedule list/create endpoints with weekday/time validation, overlap conflict handling, audit evidence, OpenAPI contract, and regenerated SDK; API typecheck and parity checks passed | PARTIAL; canonical booking commands and legacy route retirement remain | `77f6122` |
 | 2026-08-28 | Canonical appointment commands | Added canonical appointment listing/booking plus audited idempotent check-in and cancellation commands with doctor availability, tenant validation, overlap locking, and OpenAPI/SDK surfaces; API typecheck passed | PARTIAL; reschedule/no-show/queue and legacy route retirement remain | `0ca2d0d` |
+| 2026-08-28 | Canonical appointment completion | Added audited idempotent reschedule and no-show commands with state validation, doctor-level advisory locking, and OpenAPI/SDK coverage; API typecheck passed | PARTIAL; queue linkage, Operator/Admin migration, and legacy route retirement remain | `857f7f1` |
 
 ## Historical-only evidence
 
