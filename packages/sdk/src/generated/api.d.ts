@@ -2410,6 +2410,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/opd/doctors/{doctorId}/schedules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List canonical tenant-scoped doctor schedules */
+        get: operations["listOpdCanonicalSchedules"];
+        put?: never;
+        /** Create a canonical doctor schedule */
+        post: operations["createOpdCanonicalSchedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/opd/doctors/{doctorId}": {
         parameters: {
             query?: never;
@@ -4995,7 +5013,30 @@ export interface components {
         };
         OpdDoctorListResponse: {
             data: components["schemas"]["OpdDoctor"][];
-            pagination: components["schemas"]["Pagination"];
+        };
+        OpdCanonicalSchedule: {
+            id: string;
+            tenantId: string;
+            doctorId: string;
+            weekday: number;
+            startTime: string;
+            endTime: string;
+            slotMinutes: number;
+            timezone: string;
+            /** Format: date-time */
+            effectiveFrom?: string | null;
+            /** Format: date-time */
+            effectiveTo?: string | null;
+            isActive: boolean;
+        };
+        OpdCanonicalScheduleCreateRequest: {
+            weekday: number;
+            startTime: string;
+            endTime: string;
+            slotMinutes?: number;
+            timezone?: string;
+            isActive?: boolean;
+            pagination?: components["schemas"]["Pagination"];
         };
         OpdEncounterKmvp: {
             id: string;
@@ -10831,6 +10872,72 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             /** @description Duplicate doctor code in tenant */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listOpdCanonicalSchedules: {
+        parameters: {
+            query?: {
+                isActive?: boolean;
+            };
+            header?: never;
+            path: {
+                doctorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Canonical doctor schedules */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["OpdCanonicalSchedule"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    createOpdCanonicalSchedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doctorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpdCanonicalScheduleCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Canonical doctor schedule created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdCanonicalSchedule"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description Schedule overlaps an existing canonical schedule */
             409: {
                 headers: {
                     [name: string]: unknown;

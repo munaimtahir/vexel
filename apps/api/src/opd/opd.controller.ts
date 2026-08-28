@@ -77,6 +77,25 @@ export class OpdController {
     return this.svc.updateDoctor(this.resolveTenantId(req), doctorId, body, user.userId, correlationId);
   }
 
+  @Get('doctors/:doctorId/schedules')
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
+  listCanonicalSchedules(@Req() req: Request, @Param('doctorId') doctorId: string, @Query() q: any) {
+    return this.svc.listCanonicalSchedules(this.resolveTenantId(req), doctorId, q);
+  }
+
+  @Post('doctors/:doctorId/schedules')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions(Permission.MODULE_ADMIN)
+  createCanonicalSchedule(
+    @Req() req: Request,
+    @Param('doctorId') doctorId: string,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.createCanonicalSchedule(this.resolveTenantId(req), doctorId, body, user.userId, correlationId);
+  }
+
   // ─── OPD KMVP Encounters + Commands ───────────────────────────────────────
 
   @Get('encounters')

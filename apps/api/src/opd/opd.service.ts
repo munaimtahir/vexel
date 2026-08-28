@@ -1891,6 +1891,83 @@ export class OpdService {
 
   // ─── OPD KMVP Doctor Master ───────────────────────────────────────────────
 
+  private mapCanonicalSchedule(schedule: any) {
+    return {
+      id: schedule.id,
+      tenantId: schedule.tenantId,
+      doctorId: schedule.doctorId,
+      weekday: schedule.weekday,
+      startTime: schedule.startTime,
+      endTime: schedule.endTime,
+      slotMinutes: schedule.slotMinutes,
+      timezone: schedule.timezone,
+      effectiveFrom: schedule.effectiveFrom,
+      effectiveTo: schedule.effectiveTo,
+      isActive: schedule.isActive,
+    };
+  }
+
+  private mapCanonicalAppointment(appointment: any) {
+    return {
+      id: appointment.id,
+      tenantId: appointment.tenantId,
+      patientId: appointment.patientId,
+      doctorId: appointment.doctorId,
+      appointmentCode: appointment.appointmentCode,
+      scheduledAt: appointment.scheduledAt,
+      timezone: appointment.timezone,
+      durationMinutes: appointment.durationMinutes,
+      status: appointment.status,
+      reason: appointment.reason,
+      checkedInAt: appointment.checkedInAt,
+      consultationStartedAt: appointment.consultationStartedAt,
+      completedAt: appointment.completedAt,
+      cancelledAt: appointment.cancelledAt,
+      cancelledReason: appointment.cancelledReason,
+      noShowMarkedAt: appointment.noShowMarkedAt,
+    };
+  }
+
+  async listCanonicalSchedules(tenantId: string, doctorId: string, q: any) {
+    await this.assertOpdEnabled(tenantId);
+    const doctor = await (this.prisma as any).opdDoctor.findFirst({ where: { id: doctorId, tenantId } });
+    if (!doctor) throw new NotFoundException('OPD doctor not found');
+    const where: any = { tenantId, doctorId };
+    const active = parseBool(q?.isActive);
+    if (active !== undefined) where.isActive = active;
+    const schedules = await (this.prisma as any).opdSchedule.findMany({
+      where, orderBy: [{ weekday: 'asc' }, { startTime: 'asc' }],
+    });
+    return { data: schedules.map((schedule: any) => this.mapCanonicalSchedule(schedule)) };
+  }
+
+  async createCanonicalSchedule(tenantId: string, doctorId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    const doctor = await (this.prisma as any).opdDoctor.findFirst({ where: { id: doctorId, tenantId } });
+    if (!doctor) throw new NotFoundException('OPD doctor not found');
+    const weekday = Number(body?.weekday);
+    const slotMinutes = Number(body?.slotMinutes ?? 15);
+    if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) throw new BadRequestException('weekday must be 0-6');
+    if (!Number.isInteger(slotMinutes) || slotMinutes <= 0 || slotMinutes > 1440) throw new BadRequestException('slotMinutes is invalid');
+    const start = timeToMinutes(String(body?.startTime ?? ''));
+    const end = timeToMinutes(String(body?.endTime ?? ''));
+    if (start >= end) throw new BadRequestException('Schedule endTime must be after startTime');
+    const existing = await (this.prisma as any).opdSchedule.findMany({ where: { tenantId, doctorId, weekday, isActive: true } });
+    if (existing.some((s: any) => overlaps(start, end, timeToMinutes(s.startTime), timeToMinutes(s.endTime)))) {
+      throw new ConflictException('Overlapping canonical doctor schedule');
+    }
+    try {
+      const schedule = await (this.prisma as any).opdSchedule.create({
+        data: { tenantId, doctorId, weekday, startTime: body.startTime, endTime: body.endTime, slotMinutes, timezone: body.timezone ?? 'Asia/Karachi', isActive: body.isActive ?? true },
+      });
+      await this.audit.log({ tenantId, actorUserId, action: 'opd.schedule.created', entityType: 'OpdSchedule', entityId: schedule.id, after: this.mapCanonicalSchedule(schedule), correlationId });
+      return this.mapCanonicalSchedule(schedule);
+    } catch (err: any) {
+      if (err?.code === 'P2002') throw new ConflictException('Canonical schedule already exists');
+      throw err;
+    }
+  }
+
   async listDoctors(tenantId: string, q: any) {
     await this.assertOpdEnabled(tenantId);
     await this.assertOpdFeatureEnabled(tenantId, 'module.opd.doctorProfiles');
