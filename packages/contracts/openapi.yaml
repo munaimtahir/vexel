@@ -2906,19 +2906,10 @@ components:
 
     PublishOpdPrescriptionRequest:
       type: object
-      required: [opdEncounterId, historyNotes, examNotes, assessment, plan, advice, prescriptionItems]
+      required: [opdEncounterId, prescriptionItems]
       properties:
         opdEncounterId: { type: string }
         idempotencyKey: { type: string }
-        historyNotes: { type: string }
-        examNotes: { type: string }
-        assessment: { type: string }
-        plan: { type: string }
-        advice: { type: string }
-        diagnosis: { type: string, nullable: true }
-        followUp: { type: string, nullable: true }
-        investigations: { type: string, nullable: true }
-        remarks: { type: string, nullable: true }
         prescriptionItems:
           type: array
           minItems: 1
@@ -2934,6 +2925,22 @@ components:
               duration: { type: string, nullable: true }
               route: { type: string, nullable: true }
               instructions: { type: string, nullable: true }
+
+    SignOpdNoteRequest:
+      type: object
+      required: [opdEncounterId, historyNotes, examNotes, assessment, plan, advice]
+      properties:
+        opdEncounterId: { type: string }
+        idempotencyKey: { type: string }
+        historyNotes: { type: string }
+        examNotes: { type: string }
+        assessment: { type: string }
+        plan: { type: string }
+        advice: { type: string }
+        diagnosis: { type: string, nullable: true }
+        followUp: { type: string, nullable: true }
+        investigations: { type: string, nullable: true }
+        remarks: { type: string, nullable: true }
 
     PublishOpdPrescriptionResponse:
       type: object
@@ -10259,6 +10266,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublishOpdPrescriptionResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: domain_error for invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opd/commands/signNote:
+    post:
+      operationId: signOpdNoteCommand
+      summary: Sign the clinical note and transition IN_CONSULTATION -> NOTE_SIGNED
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignOpdNoteRequest'
+      responses:
+        "200":
+          description: Clinical note signed
+          content:
+            application/json:
+              schema: { type: object }
         "401":
           $ref: '#/components/responses/Unauthorized'
         "403":

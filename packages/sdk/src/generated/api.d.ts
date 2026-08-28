@@ -3071,6 +3071,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/opd/commands/signNote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign the clinical note and transition IN_CONSULTATION -> NOTE_SIGNED */
+        post: operations["signOpdNoteCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/opd/commands/finalizeEncounter": {
         parameters: {
             query?: never;
@@ -5052,15 +5069,6 @@ export interface components {
         PublishOpdPrescriptionRequest: {
             opdEncounterId: string;
             idempotencyKey?: string;
-            historyNotes: string;
-            examNotes: string;
-            assessment: string;
-            plan: string;
-            advice: string;
-            diagnosis?: string | null;
-            followUp?: string | null;
-            investigations?: string | null;
-            remarks?: string | null;
             prescriptionItems: {
                 drugName: string;
                 genericName?: string | null;
@@ -5071,6 +5079,19 @@ export interface components {
                 route?: string | null;
                 instructions?: string | null;
             }[];
+        };
+        SignOpdNoteRequest: {
+            opdEncounterId: string;
+            idempotencyKey?: string;
+            historyNotes: string;
+            examNotes: string;
+            assessment: string;
+            plan: string;
+            advice: string;
+            diagnosis?: string | null;
+            followUp?: string | null;
+            investigations?: string | null;
+            remarks?: string | null;
         };
         PublishOpdPrescriptionResponse: {
             opdEncounter: components["schemas"]["OpdEncounterKmvp"];
@@ -12478,6 +12499,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublishOpdPrescriptionResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description domain_error for invalid state transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    signOpdNoteCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignOpdNoteRequest"];
+            };
+        };
+        responses: {
+            /** @description Clinical note signed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
                 };
             };
             401: components["responses"]["Unauthorized"];

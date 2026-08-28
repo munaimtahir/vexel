@@ -153,15 +153,25 @@ export default function OpdDoctorPage() {
         }))
         .filter((item) => item.drugName);
       const api = getApiClient(getToken() ?? undefined);
-      const { data, error: apiError } = await api.POST('/opd/commands/publishPrescription', {
+      const { data: signedNote, error: signError } = await api.POST('/opd/commands/signNote', {
         body: {
           opdEncounterId: encounterId,
-          idempotencyKey: `opd-publish-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          idempotencyKey: `opd-sign-note-${encounterId}`,
           historyNotes: historyNotes.trim(),
           examNotes: examNotes.trim(),
           assessment: assessment.trim(),
           plan: plan.trim(),
           advice: advice.trim(),
+        } as any,
+      });
+      if (signError || !signedNote) {
+        setError('Failed to sign clinical note');
+        return;
+      }
+      const { data, error: apiError } = await api.POST('/opd/commands/publishPrescription', {
+        body: {
+          opdEncounterId: encounterId,
+          idempotencyKey: `opd-publish-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           prescriptionItems,
         } as any,
       });
