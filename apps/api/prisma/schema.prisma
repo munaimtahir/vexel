@@ -10,63 +10,65 @@ datasource db {
 // ─── System / Platform ────────────────────────────────────────────────────
 
 model Tenant {
-  id        String   @id @default(uuid())
-  name      String
-  status    String   @default("trial") // active | suspended | trial
-  isSuperAdmin Boolean @default(false)  // system tenant for super-admins
+  id                     String    @id @default(uuid())
+  name                   String
+  status                 String    @default("trial") // active | suspended | trial
+  isSuperAdmin           Boolean   @default(false) // system tenant for super-admins
   // Catalog seed state (set by enable-lims command)
-  catalogSeedMode        String?   // BASE_ON_ENABLE | EMPTY | CUSTOM_UPLOAD
+  catalogSeedMode        String? // BASE_ON_ENABLE | EMPTY | CUSTOM_UPLOAD
   catalogSeededAt        DateTime?
   catalogSeedBaseVersion String?
   catalogSeedHash        String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
-  domains       TenantDomain[]
-  config        TenantConfig?
-  users         User[]
-  featureFlags  TenantFeature[]
-  auditEvents   AuditEvent[]
-  catalogTests  CatalogTest[]
-  catalogPanels CatalogPanel[]
-  sampleTypes   SampleType[]
-  roles         Role[]
-  encounters    Encounter[]
-  patients      Patient[]
-  labOrders     LabOrder[]
-  specimens     Specimen[]
-  specimenItems SpecimenItem[]
-  labResults    LabResult[]
-  parameters           Parameter[]
-  testParameterMappings TestParameterMapping[]
-  panelTestMappings    PanelTestMapping[]
-  referenceRanges      ReferenceRange[]
-  jobRuns              JobRun[]
-  documentTemplates    DocumentTemplate[]
-  documents            Document[]
-  cashTransactions     CashTransaction[]
-  topTests             TenantTopTest[]
-  providers            Provider[]
-  providerSchedules    ProviderSchedule[]
-  appointments         Appointment[]
-  opdVisits            OPDVisit[]
-  opdVitals            OPDVitals[]
-  opdClinicalNotes     OPDClinicalNote[]
-  opdPrescriptions     OPDPrescription[]
-  opdPrescriptionItems OPDPrescriptionItem[]
-  invoices             Invoice[]
-  invoiceLines         InvoiceLine[]
-  payments             Payment[]
-  printTemplates       PrintTemplate[]
-  testTemplateMaps     TestTemplateMap[]
-  opdDoctors           OpdDoctor[]
-  opdEncountersKmvp    OpdEncounter[]
-  opdVitalsKmvp        OpdVital[]
-  opdNotesKmvp         OpdNote[]
-  opdPrescriptionsKmvp OpdEncounterPrescription[]
+  domains                  TenantDomain[]
+  config                   TenantConfig?
+  users                    User[]
+  featureFlags             TenantFeature[]
+  auditEvents              AuditEvent[]
+  catalogTests             CatalogTest[]
+  catalogPanels            CatalogPanel[]
+  sampleTypes              SampleType[]
+  roles                    Role[]
+  encounters               Encounter[]
+  patients                 Patient[]
+  labOrders                LabOrder[]
+  specimens                Specimen[]
+  specimenItems            SpecimenItem[]
+  labResults               LabResult[]
+  parameters               Parameter[]
+  testParameterMappings    TestParameterMapping[]
+  panelTestMappings        PanelTestMapping[]
+  referenceRanges          ReferenceRange[]
+  jobRuns                  JobRun[]
+  documentTemplates        DocumentTemplate[]
+  documents                Document[]
+  cashTransactions         CashTransaction[]
+  topTests                 TenantTopTest[]
+  providers                Provider[]
+  providerSchedules        ProviderSchedule[]
+  appointments             Appointment[]
+  opdVisits                OPDVisit[]
+  opdVitals                OPDVitals[]
+  opdClinicalNotes         OPDClinicalNote[]
+  opdPrescriptions         OPDPrescription[]
+  opdPrescriptionItems     OPDPrescriptionItem[]
+  invoices                 Invoice[]
+  invoiceLines             InvoiceLine[]
+  payments                 Payment[]
+  printTemplates           PrintTemplate[]
+  testTemplateMaps         TestTemplateMap[]
+  opdDoctors               OpdDoctor[]
+  opdSchedules             OpdSchedule[]
+  opdAppointments          OpdAppointment[]
+  opdEncountersKmvp        OpdEncounter[]
+  opdVitalsKmvp            OpdVital[]
+  opdNotesKmvp             OpdNote[]
+  opdPrescriptionsKmvp     OpdEncounterPrescription[]
   opdPrescriptionItemsKmvp OpdPrescriptionItemKmvp[]
-  opdCommandLogs       OpdCommandLog[]
-  sequences            TenantSequence[]
+  opdCommandLogs           OpdCommandLog[]
+  sequences                TenantSequence[]
 
   @@map("tenants")
 }
@@ -74,7 +76,7 @@ model Tenant {
 model TenantDomain {
   id       String @id @default(uuid())
   tenantId String
-  domain   String @unique  // globally unique — one domain maps to one tenant
+  domain   String @unique // globally unique — one domain maps to one tenant
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
@@ -83,15 +85,15 @@ model TenantDomain {
 }
 
 model TenantConfig {
-  id                 String  @id @default(uuid())
-  tenantId           String  @unique
-  brandName          String?
-  logoUrl            String?
-  primaryColor       String?
-  reportHeader       String?
-  reportFooter       String?
-  headerText         String?
-  footerText         String?
+  id                   String   @id @default(uuid())
+  tenantId             String   @unique
+  brandName            String?
+  logoUrl              String?
+  primaryColor         String?
+  reportHeader         String?
+  reportFooter         String?
+  headerText           String?
+  footerText           String?
   registrationPrefix   String? // e.g. "VX" — 2-3 letters; server appends -YY-SEQ
   orderPrefix          String? // e.g. "VX" — server appends module letter + YYMM + SEQ
   reportHeaderLayout   String? // default | classic | minimal  (lab report)
@@ -108,25 +110,25 @@ model TenantConfig {
 }
 
 model User {
-  id               String   @id @default(uuid())
-  tenantId         String
-  email            String
-  firstName        String
-  lastName         String
-  passwordHash     String
-  status           String   @default("active") // active | disabled | pending
-  isSuperAdmin     Boolean  @default(false)    // super-admin bypasses all RBAC
-  maxDiscountPct   Decimal? @db.Decimal(5,2)   // overrides role default when set
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id             String   @id @default(uuid())
+  tenantId       String
+  email          String
+  firstName      String
+  lastName       String
+  passwordHash   String
+  status         String   @default("active") // active | disabled | pending
+  isSuperAdmin   Boolean  @default(false) // super-admin bypasses all RBAC
+  maxDiscountPct Decimal? @db.Decimal(5, 2) // overrides role default when set
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  tenant           Tenant           @relation(fields: [tenantId], references: [id])
+  tenant           Tenant            @relation(fields: [tenantId], references: [id])
   userRoles        UserRole[]
   refreshTokens    RefreshToken[]
   auditEvents      AuditEvent[]
   cashTransactions CashTransaction[]
   opsBackupRuns    OpsBackupRun[]
-  createdTemplates PrintTemplate[]  @relation("TemplateCreatedBy")
+  createdTemplates PrintTemplate[]   @relation("TemplateCreatedBy")
 
   @@unique([tenantId, email])
   @@index([tenantId, status])
@@ -134,12 +136,12 @@ model User {
 }
 
 model RefreshToken {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   userId    String
-  token     String   @unique  // hashed token stored
+  token     String    @unique // hashed token stored
   expiresAt DateTime
   revokedAt DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id])
 
@@ -149,14 +151,14 @@ model RefreshToken {
 }
 
 model Role {
-  id                String   @id @default(uuid())
-  tenantId          String
-  name              String
-  description       String?
-  isSystem          Boolean  @default(false)  // system roles cannot be deleted
-  maxDiscountPct    Decimal? @db.Decimal(5,2) // max % discount this role may apply
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id             String   @id @default(uuid())
+  tenantId       String
+  name           String
+  description    String?
+  isSystem       Boolean  @default(false) // system roles cannot be deleted
+  maxDiscountPct Decimal? @db.Decimal(5, 2) // max % discount this role may apply
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   tenant          Tenant           @relation(fields: [tenantId], references: [id])
   userRoles       UserRole[]
@@ -171,7 +173,7 @@ model Role {
 // Stored as strings so schema doesn't need to change when adding new permissions
 model RolePermission {
   roleId     String
-  permission String  // matches Permission enum values
+  permission String // matches Permission enum values
 
   role Role @relation(fields: [roleId], references: [id])
 
@@ -182,7 +184,7 @@ model RolePermission {
 model UserRole {
   userId    String
   roleId    String
-  grantedBy String?  // userId who granted this role
+  grantedBy String? // userId who granted this role
   grantedAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
@@ -195,12 +197,12 @@ model UserRole {
 model TenantFeature {
   id          String   @id @default(uuid())
   tenantId    String
-  key         String   // e.g. module.lims, module.printing
+  key         String // e.g. module.lims, module.printing
   enabled     Boolean  @default(false)
-  variantJson String?  // JSON string for variant-type flags e.g. {"mode":"separate"}
+  variantJson String? // JSON string for variant-type flags e.g. {"mode":"separate"}
   description String?
   updatedAt   DateTime @updatedAt
-  updatedBy   String?  // userId who last changed it
+  updatedBy   String? // userId who last changed it
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
@@ -212,29 +214,29 @@ model TenantFeature {
 // ─── Catalog ──────────────────────────────────────────────────────────────
 
 model CatalogTest {
-  id                   String   @id @default(uuid())
-  tenantId             String
-  sampleTypeId         String?
-  name                 String
-  description          String?
-  sampleType           String?  // legacy field kept for compat
-  specimenType         String?  // exact specimen type e.g. "EDTA Blood", "Clot Blood", "Urine"
-  price                Decimal? @db.Decimal(10,2) // price in PKR
-  turnaroundHours      Int?
-  isActive             Boolean  @default(true)
-  externalId           String?
-  userCode             String?
-  loincCode            String?
-  department           String?
-  method               String?
-  printAlone           Boolean  @default(false) // if true, test prints on its own page in lab report
-  resultSchemaType     String   @default("TABULAR") // TABULAR | DESCRIPTIVE_HEMATOLOGY | HISTOPATHOLOGY | GRAPH_SERIES | IMAGE_ATTACHMENT | MIXED_STRUCTURED
-  allowTemplateOverride Boolean @default(false) // if true, operator can select template at publish time
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  id                    String   @id @default(uuid())
+  tenantId              String
+  sampleTypeId          String?
+  name                  String
+  description           String?
+  sampleType            String? // legacy field kept for compat
+  specimenType          String? // exact specimen type e.g. "EDTA Blood", "Clot Blood", "Urine"
+  price                 Decimal? @db.Decimal(10, 2) // price in PKR
+  turnaroundHours       Int?
+  isActive              Boolean  @default(true)
+  externalId            String?
+  userCode              String?
+  loincCode             String?
+  department            String?
+  method                String?
+  printAlone            Boolean  @default(false) // if true, test prints on its own page in lab report
+  resultSchemaType      String   @default("TABULAR") // TABULAR | DESCRIPTIVE_HEMATOLOGY | HISTOPATHOLOGY | GRAPH_SERIES | IMAGE_ATTACHMENT | MIXED_STRUCTURED
+  allowTemplateOverride Boolean  @default(false) // if true, operator can select template at publish time
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
-  tenant            Tenant      @relation(fields: [tenantId], references: [id])
-  sampleTypeRef     SampleType? @relation(fields: [sampleTypeId], references: [id])
+  tenant            Tenant                 @relation(fields: [tenantId], references: [id])
+  sampleTypeRef     SampleType?            @relation(fields: [sampleTypeId], references: [id])
   labOrders         LabOrder[]
   parameterMappings TestParameterMapping[]
   panelMappings     PanelTestMapping[]
@@ -256,7 +258,7 @@ model TenantTopTest {
   rank      Int
   createdAt DateTime @default(now())
 
-  tenant Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   test   CatalogTest @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, rank])
@@ -289,7 +291,7 @@ model CatalogPanel {
   tenantId    String
   name        String
   description String?
-  price       Decimal? @db.Decimal(10,2) // price in PKR
+  price       Decimal? @db.Decimal(10, 2) // price in PKR
   isActive    Boolean  @default(true)
   externalId  String?
   userCode    String?
@@ -297,7 +299,7 @@ model CatalogPanel {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tenant      Tenant           @relation(fields: [tenantId], references: [id])
+  tenant       Tenant             @relation(fields: [tenantId], references: [id])
   testMappings PanelTestMapping[]
 
   @@unique([tenantId, externalId], name: "tenant_panel_externalId")
@@ -309,7 +311,7 @@ model Parameter {
   tenantId      String
   name          String
   unit          String?
-  ucumCode      String?  // UCUM unit code (e.g. "mg/dL", "mmol/L")
+  ucumCode      String? // UCUM unit code (e.g. "mg/dL", "mmol/L")
   dataType      String   @default("numeric")
   isActive      Boolean  @default(true)
   externalId    String?
@@ -319,7 +321,7 @@ model Parameter {
   defaultUnit   String?
   decimals      Int?
   allowedValues String?
-  defaultValue  String?  // pre-filled value shown in result entry
+  defaultValue  String? // pre-filled value shown in result entry
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -384,8 +386,8 @@ model ReferenceRange {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id])
-  parameter Parameter @relation(fields: [parameterId], references: [id])
+  tenant    Tenant       @relation(fields: [tenantId], references: [id])
+  parameter Parameter    @relation(fields: [parameterId], references: [id])
   test      CatalogTest? @relation(fields: [testId], references: [id])
 
   @@index([tenantId, parameterId])
@@ -420,13 +422,13 @@ model AuditEvent {
   id            String   @id @default(uuid())
   tenantId      String
   actorUserId   String?
-  action        String   // e.g. user.create, role.assign, feature_flag.set
+  action        String // e.g. user.create, role.assign, feature_flag.set
   entityType    String?
   entityId      String?
   correlationId String?
   before        Json?
   after         Json?
-  metadata      Json?    // extra context (e.g. IP, user-agent)
+  metadata      Json? // extra context (e.g. IP, user-agent)
   createdAt     DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
@@ -442,26 +444,27 @@ model AuditEvent {
 // ─── LIMS ──────────────────────────────────────────────────────────────────
 
 model Patient {
-  id               String    @id @default(uuid())
-  tenantId         String
-  firstName        String
-  lastName         String
-  dateOfBirth      DateTime?
-  ageYears         Int?      // alternate to DOB; stored if DOB not known
-  gender           String?
-  mrn              String    // Registration Number — server-generated, permanent
-  mobile           String?
-  cnic             String?   // National ID (optional)
-  address          String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id          String    @id @default(uuid())
+  tenantId    String
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime?
+  ageYears    Int? // alternate to DOB; stored if DOB not known
+  gender      String?
+  mrn         String // Registration Number — server-generated, permanent
+  mobile      String?
+  cnic        String? // National ID (optional)
+  address     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  tenant       Tenant         @relation(fields: [tenantId], references: [id])
-  encounters   Encounter[]
-  appointments Appointment[]
-  opdVisits    OPDVisit[]
-  opdEncounters OpdEncounter[]
-  invoices     Invoice[]
+  tenant          Tenant           @relation(fields: [tenantId], references: [id])
+  encounters      Encounter[]
+  appointments    Appointment[]
+  opdAppointments OpdAppointment[]
+  opdVisits       OPDVisit[]
+  opdEncounters   OpdEncounter[]
+  invoices        Invoice[]
 
   @@unique([tenantId, mrn])
   @@index([tenantId, lastName])
@@ -474,21 +477,21 @@ model Encounter {
   tenantId      String
   patientId     String
   moduleType    String   @default("LIMS") // LIMS | OPD
-  encounterCode String?  // LIMS Order ID — server-generated e.g. VXL-2602-001
+  encounterCode String? // LIMS Order ID — server-generated e.g. VXL-2602-001
   status        String   @default("registered")
   // registered | lab_ordered | specimen_collected | specimen_received
   // | partial_resulted | resulted | verified | cancelled
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  tenant           Tenant           @relation(fields: [tenantId], references: [id])
-  patient          Patient          @relation(fields: [patientId], references: [id])
-  labOrders        LabOrder[]
-  specimenItems    SpecimenItem[]
-  cashTransactions CashTransaction[]
-  opdVisits        OPDVisit[]
+  tenant            Tenant            @relation(fields: [tenantId], references: [id])
+  patient           Patient           @relation(fields: [patientId], references: [id])
+  labOrders         LabOrder[]
+  specimenItems     SpecimenItem[]
+  cashTransactions  CashTransaction[]
+  opdVisits         OPDVisit[]
   opdEncountersKmvp OpdEncounter[]
-  invoices         Invoice[]
+  invoices          Invoice[]
 
   @@unique([tenantId, encounterCode])
   @@index([tenantId, status])
@@ -502,17 +505,17 @@ model LabOrder {
   tenantId         String
   encounterId      String
   testId           String
-  testNameSnapshot String?   // snapshot at order time
+  testNameSnapshot String? // snapshot at order time
   status           String    @default("ordered") // ordered | specimen_collected | processing | resulted | verified | cancelled
   resultStatus     String    @default("PENDING") // PENDING | SUBMITTED
   priority         String    @default("routine") // routine | stat | urgent
   // Financials (captured at order time)
-  totalAmount      Decimal?  @db.Decimal(10,2)
-  discountAmount   Decimal?  @db.Decimal(10,2)
-  discountPct      Decimal?  @db.Decimal(5,2)
-  payableAmount    Decimal?  @db.Decimal(10,2)
-  amountPaid       Decimal?  @db.Decimal(10,2)
-  dueAmount        Decimal?  @db.Decimal(10,2)
+  totalAmount      Decimal?  @db.Decimal(10, 2)
+  discountAmount   Decimal?  @db.Decimal(10, 2)
+  discountPct      Decimal?  @db.Decimal(5, 2)
+  payableAmount    Decimal?  @db.Decimal(10, 2)
+  amountPaid       Decimal?  @db.Decimal(10, 2)
+  dueAmount        Decimal?  @db.Decimal(10, 2)
   submittedAt      DateTime?
   submittedById    String?
   cancelledAt      DateTime?
@@ -520,9 +523,9 @@ model LabOrder {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  tenant           Tenant           @relation(fields: [tenantId], references: [id])
-  encounter        Encounter        @relation(fields: [encounterId], references: [id])
-  test             CatalogTest      @relation(fields: [testId], references: [id])
+  tenant           Tenant            @relation(fields: [tenantId], references: [id])
+  encounter        Encounter         @relation(fields: [encounterId], references: [id])
+  test             CatalogTest       @relation(fields: [testId], references: [id])
   specimen         Specimen?
   results          LabResult[]
   cashTransactions CashTransaction[]
@@ -558,9 +561,9 @@ model SpecimenItem {
   id                  String    @id @default(uuid())
   tenantId            String
   encounterId         String
-  catalogSpecimenType String    // exact value from CatalogTest.specimenType e.g. "EDTA Blood"
+  catalogSpecimenType String // exact value from CatalogTest.specimenType e.g. "EDTA Blood"
   status              String    @default("PENDING") // PENDING | COLLECTED | POSTPONED | RECEIVED
-  barcode             String?   // system-generated if barcode feature flag enabled
+  barcode             String? // system-generated if barcode feature flag enabled
   collectedAt         DateTime?
   collectedById       String?
   postponedAt         DateTime?
@@ -581,21 +584,21 @@ model SpecimenItem {
 }
 
 model LabResult {
-  id                   String    @id @default(uuid())
-  tenantId             String
-  labOrderId           String
-  parameterId          String?   // null for legacy single-value results
-  parameterNameSnapshot String?  // snapshot at entry time
-  value                String
-  unit                 String?
-  ucumCode             String?
-  referenceRange       String?
-  flag                 String?   // normal | high | low | critical
-  locked               Boolean   @default(false) // true once test is submitted
-  enteredAt            DateTime  @default(now())
-  enteredById          String?
-  verifiedAt           DateTime?
-  verifiedBy           String?
+  id                    String    @id @default(uuid())
+  tenantId              String
+  labOrderId            String
+  parameterId           String? // null for legacy single-value results
+  parameterNameSnapshot String? // snapshot at entry time
+  value                 String
+  unit                  String?
+  ucumCode              String?
+  referenceRange        String?
+  flag                  String? // normal | high | low | critical
+  locked                Boolean   @default(false) // true once test is submitted
+  enteredAt             DateTime  @default(now())
+  enteredById           String?
+  verifiedAt            DateTime?
+  verifiedBy            String?
 
   tenant   Tenant   @relation(fields: [tenantId], references: [id])
   labOrder LabOrder @relation(fields: [labOrderId], references: [id])
@@ -608,19 +611,19 @@ model LabResult {
 // ─── OPD / Billing (MVP scaffold; contract-first endpoints come later) ──────
 
 model Provider {
-  id             String   @id @default(uuid())
-  tenantId       String
-  code           String?
-  displayName    String
-  specialty      String?
-  registrationNo   String?
-  qualification    String?
-  phone            String?
-  email            String?
-  consultationFee  Decimal? @db.Decimal(10,2)
-  isActive         Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(uuid())
+  tenantId        String
+  code            String?
+  displayName     String
+  specialty       String?
+  registrationNo  String?
+  qualification   String?
+  phone           String?
+  email           String?
+  consultationFee Decimal? @db.Decimal(10, 2)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   tenant        Tenant             @relation(fields: [tenantId], references: [id])
   schedules     ProviderSchedule[]
@@ -637,21 +640,21 @@ model Provider {
 }
 
 model ProviderSchedule {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   tenantId      String
   providerId    String
-  weekday       Int      // 0-6; interpretation locked at API layer
-  startTime     String   // HH:mm
-  endTime       String   // HH:mm
-  slotMinutes   Int      @default(15)
-  isActive      Boolean  @default(true)
+  weekday       Int // 0-6; interpretation locked at API layer
+  startTime     String // HH:mm
+  endTime       String // HH:mm
+  slotMinutes   Int       @default(15)
+  isActive      Boolean   @default(true)
   effectiveFrom DateTime?
   effectiveTo   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  tenant    Tenant   @relation(fields: [tenantId], references: [id])
-  provider  Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, providerId, weekday, startTime, endTime])
   @@index([tenantId, providerId, weekday, isActive])
@@ -659,14 +662,14 @@ model ProviderSchedule {
 }
 
 model Appointment {
-  id                    String   @id @default(uuid())
+  id                    String    @id @default(uuid())
   tenantId              String
   patientId             String
   providerId            String
   appointmentCode       String?
-  status                String   @default("BOOKED") // BOOKED | CHECKED_IN | IN_CONSULTATION | COMPLETED | CANCELLED | NO_SHOW
+  status                String    @default("BOOKED") // BOOKED | CHECKED_IN | IN_CONSULTATION | COMPLETED | CANCELLED | NO_SHOW
   scheduledAt           DateTime
-  durationMinutes       Int      @default(15)
+  durationMinutes       Int       @default(15)
   reason                String?
   notes                 String?
   checkedInAt           DateTime?
@@ -676,12 +679,12 @@ model Appointment {
   cancelledReason       String?
   noShowMarkedAt        DateTime?
   bookedById            String?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-  tenant   Tenant    @relation(fields: [tenantId], references: [id])
-  patient  Patient   @relation(fields: [patientId], references: [id])
-  provider Provider  @relation(fields: [providerId], references: [id])
+  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+  patient   Patient    @relation(fields: [patientId], references: [id])
+  provider  Provider   @relation(fields: [providerId], references: [id])
   opdVisits OPDVisit[]
 
   @@unique([tenantId, appointmentCode])
@@ -692,14 +695,14 @@ model Appointment {
 }
 
 model OPDVisit {
-  id                    String   @id @default(uuid())
+  id                    String    @id @default(uuid())
   tenantId              String
   encounterId           String
   patientId             String
   providerId            String
   appointmentId         String?
   visitCode             String?
-  status                String   @default("REGISTERED") // REGISTERED | WAITING | IN_CONSULTATION | COMPLETED | CANCELLED
+  status                String    @default("REGISTERED") // REGISTERED | WAITING | IN_CONSULTATION | COMPLETED | CANCELLED
   chiefComplaint        String?
   queueNumber           String?
   waitingAt             DateTime?
@@ -708,14 +711,14 @@ model OPDVisit {
   cancelledAt           DateTime?
   cancelledReason       String?
   createdById           String?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-  tenant        Tenant             @relation(fields: [tenantId], references: [id])
-  encounter     Encounter          @relation(fields: [encounterId], references: [id])
-  patient       Patient            @relation(fields: [patientId], references: [id])
-  provider      Provider           @relation(fields: [providerId], references: [id])
-  appointment   Appointment?       @relation(fields: [appointmentId], references: [id])
+  tenant        Tenant            @relation(fields: [tenantId], references: [id])
+  encounter     Encounter         @relation(fields: [encounterId], references: [id])
+  patient       Patient           @relation(fields: [patientId], references: [id])
+  provider      Provider          @relation(fields: [providerId], references: [id])
+  appointment   Appointment?      @relation(fields: [appointmentId], references: [id])
   vitals        OPDVitals[]
   clinicalNotes OPDClinicalNote[]
   prescriptions OPDPrescription[]
@@ -737,21 +740,21 @@ model OPDVitals {
   visitId          String
   recordedAt       DateTime @default(now())
   recordedById     String?
-  heightCm         Decimal? @db.Decimal(5,2)
-  weightKg         Decimal? @db.Decimal(5,2)
-  bmi              Decimal? @db.Decimal(5,2)
-  temperatureC     Decimal? @db.Decimal(4,1)
+  heightCm         Decimal? @db.Decimal(5, 2)
+  weightKg         Decimal? @db.Decimal(5, 2)
+  bmi              Decimal? @db.Decimal(5, 2)
+  temperatureC     Decimal? @db.Decimal(4, 1)
   pulseBpm         Int?
   systolicBp       Int?
   diastolicBp      Int?
   respiratoryRate  Int?
   spo2Pct          Int?
-  bloodGlucoseMgDl Decimal? @db.Decimal(6,2)
+  bloodGlucoseMgDl Decimal? @db.Decimal(6, 2)
   notes            String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  tenant Tenant  @relation(fields: [tenantId], references: [id])
+  tenant Tenant   @relation(fields: [tenantId], references: [id])
   visit  OPDVisit @relation(fields: [visitId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, visitId, recordedAt])
@@ -759,19 +762,19 @@ model OPDVitals {
 }
 
 model OPDClinicalNote {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   tenantId       String
   visitId        String
   providerId     String
-  status         String   @default("DRAFT") // DRAFT | SIGNED
+  status         String    @default("DRAFT") // DRAFT | SIGNED
   subjectiveJson Json?
   objectiveJson  Json?
   assessmentJson Json?
   planJson       Json?
   diagnosisText  String?
   signedAt       DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   tenant   Tenant   @relation(fields: [tenantId], references: [id])
   visit    OPDVisit @relation(fields: [visitId], references: [id], onDelete: Cascade)
@@ -784,16 +787,16 @@ model OPDClinicalNote {
 }
 
 model OPDPrescription {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   tenantId   String
   visitId    String
   providerId String
-  status     String   @default("DRAFT") // DRAFT | SIGNED | PRINTED
+  status     String    @default("DRAFT") // DRAFT | SIGNED | PRINTED
   notes      String?
   signedAt   DateTime?
   printedAt  DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   tenant   Tenant                @relation(fields: [tenantId], references: [id])
   visit    OPDVisit              @relation(fields: [visitId], references: [id], onDelete: Cascade)
@@ -828,30 +831,30 @@ model OPDPrescriptionItem {
 }
 
 model Invoice {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   tenantId       String
   patientId      String
   encounterId    String?
   opdVisitId     String?
   invoiceCode    String?
-  status         String   @default("DRAFT") // DRAFT | ISSUED | PARTIALLY_PAID | PAID | VOID
-  currency       String   @default("PKR")
-  subtotalAmount Decimal  @db.Decimal(10,2)
-  discountAmount Decimal  @default(0) @db.Decimal(10,2)
-  totalAmount    Decimal  @db.Decimal(10,2)
-  amountPaid     Decimal  @default(0) @db.Decimal(10,2)
-  amountDue      Decimal  @db.Decimal(10,2)
+  status         String    @default("DRAFT") // DRAFT | ISSUED | PARTIALLY_PAID | PAID | VOID
+  currency       String    @default("PKR")
+  subtotalAmount Decimal   @db.Decimal(10, 2)
+  discountAmount Decimal   @default(0) @db.Decimal(10, 2)
+  totalAmount    Decimal   @db.Decimal(10, 2)
+  amountPaid     Decimal   @default(0) @db.Decimal(10, 2)
+  amountDue      Decimal   @db.Decimal(10, 2)
   issuedAt       DateTime?
   voidedAt       DateTime?
   voidReason     String?
   createdById    String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  tenant    Tenant     @relation(fields: [tenantId], references: [id])
-  patient   Patient    @relation(fields: [patientId], references: [id])
-  encounter Encounter? @relation(fields: [encounterId], references: [id])
-  opdVisit  OPDVisit?  @relation(fields: [opdVisitId], references: [id])
+  tenant    Tenant        @relation(fields: [tenantId], references: [id])
+  patient   Patient       @relation(fields: [patientId], references: [id])
+  encounter Encounter?    @relation(fields: [encounterId], references: [id])
+  opdVisit  OPDVisit?     @relation(fields: [opdVisitId], references: [id])
   lines     InvoiceLine[]
   payments  Payment[]
 
@@ -870,10 +873,10 @@ model InvoiceLine {
   sortOrder      Int      @default(0)
   lineType       String   @default("SERVICE") // SERVICE | ADJUSTMENT
   description    String
-  quantity       Decimal  @default(1) @db.Decimal(10,2)
-  unitPrice      Decimal  @db.Decimal(10,2)
-  discountAmount Decimal  @default(0) @db.Decimal(10,2)
-  lineTotal      Decimal  @db.Decimal(10,2)
+  quantity       Decimal  @default(1) @db.Decimal(10, 2)
+  unitPrice      Decimal  @db.Decimal(10, 2)
+  discountAmount Decimal  @default(0) @db.Decimal(10, 2)
+  lineTotal      Decimal  @db.Decimal(10, 2)
   metadataJson   Json?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -887,22 +890,22 @@ model InvoiceLine {
 }
 
 model Payment {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   tenantId      String
   invoiceId     String
   paymentCode   String?
-  status        String   @default("POSTED") // POSTED | VOIDED
-  method        String   @default("CASH") // CASH | CARD | TRANSFER (future expansion)
-  amount        Decimal  @db.Decimal(10,2)
-  receivedAt    DateTime @default(now())
+  status        String    @default("POSTED") // POSTED | VOIDED
+  method        String    @default("CASH") // CASH | CARD | TRANSFER (future expansion)
+  amount        Decimal   @db.Decimal(10, 2)
+  receivedAt    DateTime  @default(now())
   receivedById  String?
   referenceNo   String?
   note          String?
   correlationId String?
   voidedAt      DateTime?
   voidReason    String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   tenant  Tenant  @relation(fields: [tenantId], references: [id])
   invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
@@ -920,7 +923,7 @@ model OpdDoctor {
   code            String
   displayName     String
   specialtyName   String
-  consultationFee Decimal  @db.Decimal(10,2)
+  consultationFee Decimal  @db.Decimal(10, 2)
   currency        String   @default("PKR")
   isActive        Boolean  @default(true)
   sortOrder       Int      @default(0)
@@ -936,8 +939,10 @@ model OpdDoctor {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  tenant        Tenant          @relation(fields: [tenantId], references: [id])
+  tenant        Tenant           @relation(fields: [tenantId], references: [id])
   opdEncounters OpdEncounter[]
+  schedules     OpdSchedule[]
+  appointments  OpdAppointment[]
 
   @@unique([tenantId, code])
   @@index([tenantId, isActive, sortOrder])
@@ -945,38 +950,98 @@ model OpdDoctor {
   @@map("opd_doctors")
 }
 
-model OpdEncounter {
-  id             String    @id @default(uuid())
-  tenantId       String
-  patientId      String
-  encounterId    String
-  doctorId       String
-  status         String    @default("DRAFT") // DRAFT | READY_FOR_PRINT | COMPLETED | CANCELLED
-  visitCode      String
-  chiefComplaint String?
-  diagnosis      String?
-  advice         String?
-  followUp       String?
-  investigations String?
-  remarks        String?
-  paymentStatus  String    @default("UNPAID") // UNPAID | PARTIALLY_PAID | PAID
-  cancelledAt    DateTime?
-  cancelledReason String?
-  completedAt    DateTime?
-  createdAt      DateTime  @default(now())
-  publishedAt    DateTime?
-  updatedAt      DateTime  @updatedAt
+model OpdSchedule {
+  id            String    @id @default(uuid())
+  tenantId      String
+  doctorId      String
+  weekday       Int
+  startTime     String
+  endTime       String
+  slotMinutes   Int       @default(15)
+  timezone      String    @default("Asia/Karachi")
+  effectiveFrom DateTime?
+  effectiveTo   DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  tenant          Tenant                     @relation(fields: [tenantId], references: [id])
-  patient         Patient                    @relation(fields: [patientId], references: [id])
-  encounter       Encounter                  @relation(fields: [encounterId], references: [id])
-  doctor          OpdDoctor                  @relation(fields: [doctorId], references: [id])
-  vitals          OpdVital[]
-  notes           OpdNote[]
-  prescriptions   OpdEncounterPrescription[]
+  tenant Tenant    @relation(fields: [tenantId], references: [id])
+  doctor OpdDoctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, doctorId, weekday, startTime, endTime])
+  @@index([tenantId, doctorId, weekday, isActive])
+  @@map("opd_schedules")
+}
+
+model OpdAppointment {
+  id                    String    @id @default(uuid())
+  tenantId              String
+  patientId             String
+  doctorId              String
+  appointmentCode       String
+  scheduledAt           DateTime
+  timezone              String    @default("Asia/Karachi")
+  durationMinutes       Int       @default(15)
+  status                String    @default("BOOKED")
+  reason                String?
+  checkedInAt           DateTime?
+  consultationStartedAt DateTime?
+  completedAt           DateTime?
+  cancelledAt           DateTime?
+  cancelledReason       String?
+  noShowMarkedAt        DateTime?
+  bookedById            String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  patient      Patient       @relation(fields: [patientId], references: [id])
+  doctor       OpdDoctor     @relation(fields: [doctorId], references: [id])
+  opdEncounter OpdEncounter?
+
+  @@unique([tenantId, appointmentCode])
+  @@unique([tenantId, doctorId, scheduledAt])
+  @@index([tenantId, status, scheduledAt])
+  @@index([tenantId, patientId, scheduledAt])
+  @@index([tenantId, doctorId, scheduledAt])
+  @@map("opd_appointments")
+}
+
+model OpdEncounter {
+  id              String    @id @default(uuid())
+  tenantId        String
+  patientId       String
+  encounterId     String
+  doctorId        String
+  appointmentId   String?   @unique
+  status          String    @default("DRAFT") // DRAFT | READY_FOR_PRINT | COMPLETED | CANCELLED
+  visitCode       String
+  chiefComplaint  String?
+  diagnosis       String?
+  advice          String?
+  followUp        String?
+  investigations  String?
+  remarks         String?
+  paymentStatus   String    @default("UNPAID") // UNPAID | PARTIALLY_PAID | PAID
+  cancelledAt     DateTime?
+  cancelledReason String?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  publishedAt     DateTime?
+  updatedAt       DateTime  @updatedAt
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id])
+  patient       Patient                    @relation(fields: [patientId], references: [id])
+  encounter     Encounter                  @relation(fields: [encounterId], references: [id])
+  doctor        OpdDoctor                  @relation(fields: [doctorId], references: [id])
+  appointment   OpdAppointment?            @relation(fields: [appointmentId], references: [id])
+  vitals        OpdVital[]
+  notes         OpdNote[]
+  prescriptions OpdEncounterPrescription[]
 
   @@unique([tenantId, visitCode])
   @@unique([tenantId, encounterId])
+  @@unique([tenantId, appointmentId])
   @@index([tenantId, patientId, createdAt])
   @@index([tenantId, doctorId, createdAt])
   @@index([tenantId, status])
@@ -984,25 +1049,25 @@ model OpdEncounter {
 }
 
 model OpdVital {
-  id             String    @id @default(uuid())
+  id             String   @id @default(uuid())
   tenantId       String
   opdEncounterId String
   bpSystolic     Int?
   bpDiastolic    Int?
   pulse          Int?
-  temperatureC   Decimal?  @db.Decimal(4,1)
+  temperatureC   Decimal? @db.Decimal(4, 1)
   respRate       Int?
   spo2           Int?
-  weightKg       Decimal?  @db.Decimal(5,2)
-  heightCm       Decimal?  @db.Decimal(5,2)
-  bmi            Decimal?  @db.Decimal(5,2)
+  weightKg       Decimal? @db.Decimal(5, 2)
+  heightCm       Decimal? @db.Decimal(5, 2)
+  bmi            Decimal? @db.Decimal(5, 2)
   enteredBy      String?
-  enteredAt      DateTime  @default(now())
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  enteredAt      DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  tenant        Tenant       @relation(fields: [tenantId], references: [id])
-  opdEncounter  OpdEncounter @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
+  tenant       Tenant       @relation(fields: [tenantId], references: [id])
+  opdEncounter OpdEncounter @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, opdEncounterId, enteredAt])
   @@map("opd_vitals_kmvp")
@@ -1044,8 +1109,8 @@ model OpdEncounterPrescription {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  tenant       Tenant       @relation(fields: [tenantId], references: [id])
-  opdEncounter OpdEncounter @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
+  tenant       Tenant                    @relation(fields: [tenantId], references: [id])
+  opdEncounter OpdEncounter              @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
   items        OpdPrescriptionItemKmvp[]
 
   @@unique([tenantId, opdEncounterId])
@@ -1114,10 +1179,10 @@ model TenantSequence {
 model DocumentTemplate {
   id          String   @id @default(uuid())
   tenantId    String
-  type        String   // RECEIPT | LAB_REPORT
-  templateKey String   // e.g. "receipt_v1", "lab_report_v1"
+  type        String // RECEIPT | LAB_REPORT
+  templateKey String // e.g. "receipt_v1", "lab_report_v1"
   version     Int      @default(1)
-  config      Json?    // template-level config overrides
+  config      Json? // template-level config overrides
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -1133,16 +1198,16 @@ model DocumentTemplate {
 model Document {
   id           String    @id @default(uuid())
   tenantId     String
-  type         String    // RECEIPT | LAB_REPORT
+  type         String // RECEIPT | LAB_REPORT
   templateId   String
   payloadJson  Json
-  payloadHash  String    // sha256(canonical_json)
-  pdfHash      String?   // sha256(pdf_bytes); null until rendered
-  storageKey   String?   // MinIO object key e.g. {tenantId}/{documentId}/report.pdf
+  payloadHash  String // sha256(canonical_json)
+  pdfHash      String? // sha256(pdf_bytes); null until rendered
+  storageKey   String? // MinIO object key e.g. {tenantId}/{documentId}/report.pdf
   status       String    @default("DRAFT") // DRAFT | RENDERING | RENDERED | PUBLISHED | FAILED
   version      Int       @default(1)
-  sourceRef    String?   // e.g. encounterId, orderId
-  sourceType   String?   // ENCOUNTER | ORDER
+  sourceRef    String? // e.g. encounterId, orderId
+  sourceType   String? // ENCOUNTER | ORDER
   errorMessage String?
   publishedAt  DateTime?
   createdBy    String
@@ -1164,11 +1229,11 @@ model Document {
 // Platform-owned starter blueprints — global, no tenantId
 model TemplateBlueprint {
   id                String   @id @default(uuid())
-  code              String   @unique  // e.g. "general_table_v1"
+  code              String   @unique // e.g. "general_table_v1"
   name              String
-  templateFamily    String   // GENERAL_TABLE | TWO_COLUMN_TABLE | PERIPHERAL_FILM_REPORT | HISTOPATH_NARRATIVE | GRAPHICAL_SCALE_REPORT | IMAGE_REPORT
-  schemaType        String   // TABULAR | DESCRIPTIVE_HEMATOLOGY | HISTOPATHOLOGY | GRAPH_SERIES | IMAGE_ATTACHMENT | MIXED_STRUCTURED
-  defaultConfigJson Json?    // default configJson for templates provisioned from this blueprint
+  templateFamily    String // GENERAL_TABLE | TWO_COLUMN_TABLE | PERIPHERAL_FILM_REPORT | HISTOPATH_NARRATIVE | GRAPHICAL_SCALE_REPORT | IMAGE_REPORT
+  schemaType        String // TABULAR | DESCRIPTIVE_HEMATOLOGY | HISTOPATHOLOGY | GRAPH_SERIES | IMAGE_ATTACHMENT | MIXED_STRUCTURED
+  defaultConfigJson Json? // default configJson for templates provisioned from this blueprint
   isActive          Boolean  @default(true)
   sortOrder         Int      @default(0)
   createdAt         DateTime @default(now())
@@ -1183,26 +1248,26 @@ model TemplateBlueprint {
 model PrintTemplate {
   id                   String   @id @default(uuid())
   tenantId             String
-  sourceBlueprintId    String?  // nullable — null for custom/shell templates
-  code                 String   // unique per tenant (enforced by compound unique below)
+  sourceBlueprintId    String? // nullable — null for custom/shell templates
+  code                 String // unique per tenant (enforced by compound unique below)
   name                 String
-  schemaType           String   // must match test.resultSchemaType for mapping
-  templateFamily       String   // drives PDF renderer selection
+  schemaType           String // must match test.resultSchemaType for mapping
+  templateFamily       String // drives PDF renderer selection
   templateVersion      Int      @default(1)
   status               String   @default("DRAFT") // DRAFT | ACTIVE | ARCHIVED
-  configJson           Json?    // structured layout config (labels, section order, flags)
-  isSystemProvisioned  Boolean  @default(false)   // provisioned from blueprint at onboarding
+  configJson           Json? // structured layout config (labels, section order, flags)
+  isSystemProvisioned  Boolean  @default(false) // provisioned from blueprint at onboarding
   createdByUserId      String?
-  supersedesTemplateId String?  // points to previous active version if created as new-version
+  supersedesTemplateId String? // points to previous active version if created as new-version
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
-  tenant            Tenant             @relation(fields: [tenantId], references: [id])
-  sourceBlueprint   TemplateBlueprint? @relation(fields: [sourceBlueprintId], references: [id])
-  createdBy         User?              @relation("TemplateCreatedBy", fields: [createdByUserId], references: [id])
-  supersedes        PrintTemplate?     @relation("TemplateVersioning", fields: [supersedesTemplateId], references: [id])
-  newerVersions     PrintTemplate[]    @relation("TemplateVersioning")
-  testMappings      TestTemplateMap[]
+  tenant          Tenant             @relation(fields: [tenantId], references: [id])
+  sourceBlueprint TemplateBlueprint? @relation(fields: [sourceBlueprintId], references: [id])
+  createdBy       User?              @relation("TemplateCreatedBy", fields: [createdByUserId], references: [id])
+  supersedes      PrintTemplate?     @relation("TemplateVersioning", fields: [supersedesTemplateId], references: [id])
+  newerVersions   PrintTemplate[]    @relation("TemplateVersioning")
+  testMappings    TestTemplateMap[]
 
   @@unique([tenantId, code, templateVersion], name: "tenant_template_code_version")
   @@index([tenantId, status])
@@ -1217,7 +1282,7 @@ model TestTemplateMap {
   tenantId   String
   testId     String
   templateId String
-  isDefault  Boolean  @default(false)  // only one active default per test
+  isDefault  Boolean  @default(false) // only one active default per test
   sortOrder  Int      @default(0)
   isEnabled  Boolean  @default(true)
   createdAt  DateTime @default(now())
@@ -1235,17 +1300,17 @@ model TestTemplateMap {
 
 // Cash transaction log — immutable append-only ledger
 model CashTransaction {
-  id          String   @id @default(uuid())
-  tenantId    String
-  encounterId String
-  labOrderId  String?
-  type        String   // PAYMENT | DISCOUNT | REFUND | DUE_RECEIVED | CANCELLATION_REFUND
-  amount      Decimal  @db.Decimal(10,2) // always positive; type gives direction
-  paymentMode String   @default("CASH") // CASH | CARD | BANK_TRANSFER | ONLINE | CHEQUE — not meaningful for DISCOUNT rows
-  actorUserId String
-  reason      String?  // required for DISCOUNT, CANCELLATION_REFUND
+  id            String   @id @default(uuid())
+  tenantId      String
+  encounterId   String
+  labOrderId    String?
+  type          String // PAYMENT | DISCOUNT | REFUND | DUE_RECEIVED | CANCELLATION_REFUND
+  amount        Decimal  @db.Decimal(10, 2) // always positive; type gives direction
+  paymentMode   String   @default("CASH") // CASH | CARD | BANK_TRANSFER | ONLINE | CHEQUE — not meaningful for DISCOUNT rows
+  actorUserId   String
+  reason        String? // required for DISCOUNT, CANCELLATION_REFUND
   correlationId String?
-  createdAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
 
   tenant    Tenant    @relation(fields: [tenantId], references: [id])
   encounter Encounter @relation(fields: [encounterId], references: [id])
@@ -1262,10 +1327,10 @@ model CashTransaction {
 // ─── Worker Heartbeat (global singleton row per worker instance) ──────────
 
 model WorkerHeartbeat {
-  id          String   @id @default("worker-singleton")
-  lastBeatAt  DateTime @default(now())
-  startedAt   DateTime @default(now())
-  version     String?
+  id         String   @id @default("worker-singleton")
+  lastBeatAt DateTime @default(now())
+  startedAt  DateTime @default(now())
+  version    String?
 
   @@map("worker_heartbeats")
 }
@@ -1275,10 +1340,10 @@ model WorkerHeartbeat {
 // Storage targets — where backup artifacts are stored
 model OpsStorageTarget {
   id         String   @id @default(uuid())
-  tenantId   String?  // null = global (platform-wide)
-  type       String   // LOCAL | S3 | SSH
+  tenantId   String? // null = global (platform-wide)
+  type       String // LOCAL | S3 | SSH
   name       String
-  configJson Json?    // non-secret config: { path, bucket, endpoint, region, prefix }
+  configJson Json? // non-secret config: { path, bucket, endpoint, region, prefix }
   isEnabled  Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -1293,27 +1358,27 @@ model OpsStorageTarget {
 // Backup / restore / healthcheck run records
 model OpsBackupRun {
   id                String    @id @default(uuid())
-  type              String    // FULL | TENANT_EXPORT | RESTORE | HEALTHCHECK
-  tenantId          String?   // set for TENANT_EXPORT; null for global operations
+  type              String // FULL | TENANT_EXPORT | RESTORE | HEALTHCHECK
+  tenantId          String? // set for TENANT_EXPORT; null for global operations
   status            String    @default("QUEUED") // QUEUED | RUNNING | SUCCEEDED | FAILED | CANCELLED
   startedAt         DateTime?
   finishedAt        DateTime?
-  artifactPath      String?   // relative path under runtime/backups/
+  artifactPath      String? // relative path under runtime/backups/
   artifactSizeBytes BigInt?
   checksumSha256    String?
-  logPath           String?   // path under runtime/data/logs/
+  logPath           String? // path under runtime/data/logs/
   initiatedByUserId String?
   correlationId     String?   @unique
   errorSummary      String?
-  metaJson          Json?     // type-specific: tenantId, restoreOptions, healthResults, includeFlags
+  metaJson          Json? // type-specific: tenantId, restoreOptions, healthResults, includeFlags
 
-  storageTargetId   String?
-  storageTarget     OpsStorageTarget? @relation(fields: [storageTargetId], references: [id])
+  storageTargetId String?
+  storageTarget   OpsStorageTarget? @relation(fields: [storageTargetId], references: [id])
 
-  initiatedBy       User?     @relation(fields: [initiatedByUserId], references: [id])
+  initiatedBy User? @relation(fields: [initiatedByUserId], references: [id])
 
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([type, status])
   @@index([tenantId])
@@ -1324,12 +1389,12 @@ model OpsBackupRun {
 // Backup schedules (cron-based)
 model OpsSchedule {
   id                  String   @id @default(uuid())
-  type                String   // FULL_BACKUP | TENANT_EXPORT
-  tenantId            String?  // required for TENANT_EXPORT
-  cronExpression      String   // e.g. "0 2 * * *"
+  type                String // FULL_BACKUP | TENANT_EXPORT
+  tenantId            String? // required for TENANT_EXPORT
+  cronExpression      String // e.g. "0 2 * * *"
   isEnabled           Boolean  @default(true)
   retentionDays       Int      @default(30)
-  retentionPolicyJson Json?    // { keepLast: N, keepDays: N, deleteOldAfter: N }
+  retentionPolicyJson Json? // { keepLast: N, keepDays: N, deleteOldAfter: N }
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
