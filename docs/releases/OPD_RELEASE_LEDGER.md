@@ -43,6 +43,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Runtime receipt and deployment verification | Rebuilt API/worker; paid invoice receipt command returned 200 through deterministic pipeline; Compose config, service health, migration status, Prisma validation, correlation ID, and `admin.localhost` host resolution passed | PARTIAL; clean deployment/reconciliation/rollback/public proxy evidence remains required | `a0626a6` |
 | 2026-08-28 | Full browser regression | Rebuilt API/Admin stack passed the complete non-nightly repository Playwright run: 120 passed, 3 pre-existing scenarios skipped; OPD dedicated tests remained 2/2 passing | PASS for current browser slice; release remains NOT READY | runtime evidence |
 | 2026-08-28 | Receipt versioning hardening | Removed fixed invoice-wide command idempotency key so same-payload receipt retries deduplicate while later valid payment changes create a new deterministic payload/hash | PASS for this slice; release remains NOT READY | `2d8ed3c` |
+| 2026-08-28 | Static contract/UI gates | SDK regeneration and freshness, Admin/OpenAPI parity (164 references across 63 files), UI color lint, Operator typecheck, and Admin typecheck all passed; git diff check passed | PASS for this slice; release remains NOT READY | runtime evidence |
 
 ## Historical-only evidence
 
