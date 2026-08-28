@@ -1802,7 +1802,7 @@ export class OpdService {
     await this.assertOpdEnabled(tenantId);
     const amount = Number(body.amount);
     if (!Number.isFinite(amount) || amount <= 0) throw new ConflictException('Payment amount must be positive');
-    const { inv, payment } = await (this.prisma as any).$transaction(async (tx: any) => {
+    const { invoice, payment } = await (this.prisma as any).$transaction(async (tx: any) => {
       // Lock the invoice row so concurrent cash-desk payments cannot both
       // calculate a balance from the same stale amountPaid value.
       const locked = await tx.invoice.findFirst({ where: { id: invoiceId, tenantId } });
@@ -1830,15 +1830,16 @@ export class OpdService {
           correlationId: correlationId ?? null,
         },
       });
-      await tx.invoice.update({
+      const updatedInvoice = await tx.invoice.update({
         where: { id: invoiceId },
         data: {
           amountPaid: newAmountPaid,
           amountDue: newAmountDue,
           status: newAmountDue === 0 ? 'PAID' : 'PARTIALLY_PAID',
         },
+        include: { lines: { orderBy: { sortOrder: 'asc' } }, opdVisit: { select: { appointmentId: true } } },
       });
-      return { inv: locked, payment: createdPayment };
+      return { invoice: updatedInvoice, payment: createdPayment };
     });
 
     await this.audit.log({
@@ -1850,7 +1851,7 @@ export class OpdService {
       after: body,
       correlationId,
     });
-    return this.mapPayment(payment);
+    return { invoice: this.mapInvoice(invoice), payment: this.mapPayment(payment) };
   }
 
   async generateReceipt(
@@ -1864,15 +1865,25 @@ export class OpdService {
       where: { id: invoiceId, tenantId },
     });
     if (!inv) throw new NotFoundException('Invoice not found');
-    await this.audit.log({
-      tenantId,
-      actorUserId,
-      action: 'opd.receipt.generate',
-      entityType: 'Invoice',
-      entityId: invoiceId,
-      correlationId,
+    if (!['ISSUED', 'PARTIALLY_PAID', 'PAID'].includes(inv.status)) {
+      throw new ConflictException('Invoice must be issued or paid before receipt generation');
+    }
+    const encounter = await (this.prisma as any).opdEncounter.findFirst({
+      where: { tenantId, encounterId: inv.encounterId },
     });
-    return { invoiceId, message: 'Receipt generation queued', status: 'QUEUED' };
+    if (!encounter) throw new NotFoundException('OPD encounter for invoice not found');
+    const generated = await this.generateEncounterReceipt(
+      tenantId,
+      { opdEncounterId: encounter.id, idempotencyKey: `invoice:${invoiceId}` },
+      actorUserId,
+      correlationId,
+    );
+    const invoice = await (this.prisma as any).invoice.findFirst({
+      where: { id: invoiceId, tenantId },
+      include: { lines: { orderBy: { sortOrder: 'asc' } }, opdVisit: { select: { appointmentId: true } } },
+    });
+    const document = await this.documents.getDocument(tenantId, generated.documentId);
+    return { invoice: this.mapInvoice(invoice), document };
   }
 
   // ─── OPD KMVP Doctor Master ───────────────────────────────────────────────
