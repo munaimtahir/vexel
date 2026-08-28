@@ -8,7 +8,7 @@
 | Contract | incomplete | OpenAPI exposes both OPD families and broad scaffold-era surfaces | Canonical contract, obsolete path removal, SDK regeneration and freshness pass |
 | Registration | incomplete | Command registration exists, but complete duplicate/retry/concurrency proof is absent | Transactional command tests and browser workflow evidence |
 | Intake/vitals | incomplete | Intake command exists; complete range validation, repeat history, role behavior, and signed-record protection are not proven | Unit/integration/E2E evidence |
-| Consultation/notes | incomplete | Existing KMVP note path is not proven as a complete draft/sign/immutable/amendment lifecycle | Canonical commands, ownership tests, immutable/version evidence |
+| Consultation/notes | incomplete | Canonical encounter states and consultation start are implemented, but note signing/prescription publication remain coupled in one command and full amendment/ownership evidence is absent | Separate canonical commands, ownership tests, immutable/version evidence |
 | Prescription | incomplete | Publish path exists; complete draft/sign/publish lifecycle and secure tenant retrieval are not release-proven | API, deterministic document, authorization, and browser evidence |
 | Scheduling | incomplete | Provider schedules, availability, appointments, and visits remain reachable alongside encounter workflow | Retain and complete atomically, or remove from active scope with migration/boundary evidence |
 | Billing | incomplete | Billing service/routes exist, but concurrent payment, void/correction/refund, and full audit proof are absent | Transaction/concurrency/billing test evidence |

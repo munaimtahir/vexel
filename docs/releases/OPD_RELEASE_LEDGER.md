@@ -44,6 +44,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Full browser regression | Rebuilt API/Admin stack passed the complete non-nightly repository Playwright run: 120 passed, 3 pre-existing scenarios skipped; OPD dedicated tests remained 2/2 passing | PASS for current browser slice; release remains NOT READY | runtime evidence |
 | 2026-08-28 | Receipt versioning hardening | Removed fixed invoice-wide command idempotency key so same-payload receipt retries deduplicate while later valid payment changes create a new deterministic payload/hash | PASS for this slice; release remains NOT READY | `2d8ed3c` |
 | 2026-08-28 | Static contract/UI gates | SDK regeneration and freshness, Admin/OpenAPI parity (164 references across 63 files), UI color lint, Operator typecheck, and Admin typecheck all passed; git diff check passed | PASS for this slice; release remains NOT READY | runtime evidence |
+| 2026-08-28 | Canonical workflow cutover | Added canonical encounter states, consultation-start command, signed-note metadata, prescription-published intermediate state, additive status normalization migration, regenerated SDK, rebuilt API/Operator, and verified the real canonical command flow plus OPD browser smoke 2/2 | PARTIAL; legacy scheduling/visit retirement and full canonical clinical command coverage remain | `1179ea6`, `8ddaa2a` |
 
 ## Historical-only evidence
 
