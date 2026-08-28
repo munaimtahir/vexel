@@ -42,6 +42,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Billing service adversarial tests | Added focused tests for cross-tenant encounter linkage, empty invoice rejection, row-locked overpayment rejection, and atomic valid payment response | PASS for this slice; release remains NOT READY | `5a8d39e` |
 | 2026-08-28 | Runtime receipt and deployment verification | Rebuilt API/worker; paid invoice receipt command returned 200 through deterministic pipeline; Compose config, service health, migration status, Prisma validation, correlation ID, and `admin.localhost` host resolution passed | PARTIAL; clean deployment/reconciliation/rollback/public proxy evidence remains required | `a0626a6` |
 | 2026-08-28 | Full browser regression | Rebuilt API/Admin stack passed the complete non-nightly repository Playwright run: 120 passed, 3 pre-existing scenarios skipped; OPD dedicated tests remained 2/2 passing | PASS for current browser slice; release remains NOT READY | runtime evidence |
+| 2026-08-28 | Receipt versioning hardening | Removed fixed invoice-wide command idempotency key so same-payload receipt retries deduplicate while later valid payment changes create a new deterministic payload/hash | PASS for this slice; release remains NOT READY | `2d8ed3c` |
 
 ## Historical-only evidence
 
