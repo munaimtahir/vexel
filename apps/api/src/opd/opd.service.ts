@@ -2341,7 +2341,11 @@ export class OpdService {
           },
         });
         if (!e) throw new NotFoundException('OPD encounter not found');
-        assertOpdTransition(e.status, 'PRESCRIPTION_PUBLISHED');
+        if (e.status === 'IN_CONSULTATION') {
+          assertOpdTransition(e.status, 'NOTE_SIGNED');
+        } else {
+          assertOpdTransition(e.status, 'PRESCRIPTION_PUBLISHED');
+        }
         const historyNotes = String(body.historyNotes ?? '').trim();
         const examNotes = String(body.examNotes ?? '').trim();
         const assessment = String(body.assessment ?? '').trim();
@@ -2388,6 +2392,17 @@ export class OpdService {
             remarks: remarks || null,
           },
         });
+        if (e.status === 'IN_CONSULTATION') {
+          await this.audit.log({
+            tenantId,
+            actorUserId,
+            action: 'opd.clinical_note.signed',
+            entityType: 'OpdEncounter',
+            entityId: e.id,
+            after: { noteId: note.id, status: 'NOTE_SIGNED' },
+            correlationId,
+          });
+        }
         const prescription = await (this.prisma as any).opdEncounterPrescription.upsert({
           where: { tenantId_opdEncounterId: { tenantId, opdEncounterId: e.id } },
           create: { tenantId, opdEncounterId: e.id },
