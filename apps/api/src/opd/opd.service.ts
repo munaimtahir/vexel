@@ -326,7 +326,7 @@ export class OpdService {
     // side effect. A unique constraint alone is insufficient: two requests
     // can both perform the clinical write before the second insert loses.
     return (this.prisma as any).$transaction(async (tx: any) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${tenantId}:${commandName}:${key}`}, 0))`;
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${tenantId}:${commandName}:${key}`}, 0))`;
       const existing = await tx.opdCommandLog.findFirst({
         where: { tenantId, commandName, idempotencyKey: key },
       });

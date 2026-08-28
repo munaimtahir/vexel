@@ -36,6 +36,7 @@ describe('OpdService billing invariants', () => {
     const tx = {
       invoice: { findFirst: jest.fn().mockResolvedValue({ ...baseInvoice, amountPaid: 900, amountDue: 100 }), update },
       $queryRaw: jest.fn().mockResolvedValue([]),
+      $executeRaw: jest.fn().mockResolvedValue(0),
       tenantSequence: { upsert: jest.fn() },
       payment: { create: jest.fn() },
     };
@@ -57,6 +58,7 @@ describe('OpdService billing invariants', () => {
         update: jest.fn().mockResolvedValue({ ...paidInvoice, lines: [], opdVisit: null }),
       },
       $queryRaw: jest.fn().mockResolvedValue([]),
+      $executeRaw: jest.fn().mockResolvedValue(0),
       tenantSequence: { upsert: jest.fn().mockResolvedValue({ nextValue: 2 }) },
       payment: { create: jest.fn().mockResolvedValue({ id: 'pay-1', tenantId: 'tenant-a', invoiceId: 'inv-1', status: 'POSTED', method: 'CASH', amount: 1000, receivedAt: new Date() }) },
     };
