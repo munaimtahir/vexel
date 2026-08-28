@@ -15,7 +15,7 @@ No prior LIMS/platform test result is accepted as OPD release proof. Current-spr
 | tenant isolation, RBAC, clinician ownership | pass | incomplete evidence |
 | registration/payment/document concurrency | pass | incomplete evidence |
 | deterministic payload/PDF/retry tests | pass | incomplete evidence |
-| Admin/Operator browser E2E | pass | OPD Playwright 2/2; repository browser 118 passed with 2 unrelated regressions repaired; full OPD journeys incomplete |
+| Admin/Operator browser E2E | pass | Full repository Playwright run: 120 passed, 3 pre-existing scenarios skipped; dedicated OPD coverage 2/2 passed. Full OPD clinical journey coverage remains incomplete |
 | migration and deployment smoke tests | pass | Compose config, healthy services, 28 migrations up to date, Prisma validation, API health/correlation, Host resolution, and paid receipt command verified; clean-deployment evidence incomplete |
 
 The release ledger may be changed to `READY` only when each row has a reproducible command and checked-in artifact.
