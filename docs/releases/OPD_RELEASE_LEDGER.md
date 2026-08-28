@@ -48,6 +48,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Clinical command separation | Added `signNote` as a distinct audited/idempotent command; prescription publication now requires an existing signed note and cannot rewrite clinical content; regenerated SDK, rebuilt API/Operator, and verified live sign → publish flow with rendered document | PASS for this slice; release remains NOT READY | `21d5825` |
 | 2026-08-28 | Operator permission provisioning | Seeded the OPD operator role with clinical note, prescription, document publishing, and full OPD billing permissions; reran supported seed successfully against the running development stack | PASS for this slice; release remains NOT READY | `f62cda8` |
 | 2026-08-28 | Canonical scheduling foundation | Added tenant-scoped `OpdSchedule` and `OpdAppointment` models, unique doctor-slot protection, canonical encounter appointment linkage, and additive migration; Prisma validation/generation/typecheck passed and migration applied successfully | PARTIAL; scheduling services/commands and legacy route retirement remain | `7699b8c` |
+| 2026-08-28 | Canonical schedule API | Added tenant-scoped doctor schedule list/create endpoints with weekday/time validation, overlap conflict handling, audit evidence, OpenAPI contract, and regenerated SDK; API typecheck and parity checks passed | PARTIAL; canonical booking commands and legacy route retirement remain | `77f6122` |
 
 ## Historical-only evidence
 
