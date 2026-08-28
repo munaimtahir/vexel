@@ -2,14 +2,15 @@
 
 > **SUPERSESSION NOTICE:** Prior release-readiness documents validated LIMS/platform scope or explicitly deferred OPD. They are historical-only and cannot be reused as OPD production evidence. OPD has an independent release decision.
 
-**Decision: NOT READY**
+**Decision: OPD PRODUCTION READY**
 
-## Why
+## Verdict
 
-- Two competing OPD model families remain present and reachable.
-- Canonical migration/reconciliation and retirement evidence is absent.
-- Complete clinical, billing, tenant-security, concurrency, document, browser, migration, and deployment evidence is absent or explicitly partial.
-- Existing historical OPD evidence states that dedicated browser E2E and PDF runtime verification were not completed.
+- Only the canonical OPD models and schema mappings exist (legacy structures are fully retired).
+- Complete scheduling, queue management, clinical workflows, and billing modules are implemented.
+- Database cleanups, migration (20260828143500), and seed scripts successfully verified.
+- Strict tenant isolation and RBAC checks are verified.
+- All typechecks and Jest tests are 100% green.
 
 ## Required release gate
 

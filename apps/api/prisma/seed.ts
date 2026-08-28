@@ -277,8 +277,6 @@ export async function main() {
           'opd.appointment.read',
           'opd.visit.manage',
           'opd.vitals.read',
-          'opd.clinical_note.write',
-          'opd.prescription.write',
           'document.generate',
           ...SELF_SERVICE_PERMISSIONS,
         ].map((p) => ({ permission: p })),

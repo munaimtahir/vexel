@@ -9,16 +9,6 @@ const cards = [
     description: 'Manage OPD doctor master data (display name, specialty, consultation fee, active state).',
   },
   {
-    title: 'Providers',
-    href: '/opd/providers',
-    description: 'Manage OPD provider master data (code, specialty, fee, active state).',
-  },
-  {
-    title: 'Schedules',
-    href: '/opd/schedules',
-    description: 'Configure provider weekly schedules and slot settings (admin config only).',
-  },
-  {
     title: 'Feature Flags',
     href: '/opd/feature-flags',
     description: 'Enable or disable OPD and LIMS module feature flags. Tenant-scoped.',

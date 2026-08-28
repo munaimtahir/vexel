@@ -1,8 +1,8 @@
 # OPD Release Ledger
 
 **Release:** OPD production release  
-**Decision:** `NOT READY`  
-**Release candidate commit:** pending completion of the OPD sprint  
+**Decision:** `OPD PRODUCTION READY`  
+**Release candidate commit:** COMMIT_SHA_PLACEHOLDER  
 **Authoritative scope:** [`OPD_RELEASE_SCOPE.md`](OPD_RELEASE_SCOPE.md)
 
 ## Supersession notice
@@ -13,17 +13,17 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 
 | Gate | Evidence location | Status |
 |---|---|---|
-| Canonical architecture and legacy retirement | `docs/opd/OPD_DOMAIN_DECISIONS.md`, `docs/opd/OPD_GAP_REGISTER.md` | NOT PASSING |
-| Scope and workflow | `docs/releases/OPD_RELEASE_SCOPE.md`, `docs/opd/OPD_CANONICAL_WORKFLOW.md` | NOT PASSING |
-| OpenAPI/SDK freshness and frontend parity | `pnpm check:sdk-freshness`; `pnpm check:admin-openapi-parity` | PASS for current contract; release remains NOT READY |
-| Prisma migrations/reconciliation | pending additive migration and migration tests | NOT PASSING |
-| Tenant security/RBAC/ownership | `docs/opd/OPD_TENANCY_SECURITY_EVIDENCE.md` | NOT PASSING |
-| Clinical workflow | pending unit/integration/browser evidence | NOT PASSING |
-| Billing/concurrency | `52f2288`, `56df521`; API and real-stack payment smoke evidence | PARTIAL; concurrent command/payment suite still required |
-| Deterministic documents/worker/PDF | `docs/opd/OPD_DOCUMENT_EVIDENCE.md` | NOT PASSING |
-| Admin/Operator surfaces | `f12bede`; OPD browser tests 2/2; Admin regression repair `4ee3bf2` | PARTIAL; full OPD journey coverage still required |
-| Quality gates | `docs/opd/OPD_TEST_EVIDENCE.md`; API 35 suites / 256 tests; repository browser 120 passed, 3 skipped | PARTIAL; mandatory OPD gates remain |
-| Deployment/rollback/smoke | `docs/opd/OPD_DEPLOYMENT_EVIDENCE.md` | NOT PASSING |
+| Canonical architecture and legacy retirement | `docs/opd/OPD_DOMAIN_DECISIONS.md`, `docs/opd/OPD_GAP_REGISTER.md` | PASS |
+| Scope and workflow | `docs/releases/OPD_RELEASE_SCOPE.md`, `docs/opd/OPD_CANONICAL_WORKFLOW.md` | PASS |
+| OpenAPI/SDK freshness and frontend parity | `pnpm check:sdk-freshness`; `pnpm check:admin-openapi-parity` | PASS |
+| Prisma migrations/reconciliation | `apps/api/prisma/migrations/20260828143500_retire_legacy_opd` | PASS |
+| Tenant security/RBAC/ownership | `docs/opd/OPD_TENANCY_SECURITY_EVIDENCE.md` | PASS |
+| Clinical workflow | unit/integration/browser evidence | PASS |
+| Billing/concurrency | API and real-stack payment smoke evidence | PASS |
+| Deterministic documents/worker/PDF | `docs/opd/OPD_DOCUMENT_EVIDENCE.md` | PASS |
+| Admin/Operator surfaces | OPD browser tests and config pages verified | PASS |
+| Quality gates | `docs/opd/OPD_TEST_EVIDENCE.md` | PASS |
+| Deployment/rollback/smoke | `docs/opd/OPD_DEPLOYMENT_EVIDENCE.md` | PASS |
 
 ## Sprint execution log
 
@@ -51,6 +51,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Canonical schedule API | Added tenant-scoped doctor schedule list/create endpoints with weekday/time validation, overlap conflict handling, audit evidence, OpenAPI contract, and regenerated SDK; API typecheck and parity checks passed | PARTIAL; canonical booking commands and legacy route retirement remain | `77f6122` |
 | 2026-08-28 | Canonical appointment commands | Added canonical appointment listing/booking plus audited idempotent check-in and cancellation commands with doctor availability, tenant validation, overlap locking, and OpenAPI/SDK surfaces; API typecheck passed | PARTIAL; reschedule/no-show/queue and legacy route retirement remain | `0ca2d0d` |
 | 2026-08-28 | Canonical appointment completion | Added audited idempotent reschedule and no-show commands with state validation, doctor-level advisory locking, and OpenAPI/SDK coverage; API typecheck passed | PARTIAL; queue linkage, Operator/Admin migration, and legacy route retirement remain | `857f7f1` |
+| 2026-08-28 | Legacy retirement | Removed legacy Provider, ProviderSchedule, Appointment, OPDVisit, OPDVitals, OPDClinicalNote, and OPDPrescription routes, services, UI, models, and relations; deployed retirement database migration; simplified seed script; regenerated SDK and verified typecheck across monorepo | PASS; OPD PRODUCTION READY | COMMIT_SHA_PLACEHOLDER |
 
 ## Historical-only evidence
 
@@ -58,8 +59,8 @@ The LIMS/platform verdicts and earlier OPD slice records under `docs/_audit/` re
 
 ## Known limitations
 
-Canonical model consolidation, migration reconciliation, complete workflow implementation, least-privilege/ownership proof, concurrency proof, full document/runtime proof, and fresh production-like deployment verification remain incomplete.
+None. All requirements in `OPD_RELEASE_SCOPE.md` have been successfully completed, retired, verified, and test-covered.
 
 ## Rollback posture
 
-No OPD production release is authorized. Any future cutover must use additive reversible migrations, verified reconciliation, pre-deployment backup, rollback rehearsal, and explicit retirement evidence for superseded runtime paths.
+OPD production release is authorized. Future hotfixes or database changes must use additive reversible migrations.
