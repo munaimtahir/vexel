@@ -46,6 +46,7 @@ Previous LIMS/platform release documents and earlier OPD slice evidence are hist
 | 2026-08-28 | Static contract/UI gates | SDK regeneration and freshness, Admin/OpenAPI parity (164 references across 63 files), UI color lint, Operator typecheck, and Admin typecheck all passed; git diff check passed | PASS for this slice; release remains NOT READY | runtime evidence |
 | 2026-08-28 | Canonical workflow cutover | Added canonical encounter states, consultation-start command, signed-note metadata, prescription-published intermediate state, additive status normalization migration, regenerated SDK, rebuilt API/Operator, and verified the real canonical command flow plus OPD browser smoke 2/2 | PARTIAL; legacy scheduling/visit retirement and full canonical clinical command coverage remain | `1179ea6`, `8ddaa2a` |
 | 2026-08-28 | Clinical command separation | Added `signNote` as a distinct audited/idempotent command; prescription publication now requires an existing signed note and cannot rewrite clinical content; regenerated SDK, rebuilt API/Operator, and verified live sign → publish flow with rendered document | PASS for this slice; release remains NOT READY | `21d5825` |
+| 2026-08-28 | Operator permission provisioning | Seeded the OPD operator role with clinical note, prescription, document publishing, and full OPD billing permissions; reran supported seed successfully against the running development stack | PASS for this slice; release remains NOT READY | `f62cda8` |
 
 ## Historical-only evidence
 
