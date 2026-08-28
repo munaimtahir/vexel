@@ -2517,6 +2517,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/opd/canonical-appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List canonical tenant-scoped OPD appointments */
+        get: operations["listCanonicalOpdAppointments"];
+        put?: never;
+        /** Book a canonical OPD appointment */
+        post: operations["createCanonicalOpdAppointment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/canonical-appointments/{appointmentId}:check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check in a canonical OPD appointment */
+        post: operations["checkInCanonicalOpdAppointment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/canonical-appointments/{appointmentId}:cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a canonical OPD appointment */
+        post: operations["cancelCanonicalOpdAppointment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/opd/appointments": {
         parameters: {
             query?: never;
@@ -11276,6 +11328,135 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+        };
+    };
+    listCanonicalOpdAppointments: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                doctorId?: string;
+                patientId?: string;
+                status?: "BOOKED" | "CHECKED_IN" | "IN_CONSULTATION" | "COMPLETED" | "CANCELLED" | "NO_SHOW";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Canonical appointment list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    createCanonicalOpdAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    patientId: string;
+                    doctorId: string;
+                    /** Format: date-time */
+                    scheduledAt: string;
+                    timezone?: string;
+                    durationMinutes?: number;
+                    reason?: string | null;
+                    idempotencyKey?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Canonical appointment booked */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description Slot conflict or unavailable doctor schedule */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    checkInCanonicalOpdAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Appointment checked in */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            404: components["responses"]["NotFound"];
+            /** @description Invalid appointment transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cancelCanonicalOpdAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    reason?: string;
+                    idempotencyKey?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Appointment cancelled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            404: components["responses"]["NotFound"];
+            /** @description Invalid appointment transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     listOpdAppointments: {

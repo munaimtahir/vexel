@@ -96,6 +96,34 @@ export class OpdController {
     return this.svc.createCanonicalSchedule(this.resolveTenantId(req), doctorId, body, user.userId, correlationId);
   }
 
+  @Get('canonical-appointments')
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
+  listCanonicalAppointments(@Req() req: Request, @Query() q: any) {
+    return this.svc.listCanonicalAppointments(this.resolveTenantId(req), q);
+  }
+
+  @Post('canonical-appointments')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions(Permission.OPD_ENCOUNTER_MANAGE)
+  createCanonicalAppointment(@Req() req: Request, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.createCanonicalAppointment(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Post('canonical-appointments/:appointmentId:check-in')
+  @RequirePermissions(Permission.OPD_INTAKE_WRITE)
+  checkInCanonicalAppointment(@Req() req: Request, @Param('appointmentId') appointmentId: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.transitionCanonicalAppointment(this.resolveTenantId(req), appointmentId, 'CHECKED_IN', user.userId, body, correlationId);
+  }
+
+  @Post('canonical-appointments/:appointmentId:cancel')
+  @RequirePermissions(Permission.OPD_ENCOUNTER_MANAGE)
+  cancelCanonicalAppointment(@Req() req: Request, @Param('appointmentId') appointmentId: string, @Body() body: any, @Headers(CORRELATION_ID_HEADER) correlationId?: string) {
+    const user = (req as any).user;
+    return this.svc.transitionCanonicalAppointment(this.resolveTenantId(req), appointmentId, 'CANCELLED', user.userId, body, correlationId);
+  }
+
   // ─── OPD KMVP Encounters + Commands ───────────────────────────────────────
 
   @Get('encounters')

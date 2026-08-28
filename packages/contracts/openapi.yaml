@@ -9024,6 +9024,90 @@ paths:
         "404":
           $ref: '#/components/responses/NotFound'
 
+  /opd/canonical-appointments:
+    get:
+      operationId: listCanonicalOpdAppointments
+      summary: List canonical tenant-scoped OPD appointments
+      tags: [OPD Appointments]
+      parameters:
+        - { $ref: '#/components/parameters/PageParam' }
+        - { $ref: '#/components/parameters/LimitParam' }
+        - name: doctorId
+          in: query
+          schema: { type: string }
+        - name: patientId
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [BOOKED, CHECKED_IN, IN_CONSULTATION, COMPLETED, CANCELLED, NO_SHOW] }
+      responses:
+        "200": { description: Canonical appointment list }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+    post:
+      operationId: createCanonicalOpdAppointment
+      summary: Book a canonical OPD appointment
+      tags: [OPD Appointments]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patientId, doctorId, scheduledAt]
+              properties:
+                patientId: { type: string }
+                doctorId: { type: string }
+                scheduledAt: { type: string, format: date-time }
+                timezone: { type: string }
+                durationMinutes: { type: integer, minimum: 1, maximum: 1440 }
+                reason: { type: string, nullable: true }
+                idempotencyKey: { type: string }
+      responses:
+        "201": { description: Canonical appointment booked }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "409": { description: Slot conflict or unavailable doctor schedule }
+
+  /opd/canonical-appointments/{appointmentId}:check-in:
+    post:
+      operationId: checkInCanonicalOpdAppointment
+      summary: Check in a canonical OPD appointment
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Appointment checked in }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { description: Invalid appointment transition }
+
+  /opd/canonical-appointments/{appointmentId}:cancel:
+    post:
+      operationId: cancelCanonicalOpdAppointment
+      summary: Cancel a canonical OPD appointment
+      tags: [OPD Appointments]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string }
+                idempotencyKey: { type: string }
+      responses:
+        "200": { description: Appointment cancelled }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { description: Invalid appointment transition }
+
   # ─── OPD Appointments (workflow via commands only) ───────────────────────
 
   /opd/appointments:

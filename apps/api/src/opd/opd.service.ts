@@ -1968,6 +1968,100 @@ export class OpdService {
     }
   }
 
+  async listCanonicalAppointments(tenantId: string, q: any) {
+    await this.assertOpdEnabled(tenantId);
+    const page = Math.max(1, Number(q?.page ?? 1));
+    const limit = Math.min(100, Math.max(1, Number(q?.limit ?? 20)));
+    const where: any = { tenantId };
+    if (q?.doctorId) where.doctorId = q.doctorId;
+    if (q?.patientId) where.patientId = q.patientId;
+    if (q?.status) where.status = q.status;
+    if (q?.fromDate || q?.toDate) {
+      where.scheduledAt = {};
+      if (q.fromDate) where.scheduledAt.gte = new Date(`${q.fromDate}T00:00:00.000Z`);
+      if (q.toDate) where.scheduledAt.lte = new Date(`${q.toDate}T23:59:59.999Z`);
+    }
+    const [data, total] = await Promise.all([
+      (this.prisma as any).opdAppointment.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { scheduledAt: 'asc' } }),
+      (this.prisma as any).opdAppointment.count({ where }),
+    ]);
+    return { data: data.map((a: any) => this.mapCanonicalAppointment(a)), pagination: { page, limit, total, totalPages: Math.ceil(total / limit) || 1 } };
+  }
+
+  async createCanonicalAppointment(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    if (!body?.patientId || !body?.doctorId || !body?.scheduledAt) {
+      throw new BadRequestException('patientId, doctorId, and scheduledAt are required');
+    }
+    const scheduledAt = new Date(body.scheduledAt);
+    if (Number.isNaN(scheduledAt.getTime())) throw new BadRequestException('scheduledAt must be a valid date-time');
+    const durationMinutes = Number(body.durationMinutes ?? 15);
+    if (!Number.isInteger(durationMinutes) || durationMinutes <= 0 || durationMinutes > 1440) {
+      throw new BadRequestException('durationMinutes must be between 1 and 1440');
+    }
+    return this.withCommandIdempotency(tenantId, 'CreateOpdAppointment', body?.idempotencyKey, body, async () => {
+      const appointment = await (this.prisma as any).$transaction(async (tx: any) => {
+        const [patient, doctor] = await Promise.all([
+          tx.patient.findFirst({ where: { id: body.patientId, tenantId } }),
+          tx.opdDoctor.findFirst({ where: { id: body.doctorId, tenantId, isActive: true } }),
+        ]);
+        if (!patient) throw new NotFoundException('Patient not found');
+        if (!doctor) throw new NotFoundException('OPD doctor not found');
+        await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${tenantId}:opd-doctor:${body.doctorId}`}, 0))`;
+        const endAt = new Date(scheduledAt.getTime() + durationMinutes * 60000);
+        const conflicts = await tx.opdAppointment.findMany({
+          where: { tenantId, doctorId: body.doctorId, status: { in: ['BOOKED', 'CHECKED_IN', 'IN_CONSULTATION'] }, scheduledAt: { lt: endAt } },
+        });
+        if (conflicts.some((a: any) => new Date(a.scheduledAt).getTime() + Number(a.durationMinutes) * 60000 > scheduledAt.getTime())) {
+          throw new ConflictException('Appointment slot already booked for this doctor');
+        }
+        const schedule = await tx.opdSchedule.findFirst({
+          where: { tenantId, doctorId: body.doctorId, weekday: scheduledAt.getUTCDay(), isActive: true },
+        });
+        if (!schedule) throw new ConflictException('Doctor is not available for the requested day');
+        const start = scheduledAt.getUTCHours() * 60 + scheduledAt.getUTCMinutes();
+        const end = start + durationMinutes;
+        if (start < timeToMinutes(schedule.startTime) || end > timeToMinutes(schedule.endTime)) {
+          throw new ConflictException('Requested appointment is outside doctor availability');
+        }
+        const seq = await this.nextTenantSequence(tenantId, 'OPD_CANONICAL_APPOINTMENT', tx);
+        return tx.opdAppointment.create({
+          data: {
+            tenantId, patientId: body.patientId, doctorId: body.doctorId,
+            appointmentCode: buildCode('OPD-APT', seq), scheduledAt,
+            timezone: body.timezone ?? schedule.timezone ?? 'Asia/Karachi', durationMinutes,
+            status: 'BOOKED', reason: body.reason ?? null, bookedById: actorUserId,
+          },
+        });
+      });
+      await this.audit.log({ tenantId, actorUserId, action: 'opd.canonical_appointment.booked', entityType: 'OpdAppointment', entityId: appointment.id, after: this.mapCanonicalAppointment(appointment), correlationId });
+      return this.mapCanonicalAppointment(appointment);
+    });
+  }
+
+  async transitionCanonicalAppointment(tenantId: string, appointmentId: string, target: string, actorUserId: string, body: any, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    return this.withCommandIdempotency(tenantId, `TransitionOpdAppointment:${target}`, body?.idempotencyKey, { appointmentId, target, ...body }, async () => {
+      const appointment = await (this.prisma as any).opdAppointment.findFirst({ where: { id: appointmentId, tenantId } });
+      if (!appointment) throw new NotFoundException('OPD appointment not found');
+      const allowed: Record<string, string[]> = {
+        CHECKED_IN: ['BOOKED'], IN_CONSULTATION: ['CHECKED_IN'], COMPLETED: ['IN_CONSULTATION'],
+        CANCELLED: ['BOOKED', 'CHECKED_IN'], NO_SHOW: ['BOOKED'],
+      };
+      if (!allowed[target]?.includes(appointment.status)) throw new ConflictException(`Cannot transition appointment from ${appointment.status} to ${target}`);
+      const now = new Date();
+      const data: any = { status: target };
+      if (target === 'CHECKED_IN') data.checkedInAt = now;
+      if (target === 'IN_CONSULTATION') data.consultationStartedAt = now;
+      if (target === 'COMPLETED') data.completedAt = now;
+      if (target === 'CANCELLED') { data.cancelledAt = now; data.cancelledReason = body?.reason ?? null; }
+      if (target === 'NO_SHOW') data.noShowMarkedAt = now;
+      const updated = await (this.prisma as any).opdAppointment.update({ where: { id: appointmentId }, data });
+      await this.audit.log({ tenantId, actorUserId, action: `opd.canonical_appointment.${target.toLowerCase()}`, entityType: 'OpdAppointment', entityId: appointmentId, before: this.mapCanonicalAppointment(appointment), after: this.mapCanonicalAppointment(updated), correlationId });
+      return this.mapCanonicalAppointment(updated);
+    });
+  }
+
   async listDoctors(tenantId: string, q: any) {
     await this.assertOpdEnabled(tenantId);
     await this.assertOpdFeatureEnabled(tenantId, 'module.opd.doctorProfiles');
