@@ -2159,7 +2159,7 @@ export class OpdService {
             patientId: body.patientId,
             encounterId: encounter.id,
             doctorId: body.doctorId,
-            status: 'DRAFT',
+            status: 'REGISTERED',
             visitCode: buildCode('OPD', seq),
             paymentStatus: 'UNPAID',
           },
@@ -2237,7 +2237,7 @@ export class OpdService {
           where: { id: body.opdEncounterId, tenantId },
         });
         if (!e) throw new NotFoundException('OPD encounter not found');
-        assertOpdTransition(e.status, 'READY_FOR_PRINT');
+        assertOpdTransition(e.status, 'INTAKE_COMPLETE');
 
         const hasMeaningfulVitals =
           body.bpSystolic != null ||
@@ -2280,7 +2280,7 @@ export class OpdService {
           where: { id: e.id },
           data: {
             chiefComplaint: String(body.chiefComplaint).trim(),
-            status: 'READY_FOR_PRINT',
+            status: 'INTAKE_COMPLETE',
             diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : null,
             advice: body.advice != null ? String(body.advice).trim() : null,
             followUp: body.followUp != null ? String(body.followUp).trim() : null,
@@ -2300,6 +2300,24 @@ export class OpdService {
         return { opdEncounter: this.mapKmvpEncounter(updated) };
       },
     );
+  }
+
+  async startConsultation(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    if (!body?.opdEncounterId) throw new BadRequestException('opdEncounterId is required');
+    return this.withCommandIdempotency(tenantId, 'StartOpdConsultation', body?.idempotencyKey, body, async () => {
+      const e = await (this.prisma as any).opdEncounter.findFirst({ where: { id: body.opdEncounterId, tenantId } });
+      if (!e) throw new NotFoundException('OPD encounter not found');
+      assertOpdTransition(e.status, 'IN_CONSULTATION');
+      const updated = await (this.prisma as any).opdEncounter.update({
+        where: { id: e.id }, data: { status: 'IN_CONSULTATION' },
+      });
+      await this.audit.log({
+        tenantId, actorUserId, action: 'opd.consultation.started', entityType: 'OpdEncounter',
+        entityId: e.id, before: this.mapKmvpEncounter(e), after: this.mapKmvpEncounter(updated), correlationId,
+      });
+      return { opdEncounter: this.mapKmvpEncounter(updated) };
+    });
   }
 
   async publishPrescription(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
@@ -2323,7 +2341,7 @@ export class OpdService {
           },
         });
         if (!e) throw new NotFoundException('OPD encounter not found');
-        assertOpdTransition(e.status, 'COMPLETED');
+        assertOpdTransition(e.status, 'PRESCRIPTION_PUBLISHED');
         const historyNotes = String(body.historyNotes ?? '').trim();
         const examNotes = String(body.examNotes ?? '').trim();
         const assessment = String(body.assessment ?? '').trim();
@@ -2341,6 +2359,9 @@ export class OpdService {
           create: {
             tenantId,
             opdEncounterId: e.id,
+            status: 'SIGNED',
+            signedAt: new Date(),
+            signedBy: actorUserId,
             historyNotes,
             examNotes,
             assessment,
@@ -2352,6 +2373,10 @@ export class OpdService {
             remarks: remarks || null,
           },
           update: {
+            status: 'SIGNED',
+            signedAt: new Date(),
+            signedBy: actorUserId,
+            version: { increment: 1 },
             historyNotes,
             examNotes,
             assessment,
@@ -2455,9 +2480,8 @@ export class OpdService {
         const updatedEncounter = await (this.prisma as any).opdEncounter.update({
           where: { id: e.id },
           data: {
-            status: 'COMPLETED',
+            status: 'PRESCRIPTION_PUBLISHED',
             publishedAt: new Date(),
-            completedAt: new Date(),
             diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : e.diagnosis,
             advice: advice,
             followUp: followUp || null,
@@ -2538,9 +2562,7 @@ export class OpdService {
           where: { id: body.opdEncounterId, tenantId },
         });
         if (!e) throw new NotFoundException('OPD encounter not found');
-        if (e.status !== 'READY_FOR_PRINT') {
-          throw new ConflictException(`Invalid transition ${e.status} -> COMPLETED`);
-        }
+        assertOpdTransition(e.status, 'COMPLETED');
         const updated = await (this.prisma as any).opdEncounter.update({
           where: { id: e.id },
           data: {

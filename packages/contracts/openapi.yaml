@@ -2829,7 +2829,7 @@ components:
         doctorId: { type: string }
         status:
           type: string
-          enum: [DRAFT, READY_FOR_PRINT, COMPLETED, CANCELLED]
+          enum: [REGISTERED, INTAKE_COMPLETE, IN_CONSULTATION, NOTE_SIGNED, PRESCRIPTION_PUBLISHED, COMPLETED, CANCELLED]
         visitCode: { type: string }
         chiefComplaint: { type: string, nullable: true }
         diagnosis: { type: string, nullable: true }
@@ -2896,6 +2896,13 @@ components:
         followUp: { type: string, nullable: true }
         investigations: { type: string, nullable: true }
         remarks: { type: string, nullable: true }
+
+    StartOpdConsultationRequest:
+      type: object
+      required: [opdEncounterId]
+      properties:
+        opdEncounterId: { type: string }
+        idempotencyKey: { type: string }
 
     PublishOpdPrescriptionRequest:
       type: object
@@ -10102,7 +10109,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [DRAFT, READY_FOR_PRINT, COMPLETED, CANCELLED]
+            enum: [REGISTERED, INTAKE_COMPLETE, IN_CONSULTATION, NOTE_SIGNED, PRESCRIPTION_PUBLISHED, COMPLETED, CANCELLED]
         - name: patientId
           in: query
           schema: { type: string }
@@ -10180,7 +10187,7 @@ paths:
   /opd/commands/recordIntake:
     post:
       operationId: recordOpdIntakeCommand
-      summary: Record intake and transition DRAFT -> READY_FOR_PRINT
+      summary: Record intake and transition REGISTERED -> INTAKE_COMPLETE
       tags: [OPD Commands]
       requestBody:
         required: true
@@ -10206,10 +10213,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /opd/commands/startConsultation:
+    post:
+      operationId: startOpdConsultationCommand
+      summary: Start consultation and transition INTAKE_COMPLETE -> IN_CONSULTATION
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartOpdConsultationRequest'
+      responses:
+        "200":
+          description: Consultation started
+          content:
+            application/json:
+              schema: { type: object }
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "409":
+          description: domain_error for invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /opd/commands/publishPrescription:
     post:
       operationId: publishOpdPrescriptionCommand
-      summary: Publish prescription and transition READY_FOR_PRINT -> COMPLETED
+      summary: Sign clinical note and publish prescription
       tags: [OPD Commands]
       requestBody:
         required: true
@@ -10238,7 +10273,7 @@ paths:
   /opd/commands/finalizeEncounter:
     post:
       operationId: finalizeOpdEncounterCommand
-      summary: Finalize OPD encounter and transition READY_FOR_PRINT -> COMPLETED
+      summary: Finalize OPD encounter PRESCRIPTION_PUBLISHED -> COMPLETED
       tags: [OPD Commands]
       requestBody:
         required: true
@@ -10267,7 +10302,7 @@ paths:
   /opd/commands/cancelEncounter:
     post:
       operationId: cancelOpdEncounterCommand
-      summary: Cancel OPD encounter and transition DRAFT/READY_FOR_PRINT -> CANCELLED
+      summary: Cancel OPD encounter before completion
       tags: [OPD Commands]
       requestBody:
         required: true

@@ -25,7 +25,7 @@ type RxItem = {
 type Encounter = {
   id: string;
   visitCode: string;
-  status: 'DRAFT' | 'READY_FOR_PRINT' | 'COMPLETED' | 'CANCELLED';
+  status: 'REGISTERED' | 'INTAKE_COMPLETE' | 'IN_CONSULTATION' | 'NOTE_SIGNED' | 'PRESCRIPTION_PUBLISHED' | 'COMPLETED' | 'CANCELLED';
   chiefComplaint?: string | null;
   vitals?: Array<{
     bpSystolic?: number | null;
@@ -171,12 +171,26 @@ export default function OpdDoctorPage() {
       }
       const docId = (data as any).documentId as string;
       if (docId) await openDocument(docId);
-      setEncounter((prev) => (prev ? { ...prev, status: 'COMPLETED' } : prev));
+      setEncounter((prev) => (prev ? { ...prev, status: 'PRESCRIPTION_PUBLISHED' } : prev));
     } catch {
       setError('Failed to publish prescription');
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function handleStartConsultation() {
+    setSubmitting(true);
+    setError('');
+    try {
+      const api = getApiClient(getToken() ?? undefined);
+      const { data, error: apiError } = await api.POST('/opd/commands/startConsultation', {
+        body: { opdEncounterId: encounterId, idempotencyKey: `opd-consult-${encounterId}` } as any,
+      });
+      if (apiError || !data) { setError('Failed to start consultation'); return; }
+      setEncounter((prev) => (prev ? { ...prev, status: 'IN_CONSULTATION' } : prev));
+    } catch { setError('Failed to start consultation'); }
+    finally { setSubmitting(false); }
   }
 
   if (!flagsLoading && !prescriptionEnabled) {
@@ -208,8 +222,12 @@ export default function OpdDoctorPage() {
           </SectionCard>
 
           <SectionCard title="Clinical Content">
-            {encounter.status !== 'READY_FOR_PRINT' ? (
-              <ErrorState title="Doctor publish is locked" message="Encounter must be READY_FOR_PRINT before publish." />
+            {encounter.status === 'INTAKE_COMPLETE' ? (
+              <Button type="button" disabled={submitting} onClick={handleStartConsultation}>
+                {submitting ? 'Starting...' : 'Start Consultation'}
+              </Button>
+            ) : encounter.status !== 'IN_CONSULTATION' ? (
+              <ErrorState title="Doctor workflow is locked" message="Only IN_CONSULTATION encounters can be documented." />
             ) : (
               <form className="space-y-4" onSubmit={handlePublish}>
                 <div className="grid gap-3 md:grid-cols-2">

@@ -1021,6 +1021,10 @@ model OpdNote {
   followUp       String?
   investigations String?
   remarks        String?
+  status         String    @default("DRAFT") // DRAFT | SIGNED
+  signedAt       DateTime?
+  signedBy       String?
+  version        Int       @default(1)
   updatedAt      DateTime  @updatedAt
   createdAt      DateTime  @default(now())
 

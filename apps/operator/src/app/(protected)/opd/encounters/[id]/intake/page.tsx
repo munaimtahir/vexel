@@ -12,7 +12,7 @@ import { getToken } from '@/lib/auth';
 
 type EncounterDetail = {
   id: string;
-  status: 'DRAFT' | 'READY_FOR_PRINT' | 'COMPLETED' | 'CANCELLED';
+  status: 'REGISTERED' | 'INTAKE_COMPLETE' | 'IN_CONSULTATION' | 'NOTE_SIGNED' | 'PRESCRIPTION_PUBLISHED' | 'COMPLETED' | 'CANCELLED';
   visitCode: string;
   chiefComplaint?: string | null;
 };
@@ -67,7 +67,7 @@ export default function OpdIntakePage() {
     };
   }, [encounterId]);
 
-  const blocked = useMemo(() => encounter && encounter.status !== 'DRAFT', [encounter]);
+  const blocked = useMemo(() => encounter && encounter.status !== 'REGISTERED', [encounter]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -115,7 +115,7 @@ export default function OpdIntakePage() {
           </SectionCard>
           <SectionCard title="Intake">
             {blocked ? (
-              <ErrorState title="Intake is locked" message="Only DRAFT encounters can record intake." />
+              <ErrorState title="Intake is locked" message="Only REGISTERED encounters can record intake." />
             ) : (
               <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>

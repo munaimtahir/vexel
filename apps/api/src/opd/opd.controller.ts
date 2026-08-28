@@ -127,6 +127,18 @@ export class OpdController {
     return this.svc.publishPrescription(this.resolveTenantId(req), body, user.userId, correlationId);
   }
 
+  @Post('commands/startConsultation')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.OPD_CLINICAL_NOTE_WRITE)
+  startConsultation(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.startConsultation(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
   @Post('commands/finalizeEncounter')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.OPD_ENCOUNTER_MANAGE)

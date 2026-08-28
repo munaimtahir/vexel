@@ -10,7 +10,7 @@ import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
-type Status = '' | 'DRAFT' | 'READY_FOR_PRINT' | 'COMPLETED' | 'CANCELLED';
+type Status = '' | 'REGISTERED' | 'INTAKE_COMPLETE' | 'IN_CONSULTATION' | 'NOTE_SIGNED' | 'PRESCRIPTION_PUBLISHED' | 'COMPLETED' | 'CANCELLED';
 type Row = {
   id: string;
   patientId: string;
@@ -77,9 +77,9 @@ export default function OpdEncountersPage() {
 
   const counts = useMemo(() => {
     const completed = rows.filter((r) => r.status === 'COMPLETED').length;
-    const ready = rows.filter((r) => r.status === 'READY_FOR_PRINT').length;
-    const draft = rows.filter((r) => r.status === 'DRAFT').length;
-    return { completed, ready, draft };
+    const consultation = rows.filter((r) => r.status === 'IN_CONSULTATION').length;
+    const registered = rows.filter((r) => r.status === 'REGISTERED').length;
+    return { completed, consultation, registered };
   }, [rows]);
 
   return (
@@ -120,20 +120,23 @@ export default function OpdEncountersPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="__all__">All statuses</SelectItem>
-              <SelectItem value="DRAFT">DRAFT</SelectItem>
-              <SelectItem value="READY_FOR_PRINT">READY_FOR_PRINT</SelectItem>
+              <SelectItem value="REGISTERED">REGISTERED</SelectItem>
+              <SelectItem value="INTAKE_COMPLETE">INTAKE_COMPLETE</SelectItem>
+              <SelectItem value="IN_CONSULTATION">IN_CONSULTATION</SelectItem>
+              <SelectItem value="NOTE_SIGNED">NOTE_SIGNED</SelectItem>
+              <SelectItem value="PRESCRIPTION_PUBLISHED">PRESCRIPTION_PUBLISHED</SelectItem>
               <SelectItem value="COMPLETED">COMPLETED</SelectItem>
               <SelectItem value="CANCELLED">CANCELLED</SelectItem>
             </SelectContent>
           </Select>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="rounded-md border border-border bg-muted p-2 text-center">
-              <p className="font-semibold text-foreground">{counts.draft}</p>
-              <p className="text-muted-foreground">Draft</p>
+              <p className="font-semibold text-foreground">{counts.registered}</p>
+              <p className="text-muted-foreground">Registered</p>
             </div>
             <div className="rounded-md border border-border bg-muted p-2 text-center">
-              <p className="font-semibold text-foreground">{counts.ready}</p>
-              <p className="text-muted-foreground">Ready</p>
+              <p className="font-semibold text-foreground">{counts.consultation}</p>
+              <p className="text-muted-foreground">Consultation</p>
             </div>
             <div className="rounded-md border border-border bg-muted p-2 text-center">
               <p className="font-semibold text-foreground">{counts.completed}</p>

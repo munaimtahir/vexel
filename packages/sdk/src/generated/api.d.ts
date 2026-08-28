@@ -3029,8 +3029,25 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Record intake and transition DRAFT -> READY_FOR_PRINT */
+        /** Record intake and transition REGISTERED -> INTAKE_COMPLETE */
         post: operations["recordOpdIntakeCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/startConsultation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start consultation and transition INTAKE_COMPLETE -> IN_CONSULTATION */
+        post: operations["startOpdConsultationCommand"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3046,7 +3063,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Publish prescription and transition READY_FOR_PRINT -> COMPLETED */
+        /** Sign clinical note and publish prescription */
         post: operations["publishOpdPrescriptionCommand"];
         delete?: never;
         options?: never;
@@ -3063,7 +3080,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Finalize OPD encounter and transition READY_FOR_PRINT -> COMPLETED */
+        /** Finalize OPD encounter PRESCRIPTION_PUBLISHED -> COMPLETED */
         post: operations["finalizeOpdEncounterCommand"];
         delete?: never;
         options?: never;
@@ -3080,7 +3097,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Cancel OPD encounter and transition DRAFT/READY_FOR_PRINT -> CANCELLED */
+        /** Cancel OPD encounter before completion */
         post: operations["cancelOpdEncounterCommand"];
         delete?: never;
         options?: never;
@@ -4970,7 +4987,7 @@ export interface components {
             encounterId: string;
             doctorId: string;
             /** @enum {string} */
-            status: "DRAFT" | "READY_FOR_PRINT" | "COMPLETED" | "CANCELLED";
+            status: "REGISTERED" | "INTAKE_COMPLETE" | "IN_CONSULTATION" | "NOTE_SIGNED" | "PRESCRIPTION_PUBLISHED" | "COMPLETED" | "CANCELLED";
             visitCode: string;
             chiefComplaint?: string | null;
             diagnosis?: string | null;
@@ -5027,6 +5044,10 @@ export interface components {
             followUp?: string | null;
             investigations?: string | null;
             remarks?: string | null;
+        };
+        StartOpdConsultationRequest: {
+            opdEncounterId: string;
+            idempotencyKey?: string;
         };
         PublishOpdPrescriptionRequest: {
             opdEncounterId: string;
@@ -12283,7 +12304,7 @@ export interface operations {
             query?: {
                 page?: components["parameters"]["PageParam"];
                 limit?: components["parameters"]["LimitParam"];
-                status?: "DRAFT" | "READY_FOR_PRINT" | "COMPLETED" | "CANCELLED";
+                status?: "REGISTERED" | "INTAKE_COMPLETE" | "IN_CONSULTATION" | "NOTE_SIGNED" | "PRESCRIPTION_PUBLISHED" | "COMPLETED" | "CANCELLED";
                 patientId?: string;
                 doctorId?: string;
                 search?: string;
@@ -12381,6 +12402,41 @@ export interface operations {
         };
         responses: {
             /** @description Intake recorded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description domain_error for invalid state transition */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    startOpdConsultationCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartOpdConsultationRequest"];
+            };
+        };
+        responses: {
+            /** @description Consultation started */
             200: {
                 headers: {
                     [name: string]: unknown;
