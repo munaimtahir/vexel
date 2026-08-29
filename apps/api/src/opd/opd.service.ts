@@ -393,29 +393,34 @@ export class OpdService {
     correlationId?: string,
   ) {
     await this.assertOpdEnabled(tenantId);
-    const inv = await (this.prisma as any).invoice.findFirst({
-      where: { id: invoiceId, tenantId },
-      include: { lines: { orderBy: { sortOrder: 'asc' } } },
+    const { invoice } = await (this.prisma as any).$transaction(async (tx: any) => {
+      const locked = await tx.invoice.findFirst({ where: { id: invoiceId, tenantId } });
+      if (!locked) throw new NotFoundException('Invoice not found');
+      await tx.$queryRaw`SELECT id FROM "invoices" WHERE id = ${invoiceId} AND "tenantId" = ${tenantId} FOR UPDATE`;
+      if (locked.status === 'VOID') {
+        throw new ConflictException('Invoice is already void');
+      }
+      if (Number(locked.amountPaid) > 0) {
+        throw new ConflictException('Cannot void an invoice that has payments recorded. Issue a refund instead.');
+      }
+      const updated = await tx.invoice.update({
+        where: { id: invoiceId },
+        data: {
+          status: 'VOID',
+          amountDue: 0,
+          voidedAt: new Date(),
+          voidReason: body?.reason ?? null,
+        },
+        include: { lines: { orderBy: { sortOrder: 'asc' } } }
+      });
+      return { invoice: updated };
     });
-    if (!inv) throw new NotFoundException('Invoice not found');
-    if (inv.status === 'PAID') throw new ConflictException('Paid invoice cannot be voided');
-    if (inv.status === 'VOID') throw new ConflictException('Invoice is already voided');
-    const updated = await (this.prisma as any).invoice.update({
-      where: { id: invoiceId },
-      data: { status: 'VOID', voidedAt: new Date(), voidReason: body?.reason ?? null },
-      include: { lines: { orderBy: { sortOrder: 'asc' } } },
-    });
+
     await this.audit.log({
-      tenantId,
-      actorUserId,
-      action: 'opd.invoice.void',
-      entityType: 'Invoice',
-      entityId: invoiceId,
-      before: this.mapInvoice(inv),
-      after: body,
-      correlationId,
+      tenantId, actorUserId, action: 'opd.invoice.void', entityType: 'Invoice', entityId: invoiceId,
+      after: { id: invoiceId, status: 'VOID', reason: body?.reason ?? null }, correlationId
     });
-    return this.mapInvoice(updated);
+    return this.mapInvoice(invoice);
   }
 
   async recordPayment(
@@ -513,6 +518,121 @@ export class OpdService {
     });
     const document = await this.documents.getDocument(tenantId, generated.documentId);
     return { invoice: this.mapInvoice(invoice), document };
+  }
+
+  async getSettings(tenantId: string) {
+    await this.assertOpdEnabled(tenantId);
+    let settings = await (this.prisma as any).opdSettings.findUnique({ where: { tenantId } });
+    if (!settings) {
+      settings = await (this.prisma as any).opdSettings.create({
+        data: { tenantId, refundMaxLimitPct: 100, queueRule: 'CHECK_IN_TIME', retentionYears: 3 }
+      });
+    }
+    return settings;
+  }
+
+  async updateSettings(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    let settings = await (this.prisma as any).opdSettings.findUnique({ where: { tenantId } });
+    if (!settings) {
+      settings = await (this.prisma as any).opdSettings.create({
+        data: { tenantId, refundMaxLimitPct: 100, queueRule: 'CHECK_IN_TIME', retentionYears: 3 }
+      });
+    }
+    const refundMaxLimitPct = body.refundMaxLimitPct !== undefined ? Number(body.refundMaxLimitPct) : settings.refundMaxLimitPct;
+    const queueRule = body.queueRule !== undefined ? String(body.queueRule) : settings.queueRule;
+    const retentionYears = body.retentionYears !== undefined ? Number(body.retentionYears) : settings.retentionYears;
+    
+    if (refundMaxLimitPct < 0 || refundMaxLimitPct > 100) {
+      throw new BadRequestException('refundMaxLimitPct must be between 0 and 100');
+    }
+    if (retentionYears < 3) {
+      throw new BadRequestException('retentionYears must be at least 3 years');
+    }
+
+    const updated = await (this.prisma as any).opdSettings.update({
+      where: { tenantId },
+      data: { refundMaxLimitPct, queueRule, retentionYears }
+    });
+
+    await this.audit.log({
+      tenantId, actorUserId, action: 'opd.settings.updated', entityType: 'OpdSettings', entityId: settings.id,
+      before: settings, after: updated, correlationId
+    });
+    return updated;
+  }
+
+  async refundInvoice(tenantId: string, invoiceId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    const refundAmount = Number(body.amount);
+    if (!Number.isFinite(refundAmount) || refundAmount <= 0) {
+      throw new BadRequestException('Refund amount must be positive');
+    }
+
+    const settings = await this.getSettings(tenantId);
+
+    const { invoice, payment } = await (this.prisma as any).$transaction(async (tx: any) => {
+      const locked = await tx.invoice.findFirst({ where: { id: invoiceId, tenantId } });
+      if (!locked) throw new NotFoundException('Invoice not found');
+      await tx.$queryRaw`SELECT id FROM "invoices" WHERE id = ${invoiceId} AND "tenantId" = ${tenantId} FOR UPDATE`;
+
+      if (locked.status === 'VOID') {
+        throw new ConflictException('Cannot refund a void invoice');
+      }
+
+      const maxAllowed = (Number(locked.totalAmount) * settings.refundMaxLimitPct) / 100;
+      const existingRefunds = await tx.payment.findMany({
+        where: { tenantId, invoiceId, status: 'REFUNDED' }
+      });
+      const totalRefundedSoFar = existingRefunds.reduce((sum: number, p: any) => sum + Number(p.amount), 0);
+      
+      if (totalRefundedSoFar + refundAmount > maxAllowed) {
+        throw new ConflictException(`Total refund exceeds maximum allowed limit of ${settings.refundMaxLimitPct}% (${maxAllowed})`);
+      }
+
+      if (totalRefundedSoFar + refundAmount > Number(locked.amountPaid)) {
+        throw new ConflictException('Cannot refund more than the total amount paid');
+      }
+
+      const seq = await this.nextTenantSequence(tenantId, 'OPD_PAYMENT', tx);
+      const createdPayment = await tx.payment.create({
+        data: {
+          tenantId,
+          invoiceId,
+          paymentCode: buildCode('REF', seq),
+          status: 'REFUNDED',
+          method: body.method ?? 'CASH',
+          amount: refundAmount,
+          receivedAt: new Date(),
+          receivedById: actorUserId,
+          referenceNo: body.referenceNo ?? null,
+          note: body.notes ?? 'Refund issued',
+          correlationId: correlationId ?? null,
+        }
+      });
+
+      const newAmountPaid = Number(locked.amountPaid) - refundAmount;
+      const newAmountDue = Number(locked.totalAmount) - newAmountPaid;
+
+      const updatedInvoice = await tx.invoice.update({
+        where: { id: invoiceId },
+        data: {
+          amountPaid: newAmountPaid,
+          amountDue: newAmountDue,
+          status: newAmountPaid === 0 ? 'ISSUED' : 'PARTIALLY_PAID',
+        },
+        include: { lines: { orderBy: { sortOrder: 'asc' } } }
+      });
+
+      return { invoice: updatedInvoice, payment: createdPayment };
+    });
+
+    await this.audit.log({
+      tenantId, actorUserId, action: 'opd.invoice.refund', entityType: 'Payment', entityId: payment.id,
+      after: body, correlationId
+    });
+
+    return { invoice: this.mapInvoice(invoice), payment: this.mapPayment(payment) };
   }
 
   // ─── OPD KMVP Doctor Master ───────────────────────────────────────────────

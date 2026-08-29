@@ -336,4 +336,21 @@ export class OpdController {
     return new StreamableFile(bytes);
   }
 
+  @Get('settings')
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
+  getSettings(@Req() req: Request) {
+    return this.svc.getSettings(this.resolveTenantId(req));
+  }
+
+  @Patch('settings')
+  @RequirePermissions(Permission.MODULE_ADMIN)
+  updateSettings(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.updateSettings(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
 }

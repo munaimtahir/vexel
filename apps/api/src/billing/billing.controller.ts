@@ -88,6 +88,19 @@ export class BillingController {
     return this.svc.voidInvoice(this.resolveTenantId(req), invoiceId, body, user.userId, correlationId);
   }
 
+  @Post('invoices/:invoiceId\\:refund')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.OPD_BILLING_MANAGE)
+  refundInvoice(
+    @Req() req: Request,
+    @Param('invoiceId') invoiceId: string,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.refundInvoice(this.resolveTenantId(req), invoiceId, body, user.userId, correlationId);
+  }
+
   @Post('invoices/:invoiceId\\:record-payment')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.OPD_BILLING_MANAGE)
