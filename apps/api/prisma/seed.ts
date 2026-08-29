@@ -103,6 +103,19 @@ export async function main() {
   });
   console.log('✅ System tenant:', systemTenant.id);
 
+  // Create default OPD settings for system tenant
+  await prisma.opdSettings.upsert({
+    where: { tenantId: 'system' },
+    update: {},
+    create: {
+      tenantId: 'system',
+      refundMaxLimitPct: 100,
+      queueRule: 'CHECK_IN_TIME',
+      retentionYears: 3,
+    },
+  });
+  console.log('✅ Default OPD settings seeded');
+
   // Seed feature flags for system tenant
   for (const flag of DEFAULT_FEATURE_FLAGS) {
     await prisma.tenantFeature.upsert({

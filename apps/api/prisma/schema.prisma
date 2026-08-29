@@ -61,6 +61,7 @@ model Tenant {
   opdPrescriptionItemsKmvp OpdPrescriptionItemKmvp[]
   opdCommandLogs           OpdCommandLog[]
   sequences                TenantSequence[]
+  opdSettings              OpdSettings?
 
   @@map("tenants")
 }
@@ -848,29 +849,32 @@ model OpdVital {
 }
 
 model OpdNote {
-  id             String    @id @default(uuid())
-  tenantId       String
-  opdEncounterId String
-  historyNotes   String?
-  examNotes      String?
-  assessment     String?
-  plan           String?
-  advice         String?
-  diagnosis      String?
-  followUp       String?
-  investigations String?
-  remarks        String?
-  status         String    @default("DRAFT") // DRAFT | SIGNED
-  signedAt       DateTime?
-  signedBy       String?
-  version        Int       @default(1)
-  updatedAt      DateTime  @updatedAt
-  createdAt      DateTime  @default(now())
+  id              String    @id @default(uuid())
+  tenantId        String
+  opdEncounterId  String
+  historyNotes    String?
+  examNotes       String?
+  assessment      String?
+  plan            String?
+  advice          String?
+  diagnosis       String?
+  followUp        String?
+  investigations  String?
+  remarks         String?
+  status          String    @default("DRAFT") // DRAFT | SIGNED | AMENDED_DRAFT
+  signedAt        DateTime?
+  signedBy        String?
+  version         Int       @default(1)
+  amendmentReason String?
+  amendedById     String?
+  amendmentStatus String?   // PENDING | APPROVED | REJECTED
+  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime  @default(now())
 
   tenant       Tenant       @relation(fields: [tenantId], references: [id])
   opdEncounter OpdEncounter @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
 
-  @@unique([tenantId, opdEncounterId])
+  @@unique([tenantId, opdEncounterId, version])
   @@index([tenantId, updatedAt])
   @@map("opd_notes")
 }
@@ -879,6 +883,8 @@ model OpdEncounterPrescription {
   id                  String   @id @default(uuid())
   tenantId            String
   opdEncounterId      String
+  version             Int      @default(1)
+  status              String   @default("DRAFT") // DRAFT | PUBLISHED
   publishedDocumentId String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -887,7 +893,7 @@ model OpdEncounterPrescription {
   opdEncounter OpdEncounter              @relation(fields: [opdEncounterId], references: [id], onDelete: Cascade)
   items        OpdPrescriptionItemKmvp[]
 
-  @@unique([tenantId, opdEncounterId])
+  @@unique([tenantId, opdEncounterId, version])
   @@index([tenantId, createdAt])
   @@map("opd_prescriptions_kmvp")
 }
@@ -931,6 +937,20 @@ model OpdCommandLog {
   @@unique([tenantId, commandName, idempotencyKey])
   @@index([tenantId, createdAt])
   @@map("opd_command_logs")
+}
+
+model OpdSettings {
+  id                 String   @id @default(uuid())
+  tenantId           String   @unique
+  refundMaxLimitPct  Int      @default(100)
+  queueRule          String   @default("CHECK_IN_TIME")
+  retentionYears     Int      @default(3)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  tenant             Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("opd_settings")
 }
 
 model TenantSequence {
