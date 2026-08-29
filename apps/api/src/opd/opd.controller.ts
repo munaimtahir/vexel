@@ -212,6 +212,42 @@ export class OpdController {
     return this.svc.signNote(this.resolveTenantId(req), body, user.userId, correlationId);
   }
 
+  @Post('commands/saveDraftNote')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.OPD_CLINICAL_NOTE_WRITE)
+  saveDraftNote(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.saveDraftNote(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Post('commands/requestNoteAmendment')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.OPD_CLINICAL_NOTE_WRITE)
+  requestNoteAmendment(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.requestNoteAmendment(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
+  @Post('commands/approveNoteAmendment')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.MODULE_ADMIN)
+  approveNoteAmendment(
+    @Req() req: Request,
+    @Body() body: any,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.approveNoteAmendment(this.resolveTenantId(req), body, user.userId, correlationId);
+  }
+
   @Post('commands/startConsultation')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.OPD_CLINICAL_NOTE_WRITE)

@@ -1241,6 +1241,27 @@ export class OpdService {
           throw new BadRequestException('At least one meaningful vital input is required');
         }
 
+        if (body.bpSystolic != null) {
+          const val = Number(body.bpSystolic);
+          if (val < 70 || val > 220) throw new BadRequestException('bpSystolic must be between 70 and 220 mmHg');
+        }
+        if (body.bpDiastolic != null) {
+          const val = Number(body.bpDiastolic);
+          if (val < 40 || val > 130) throw new BadRequestException('bpDiastolic must be between 40 and 130 mmHg');
+        }
+        if (body.pulse != null) {
+          const val = Number(body.pulse);
+          if (val < 30 || val > 220) throw new BadRequestException('pulse must be between 30 and 220 bpm');
+        }
+        if (body.temperatureC != null) {
+          const val = Number(body.temperatureC);
+          if (val < 30 || val > 45) throw new BadRequestException('temperatureC must be between 30 and 45 C');
+        }
+        if (body.spo2 != null) {
+          const val = Number(body.spo2);
+          if (val < 50 || val > 100) throw new BadRequestException('spo2 must be between 50% and 100%');
+        }
+
         const height = body.heightCm != null ? Number(body.heightCm) : null;
         const weight = body.weightKg != null ? Number(body.weightKg) : null;
         let bmi: number | null = null;
@@ -1316,36 +1337,231 @@ export class OpdService {
       const e = await (this.prisma as any).opdEncounter.findFirst({ where: { id: body.opdEncounterId, tenantId } });
       if (!e) throw new NotFoundException('OPD encounter not found');
       assertOpdTransition(e.status, 'NOTE_SIGNED');
+
+      // Enforce clinician ownership
+      const doctor = await (this.prisma as any).opdDoctor.findFirst({ where: { id: e.doctorId, tenantId } });
+      if (doctor?.userId && doctor.userId !== actorUserId) {
+        throw new ForbiddenException('Only the assigned clinician can sign clinical notes');
+      }
+
       const values = ['historyNotes', 'examNotes', 'assessment', 'plan', 'advice']
         .map((key) => [key, String(body[key] ?? '').trim()] as const);
       if (values.some(([, value]) => !value)) {
         throw new BadRequestException('historyNotes, examNotes, assessment, plan, and advice are required');
       }
-      const note = await (this.prisma as any).opdNote.upsert({
-        where: { tenantId_opdEncounterId: { tenantId, opdEncounterId: e.id } },
-        create: {
-          tenantId, opdEncounterId: e.id, status: 'SIGNED', signedAt: new Date(), signedBy: actorUserId,
-          historyNotes: values[0][1], examNotes: values[1][1], assessment: values[2][1], plan: values[3][1], advice: values[4][1],
-          diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : null,
-          followUp: body.followUp ? String(body.followUp).trim() : null,
-          investigations: body.investigations ? String(body.investigations).trim() : null,
-          remarks: body.remarks ? String(body.remarks).trim() : null,
-        },
-        update: {
-          status: 'SIGNED', signedAt: new Date(), signedBy: actorUserId, version: { increment: 1 },
-          historyNotes: values[0][1], examNotes: values[1][1], assessment: values[2][1], plan: values[3][1], advice: values[4][1],
-          diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : null,
-          followUp: body.followUp ? String(body.followUp).trim() : null,
-          investigations: body.investigations ? String(body.investigations).trim() : null,
-          remarks: body.remarks ? String(body.remarks).trim() : null,
-        },
+
+      const latest = await (this.prisma as any).opdNote.findFirst({
+        where: { tenantId, opdEncounterId: e.id },
+        orderBy: { version: 'desc' }
       });
+
+      let note;
+      if (!latest) {
+        // Create version 1 directly as SIGNED
+        note = await (this.prisma as any).opdNote.create({
+          data: {
+            tenantId, opdEncounterId: e.id, status: 'SIGNED', signedAt: new Date(), signedBy: actorUserId, version: 1,
+            historyNotes: values[0][1], examNotes: values[1][1], assessment: values[2][1], plan: values[3][1], advice: values[4][1],
+            diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : null,
+            followUp: body.followUp ? String(body.followUp).trim() : null,
+            investigations: body.investigations ? String(body.investigations).trim() : null,
+            remarks: body.remarks ? String(body.remarks).trim() : null,
+          }
+        });
+      } else if (latest.status === 'SIGNED') {
+        throw new ConflictException('Note is already signed. Use amendments to make changes.');
+      } else {
+        // Upgrade latest draft to SIGNED
+        note = await (this.prisma as any).opdNote.update({
+          where: { id: latest.id },
+          data: {
+            status: 'SIGNED', signedAt: new Date(), signedBy: actorUserId,
+            historyNotes: values[0][1], examNotes: values[1][1], assessment: values[2][1], plan: values[3][1], advice: values[4][1],
+            diagnosis: body.diagnosis != null ? String(body.diagnosis).trim() : null,
+            followUp: body.followUp ? String(body.followUp).trim() : null,
+            investigations: body.investigations ? String(body.investigations).trim() : null,
+            remarks: body.remarks ? String(body.remarks).trim() : null,
+          }
+        });
+      }
+
       const updated = await (this.prisma as any).opdEncounter.update({ where: { id: e.id }, data: { status: 'NOTE_SIGNED' } });
       await this.audit.log({
         tenantId, actorUserId, action: 'opd.clinical_note.signed', entityType: 'OpdEncounter', entityId: e.id,
         before: this.mapKmvpEncounter(e), after: { ...this.mapKmvpEncounter(updated), noteId: note.id, noteVersion: note.version }, correlationId,
       });
       return { opdEncounter: this.mapKmvpEncounter(updated), note: { id: note.id, version: note.version, status: note.status } };
+    });
+  }
+
+  async saveDraftNote(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    if (!body?.opdEncounterId) throw new BadRequestException('opdEncounterId is required');
+    return this.withCommandIdempotency(tenantId, 'SaveDraftOpdNote', body?.idempotencyKey, body, async () => {
+      const e = await (this.prisma as any).opdEncounter.findFirst({ where: { id: body.opdEncounterId, tenantId } });
+      if (!e) throw new NotFoundException('OPD encounter not found');
+      if (['COMPLETED', 'CANCELLED'].includes(e.status)) {
+        throw new ConflictException('Cannot modify notes of completed or cancelled encounters');
+      }
+
+      const doctor = await (this.prisma as any).opdDoctor.findFirst({ where: { id: e.doctorId, tenantId } });
+      if (doctor?.userId && doctor.userId !== actorUserId) {
+        throw new ForbiddenException('Only the assigned clinician can modify clinical notes');
+      }
+
+      const latest = await (this.prisma as any).opdNote.findFirst({
+        where: { tenantId, opdEncounterId: e.id },
+        orderBy: { version: 'desc' }
+      });
+
+      let note;
+      if (!latest) {
+        note = await (this.prisma as any).opdNote.create({
+          data: {
+            tenantId,
+            opdEncounterId: e.id,
+            status: 'DRAFT',
+            version: 1,
+            historyNotes: body.historyNotes ?? null,
+            examNotes: body.examNotes ?? null,
+            assessment: body.assessment ?? null,
+            plan: body.plan ?? null,
+            advice: body.advice ?? null,
+            diagnosis: body.diagnosis ?? null,
+            followUp: body.followUp ?? null,
+            investigations: body.investigations ?? null,
+            remarks: body.remarks ?? null,
+          }
+        });
+      } else if (latest.status === 'SIGNED') {
+        throw new ConflictException('Cannot edit a signed note directly. Please request an amendment.');
+      } else {
+        note = await (this.prisma as any).opdNote.update({
+          where: { id: latest.id },
+          data: {
+            historyNotes: body.historyNotes !== undefined ? body.historyNotes : latest.historyNotes,
+            examNotes: body.examNotes !== undefined ? body.examNotes : latest.examNotes,
+            assessment: body.assessment !== undefined ? body.assessment : latest.assessment,
+            plan: body.plan !== undefined ? body.plan : latest.plan,
+            advice: body.advice !== undefined ? body.advice : latest.advice,
+            diagnosis: body.diagnosis !== undefined ? body.diagnosis : latest.diagnosis,
+            followUp: body.followUp !== undefined ? body.followUp : latest.followUp,
+            investigations: body.investigations !== undefined ? body.investigations : latest.investigations,
+            remarks: body.remarks !== undefined ? body.remarks : latest.remarks,
+          }
+        });
+      }
+
+      await this.audit.log({
+        tenantId, actorUserId, action: 'opd.clinical_note.draft_saved', entityType: 'OpdNote', entityId: note.id,
+        after: { id: note.id, version: note.version, status: note.status }, correlationId,
+      });
+
+      return { note: { id: note.id, version: note.version, status: note.status } };
+    });
+  }
+
+  async requestNoteAmendment(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    if (!body?.opdEncounterId || !body?.amendmentReason) {
+      throw new BadRequestException('opdEncounterId and amendmentReason are required');
+    }
+    return this.withCommandIdempotency(tenantId, 'RequestOpdNoteAmendment', body?.idempotencyKey, body, async () => {
+      const e = await (this.prisma as any).opdEncounter.findFirst({ where: { id: body.opdEncounterId, tenantId } });
+      if (!e) throw new NotFoundException('OPD encounter not found');
+      if (['COMPLETED', 'CANCELLED'].includes(e.status)) {
+        throw new ConflictException('Cannot amend notes of completed or cancelled encounters');
+      }
+
+      const doctor = await (this.prisma as any).opdDoctor.findFirst({ where: { id: e.doctorId, tenantId } });
+      if (doctor?.userId && doctor.userId !== actorUserId) {
+        throw new ForbiddenException('Only the assigned clinician can request amendments');
+      }
+
+      const activeNote = await (this.prisma as any).opdNote.findFirst({
+        where: { tenantId, opdEncounterId: e.id, status: 'SIGNED' },
+        orderBy: { version: 'desc' }
+      });
+      if (!activeNote) throw new ConflictException('No signed note exists to amend');
+
+      const latest = await (this.prisma as any).opdNote.findFirst({
+        where: { tenantId, opdEncounterId: e.id },
+        orderBy: { version: 'desc' }
+      });
+      if (latest && latest.status !== 'SIGNED') {
+        throw new ConflictException('A pending note amendment draft already exists');
+      }
+
+      const newVersion = activeNote.version + 1;
+      const note = await (this.prisma as any).opdNote.create({
+        data: {
+          tenantId,
+          opdEncounterId: e.id,
+          status: 'AMENDED_DRAFT',
+          version: newVersion,
+          historyNotes: body.historyNotes ?? activeNote.historyNotes,
+          examNotes: body.examNotes ?? activeNote.examNotes,
+          assessment: body.assessment ?? activeNote.assessment,
+          plan: body.plan ?? activeNote.plan,
+          advice: body.advice ?? activeNote.advice,
+          diagnosis: body.diagnosis ?? activeNote.diagnosis,
+          followUp: body.followUp ?? activeNote.followUp,
+          investigations: body.investigations ?? activeNote.investigations,
+          remarks: body.remarks ?? activeNote.remarks,
+          amendmentReason: body.amendmentReason,
+          amendedById: actorUserId,
+          amendmentStatus: 'PENDING',
+        }
+      });
+
+      await this.audit.log({
+        tenantId, actorUserId, action: 'opd.clinical_note.amendment_requested', entityType: 'OpdNote', entityId: note.id,
+        after: { id: note.id, version: note.version, status: note.status }, correlationId,
+      });
+
+      return { note: { id: note.id, version: note.version, status: note.status, amendmentStatus: note.amendmentStatus } };
+    });
+  }
+
+  async approveNoteAmendment(tenantId: string, body: any, actorUserId: string, correlationId?: string) {
+    await this.assertOpdEnabled(tenantId);
+    if (!body?.opdEncounterId || !body?.version) {
+      throw new BadRequestException('opdEncounterId and version are required');
+    }
+    const version = Number(body.version);
+    return this.withCommandIdempotency(tenantId, 'ApproveOpdNoteAmendment', body?.idempotencyKey, body, async () => {
+      const e = await (this.prisma as any).opdEncounter.findFirst({ where: { id: body.opdEncounterId, tenantId } });
+      if (!e) throw new NotFoundException('OPD encounter not found');
+
+      const pending = await (this.prisma as any).opdNote.findUnique({
+        where: {
+          tenantId_opdEncounterId_version: {
+            tenantId,
+            opdEncounterId: e.id,
+            version
+          }
+        }
+      });
+      if (!pending || pending.status !== 'AMENDED_DRAFT' || pending.amendmentStatus !== 'PENDING') {
+        throw new NotFoundException('Pending note amendment draft not found');
+      }
+
+      const note = await (this.prisma as any).opdNote.update({
+        where: { id: pending.id },
+        data: {
+          status: 'SIGNED',
+          amendmentStatus: 'APPROVED',
+          signedAt: new Date(),
+          signedBy: pending.amendedById,
+        }
+      });
+
+      await this.audit.log({
+        tenantId, actorUserId, action: 'opd.clinical_note.amendment_approved', entityType: 'OpdNote', entityId: note.id,
+        after: { id: note.id, version: note.version, status: note.status, amendmentStatus: note.amendmentStatus }, correlationId,
+      });
+
+      return { note: { id: note.id, version: note.version, status: note.status, amendmentStatus: note.amendmentStatus } };
     });
   }
 
