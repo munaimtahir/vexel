@@ -8036,6 +8036,42 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
 
+  /opd/doctors/{doctorId}/slots:
+    get:
+      operationId: getOpdDoctorSlots
+      summary: Get doctor's 15-minute slots on a specific date
+      tags: [OPD Schedules]
+      parameters:
+        - name: doctorId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: date
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of time slots
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required: [startTime, endTime, isBooked]
+                      properties:
+                        startTime: { type: string }
+                        endTime: { type: string }
+                        isBooked: { type: boolean }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+
   /opd/doctors/{doctorId}:
     get:
       operationId: getOpdDoctor
@@ -8431,6 +8467,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /opd/billing/invoices/{invoiceId}:refund:
+    post:
+      operationId: refundOpdInvoice
+      summary: Issue refund on invoice
+      tags: [OPD Billing]
+      parameters:
+        - name: invoiceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount: { type: number }
+                method: { type: string }
+                referenceNo: { type: string }
+                notes: { type: string }
+      responses:
+        "200":
+          description: Refund issued successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdInvoicePaymentCommandResponse'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Refund exceeds limits or invalid invoice status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /opd/billing/invoices/{invoiceId}:record-payment:
     post:
       operationId: recordOpdInvoicePayment
@@ -8542,6 +8621,72 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         "403":
           $ref: '#/components/responses/Forbidden'
+
+  /opd/encounters/queue:
+    get:
+      operationId: listOpdEncounterQueue
+      summary: List OPD patient check-in queue
+      tags: [OPD Encounters]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: doctorId
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: OPD patient queue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpdEncounterKmvpListResponse'
+  /opd/settings:
+    get:
+      operationId: getOpdSettings
+      summary: Retrieve tenant OPD settings
+      tags: [OPD Commands]
+      responses:
+        "200":
+          description: Tenant OPD settings
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [refundMaxLimitPct, queueRule, retentionYears]
+                properties:
+                  refundMaxLimitPct: { type: integer }
+                  queueRule: { type: string }
+                  retentionYears: { type: integer }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+    patch:
+      operationId: updateOpdSettings
+      summary: Update tenant OPD settings
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refundMaxLimitPct: { type: integer }
+                queueRule: { type: string }
+                retentionYears: { type: integer }
+      responses:
+        "200":
+          description: Settings updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [refundMaxLimitPct, queueRule, retentionYears]
+                properties:
+                  refundMaxLimitPct: { type: integer }
+                  queueRule: { type: string }
+                  retentionYears: { type: integer }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
 
   /opd/encounters/{encounterId}:
     get:
@@ -8709,6 +8854,98 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /opd/commands/saveDraftNote:
+    post:
+      operationId: saveDraftOpdNoteCommand
+      summary: Save clinical note draft without transitioning state
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [opdEncounterId]
+              properties:
+                opdEncounterId: { type: string }
+                historyNotes: { type: string }
+                examNotes: { type: string }
+                assessment: { type: string }
+                plan: { type: string }
+                advice: { type: string }
+                diagnosis: { type: string }
+                followUp: { type: string }
+                investigations: { type: string }
+                remarks: { type: string }
+      responses:
+        "200":
+          description: Draft note saved
+          content:
+            application/json:
+              schema:
+                type: object
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+
+  /opd/commands/requestNoteAmendment:
+    post:
+      operationId: requestOpdNoteAmendmentCommand
+      summary: Request note amendment duplicating row at higher version
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [opdEncounterId, amendmentReason]
+              properties:
+                opdEncounterId: { type: string }
+                amendmentReason: { type: string }
+                historyNotes: { type: string }
+                examNotes: { type: string }
+                assessment: { type: string }
+                plan: { type: string }
+                advice: { type: string }
+                diagnosis: { type: string }
+                followUp: { type: string }
+                investigations: { type: string }
+                remarks: { type: string }
+      responses:
+        "200":
+          description: Note amendment requested
+          content:
+            application/json:
+              schema:
+                type: object
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+
+  /opd/commands/approveNoteAmendment:
+    post:
+      operationId: approveOpdNoteAmendmentCommand
+      summary: Approve note amendment setting version to SIGNED and APPROVED
+      tags: [OPD Commands]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [opdEncounterId, version]
+              properties:
+                opdEncounterId: { type: string }
+                version: { type: integer }
+      responses:
+        "200":
+          description: Note amendment approved
+          content:
+            application/json:
+              schema:
+                type: object
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
 
   /opd/commands/finalizeEncounter:
     post:

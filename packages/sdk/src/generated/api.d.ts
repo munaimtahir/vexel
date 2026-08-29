@@ -2410,6 +2410,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/opd/doctors/{doctorId}/slots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get doctor's 15-minute slots on a specific date */
+        get: operations["getOpdDoctorSlots"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/opd/doctors/{doctorId}": {
         parameters: {
             query?: never;
@@ -2600,6 +2617,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/opd/billing/invoices/{invoiceId}:refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Issue refund on invoice */
+        post: operations["refundOpdInvoice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/opd/billing/invoices/{invoiceId}:record-payment": {
         parameters: {
             query?: never;
@@ -2654,6 +2688,41 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/opd/encounters/queue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List OPD patient check-in queue */
+        get: operations["listOpdEncounterQueue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Retrieve tenant OPD settings */
+        get: operations["getOpdSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update tenant OPD settings */
+        patch: operations["updateOpdSettings"];
         trace?: never;
     };
     "/opd/encounters/{encounterId}": {
@@ -2752,6 +2821,57 @@ export interface paths {
         put?: never;
         /** Sign the clinical note and transition IN_CONSULTATION -> NOTE_SIGNED */
         post: operations["signOpdNoteCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/saveDraftNote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Save clinical note draft without transitioning state */
+        post: operations["saveDraftOpdNoteCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/requestNoteAmendment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request note amendment duplicating row at higher version */
+        post: operations["requestOpdNoteAmendmentCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/opd/commands/approveNoteAmendment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve note amendment setting version to SIGNED and APPROVED */
+        post: operations["approveOpdNoteAmendmentCommand"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10271,6 +10391,39 @@ export interface operations {
             };
         };
     };
+    getOpdDoctorSlots: {
+        parameters: {
+            query: {
+                date: string;
+            };
+            header?: never;
+            path: {
+                doctorId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of time slots */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            startTime: string;
+                            endTime: string;
+                            isBooked: boolean;
+                        }[];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
     getOpdDoctor: {
         parameters: {
             query?: never;
@@ -10733,6 +10886,49 @@ export interface operations {
             };
         };
     };
+    refundOpdInvoice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invoiceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    amount: number;
+                    method?: string;
+                    referenceNo?: string;
+                    notes?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Refund issued successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdInvoicePaymentCommandResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Refund exceeds limits or invalid invoice status */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     recordOpdInvoicePayment: {
         parameters: {
             query?: never;
@@ -10832,6 +11028,90 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpdEncounterKmvpListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    listOpdEncounterQueue: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                doctorId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OPD patient queue */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpdEncounterKmvpListResponse"];
+                };
+            };
+        };
+    };
+    getOpdSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tenant OPD settings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        refundMaxLimitPct: number;
+                        queueRule: string;
+                        retentionYears: number;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    updateOpdSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    refundMaxLimitPct?: number;
+                    queueRule?: string;
+                    retentionYears?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Settings updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        refundMaxLimitPct: number;
+                        queueRule: string;
+                        retentionYears: number;
+                    };
                 };
             };
             401: components["responses"]["Unauthorized"];
@@ -11036,6 +11316,110 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+        };
+    };
+    saveDraftOpdNoteCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    opdEncounterId: string;
+                    historyNotes?: string;
+                    examNotes?: string;
+                    assessment?: string;
+                    plan?: string;
+                    advice?: string;
+                    diagnosis?: string;
+                    followUp?: string;
+                    investigations?: string;
+                    remarks?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Draft note saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    requestOpdNoteAmendmentCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    opdEncounterId: string;
+                    amendmentReason: string;
+                    historyNotes?: string;
+                    examNotes?: string;
+                    assessment?: string;
+                    plan?: string;
+                    advice?: string;
+                    diagnosis?: string;
+                    followUp?: string;
+                    investigations?: string;
+                    remarks?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Note amendment requested */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    approveOpdNoteAmendmentCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    opdEncounterId: string;
+                    version: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Note amendment approved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
         };
     };
     finalizeOpdEncounterCommand: {
