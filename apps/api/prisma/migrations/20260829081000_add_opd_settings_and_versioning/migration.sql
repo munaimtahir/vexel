@@ -33,3 +33,6 @@ CREATE UNIQUE INDEX "opd_prescriptions_kmvp_tenantId_opdEncounterId_version_key"
 
 -- AddForeignKey
 ALTER TABLE "opd_settings" ADD CONSTRAINT "opd_settings_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AlterTable
+ALTER TABLE "opd_encounters" ADD COLUMN "checkedInAt" TIMESTAMP(3);

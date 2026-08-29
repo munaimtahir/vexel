@@ -798,6 +798,7 @@ model OpdEncounter {
   investigations  String?
   remarks         String?
   paymentStatus   String    @default("UNPAID") // UNPAID | PARTIALLY_PAID | PAID
+  checkedInAt     DateTime?
   cancelledAt     DateTime?
   cancelledReason String?
   completedAt     DateTime?

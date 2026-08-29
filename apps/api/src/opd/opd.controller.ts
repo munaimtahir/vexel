@@ -83,6 +83,12 @@ export class OpdController {
     return this.svc.listCanonicalSchedules(this.resolveTenantId(req), doctorId, q);
   }
 
+  @Get('doctors/:doctorId/slots')
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
+  getDoctorSlots(@Req() req: Request, @Param('doctorId') doctorId: string, @Query('date') date: string) {
+    return this.svc.getDoctorSlots(this.resolveTenantId(req), doctorId, date);
+  }
+
   @Post('doctors/:doctorId/schedules')
   @HttpCode(HttpStatus.CREATED)
   @RequirePermissions(Permission.MODULE_ADMIN)
@@ -144,6 +150,12 @@ export class OpdController {
   @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
   listEncounters(@Req() req: Request, @Query() q: any) {
     return this.svc.listEncounters(this.resolveTenantId(req), q);
+  }
+
+  @Get('encounters/queue')
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
+  listEncounterQueue(@Req() req: Request, @Query() q: any) {
+    return this.svc.listEncounterQueue(this.resolveTenantId(req), q);
   }
 
   @Get('encounters/:encounterId')

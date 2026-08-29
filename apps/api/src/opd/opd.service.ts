@@ -594,6 +594,151 @@ export class OpdService {
     }
   }
 
+  async getDoctorSlots(tenantId: string, doctorId: string, dateStr: string) {
+    await this.assertOpdEnabled(tenantId);
+    const doctor = await (this.prisma as any).opdDoctor.findFirst({ where: { id: doctorId, tenantId, isActive: true } });
+    if (!doctor) throw new NotFoundException('OPD doctor not found');
+
+    const getWeekdayInTz = (dStr: string, timeZone: string): number => {
+      const d = new Date(`${dStr}T12:00:00Z`);
+      const formatterShort = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short' });
+      const dayName = formatterShort.format(d);
+      const mapping: Record<string, number> = {
+        Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6
+      };
+      return mapping[dayName];
+    };
+
+    const getUtcDateInTz = (dStr: string, timeStr: string, timeZone: string): Date => {
+      const tempStr = `${dStr}T${timeStr}:00Z`;
+      const date = new Date(tempStr);
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      });
+      const parts = formatter.formatToParts(date);
+      const map: Record<string, string> = {};
+      for (const p of parts) map[p.type] = p.value;
+      const localizedUtc = Date.UTC(
+        Number(map.year),
+        Number(map.month) - 1,
+        Number(map.day),
+        Number(map.hour),
+        Number(map.minute),
+        Number(map.second)
+      );
+      const diffMs = localizedUtc - date.getTime();
+      return new Date(date.getTime() - diffMs);
+    };
+
+    const allSchedules = await (this.prisma as any).opdSchedule.findMany({
+      where: { tenantId, doctorId, isActive: true }
+    });
+
+    const schedules = allSchedules.filter((s: any) => {
+      const tz = s.timezone ?? 'Asia/Karachi';
+      return s.weekday === getWeekdayInTz(dateStr, tz);
+    });
+
+    const slots: { startTime: string; endTime: string; isBooked: boolean }[] = [];
+
+    for (const s of schedules) {
+      const tz = s.timezone ?? 'Asia/Karachi';
+      const dayStart = getUtcDateInTz(dateStr, '00:00', tz);
+      const dayEnd = getUtcDateInTz(dateStr, '23:59', tz);
+      
+      const bookedAppts = await (this.prisma as any).opdAppointment.findMany({
+        where: {
+          tenantId,
+          doctorId,
+          status: { in: ['BOOKED', 'CHECKED_IN', 'IN_CONSULTATION'] },
+          scheduledAt: { gte: dayStart, lte: dayEnd }
+        }
+      });
+
+      let current = getUtcDateInTz(dateStr, s.startTime, tz);
+      const limit = getUtcDateInTz(dateStr, s.endTime, tz);
+
+      while (current.getTime() + s.slotMinutes * 60000 <= limit.getTime()) {
+        const next = new Date(current.getTime() + s.slotMinutes * 60000);
+        const isBooked = bookedAppts.some((appt: any) => {
+          const apptStart = new Date(appt.scheduledAt).getTime();
+          const apptEnd = apptStart + Number(appt.durationMinutes) * 60000;
+          return overlaps(current.getTime(), next.getTime(), apptStart, apptEnd);
+        });
+        slots.push({
+          startTime: current.toISOString(),
+          endTime: next.toISOString(),
+          isBooked
+        });
+        current = next;
+      }
+    }
+
+    return { data: slots };
+  }
+
+  async listEncounterQueue(tenantId: string, q: any) {
+    await this.assertOpdEnabled(tenantId);
+    const page = Math.max(1, Number(q?.page ?? 1));
+    const limit = Math.min(100, Math.max(1, Number(q?.limit ?? 20)));
+
+    const settings = await (this.prisma as any).opdSettings.findUnique({
+      where: { tenantId }
+    });
+    const sortBy = settings?.queueRule === 'CHECK_IN_TIME' ? 'checkedInAt' : 'createdAt';
+
+    const where: any = {
+      tenantId,
+      status: { notIn: ['COMPLETED', 'CANCELLED'] }
+    };
+    if (q?.doctorId) where.doctorId = q.doctorId;
+
+    const [data, total] = await Promise.all([
+      (this.prisma as any).opdEncounter.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: [
+          { [sortBy]: 'asc' },
+          { createdAt: 'asc' }
+        ],
+        include: {
+          patient: true,
+          doctor: true,
+          appointment: true
+        }
+      }),
+      (this.prisma as any).opdEncounter.count({ where })
+    ]);
+
+    return {
+      data: data.map((e: any) => ({
+        ...this.mapKmvpEncounter(e),
+        patient: {
+          id: e.patient.id,
+          firstName: e.patient.firstName,
+          lastName: e.patient.lastName,
+          mrn: e.patient.mrn,
+        },
+        doctor: this.mapKmvpDoctor(e.doctor),
+        appointment: e.appointment ? this.mapCanonicalAppointment(e.appointment) : null,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1
+      }
+    };
+  }
+
   async listCanonicalAppointments(tenantId: string, q: any) {
     await this.assertOpdEnabled(tenantId);
     const page = Math.max(1, Number(q?.page ?? 1));
@@ -962,6 +1107,30 @@ export class OpdService {
           throw new BadRequestException('immediatePaymentAmount must be between zero and the consultation fee');
         }
 
+        let appointmentId: string | null = null;
+        let checkedInAt = new Date();
+
+        if (body.appointmentId || body.appointmentCode) {
+          const appointment = await (this.prisma as any).opdAppointment.findFirst({
+            where: {
+              tenantId,
+              OR: [
+                { id: body.appointmentId },
+                { appointmentCode: body.appointmentCode }
+              ],
+              status: 'BOOKED'
+            }
+          });
+          if (!appointment) {
+            throw new NotFoundException('Active appointment not found');
+          }
+          appointmentId = appointment.id;
+          await (this.prisma as any).opdAppointment.update({
+            where: { id: appointment.id },
+            data: { status: 'CHECKED_IN', checkedInAt }
+          });
+        }
+
         const encounter = await (this.prisma as any).encounter.create({
           data: {
             tenantId,
@@ -977,9 +1146,11 @@ export class OpdService {
             patientId: body.patientId,
             encounterId: encounter.id,
             doctorId: body.doctorId,
+            appointmentId,
             status: 'REGISTERED',
             visitCode: buildCode('OPD', seq),
             paymentStatus: 'UNPAID',
+            checkedInAt,
           },
         });
 
