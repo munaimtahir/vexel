@@ -4,20 +4,19 @@
 
 **Decision: OPD NOT READY**
 
-## Current verdict (2026-08-28)
+## Current verdict (2026-08-29)
 
 The prior `OPD PRODUCTION READY` promotion was not supported by its own evidence set and is withdrawn. Static gates pass, and the canonical billing routing regression introduced during legacy retirement has been repaired and live-smoked. Mandatory production gates remain open.
 
 Release blockers include:
 
 - the retirement migration unconditionally drops legacy OPD tables and data without reconciliation, preflight counts, export, or rollback proof;
-- scheduling lacks slot/availability output, queue ordering, and appointment-to-encounter workflow linkage;
-- signed-note/prescription amendments, clinician ownership, draft lifecycles, and immutable version history are not implemented;
-- payment void/refund/correction commands are not implemented;
-- OPD-specific tenant/RBAC/concurrency/document failure-retry tests are incomplete;
+- real database concurrency/rollback evidence for scheduling, registration, notes, and payments is still missing;
+- prescription version publication and deterministic amended-document evidence is still incomplete;
+- OPD-specific tenant/RBAC/concurrency/document failure-retry tests are incomplete; PDF failure injection is now implemented but not yet exercised in a committed integration run;
 - Operator/Admin production surfaces do not cover the release scope, and the OPD Playwright tests authenticate as the super-admin rather than a least-privilege OPD user;
 - the deployment image audit reports 13 high and 1 critical dependency advisories;
-- clean-database, representative-data migration, rollback, Caddy/TLS, and complete browser journey evidence is absent.
+- clean-database, representative-data migration, rollback, and complete browser journey evidence is absent; the local same-URL stack is healthy but public production cutover is not certified.
 
 ## Passing evidence boundary
 
