@@ -113,7 +113,7 @@ test.describe('Invalid workflow transition — 409 guard', () => {
       { name: 'vexel_refresh', value: rt, domain: '127.0.0.1', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
     ]);
 
-    await page.goto(`http://127.0.0.1:9024/lims/encounters/${encounter.id}/verify`);
+    await page.goto(`/lims/encounters/${encounter.id}/verify`);
     await page.waitForLoadState('networkidle');
 
     // The Verify & Publish button should either be disabled or produce an error on click

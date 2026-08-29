@@ -89,6 +89,7 @@ services:
       STORAGE_BUCKET: vexel-documents
       CORS_ALLOWED_ORIGINS: "https://vexel.alshifalab.pk,http://localhost:3000,http://localhost:3001,http://localhost:9023,http://localhost:9024,http://127.0.0.1:9023,http://127.0.0.1:9024"
       VEXEL_ALLOW_RESTORE: ${VEXEL_ALLOW_RESTORE:-false}
+      PDF_TEST_FAILURE_INJECTION: ${PDF_TEST_FAILURE_INJECTION:-false}
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
       interval: 10s
@@ -123,6 +124,7 @@ services:
       BACKUP_PASSPHRASE: ${BACKUP_PASSPHRASE:-}
       VEXEL_ALLOW_RESTORE: ${VEXEL_ALLOW_RESTORE:-false}
       OPS_BACKUP_RETENTION_DAYS: ${OPS_BACKUP_RETENTION_DAYS:-30}
+      PDF_TEST_FAILURE_INJECTION: ${PDF_TEST_FAILURE_INJECTION:-false}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./runtime:/home/munaim/srv/apps/vexel/runtime
@@ -142,6 +144,8 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     init: true
+    environment:
+      PDF_TEST_FAILURE_INJECTION: ${PDF_TEST_FAILURE_INJECTION:-false}
     ports:
       - "127.0.0.1:9022:8080"
     healthcheck:

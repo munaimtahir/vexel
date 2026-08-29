@@ -2143,6 +2143,7 @@ components:
       properties:
         id: { type: string }
         tenantId: { type: string }
+        userId: { type: string, nullable: true }
         code: { type: string }
         displayName: { type: string }
         specialtyName: { type: string }
@@ -2170,6 +2171,7 @@ components:
         displayName: { type: string }
         specialtyName: { type: string }
         consultationFee: { type: number, minimum: 0 }
+        userId: { type: string, nullable: true, description: Authenticated clinician user assigned to this doctor }
         currency: { type: string, default: PKR }
         isActive: { type: boolean, default: true }
         sortOrder: { type: integer, default: 0 }
@@ -2190,6 +2192,7 @@ components:
         displayName: { type: string }
         specialtyName: { type: string }
         consultationFee: { type: number, minimum: 0 }
+        userId: { type: string, nullable: true, description: Authenticated clinician user assigned to this doctor }
         currency: { type: string }
         isActive: { type: boolean }
         sortOrder: { type: integer }

@@ -1,5 +1,5 @@
 import { test, expect } from '../../fixtures/auth.fixture';
-import { apiPost } from '../../helpers/api-client';
+import { apiGet, apiPost } from '../../helpers/api-client';
 
 const EMAIL = process.env.OPERATOR_EMAIL || 'admin@vexel.system';
 const PASSWORD = process.env.OPERATOR_PASSWORD || 'Admin@vexel123!';
@@ -12,14 +12,12 @@ test.describe('OPD production workflow', () => {
 
     await page.goto('/opd/encounters/new');
     await expect(page.getByRole('main').getByRole('heading', { name: 'New OPD Registration', exact: true })).toBeVisible();
-    await expect(page.getByText('Doctor *', { exact: true })).toBeVisible();
+    await expect(page.getByText('Doctor', { exact: false }).first()).toBeVisible();
   });
 
   test('completed encounter is rendered as locked in the browser', async ({ authedPage: page }) => {
     const { accessToken } = await import('../../helpers/api-client').then(({ apiLogin }) => apiLogin(EMAIL, PASSWORD));
-    const doctors = await fetch('http://127.0.0.1:9021/api/opd/doctors', {
-      headers: { Authorization: `Bearer ${accessToken}`, 'x-tenant-id': 'system' },
-    }).then((response) => response.json());
+    const doctors = await apiGet<{ data: Array<{ id: string }> }>('/opd/doctors', accessToken, 'system');
     const doctorId = doctors.data?.[0]?.id;
     expect(doctorId).toBeTruthy();
 

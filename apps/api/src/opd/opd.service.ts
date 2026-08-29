@@ -119,6 +119,7 @@ export class OpdService {
     return {
       id: d.id,
       tenantId: d.tenantId,
+      userId: d.userId ?? null,
       code: d.code,
       displayName: d.displayName,
       specialtyName: d.specialtyName,
@@ -1034,6 +1035,7 @@ export class OpdService {
           displayName: body.displayName.trim(),
           specialtyName: body.specialtyName.trim(),
           consultationFee: Number(body.consultationFee),
+          userId: body.userId != null ? String(body.userId) : null,
           currency: (body.currency ?? 'PKR').toUpperCase(),
           isActive: body.isActive !== undefined ? !!body.isActive : true,
           sortOrder: Number(body.sortOrder ?? 0),
@@ -1089,6 +1091,7 @@ export class OpdService {
           ...(body.clinicPhone !== undefined ? { clinicPhone: body.clinicPhone != null ? String(body.clinicPhone).trim() : null } : {}),
           ...(body.signatureLabel !== undefined ? { signatureLabel: body.signatureLabel != null ? String(body.signatureLabel).trim() : null } : {}),
           ...(body.signatureUrl !== undefined ? { signatureUrl: body.signatureUrl != null ? String(body.signatureUrl).trim() : null } : {}),
+          ...(body.userId !== undefined ? { userId: body.userId != null ? String(body.userId) : null } : {}),
         },
       });
       await this.audit.log({

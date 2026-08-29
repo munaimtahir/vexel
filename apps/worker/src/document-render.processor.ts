@@ -84,6 +84,9 @@ function postJson(
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(body),
         'X-Correlation-ID': correlationId,
+        ...(process.env.PDF_TEST_FAILURE_INJECTION === 'true'
+          ? { 'X-Test-Inject-Pdf-Failure': 'true' }
+          : {}),
       },
     };
 

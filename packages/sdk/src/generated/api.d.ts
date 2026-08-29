@@ -4457,6 +4457,7 @@ export interface components {
         OpdDoctor: {
             id: string;
             tenantId: string;
+            userId?: string | null;
             code: string;
             displayName: string;
             specialtyName: string;
@@ -4483,6 +4484,8 @@ export interface components {
             displayName: string;
             specialtyName: string;
             consultationFee: number;
+            /** @description Authenticated clinician user assigned to this doctor */
+            userId?: string | null;
             /** @default PKR */
             currency: string;
             /** @default true */
@@ -4504,6 +4507,8 @@ export interface components {
             displayName?: string;
             specialtyName?: string;
             consultationFee?: number;
+            /** @description Authenticated clinician user assigned to this doctor */
+            userId?: string | null;
             currency?: string;
             isActive?: boolean;
             sortOrder?: number;

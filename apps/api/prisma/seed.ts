@@ -58,23 +58,23 @@ const DEFAULT_FEATURE_FLAGS = [
   { key: 'module.lims', enabled: true, description: 'LIMS core module' },
   { key: 'module.printing', enabled: false, description: 'Printing module' },
   { key: 'module.rad', enabled: false, description: 'Radiology (RAD) scaffold' },
-  { key: 'module.opd', enabled: false, description: 'OPD scaffold' },
+  { key: 'module.opd', enabled: true, description: 'OPD module' },
   { key: 'opd.providers', enabled: false, description: 'OPD provider setup and directory' },
   { key: 'opd.doctor_master', enabled: false, description: 'OPD doctor master for KMVP registration' },
-  { key: 'module.opd.doctorProfiles', enabled: false, description: 'OPD doctor profile configuration + selection' },
-  { key: 'module.opd.receipt', enabled: false, description: 'Deterministic OPD consultation receipt generation' },
-  { key: 'module.opd.prescription', enabled: false, description: 'OPD prescription command + print workflow' },
+  { key: 'module.opd.doctorProfiles', enabled: true, description: 'OPD doctor profile configuration + selection' },
+  { key: 'module.opd.receipt', enabled: true, description: 'Deterministic OPD consultation receipt generation' },
+  { key: 'module.opd.prescription', enabled: true, description: 'OPD prescription command + print workflow' },
   { key: 'module.opd.printSummary', enabled: false, description: 'OPD print summary data rendering' },
-  { key: 'opd.intake', enabled: false, description: 'OPD intake (vitals + chief complaint)' },
-  { key: 'opd.prescription', enabled: false, description: 'OPD prescription publish workflow' },
+  { key: 'opd.intake', enabled: true, description: 'OPD intake (vitals + chief complaint)' },
+  { key: 'opd.prescription', enabled: true, description: 'OPD prescription publish workflow' },
   { key: 'opd.immediate_print_after_publish', enabled: true, description: 'Open prescription PDF after publish' },
-  { key: 'opd.scheduling', enabled: false, description: 'OPD provider schedule management' },
-  { key: 'opd.appointments', enabled: false, description: 'OPD appointment booking workflow' },
-  { key: 'opd.vitals', enabled: false, description: 'OPD vitals capture workflow' },
-  { key: 'opd.clinical_note', enabled: false, description: 'OPD structured clinical notes' },
+  { key: 'opd.scheduling', enabled: true, description: 'OPD provider schedule management' },
+  { key: 'opd.appointments', enabled: true, description: 'OPD appointment booking workflow' },
+  { key: 'opd.vitals', enabled: true, description: 'OPD vitals capture workflow' },
+  { key: 'opd.clinical_note', enabled: true, description: 'OPD structured clinical notes' },
   { key: 'opd.prescription_free_text', enabled: false, description: 'OPD free-text prescription workflow' },
-  { key: 'opd.billing', enabled: false, description: 'OPD billing and payments' },
-  { key: 'opd.invoice_receipt_pdf', enabled: false, description: 'OPD deterministic invoice/receipt PDFs' },
+  { key: 'opd.billing', enabled: true, description: 'OPD billing and payments' },
+  { key: 'opd.invoice_receipt_pdf', enabled: true, description: 'OPD deterministic invoice/receipt PDFs' },
   { key: 'module.ipd', enabled: false, description: 'IPD scaffold' },
   { key: 'lims.auto_verify', enabled: false, description: 'Auto-verify LIMS results' },
   { key: 'lims.print_results', enabled: false, description: 'Allow printing results from LIMS' },
@@ -120,7 +120,7 @@ export async function main() {
   for (const flag of DEFAULT_FEATURE_FLAGS) {
     await prisma.tenantFeature.upsert({
       where: { tenantId_key: { tenantId: 'system', key: flag.key } },
-      update: {},
+      update: { enabled: flag.enabled, description: flag.description },
       create: { tenantId: 'system', ...flag },
     });
   }
@@ -358,6 +358,25 @@ export async function main() {
     });
     console.log(`✅ Demo user: ${u.email}  password: ${u.password}`);
   }
+
+  // Canonical OPD clinician used by local smoke/browser journeys. The explicit
+  // user link is also the ownership boundary for signed clinical records.
+  await prisma.opdDoctor.upsert({
+    where: { tenantId_code: { tenantId: 'system', code: 'DOC-001' } },
+    update: { userId: superAdmin.id, isActive: true },
+    create: {
+      tenantId: 'system',
+      userId: superAdmin.id,
+      code: 'DOC-001',
+      displayName: 'Demo OPD Clinician',
+      specialtyName: 'General Medicine',
+      consultationFee: 1500,
+      currency: 'PKR',
+      isActive: true,
+      sortOrder: 1,
+    },
+  });
+  console.log('✅ Canonical OPD demo clinician seeded');
 
   // Seed minimal catalog tests for E2E testing
   const sampleType = await prisma.sampleType.upsert({

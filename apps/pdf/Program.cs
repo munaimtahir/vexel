@@ -27,6 +27,17 @@ app.MapGet("/health/pdf", () => Results.Ok(new { status = "ok", version = "1.0.0
 
 app.MapPost("/render", async (HttpContext context) =>
 {
+    // Controlled failure injection is opt-in for test environments only. This
+    // allows worker retry/FAILED-state tests without exposing a production
+    // failure switch.
+    if (Environment.GetEnvironmentVariable("PDF_TEST_FAILURE_INJECTION") == "true" &&
+        string.Equals(context.Request.Headers["X-Test-Inject-Pdf-Failure"], "true", StringComparison.OrdinalIgnoreCase))
+    {
+        context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+        await context.Response.WriteAsJsonAsync(new { error = "TEST_INJECTED_PDF_FAILURE" });
+        return Results.Empty;
+    }
+
     using var reader = new StreamReader(context.Request.Body);
     var body = await reader.ReadToEndAsync();
 

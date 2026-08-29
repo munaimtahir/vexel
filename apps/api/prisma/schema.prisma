@@ -122,6 +122,7 @@ model User {
   cashTransactions CashTransaction[]
   opsBackupRuns    OpsBackupRun[]
   createdTemplates PrintTemplate[]   @relation("TemplateCreatedBy")
+  opdDoctors      OpdDoctor[]
 
   @@unique([tenantId, email])
   @@index([tenantId, status])
@@ -695,6 +696,7 @@ model Payment {
 model OpdDoctor {
   id              String   @id @default(uuid())
   tenantId        String
+  userId          String?
   code            String
   displayName     String
   specialtyName   String
@@ -715,6 +717,7 @@ model OpdDoctor {
   updatedAt       DateTime @updatedAt
 
   tenant        Tenant           @relation(fields: [tenantId], references: [id])
+  user          User?             @relation(fields: [userId], references: [id])
   opdEncounters OpdEncounter[]
   schedules     OpdSchedule[]
   appointments  OpdAppointment[]
@@ -722,6 +725,7 @@ model OpdDoctor {
   @@unique([tenantId, code])
   @@index([tenantId, isActive, sortOrder])
   @@index([tenantId, displayName])
+  @@index([tenantId, userId])
   @@map("opd_doctors")
 }
 
