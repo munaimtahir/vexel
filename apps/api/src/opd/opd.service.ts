@@ -306,7 +306,6 @@ export class OpdService {
         tenantId,
         patientId: body.patientId,
         encounterId: body.encounterId ?? null,
-        opdVisitId: body.visitId ?? null,
         invoiceCode,
         status: 'DRAFT',
         currency: body.currency ?? 'PKR',

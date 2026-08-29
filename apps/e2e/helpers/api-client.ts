@@ -4,7 +4,10 @@
  * Allowed in test helpers (not in app code — see guardrails).
  */
 
-export const API_BASE = (process.env.API_BASE || 'http://127.0.0.1:9021') + '/api';
+// Use a tenant-mapped hostname by default. The production API intentionally
+// ignores the development-only x-tenant-id override, so an IP literal cannot
+// establish tenant context for login against the containerized stack.
+export const API_BASE = (process.env.API_BASE || 'http://admin.localhost:9021') + '/api';
 
 export interface LoginResult {
   accessToken: string;

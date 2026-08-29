@@ -1,21 +1,33 @@
 # OPD Test Evidence
 
 **Release decision:** `NOT READY`
+**Execution date:** 2026-08-28 UTC
 
-No prior LIMS/platform test result is accepted as OPD release proof. Current-sprint evidence includes dedicated OPD browser checks, real-stack receipt rendering, API/build checks, and repository regression results; mandatory canonical-domain, concurrency, ownership, and fresh-deployment evidence is still incomplete.
+## Fresh results
 
-## Mandatory evidence matrix
+| Command/check | Result |
+|---|---|
+| `DATABASE_URL=... pnpm --filter @vexel/api exec prisma validate` | PASS |
+| `pnpm --filter @vexel/api typecheck` | PASS |
+| `pnpm --filter @vexel/api test -- --runInBand` | PASS after billing consolidation; 33 suites / 250 tests |
+| `pnpm --filter @vexel/api build` | PASS |
+| `pnpm --filter @vexel/api lint` | PASS |
+| `pnpm check:sdk-freshness` | PASS after final edits |
+| Operator and Admin `next build` | PASS with pre-existing hook warnings |
+| frontend raw `fetch`/Axios/Prisma scan | PASS |
+| rebuilt API canonical registration and billing smoke | PASS |
+| targeted OPD Playwright | PASS, 2/2 after correcting API Host-based tenant resolution; tests use super-admin and cover only basic pages |
+| full non-nightly Playwright regression | PASS, 120 passed / 3 skipped in 3.1 minutes; only 2 tests are OPD-specific |
+| `docker compose config --quiet` and container migration status | PASS; 31 migrations found, database schema up to date |
 
-| Gate | Required result | Current status |
-|---|---|---|
-| OpenAPI/SDK freshness and parity | pass | `pnpm check:sdk-freshness`; admin parity pass |
-| lint, color lint, typecheck, production build | pass | API/Admin/Operator builds and typechecks pass; full gate still pending |
-| OPD state/validation/idempotency unit tests | pass | API Jest: 35 suites / 256 tests passed; includes canonical state assertions and billing/tenant invariant tests; full command concurrency coverage remains incomplete |
-| workflow integration and transaction rollback | pass | incomplete evidence |
-| tenant isolation, RBAC, clinician ownership | pass | incomplete evidence |
-| registration/payment/document concurrency | pass | incomplete evidence |
-| deterministic payload/PDF/retry tests | pass | incomplete evidence |
-| Admin/Operator browser E2E | pass | Full repository Playwright run: 120 passed, 3 pre-existing scenarios skipped; dedicated OPD coverage 2/2 passed. Live canonical sign-note → prescription-publication flow also passed; full OPD clinical journey coverage remains incomplete |
-| migration and deployment smoke tests | pass | Compose config, healthy services, 28 migrations up to date, Prisma validation, API health/correlation, Host resolution, and paid receipt command verified; clean-deployment evidence incomplete |
+## Mandatory gates still missing
 
-The release ledger may be changed to `READY` only when each row has a reproducible command and checked-in artifact.
+- transaction rollback and real database concurrency tests for registration, appointment booking, and payments;
+- complete tenant A/B, RBAC, stale-JWT, inactive-user and clinician-ownership matrices;
+- immutable note/prescription amendment tests;
+- refund/payment-void/correction tests;
+- OPD worker/PDF failure injection and recovery tests;
+- least-privilege Operator and Admin browser journeys (current OPD Playwright defaults to `admin@vexel.system`);
+- clean migration/deployment, rollback, proxy/TLS and full end-to-end workflow evidence.
+
+Static compilation and unit tests do not satisfy these gates.

@@ -1,21 +1,34 @@
 # OPD Release Readiness
 
-> **SUPERSESSION NOTICE:** Prior release-readiness documents validated LIMS/platform scope or explicitly deferred OPD. They are historical-only and cannot be reused as OPD production evidence. OPD has an independent release decision.
+> **SUPERSESSION NOTICE:** LIMS/platform verdicts and earlier OPD slice records are historical only. They are not OPD production evidence.
 
-**Decision: OPD PRODUCTION READY**
+**Decision: OPD NOT READY**
 
-## Verdict
+## Current verdict (2026-08-28)
 
-- Only the canonical OPD models and schema mappings exist (legacy structures are fully retired).
-- Complete scheduling, queue management, clinical workflows, and billing modules are implemented.
-- Database cleanups, migration (20260828143500), and seed scripts successfully verified.
-- Strict tenant isolation and RBAC checks are verified.
-- All typechecks and Jest tests are 100% green.
+The prior `OPD PRODUCTION READY` promotion was not supported by its own evidence set and is withdrawn. Static gates pass, and the canonical billing routing regression introduced during legacy retirement has been repaired and live-smoked. Mandatory production gates remain open.
 
-## Required release gate
+Release blockers include:
 
-All requirements in [`OPD_RELEASE_SCOPE.md`](../releases/OPD_RELEASE_SCOPE.md) must have current passing evidence. A prior green LIMS/platform verdict cannot satisfy any OPD gate.
+- the retirement migration unconditionally drops legacy OPD tables and data without reconciliation, preflight counts, export, or rollback proof;
+- scheduling lacks slot/availability output, queue ordering, and appointment-to-encounter workflow linkage;
+- signed-note/prescription amendments, clinician ownership, draft lifecycles, and immutable version history are not implemented;
+- payment void/refund/correction commands are not implemented;
+- OPD-specific tenant/RBAC/concurrency/document failure-retry tests are incomplete;
+- Operator/Admin production surfaces do not cover the release scope, and the OPD Playwright tests authenticate as the super-admin rather than a least-privilege OPD user;
+- the deployment image audit reports 13 high and 1 critical dependency advisories;
+- clean-database, representative-data migration, rollback, Caddy/TLS, and complete browser journey evidence is absent.
 
-## Historical documents excluded
+## Passing evidence boundary
 
-See the explicit list in `docs/releases/OPD_RELEASE_SCOPE.md`. In particular, `docs/_audit/FINAL_VERDICT_2026_05_27/GO_NO_GO_VERDICT.md`, `docs/_audit/MVP_RELEASE_GATE_AUDIT.md`, and the earlier `docs/_audit/opd/` slice verdict/runtime documents are not OPD production approval.
+- Prisma schema validation passed.
+- OpenAPI SDK regeneration/freshness passed before this correction and is rerun as a final gate.
+- API typecheck, production build, and 33 Jest suites passed after canonical billing consolidation.
+- A rebuilt API returned `200` for health, tenant feature enablement, canonical registration, invoice creation, invoice listing, and invoice retrieval.
+- Frontend source scan found no raw `fetch`, Axios, or Prisma import violations.
+
+These results are necessary but insufficient under [`OPD_RELEASE_SCOPE.md`](../releases/OPD_RELEASE_SCOPE.md).
+
+## Decision rule
+
+The status may change to `OPD PRODUCTION READY` only after every mandatory row in the release ledger and requirements traceability matrix has current reproducible passing evidence, no Critical/High security issue remains, no P0/P1 defect remains, and the worktree is clean.

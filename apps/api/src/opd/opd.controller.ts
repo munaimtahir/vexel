@@ -42,13 +42,13 @@ export class OpdController {
   // ─── OPD KMVP Doctors ──────────────────────────────────────────────────────
 
   @Get('doctors')
-  @RequirePermissions(Permission.MODULE_ADMIN)
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
   listDoctors(@Req() req: Request, @Query() q: any) {
     return this.svc.listDoctors(this.resolveTenantId(req), q);
   }
 
   @Get('doctors/:doctorId')
-  @RequirePermissions(Permission.MODULE_ADMIN)
+  @RequirePermissions(Permission.OPD_ENCOUNTER_READ)
   getDoctor(@Req() req: Request, @Param('doctorId') doctorId: string) {
     return this.svc.getDoctor(this.resolveTenantId(req), doctorId);
   }
@@ -190,7 +190,7 @@ export class OpdController {
 
   @Post('commands/signNote')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.OPD_CLINICAL_NOTE_WRITE)
+  @RequirePermissions(Permission.OPD_CLINICAL_NOTE_SIGN)
   signNote(
     @Req() req: Request,
     @Body() body: any,
@@ -249,13 +249,13 @@ export class OpdController {
   }
 
   @Get('encounters/:encounterId/prescription')
-  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  @RequirePermissions(Permission.OPD_DOCUMENT_READ)
   getEncounterPrescription(@Req() req: Request, @Param('encounterId') encounterId: string) {
     return this.svc.getEncounterPrescriptionDocument(this.resolveTenantId(req), encounterId);
   }
 
   @Get('encounters/:encounterId/prescription/file')
-  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  @RequirePermissions(Permission.OPD_DOCUMENT_READ)
   async downloadEncounterPrescription(
     @Req() req: Request,
     @Param('encounterId') encounterId: string,
@@ -269,13 +269,13 @@ export class OpdController {
   }
 
   @Get('encounters/:encounterId/receipt')
-  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  @RequirePermissions(Permission.OPD_DOCUMENT_READ)
   getEncounterReceipt(@Req() req: Request, @Param('encounterId') encounterId: string) {
     return this.svc.getEncounterReceiptDocument(this.resolveTenantId(req), encounterId);
   }
 
   @Get('encounters/:encounterId/receipt/file')
-  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  @RequirePermissions(Permission.OPD_DOCUMENT_READ)
   async downloadEncounterReceipt(
     @Req() req: Request,
     @Param('encounterId') encounterId: string,

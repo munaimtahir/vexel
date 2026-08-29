@@ -9,7 +9,7 @@ describe('OpdService billing invariants', () => {
   const baseInvoice = {
     id: 'inv-1', tenantId: 'tenant-a', patientId: 'patient-a', encounterId: 'enc-1',
     status: 'ISSUED', currency: 'PKR', subtotalAmount: 1000, discountAmount: 0,
-    totalAmount: 1000, amountPaid: 0, amountDue: 1000, lines: [], opdVisit: null,
+    totalAmount: 1000, amountPaid: 0, amountDue: 1000, lines: [],
     createdAt: new Date(), updatedAt: new Date(),
   };
 
@@ -29,6 +29,26 @@ describe('OpdService billing invariants', () => {
     const prisma = { tenantFeature: { findUnique: jest.fn().mockResolvedValue({ enabled: true }) } };
     await expect(serviceWith(prisma).createInvoice('tenant-a', { patientId: 'patient-a', lines: [] }, 'actor'))
       .rejects.toThrow('At least one invoice line is required');
+  });
+
+  it('creates invoices against the canonical encounter link without the retired opdVisitId column', async () => {
+    const create = jest.fn().mockResolvedValue({ ...baseInvoice, status: 'DRAFT' });
+    const prisma = {
+      tenantFeature: { findUnique: jest.fn().mockResolvedValue({ enabled: true }) },
+      patient: { findFirst: jest.fn().mockResolvedValue({ id: 'patient-a', tenantId: 'tenant-a' }) },
+      encounter: { findFirst: jest.fn().mockResolvedValue({ id: 'enc-1', tenantId: 'tenant-a', patientId: 'patient-a', moduleType: 'OPD' }) },
+      tenantSequence: { upsert: jest.fn().mockResolvedValue({ nextValue: 2 }) },
+      invoice: { create },
+    };
+
+    await serviceWith(prisma).createInvoice('tenant-a', {
+      patientId: 'patient-a', encounterId: 'enc-1', visitId: 'retired-visit-id',
+      lines: [{ description: 'Consultation', quantity: 1, unitPrice: 1000 }],
+    }, 'actor');
+
+    const data = create.mock.calls[0][0].data;
+    expect(data.encounterId).toBe('enc-1');
+    expect(data).not.toHaveProperty('opdVisitId');
   });
 
   it('rejects overpayment while holding the invoice row lock', async () => {
@@ -55,7 +75,7 @@ describe('OpdService billing invariants', () => {
     const tx = {
       invoice: {
         findFirst: jest.fn().mockResolvedValue(baseInvoice),
-        update: jest.fn().mockResolvedValue({ ...paidInvoice, lines: [], opdVisit: null }),
+        update: jest.fn().mockResolvedValue({ ...paidInvoice, lines: [] }),
       },
       $queryRaw: jest.fn().mockResolvedValue([]),
       $executeRaw: jest.fn().mockResolvedValue(0),

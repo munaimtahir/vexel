@@ -19,28 +19,28 @@ import { getTenantId } from '../common/tenant-context';
 import { Permission } from '../rbac/permissions';
 import { PermissionsGuard } from '../rbac/permissions.guard';
 import { RequirePermissions } from '../rbac/require-permissions.decorator';
-import { BillingService } from './billing.service';
+import { OpdService } from '../opd/opd.service';
 
 @ApiTags('OPD Billing')
 @Controller('opd/billing')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class BillingController {
-  constructor(private readonly svc: BillingService) {}
+  constructor(private readonly svc: OpdService) {}
 
   private resolveTenantId(req: Request): string {
     return getTenantId(req) ?? (req as any).user.tenantId;
   }
 
   @Get('invoices')
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_BILLING_READ)
   listInvoices(@Req() req: Request, @Query() q: any) {
     return this.svc.listInvoices(this.resolveTenantId(req), q);
   }
 
   @Post('invoices')
   @HttpCode(HttpStatus.CREATED)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_BILLING_MANAGE)
   createInvoice(
     @Req() req: Request,
     @Body() body: any,
@@ -51,20 +51,20 @@ export class BillingController {
   }
 
   @Get('invoices/:invoiceId')
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_BILLING_READ)
   getInvoice(@Req() req: Request, @Param('invoiceId') invoiceId: string) {
     return this.svc.getInvoice(this.resolveTenantId(req), invoiceId);
   }
 
   @Get('invoices/:invoiceId/payments')
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_BILLING_READ)
   listInvoicePayments(@Req() req: Request, @Param('invoiceId') invoiceId: string) {
     return this.svc.listInvoicePayments(this.resolveTenantId(req), invoiceId);
   }
 
   @Post('invoices/:invoiceId\\:issue')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_BILLING_MANAGE)
   issueInvoice(
     @Req() req: Request,
     @Param('invoiceId') invoiceId: string,
@@ -72,12 +72,12 @@ export class BillingController {
     @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
     const user = (req as any).user;
-    return this.svc.issueInvoice(this.resolveTenantId(req), invoiceId, body, user.userId, correlationId);
+    return this.svc.issueInvoice(this.resolveTenantId(req), invoiceId, user.userId, correlationId);
   }
 
   @Post('invoices/:invoiceId\\:void')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_BILLING_MANAGE)
   voidInvoice(
     @Req() req: Request,
     @Param('invoiceId') invoiceId: string,
@@ -90,7 +90,7 @@ export class BillingController {
 
   @Post('invoices/:invoiceId\\:record-payment')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.ENCOUNTER_MANAGE)
+  @RequirePermissions(Permission.OPD_BILLING_MANAGE)
   recordInvoicePayment(
     @Req() req: Request,
     @Param('invoiceId') invoiceId: string,
@@ -98,19 +98,19 @@ export class BillingController {
     @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
     const user = (req as any).user;
-    return this.svc.recordInvoicePayment(this.resolveTenantId(req), invoiceId, body, user.userId, correlationId);
+    return this.svc.recordPayment(this.resolveTenantId(req), invoiceId, body, user.userId, correlationId);
   }
 
   @Post('invoices/:invoiceId\\:generate-receipt')
   @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  @RequirePermissions(Permission.OPD_DOCUMENT_GENERATE)
   generateInvoiceReceipt(
     @Req() req: Request,
     @Param('invoiceId') invoiceId: string,
     @Headers(CORRELATION_ID_HEADER) correlationId?: string,
   ) {
     const user = (req as any).user;
-    return this.svc.generateInvoiceReceipt(
+    return this.svc.generateReceipt(
       this.resolveTenantId(req),
       invoiceId,
       user.userId,
