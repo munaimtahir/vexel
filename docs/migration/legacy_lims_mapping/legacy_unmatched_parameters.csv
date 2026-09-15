@@ -1,0 +1,578 @@
+test_id,test_name,extracted_parameter_id,extracted_parameter_name,possible_parameter_match,reason,confidence
+15,BLOOD C/E,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+15,BLOOD C/E,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+15,BLOOD C/E,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+15,BLOOD C/E,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+15,BLOOD C/E,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+15,BLOOD C/E,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+15,BLOOD C/E,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+15,BLOOD C/E,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+15,BLOOD C/E,,Red Cell Dist. Width (RDW-SD),88; 2884,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+15,BLOOD C/E,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+15,BLOOD C/E,,Mean Platelet Volume (MPV),90; 2885,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+15,BLOOD C/E,,Platelet Distribution Width (PDW),91; 2886,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+15,BLOOD C/E,,Plateletcrit (PCT),92; 1490,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+15,BLOOD C/E,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+15,BLOOD C/E,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+15,BLOOD C/E,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+15,BLOOD C/E,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+15,BLOOD C/E,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+15,BLOOD C/E,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+15,BLOOD C/E,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+15,BLOOD C/E,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+15,BLOOD C/E,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+20,CALCIUM/CREATININE RATIO,,Creatinine (Spot Urine),127; 1406; 1729; 1837; 1958; 2180; 2230; 2261,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+32,DLC,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+32,DLC,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+32,DLC,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+32,DLC,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+32,DLC,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+32,DLC,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+32,DLC,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+40,GCT (GLUCOSE CHALLANGE TEST),,Blood Sugar 1-HRS,153; 1186,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+40,GCT (GLUCOSE CHALLANGE TEST),,Blood Sugar Fasting,154; 1187,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+42,HB. ELECTROPHORESIS,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+42,HB. ELECTROPHORESIS,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+42,HB. ELECTROPHORESIS,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+42,HB. ELECTROPHORESIS,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+42,HB. ELECTROPHORESIS,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+42,HB. ELECTROPHORESIS,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+42,HB. ELECTROPHORESIS,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+42,HB. ELECTROPHORESIS,,Malarial Parasite (MP),165; 1016; 1085; 1239; 2282,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+42,HB. ELECTROPHORESIS,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+42,HB. ELECTROPHORESIS,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+42,HB. ELECTROPHORESIS,,Eosinophils,20; 56; 180; 1752; 1844; 1976,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+42,HB. ELECTROPHORESIS,,Blast cells,130; 181,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+42,HB. ELECTROPHORESIS,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+42,HB. ELECTROPHORESIS,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+42,HB. ELECTROPHORESIS,,HB-A,184; 1263; 1338; 2582,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+42,HB. ELECTROPHORESIS,,HB-A2,187; 1339; 1823; 2583,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+54,PERIPHERAL BLOOD SMEARS,,Malarial Parasite (MP),165; 1016; 1085; 1239; 2282,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+54,PERIPHERAL BLOOD SMEARS,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+54,PERIPHERAL BLOOD SMEARS,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+54,PERIPHERAL BLOOD SMEARS,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+54,PERIPHERAL BLOOD SMEARS,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+54,PERIPHERAL BLOOD SMEARS,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+60,PROTHROMBIN TIME (PT with INR),,PT,204; 1475; 1506; 1849; 2019; 2057; 2280; 2564,8 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+60,PROTHROMBIN TIME (PT with INR),,INR,15; 16; 17; 205; 878; 1476; 1507; 1637; 1711; 1802; 1867; 1873; 2021; 2193; 2281; 2565; 2936; 2938; 2979; 2980; 2982,21 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+349,BLOOD GROUP & Rh FACTOR,,Blood Group,587; 1240; 2568,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+349,BLOOD GROUP & Rh FACTOR,,RH Factor,588; 1241; 2569,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+5489,BLOOD C/E WITH ESR,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+5489,BLOOD C/E WITH ESR,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+5489,BLOOD C/E WITH ESR,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+5489,BLOOD C/E WITH ESR,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+5489,BLOOD C/E WITH ESR,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+5489,BLOOD C/E WITH ESR,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+5489,BLOOD C/E WITH ESR,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+5489,BLOOD C/E WITH ESR,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5489,BLOOD C/E WITH ESR,,Red Cell Dist. Width (RDW-SD),88; 2884,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5489,BLOOD C/E WITH ESR,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5489,BLOOD C/E WITH ESR,,Mean Platelet Volume (MPV),90; 2885,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5489,BLOOD C/E WITH ESR,,Platelet Distribution Width (PDW),91; 2886,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5489,BLOOD C/E WITH ESR,,Plateletcrit (PCT),92; 1490,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5489,BLOOD C/E WITH ESR,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+5489,BLOOD C/E WITH ESR,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+5489,BLOOD C/E WITH ESR,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+5489,BLOOD C/E WITH ESR,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+5489,BLOOD C/E WITH ESR,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5489,BLOOD C/E WITH ESR,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+5489,BLOOD C/E WITH ESR,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+5489,BLOOD C/E WITH ESR,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+5489,BLOOD C/E WITH ESR,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5599,DLC,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5599,DLC,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+5599,DLC,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5599,DLC,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+5599,DLC,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5599,DLC,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+5599,DLC,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+5700,BLOOD C/E,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+5700,BLOOD C/E,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+5700,BLOOD C/E,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+5700,BLOOD C/E,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+5700,BLOOD C/E,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+5700,BLOOD C/E,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+5700,BLOOD C/E,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+5700,BLOOD C/E,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5700,BLOOD C/E,,Red Cell Dist. Width (RDW-SD),88; 2884,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5700,BLOOD C/E,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5700,BLOOD C/E,,Mean Platelet Volume (MPV),90; 2885,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5700,BLOOD C/E,,Platelet Distribution Width (PDW),91; 2886,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5700,BLOOD C/E,,Plateletcrit (PCT),92; 1490,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5700,BLOOD C/E,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+5700,BLOOD C/E,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+5700,BLOOD C/E,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+5700,BLOOD C/E,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+5700,BLOOD C/E,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5700,BLOOD C/E,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+5700,BLOOD C/E,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+5700,BLOOD C/E,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+5700,BLOOD C/E,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+5701,PROTHROMBIN TIME (PT with INR),,PT,204; 1475; 1506; 1849; 2019; 2057; 2280; 2564,8 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5701,PROTHROMBIN TIME (PT with INR),,INR,15; 16; 17; 205; 878; 1476; 1507; 1637; 1711; 1802; 1867; 1873; 2021; 2193; 2281; 2565; 2936; 2938; 2979; 2980; 2982,21 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+10552,Cross Match & Screening,,Donor Heamoglobin (HB),140; 1140,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10552,Cross Match & Screening,,HBsAg (Screening),114; 222; 765; 885; 932; 1258; 2100; 2274,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+10552,Cross Match & Screening,,Anti HCV (Screening),115; 2114,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10552,Cross Match & Screening,,RPR (VDRL),117; 2292,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10701,CBC with Peripheral Film,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+10701,CBC with Peripheral Film,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+10701,CBC with Peripheral Film,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+10701,CBC with Peripheral Film,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+10701,CBC with Peripheral Film,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+10701,CBC with Peripheral Film,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+10701,CBC with Peripheral Film,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+10701,CBC with Peripheral Film,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10701,CBC with Peripheral Film,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+10701,CBC with Peripheral Film,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+10701,CBC with Peripheral Film,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+10701,CBC with Peripheral Film,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+10701,CBC with Peripheral Film,,Eosinophils,20; 56; 180; 1752; 1844; 1976,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+10701,CBC with Peripheral Film,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10701,CBC with Peripheral Film,,"Lymphocyte, Absolute",99; 1446; 1664,3 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10701,CBC with Peripheral Film,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10701,CBC with Peripheral Film,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10701,CBC with Peripheral Film,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+10701,CBC with Peripheral Film,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+11972,CALCIUM/CREATININE RATIO,,Creatinine (Spot Urine),127; 1406; 1729; 1837; 1958; 2180; 2230; 2261,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+11977,CREATININE (24 hrs urine),,Creatinine (24 hrs urine),138; 918; 2380,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+11977,CREATININE (24 hrs urine),,Total Volume,139; 1395; 1949; 2072,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+11981,GCT (GLUCOSE CHALLANGE TEST),,Blood Sugar Fasting,154; 1187,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+11981,GCT (GLUCOSE CHALLANGE TEST),,Blood Sugar 1-HRS,153; 1186,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+11983,HB. ELECTROPHORESIS,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+11983,HB. ELECTROPHORESIS,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+11983,HB. ELECTROPHORESIS,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+11983,HB. ELECTROPHORESIS,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+11983,HB. ELECTROPHORESIS,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+11983,HB. ELECTROPHORESIS,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+11983,HB. ELECTROPHORESIS,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+11983,HB. ELECTROPHORESIS,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+11983,HB. ELECTROPHORESIS,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+11983,HB. ELECTROPHORESIS,,Eosinophils,20; 56; 180; 1752; 1844; 1976,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+11983,HB. ELECTROPHORESIS,,Blast cells,130; 181,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+11983,HB. ELECTROPHORESIS,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+11983,HB. ELECTROPHORESIS,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+11983,HB. ELECTROPHORESIS,,HB-A,184; 1263; 1338; 2582,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+11983,HB. ELECTROPHORESIS,,HB-A2,187; 1339; 1823; 2583,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+11986,Peripheral blood Film,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+11986,Peripheral blood Film,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+11986,Peripheral blood Film,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+11986,Peripheral blood Film,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+11986,Peripheral blood Film,,Band Cells,102; 2029,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+11990,Reticulocyte Count,,Reticulocyte Count,207; 879; 962; 1237; 1340; 2091; 2349,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+11990,Reticulocyte Count,,Absolute Reticulocyte Count,46; 2244,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12280,Complete Blood Count- CBC,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12280,Complete Blood Count- CBC,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12280,Complete Blood Count- CBC,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12280,Complete Blood Count- CBC,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12280,Complete Blood Count- CBC,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12280,Complete Blood Count- CBC,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12280,Complete Blood Count- CBC,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12280,Complete Blood Count- CBC,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12280,Complete Blood Count- CBC,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12280,Complete Blood Count- CBC,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12280,Complete Blood Count- CBC,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+12280,Complete Blood Count- CBC,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12280,Complete Blood Count- CBC,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12280,Complete Blood Count- CBC,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12280,Complete Blood Count- CBC,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12280,Complete Blood Count- CBC,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12280,Complete Blood Count- CBC,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12282,PROTHROMBIN TIME (PT with INR),,PT,204; 1475; 1506; 1849; 2019; 2057; 2280; 2564,8 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12282,PROTHROMBIN TIME (PT with INR),,PT Control,2020; 2981,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12282,PROTHROMBIN TIME (PT with INR),,INR,15; 16; 17; 205; 878; 1476; 1507; 1637; 1711; 1802; 1867; 1873; 2021; 2193; 2281; 2565; 2936; 2938; 2979; 2980; 2982,21 master parameters share this normalized name (unit disambiguation narrowed to 15),medium
+12283,APTT,,APTT,35; 69; 880; 1029; 1426; 1498; 1705; 1895; 2167; 2272; 2572,11 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12283,APTT,,Control,1028; 1042,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12292,Blood Group,,Blood Group,587; 1240; 2568,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12292,Blood Group,,RH Factor,588; 1241; 2569,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12299,CROSS MATCH with Screening,,Donor Heamoglobin (HB),140; 1140,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12299,CROSS MATCH with Screening,,HBsAg (Screening),114; 222; 765; 885; 932; 1258; 2100; 2274,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12299,CROSS MATCH with Screening,,Anti HCV (Screening),115; 2114,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12299,CROSS MATCH with Screening,,RPR (VDRL),117; 2292,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12303,Malarial Parasite (MP) ICT,,Malarial Parasite PF,30; 2187,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12303,Malarial Parasite (MP) ICT,,Malarial Parasite PV,31; 2227,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12306,CBC For Dengue,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12306,CBC For Dengue,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12306,CBC For Dengue,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12306,CBC For Dengue,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12306,CBC For Dengue,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12309,Prothrombin Time (PT with INR),,PT,204; 1475; 1506; 1849; 2019; 2057; 2280; 2564,8 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12309,Prothrombin Time (PT with INR),,PT Control,2020; 2981,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12309,Prothrombin Time (PT with INR),,INR,15; 16; 17; 205; 878; 1476; 1507; 1637; 1711; 1802; 1867; 1873; 2021; 2193; 2281; 2565; 2936; 2938; 2979; 2980; 2982,21 master parameters share this normalized name (unit disambiguation narrowed to 15),medium
+12322,"PT, APTT, INR",,PT,204; 1475; 1506; 1849; 2019; 2057; 2280; 2564,8 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12322,"PT, APTT, INR",,PT Control,2020; 2981,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12322,"PT, APTT, INR",,INR,15; 16; 17; 205; 878; 1476; 1507; 1637; 1711; 1802; 1867; 1873; 2021; 2193; 2281; 2565; 2936; 2938; 2979; 2980; 2982,21 master parameters share this normalized name (unit disambiguation narrowed to 15),medium
+12322,"PT, APTT, INR",,APTT,35; 69; 880; 1029; 1426; 1498; 1705; 1895; 2167; 2272; 2572,11 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12322,"PT, APTT, INR",,APTT Control,36; 1896; 2273,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12343,Complete Blood Count- CBC with ESR,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12343,Complete Blood Count- CBC with ESR,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12343,Complete Blood Count- CBC with ESR,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12343,Complete Blood Count- CBC with ESR,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12343,Complete Blood Count- CBC with ESR,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12343,Complete Blood Count- CBC with ESR,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12343,Complete Blood Count- CBC with ESR,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12343,Complete Blood Count- CBC with ESR,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12343,Complete Blood Count- CBC with ESR,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12343,Complete Blood Count- CBC with ESR,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12343,Complete Blood Count- CBC with ESR,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12343,Complete Blood Count- CBC with ESR,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+12343,Complete Blood Count- CBC with ESR,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12343,Complete Blood Count- CBC with ESR,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12343,Complete Blood Count- CBC with ESR,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12343,Complete Blood Count- CBC with ESR,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12343,Complete Blood Count- CBC with ESR,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12343,Complete Blood Count- CBC with ESR,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12344,Complete Blood Count- CBC with Blood Group,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12344,Complete Blood Count- CBC with Blood Group,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12344,Complete Blood Count- CBC with Blood Group,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12344,Complete Blood Count- CBC with Blood Group,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12344,Complete Blood Count- CBC with Blood Group,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12344,Complete Blood Count- CBC with Blood Group,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12344,Complete Blood Count- CBC with Blood Group,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12344,Complete Blood Count- CBC with Blood Group,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12344,Complete Blood Count- CBC with Blood Group,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12344,Complete Blood Count- CBC with Blood Group,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12344,Complete Blood Count- CBC with Blood Group,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12344,Complete Blood Count- CBC with Blood Group,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+12344,Complete Blood Count- CBC with Blood Group,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12344,Complete Blood Count- CBC with Blood Group,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12344,Complete Blood Count- CBC with Blood Group,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12344,Complete Blood Count- CBC with Blood Group,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12344,Complete Blood Count- CBC with Blood Group,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12344,Complete Blood Count- CBC with Blood Group,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12346,Complete Blood Count- CBC,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12346,Complete Blood Count- CBC,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12346,Complete Blood Count- CBC,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12346,Complete Blood Count- CBC,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12346,Complete Blood Count- CBC,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12346,Complete Blood Count- CBC,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12346,Complete Blood Count- CBC,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12346,Complete Blood Count- CBC,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12346,Complete Blood Count- CBC,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12346,Complete Blood Count- CBC,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12346,Complete Blood Count- CBC,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+12346,Complete Blood Count- CBC,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12346,Complete Blood Count- CBC,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12346,Complete Blood Count- CBC,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12346,Complete Blood Count- CBC,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12346,Complete Blood Count- CBC,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12346,Complete Blood Count- CBC,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Neutrophils,54; 96; 179; 1759; 1974; 2344; 2796; 2887; 2945; 2957; 2975,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,Eosinophil,97; 1762; 2347; 2960,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,"Monocyte, Absolute",18; 100; 1447; 1665; 2170; 2198; 2942,7 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12347,Complete Blood Count- CBC with Peripheral smear,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12348,Hemoglobin (Hb) with RBC indices,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12348,Hemoglobin (Hb) with RBC indices,,Hematocrit (HCT),22; 83; 1484; 1755; 1765; 1969; 2023; 2866; 2949; 2953,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12348,Hemoglobin (Hb) with RBC indices,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12348,Hemoglobin (Hb) with RBC indices,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12348,Hemoglobin (Hb) with RBC indices,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12348,Hemoglobin (Hb) with RBC indices,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12348,Hemoglobin (Hb) with RBC indices,,Red Cell Dist. Width (RDW-CV),87; 2883,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+92,STOOL REDUCING SUBSTANCE,,PH,234; 460; 663; 1011; 1022; 1035; 1062; 1101; 1483; 1638; 1985; 2088; 2149; 2267; 2637; 2738; 2749; 2818; 2930,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12004,Salmonella Typhi Antigen (Serum),,Salmonella Typhi Antigen (Serum),32; 2190,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12004,Salmonella Typhi Antigen (Serum),,Salmonella Para Typhi Antigen (Serum),33; 2189,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12288,Typhidot,,Typhidot IgM,766; 2053; 2067; 2299,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12288,Typhidot,,Typhidot IgG,767; 2052; 2066; 2298,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12288,Typhidot,,Remarks,182; 982; 993; 1137; 1139; 2277; 2822,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12290,V.D.R.L ICT SCREENING,,V.D.R.L ( Syphilis ) ICT,38; 559; 1438; 2686,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12294,TB (Screening) IgM & IgG,,TB (Screening) IgM,1440; 2069,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12294,TB (Screening) IgM & IgG,,TB (Screening) IgG,1441; 2070,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12323,"HCV, HBsAg ICT",,HBsAg Screening,114; 222; 765; 885; 932; 1258; 2100; 2274,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12323,"HCV, HBsAg ICT",,HCV Screening,225; 889; 934; 971; 1270,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12382,RA Factor,,RA Factor,1652; 2054; 2226; 2819,4 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12025,Creatinine Clearance (24 Hrs Urine & Serum),,Serum Creatinine,260; 472; 849; 857; 923; 1208; 2257,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12025,Creatinine Clearance (24 Hrs Urine & Serum),,Total Volume,139; 1395; 1949; 2072,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12025,Creatinine Clearance (24 Hrs Urine & Serum),,Creatinine Clearance,262; 1615; 2256; 2687,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12028,IgE Level,,IgE,302; 957; 1229; 1511; 1908; 2560; 2813,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12035,Stool Complete Examination,,Color,316; 338; 1051; 1149; 1686; 1996; 2496; 2786; 2931; 2963,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12035,Stool Complete Examination,,Consistency,317; 1099; 1287; 1687; 1998; 2621; 2748; 2929,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12035,Stool Complete Examination,,Mucus,320; 822; 1290; 1910; 2624,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12035,Stool Complete Examination,,Blood,321; 350; 1160; 2181; 2506,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12035,Stool Complete Examination,,Parasite,322; 823; 1291; 2625,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12035,Stool Complete Examination,,Occult Blood,213; 824; 1292; 2626,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12035,Stool Complete Examination,,Pus Cells/WBC,324; 825; 1293; 2627,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12035,Stool Complete Examination,,RBC,325; 826; 1294; 2628; 2704,5 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12035,Stool Complete Examination,,Ova,327; 1296; 1690; 2630,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12284,Urine Complete Examination,,Color,316; 338; 1051; 1149; 1686; 1996; 2496; 2786; 2931; 2963,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12284,Urine Complete Examination,,Appearance,662; 1074; 1100; 1308; 1984; 2130,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12284,Urine Complete Examination,,Specific Gravity,341; 1152; 1639; 2078; 2499,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12284,Urine Complete Examination,,PH,234; 460; 663; 1011; 1022; 1035; 1062; 1101; 1483; 1638; 1985; 2088; 2149; 2267; 2637; 2738; 2749; 2818; 2930,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12284,Urine Complete Examination,,Protein,345; 1155; 1449; 2079; 2502; 2703,6 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12284,Urine Complete Examination,,Glucose,343; 1153; 1450; 2500; 2702; 2791; 2969,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12284,Urine Complete Examination,,Ketones,344; 360; 1154; 1428; 2501; 2576,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12284,Urine Complete Examination,,Bilirubin,346; 687; 819; 1156; 2503,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12284,Urine Complete Examination,,Nitrate,347; 1157; 1986; 2080; 2504; 2743,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12284,Urine Complete Examination,,Leucocytes,1591; 2200; 2507,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12284,Urine Complete Examination,,Blood,321; 350; 1160; 2181; 2506,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12284,Urine Complete Examination,,Pus Cells,214; 1023; 1030; 1036; 1057; 1065; 1118; 1430; 1455; 1673; 1989; 2216; 2646,13 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12284,Urine Complete Examination,,Red Blood Cells,337; 1024; 1031; 1058; 1119; 1431; 2010; 2217; 2647,9 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12284,Urine Complete Examination,,Epithelial Cells,334; 1025; 1032; 1059; 1066; 1432; 1990; 2011; 2058; 2218; 2258; 2648; 2754,13 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12284,Urine Complete Examination,,Bacteria,329; 1026; 1033; 2259,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12284,Urine Complete Examination,,Yeast Cells,335; 1034; 1912; 2260,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12018,Beta HCG,,BETA HCG,249; 965; 1083; 1141; 1348; 1714; 1824; 1876; 2578; 2741,10 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12043,GROWTH HORMONE,,Growth Hormone (GH),366; 1355; 2251,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12046,"LH , FSH , SERUM PROLACTIN",,LH,29; 368; 1133; 1135; 1699; 1916; 2096; 2237; 2268; 2610,10 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12046,"LH , FSH , SERUM PROLACTIN",,FSH,28; 365; 1132; 1136; 1354; 1356; 1515; 1700; 1720; 2269; 2371; 2611; 2763,13 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12046,"LH , FSH , SERUM PROLACTIN",,Prolactin,26; 27; 369; 778; 985; 1281; 1357; 1522; 1559; 1701; 1721; 2090; 2172; 2242; 2613; 2718; 2742; 2832,18 master parameters share this normalized name (unit disambiguation narrowed to 15),medium
+12052,Thyroid Profile (TFT),,T3,6; 10; 371; 776; 979; 1358; 1473; 1680; 1723; 1805; 2126; 2173; 2175; 2210; 2362; 2605; 2608; 2710,18 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12052,Thyroid Profile (TFT),,T4,9; 23; 372; 835; 980; 1474; 1558; 1610; 1722; 1724; 1806; 1917; 2127; 2166; 2174; 2209; 2606; 2714; 2780; 2802; 2826,21 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+12052,Thyroid Profile (TFT),,TSH,5; 11; 374; 777; 836; 981; 983; 1043; 1086; 1087; 1359; 1514; 1669; 1807; 1827; 2097; 2176; 2177; 2368; 2374; 2607; 2609; 2715; 2781; 2831,25 master parameters share this normalized name (unit disambiguation narrowed to 16),medium
+12063,Fluid Complete Examination,,Color,316; 338; 1051; 1149; 1686; 1996; 2496; 2786; 2931; 2963,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12087,Anti HB Core,,Anti HBc,428; 2405,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12087,Anti HB Core,,Cut Off Value,429; 809; 893; 1226; 1555; 1556; 2406; 2517; 2810,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12091,ANTI HBs,,Patient's Value,219; 433; 952; 975; 977; 1171; 1224; 1277; 1367; 1369; 1370; 1621; 1623; 1672; 1731; 2513; 2558; 2595; 2598; 2660,20 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12113,COPPER (24 HRS URINE),,Copper (24 hrs Urine),483; 2414,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12113,COPPER (24 HRS URINE),,Total Volume,139; 1395; 1949; 2072,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12115,CORTISOL (URINE 24 HRS),,Total Volume,139; 1395; 1949; 2072,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12143,HOMOCYSTINE (URINE),,Homocystine (Urine),516; 815; 2430,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12148,"Immunoglobulin (IgA,IgG,IgM)",,IgA,517; 1385,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12148,"Immunoglobulin (IgA,IgG,IgM)",,IgM,519; 829; 832; 1326; 2494; 2649,6 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12155,Microalbuminuria (24 Hrs urine),,Micro Albumin,527; 1888,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12155,Microalbuminuria (24 Hrs urine),,Total Volume,139; 1395; 1949; 2072,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12163,Progesterone Level,,Progesterone Level,536; 986; 1282; 2766; 2944,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12172,SERUM PROTEIN ELECTROPHORESIS,,Total Protein,543; 569; 618; 846; 922; 1590; 1783; 2089; 2122; 2534; 2729,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12172,SERUM PROTEIN ELECTROPHORESIS,,Albumin,544; 570; 576; 1784; 1883; 2123; 2443,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12172,SERUM PROTEIN ELECTROPHORESIS,,Gamma,548; 1273,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12172,SERUM PROTEIN ELECTROPHORESIS,,A/G Ratio,549; 572; 1123; 1593; 1643; 1793; 1947; 2125; 2365; 2445; 2913; 2915; 2916,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12185,VMA (24 HRS URINE),,Volume,134; 661; 1050; 1098; 1307; 1433; 1674; 1995; 2129; 2213; 2747; 2927,12 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+13357,ANA PROFILE,,Anti Nucleosomes IgG,390; 800,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+13357,ANA PROFILE,,Anti dsDNA IgG,391; 801,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+13357,ANA PROFILE,,Anti Histones,392; 802,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+13357,ANA PROFILE,,Anti PCNA IgG,394; 803,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+13357,ANA PROFILE,,Anti Ribosome Protein IgG,395; 804,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+13357,ANA PROFILE,,Anti Centromere B,404; 419; 805; 2403,4 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+13357,ANA PROFILE,,Anti PM/Scl IgG,406; 807,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+13357,ANA PROFILE,,Anti Mitochondrial-M2 Ab (AMA-M2),410; 808,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+347,BILIRUBIN TOTAL,,Bilirubin Total,585; 614; 768; 788; 867; 928; 1124; 1424; 1462; 1466; 1501; 1738; 1779; 2015; 2062; 2064; 2278; 2528; 2546; 2727,20 master parameters share this normalized name (unit disambiguation narrowed to 20),medium
+12190,A/G RATIO,,Total Protein,543; 569; 618; 846; 922; 1590; 1783; 2089; 2122; 2534; 2729,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12190,A/G RATIO,,Albumin,544; 570; 576; 1784; 1883; 2123; 2443,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12190,A/G RATIO,,Serum Globulin,848; 1393; 1407; 1832; 1946,5 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12190,A/G RATIO,,A/G Ratio,549; 572; 1123; 1593; 1643; 1793; 1947; 2125; 2365; 2445; 2913; 2915; 2916,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12191,24 Hours Urine Protein,,Urine Protein,1394; 1833; 1948; 2308,4 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12191,24 Hours Urine Protein,,Total Volume,139; 1395; 1949; 2072,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12192,Urine Albumin / Creatinine Ratio- ACR (Spot),,Creatinine (Spot Urine),127; 1406; 1729; 1837; 1958; 2180; 2230; 2261,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12201,BILIRUBIN CONJUGATED,,Bilirubin Conjugated,584; 910; 1617; 1626; 1660; 2490,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12202,BILIRUBIN UNCONJUGATED,,Bilirubin Unconjugated,586; 1616; 1670; 2511; 2530; 2922; 2923,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12203,Blood Glucose Fasting (FBS),,Blood Glucose Fasting,482; 607; 2917,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12204,Blood Sugar Random (RBS),,Blood Sugar Random,481; 2918; 2921,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12205,Blood Urea,,Urea,589; 633; 773; 1183; 1457; 1460; 1499; 1766; 1809; 2889,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12205,Blood Urea,,Blood Urea Nitrogen (BUN),590; 1402; 1627; 1767; 1786; 1845; 1865; 1877; 2040; 2192; 2933,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12206,Blood Urea Nitrogen (BUN),,Urea,589; 633; 773; 1183; 1457; 1460; 1499; 1766; 1809; 2889,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12206,Blood Urea Nitrogen (BUN),,Blood Urea Nitrogen (BUN),590; 1402; 1627; 1767; 1786; 1845; 1865; 1877; 2040; 2192; 2933,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12213,Cardiac Enzymes,,C.P.K,593; 871; 1403; 1467; 1886; 1953; 2222; 2265; 2547,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12213,Cardiac Enzymes,,SGOT (AST),599; 616; 868; 1464; 1503; 1634; 1781; 1887; 1982; 2550,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12213,Cardiac Enzymes,,L.D.H.,598; 872; 955; 1404; 1405; 1468; 1581; 1835; 1955; 2101; 2548,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12221,GLUCOSE TOLERANCE TEST (G.T.T),,Blood Glucose Fasting,482; 607; 2917,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12231,Urine Protein/ Creatinine Ratio (Spot),,Protein (Spot Urine),76; 1957; 2229,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12231,Urine Protein/ Creatinine Ratio (Spot),,Creatinine (Spot Urine),127; 1406; 1729; 1837; 1958; 2180; 2230; 2261,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12231,Urine Protein/ Creatinine Ratio (Spot),,Protein / Creatinine Ratio (Spot Urine),630; 1959; 2109,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12234,RFT (RENAL FUNCTION TEST),,Urea,589; 633; 773; 1183; 1457; 1460; 1499; 1766; 1809; 2889,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12234,RFT (RENAL FUNCTION TEST),,Blood Urea Nitrogen (BUN),590; 1402; 1627; 1767; 1786; 1845; 1865; 1877; 2040; 2192; 2933,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12234,RFT (RENAL FUNCTION TEST),,Creatinine,64; 66; 634; 925; 1082; 1184; 1458; 1459; 1461; 1500; 1768; 1772; 1810; 1878; 2041; 2059; 2301; 2446; 2522; 2764,20 master parameters share this normalized name (unit disambiguation narrowed to 20),medium
+12234,RFT (RENAL FUNCTION TEST),,Uric Acid,358; 644; 696; 858; 1168; 1185; 1671; 1889; 2060; 2316; 2339; 2523; 2545; 2932,14 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12239,Serum Creatinine,,Creatinine,64; 66; 634; 925; 1082; 1184; 1458; 1459; 1461; 1500; 1768; 1772; 1810; 1878; 2041; 2059; 2301; 2446; 2522; 2764,20 master parameters share this normalized name (unit disambiguation narrowed to 20),medium
+12239,Serum Creatinine,,Glomerular Filteration Rate (GFR),606; 1769; 1893; 1961; 2203; 2262,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12240,Serum Electrolyte,,Serum Sodium,475; 637; 1470; 1584; 1962; 2451; 2910,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12240,Serum Electrolyte,,Serum Potassium,12; 476; 638; 859; 1471; 1963; 2331; 2450; 2909,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12240,Serum Electrolyte,,Serum Chloride,477; 636; 860; 1960; 2449; 2908,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12240,Serum Electrolyte,,Calcium,596; 689; 1201; 1650; 2228; 2491; 2540,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12251,Iron Studies  (Iron & TIBC),,Iron,646; 691; 1409; 2453,4 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12251,Iron Studies  (Iron & TIBC),,T.I.B.C.,645; 1822; 2452; 2495,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12298,Bilirubin,,Bilirubin Total,585; 614; 768; 788; 867; 928; 1124; 1424; 1462; 1466; 1501; 1738; 1779; 2015; 2062; 2064; 2278; 2528; 2546; 2727,20 master parameters share this normalized name (unit disambiguation narrowed to 20),medium
+12298,Bilirubin,,Direct Bilirubin,1018; 1631; 1734; 1839; 1979; 2332; 2836,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12298,Bilirubin,,Indirect Bilirubin,1019; 1442; 1632; 1662; 1677; 1710; 1735; 1794; 1840; 1843; 1866; 1980; 2279; 2333; 2838; 2925; 2934; 2940,18 master parameters share this normalized name (unit disambiguation narrowed to 18),medium
+12318,Lipid Profile,,Serum Cholesterol,620; 862; 959; 1775; 1811; 1890; 2042; 2561,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12318,Lipid Profile,,Triglycerides,621; 926; 1773; 1812; 1891; 2043; 2526,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12318,Lipid Profile,,HDL Cholesterol,611; 622; 772; 1088; 1188; 1486; 1776; 1787; 1892; 2044; 2061; 2118; 2527; 2562; 2706,15 master parameters share this normalized name (unit disambiguation narrowed to 15),medium
+12318,Lipid Profile,,LDL Cholesterol,613; 771; 1089; 1231; 1487; 1777; 1803; 2045; 2119; 2563; 2707; 2708; 2935,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12318,Lipid Profile,,Cholesterol / HDL Cholesterol Ratio,623; 774; 1090; 1232; 1488; 1667; 1704; 1778; 1790; 1804; 1847; 1870; 2120; 2705; 2924,15 master parameters share this normalized name (unit disambiguation narrowed to 15),medium
+12318,Lipid Profile,,V.L.D.L,212; 624; 1091; 1489; 1668; 1774; 1788; 1848; 1871; 2183; 2928; 2937,12 master parameters share this normalized name (unit disambiguation narrowed to 12),medium
+11998,HBsAg Elisa,,Hepatitis B Surface Antigen,223; 784; 1279; 1796; 1903; 2602,6 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+11998,HBsAg Elisa,,HBsAg Patient's index value,1797; 2128,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12256,Anti HCV Elisa,,Anti HCV Patient's index value,1799; 2148,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12289,Semen Analysis,,Volume,134; 661; 1050; 1098; 1307; 1433; 1674; 1995; 2129; 2213; 2747; 2927,12 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12289,Semen Analysis,,Color,316; 338; 1051; 1149; 1686; 1996; 2496; 2786; 2931; 2963,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12289,Semen Analysis,,Liquification Time,1049; 1997,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12289,Semen Analysis,,Consistency,317; 1099; 1287; 1687; 1998; 2621; 2748; 2929,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12289,Semen Analysis,,PH,234; 460; 663; 1011; 1022; 1035; 1062; 1101; 1483; 1638; 1985; 2088; 2149; 2267; 2637; 2738; 2749; 2818; 2930,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+12289,Semen Analysis,,Sperm Concentration,1434; 2150; 2698,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12289,Semen Analysis,,Actively motile sperm,1054; 2002,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12289,Semen Analysis,,Sluggish motile sperm,1055; 2003,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12289,Semen Analysis,,Immotile,668; 1015; 1106; 1312; 2752,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12289,Semen Analysis,,Abnormal,674; 1112; 1317; 1451; 1491,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12289,Semen Analysis,,Tail Defects,676; 1114; 1319; 1453; 1493,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12289,Semen Analysis,,Pus Cells,214; 1023; 1030; 1036; 1057; 1065; 1118; 1430; 1455; 1673; 1989; 2216; 2646,13 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12289,Semen Analysis,,Red Blood Cells,337; 1024; 1031; 1058; 1119; 1431; 2010; 2217; 2647,9 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12289,Semen Analysis,,Epithelial Cells,334; 1025; 1032; 1059; 1066; 1432; 1990; 2011; 2058; 2218; 2258; 2648; 2754,13 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12265,RENAL STONE ANALYSIS,,Serum Phosphorus,1411; 2035,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+19,BUN/ CREATININE RATIO,,BUN/Creatinine Ratio,126; 2340; 2379; 2695; 2926,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+36,EOSINOPHIL COUNT,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+41,HB,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+43,Hct,,HCT (PCV),49; 189; 1071; 1422; 1747; 2363,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+46,MALARIAL PARASITE (M.P.),,Malarial Parasite (MP),165; 1016; 1085; 1239; 2282,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+48,MCH,,Mean Cell Hemoglobin (MCH),51; 85; 193; 1749; 1757; 1971; 2025; 2073; 2881; 2955,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+49,MCHC,,Mean Cell Hb Conc (MCHC),52; 86; 194; 1072; 1423; 1750; 1972; 2026; 2882; 2950,10 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+50,MCV,,Mean Cell Volume (MCV),50; 84; 1017; 1748; 1756; 1970; 2024; 2880; 2954,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+59,PLATELET COUNT,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+62,RETICULOCYTES,,Reticulocyte Count,207; 879; 962; 1237; 1340; 2091; 2349,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+65,TOTAL LIPIDS,,Total Lipids,208; 775; 834; 1189,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+66,TOTAL RBC,,Red Blood Cell (RBC),48; 82; 156; 887; 996; 1070; 1421; 1754; 1967; 2952,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+71,V.L.D.L,,V.L.D.L,212; 624; 1091; 1489; 1668; 1774; 1788; 1848; 1871; 2183; 2928; 2937,12 master parameters share this normalized name (unit disambiguation narrowed to 12),medium
+73,WBC Count (TLC),,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+5609,Hct,,HCT (PCV),49; 189; 1071; 1422; 1747; 2363,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+5647,TOTAL LIPIDS,,TOTAL LIPIDS,208; 775; 834; 1189,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5696,HB,,Hemoglobin (HB),47; 81; 840; 920; 935; 995; 1069; 1080; 1337; 1420; 1746; 1753; 1764; 1808; 1968; 2022; 2074; 2948; 2951,19 master parameters share this normalized name (unit disambiguation narrowed to 19),medium
+5697,WBC Count (TLC),,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+5699,PLATELET COUNT,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+5705,RETICULOCYTES,,RETICULOCYTE COUNT,207; 879; 962; 1237; 1340; 2091; 2349,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+11957,APTT,,APTT,35; 69; 880; 1029; 1426; 1498; 1705; 1895; 2167; 2272; 2572,11 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+11958,ABSOLUTE EOSINOPHIL COUNT,,"Eosinophil, Absolute",19; 70; 150; 1448; 1666; 1813; 2168; 2197; 2199; 2939; 2943,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+11959,ABSOLUTE LYMPHOCYTE COUNT,,Lymphocytes,58; 71; 178; 1760; 1975; 2266; 2345; 2772; 2797; 2858; 2888; 2946; 2958; 2976,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+11960,ABSOLUTE MONOCYTE COUNT,,Monocytes,55; 72; 311; 1761; 2346; 2947; 2959,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+11961,ABSOLUTE NEUTROPHILE COUNT,,"Neutrophil, Absolute",14; 73; 1445; 1663; 2169,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+11964,AMYLASE (FLUID),,Protein (Spot Urine),76; 1957; 2229,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+11971,BUN/ CREATININE RATIO,,BUN/Creatinine Ratio,126; 2340; 2379; 2695; 2926,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+11975,Coombs Test Indirect,,Coombs Test Indirect,136; 1243; 1335; 1706; 2571,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+11976,Coombs Test Direct,,Coombs Test Direct,137; 963; 1242; 1336; 1707; 2570,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+11979,ESR,,ESR,80; 152; 877; 950; 1469; 1508; 1659; 1751; 1763; 1801; 1897; 1977; 2348,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+11984,L.D.H (CSF),,L.D.H (CSF),190; 2382,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+11988,Platelets Count,,Platelets Count,57; 89; 199; 842; 997; 1881; 1899,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+11991,V.L.D.L,,V.L.D.L,212; 624; 1091; 1489; 1668; 1774; 1788; 1848; 1871; 2183; 2928; 2937,12 master parameters share this normalized name (unit disambiguation narrowed to 12),medium
+11992,WBC Count (TLC),,White Blood Cell (WBC/TLC),53; 95; 839; 951; 1485; 1630; 1682; 1758; 1966; 2907; 2956,11 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12301,Bleeding Time (BT),,Bleeding Time (BT),8; 79; 1236; 1505; 2017; 2231,6 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12302,Clotting Time (CT),,Clotting Time (CT),13; 135; 917; 1614; 2232,5 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12305,APTT,,APTT,35; 69; 880; 1029; 1426; 1498; 1705; 1895; 2167; 2272; 2572,11 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+11993,ANA Screen IgG,,ANA Screen IgG,1900; 2263,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+11995,ASO TITER (Qualitative),,ASO titer,7; 220; 1255; 1341; 1456; 1509,6 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+11997,HBsAg Screening,,HBsAg Screening,114; 222; 765; 885; 932; 1258; 2100; 2274,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+11999,HCV Screening,,HCV Screening,225; 889; 934; 971; 1270,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12003,Rh. Antibodies Titer,,Rh Antibody Titer,231; 1244; 1343; 2688,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12007,AFP- Alpha fetoprotein,,Alpha Feto-Protein,238; 968; 1257; 1681; 1904; 2116; 2224; 2580,8 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12008,Anti-CCP (Anti-Citrullinated Peptide Antibody),,Anti CCP Antibody,1523; 1853; 2388,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12009,Anti ds DNA IgG,,Anti Ds DNA IgG,240; 1214; 1905,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12012,Anti H Pylori Screening,,Anti Helicobacter Pylori Screening,243; 888; 1268; 1641; 1698; 2290; 2588,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12013,Anti Tissue Transglutaminase IgA,,Anti Tissue Transglutaminase IgA,244; 943; 1906; 2389,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12014,Anti Tissue Transglutaminase IgG,,Anti Tissue Transglutaminase IgG,245; 793; 944; 1907; 2309; 2390,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12019,CA 125,,CA-125,251; 1554; 2590,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12020,CA 19-9,,CA-19-9,252; 2594,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12022,Cortisol PM,,Cortisol PM,257; 987; 2253; 2615; 2865,5 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12026,CRP (HIGH SENSITIVITY),,CRP (High Sensitivity),263; 1497; 1583; 1642; 1715; 2068; 2171; 2659,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12027,Serum Folic Acid,,Folic Acid,265; 1222; 1350; 2860,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12029,PIVKA-II,,PIVKA-II,304; 1351,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12030,R.A FACTOR (QUANTITATIVE),,R.A. Factor (Quantitative),1; 305; 884; 966; 1254; 1519; 2107; 2579; 2771,9 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12031,Stool for Calprotectin,,Stool for Calprotectin,307; 1352; 2391,3 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12032,Stool for H. Pylori Antigen,,Stool for H. Pylori Antigen,309; 909; 1001; 1303; 1909; 2361; 2674,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12297,C-Reactive Protien (CRP) (Quantitative),,C-Reactive Protein (CRP),250; 1081; 1256; 1620; 1649; 2014; 2182; 2353; 2817; 2905,10 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12036,Stool for Occult Blood,,Stool for Occult Blood,336; 895; 1302; 1913,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+148,FREE T3,,Free T3,2; 362; 988; 1067; 1284; 1512; 1607; 1914,8 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12039,Free T3,,Free T3,2; 362; 988; 1067; 1284; 1512; 1607; 1914,8 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12040,Free T4,,FREE T4,3; 363; 989; 1068; 1285; 1513; 1608; 1719; 1825; 1851; 1872; 1915,12 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12041,FREE TESTOSTERONE,,Free Testosterone Serum,364; 1578; 2683,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12042,FSH,,FSH,28; 365; 1132; 1136; 1354; 1356; 1515; 1700; 1720; 2269; 2371; 2611; 2763,13 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12044,Intact parathyroid hormone (i PTH) (FASTING),,Intact Parathyroid Hormone (IPTH) (Fasting),367; 1826,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12045,LH,,LH,29; 368; 1133; 1135; 1699; 1916; 2096; 2237; 2268; 2610,10 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12047,PTH (FASTING),,PTH,370; 1283,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12048,Serum Prolactin,,Prolactin,26; 27; 369; 778; 985; 1281; 1357; 1522; 1559; 1701; 1721; 2090; 2172; 2242; 2613; 2718; 2742; 2832,18 master parameters share this normalized name (unit disambiguation narrowed to 15),medium
+12049,Total T3,,T3,6; 10; 371; 776; 979; 1358; 1473; 1680; 1723; 1805; 2126; 2173; 2175; 2210; 2362; 2605; 2608; 2710,18 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12050,Total T4,,T4,9; 23; 372; 835; 980; 1474; 1558; 1610; 1722; 1724; 1806; 1917; 2127; 2166; 2174; 2209; 2606; 2714; 2780; 2802; 2826,21 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+12051,Serum Testosterone,,Testosterone,373; 837; 984; 1521; 2165; 2221; 2612,7 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12053,TSH,,TSH,5; 11; 374; 777; 836; 981; 983; 1043; 1086; 1087; 1359; 1514; 1669; 1807; 1827; 2097; 2176; 2177; 2368; 2374; 2607; 2609; 2715; 2781; 2831,25 master parameters share this normalized name (unit disambiguation narrowed to 16),medium
+12320,FREE T3,,FREE T3,2; 362; 988; 1067; 1284; 1512; 1607; 1914,8 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12321,FREE T4,,FREE T4,3; 363; 989; 1068; 1285; 1513; 1608; 1719; 1825; 1851; 1872; 1915,12 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+298,P.S.A. Total,,PSA (Prostate Specific Antigen) Total,41; 533; 1211; 1388; 1609; 1830; 1939; 2657,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12006,25-OH Vitamin D3,,25-OH Vitamin - D3,237; 1344,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12070,Adenosine Deaminase (ADA)- Serum,,Adenosine Deaminase (ADA),386; 799; 1525; 2396,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12073,ANCA - P (MPO ANTIBODIES),,ANCA-P (MPO Antibodies),412; 2401,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12074,ANCA-C (P-3 ANTIBODIES),,ANCA-C (P-3 Antibodies),413; 2402,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12078,ANTI CARDIOLIPIN IgG,,Anti Cardiolipin IgG,417; 1362; 1932; 2178; 2378; 2599,6 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12079,ANTI CARDIOLIPIN IgM,,Anti Cardiolipin IgM,418; 1363; 1933; 2377; 2600,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12082,Anti Endomysial IgG,,Anti Endomysial IgG,421; 2404,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12084,Anti Gliadin IgA,,Anti Gliadin IgA,423; 1364,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12088,ANTI HBC IgG,,Anti HBc IgG,431; 1174,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12089,ANTI HBc IgM,,Anti HBc IgM,432; 1175,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12095,ANTI KIDNEY LIVER MICROSOMAL ANTIBODIES,,Anti Kidney Liver Microsomal Antibodies (KLM),438; 2409,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12096,ANTI MITOCHONDRIAL ANTIBODY (A.M.A),,AMA (Anti Microsomal Antibodies) Blood,439; 919; 2672,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12097,Anti Mullerian Hormone (AMH),,Anti Mullerian Hormone (AMH),440; 949; 1134; 1444; 1537; 1726; 1829; 1934; 2084; 2225; 2487; 2779; 2833,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12099,ANTI PHOSPHOLIPID IgG,,Anti Phospholipid IgG,452; 2410,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12100,ANTI PHOSPHOLIPID IgM,,Anti Phospholipid IgM,453; 2411,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12101,ANTI SCL-70,,Anti SCL-70 IgG,454; 2412,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12102,ANTI SMOOTH MUSCLE Abs (A.S.M.A),,Anti Smooth Muscle Antibodies (SMA),455; 810,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12103,ANTI SPERM ANTI BODIES,,Anti Sperm Antibodies (Serum),456; 1324,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12106,BRUCELLA TEST (IgG),,Brucella IgG,467; 1143,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12107,BRUCELLA TEST (IgM),,Brucella IgM,468; 1144; 2328,3 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12108,C-Peptide Level (Fasting),,C-Peptide Level,469; 1221; 1375; 2194; 2556,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12109,CEA (Carcinoembryonic Antigen),,C.E.A,470; 2553; 2693,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12111,CMV IgG,,CMV IgG (Cytomegalovirus),479; 1941; 2144,3 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12112,CMV IgM,,CMV IgM (Cytomegalovirus),480; 1942; 2145,3 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12119,DENGUE IgG,,Dengue Virus (IgG),489; 1646; 1815; 2329; 2492,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12120,DENGUE IgM,,Dengue Virus (IgM),490; 1540; 1624; 1647; 2493,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12125,Estradiol,,Estradiol,497; 811; 1935; 2424,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12126,Estrogen,,Estrogen,498; 1376; 2709,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12127,F.D.P's (D-DIMER),,F.D.P's (D-DIMER),499; 974; 1274; 1377; 1600; 1625; 2275,7 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12130,Fibrinogen Level,,Fibrinogen Level,502; 1219; 1378; 2350; 2407,5 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12134,HBA1c,,HbA1c,506; 763; 874; 956; 1210; 1381; 1480; 1546; 1580; 1645; 1678; 1697; 1855; 1936; 2551; 2769,16 master parameters share this normalized name (unit disambiguation narrowed to 16),medium
+12136,H. Pylori IgA,,Helicobacter Pylori Abs (IgA),507; 812; 1383; 1384; 2426; 2861,6 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12137,H. Pylori IgG,,Helicobacter Pylori Abs (IgG),508; 813; 1619; 1857; 2427; 2862,6 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12145,IgA Level,,IgA,517; 1385,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12147,IgM,,IgM,519; 829; 832; 1326; 2494; 2649,6 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12150,Insulin Growth Factor-1 (IGF-1),,Insulin Growth Factor-1 (IGF-1),521; 1386; 2431,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12151,IONIZED CALCIUM,,Ionized Calcium,522; 2249; 2254; 2432,4 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12157,MYCODOT (IgG),,MycoDot (IgG),530; 1612; 2314; 2436,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12158,MYCODOT (IgM),,MycoDot (IgM),531; 1613; 2315; 2437,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12160,Total PSA,,PSA (Prostate Specific Antigen) Total,41; 533; 1211; 1388; 1609; 1830; 1939; 2657,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12161,ProBNP (N-t) II,,ProBNP (N-t) II,42; 534; 816; 830; 1389; 1527; 1894; 2098; 2438; 2692,10 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12162,Procalcitonin (PCT),,Procalcitonin (PCT),535; 2439,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12166,QuantiFeron-TB Gold Test,,QuantiFeron-TB Gold Test,537; 1858; 2440,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12167,RUBELLA ANTIBODIES (IgG),,Rubella IgG,538; 1557; 1821; 2142; 2604; 2762,6 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12168,RUBELLA ANTIBODIES (IgM),,Rubella IgM,539; 1820; 2143; 2521,4 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12169,Serum Ferritin,,Serum Ferritin,540; 764; 916; 990; 1286; 1390; 1520; 1564; 1728; 1831; 1850; 1940; 2241; 2618,14 master parameters share this normalized name (unit disambiguation narrowed to 14),medium
+12170,Serum Insulin Level (FASTING),,Serum Insulin Level (Fasting),541; 1218; 1391,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12171,SERUM LITHIUM,,Serum Lithium,542; 1213,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12177,TPHA (Syphilis),,TPHA (Syphilis),553; 970; 1003; 1267; 1553; 2587,6 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12179,Troponin-T,,Troponin-T,556; 914; 1212; 1392; 1577; 1943; 2352,7 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12300,Troponin-I,,Troponin-I,4; 555; 1328; 1443; 1594; 2016; 2151; 2651,8 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12304,Anti Mullerian Hormone (AMH),,Anti Mullerian Hormone (AMH),440; 949; 1134; 1444; 1537; 1726; 1829; 1934; 2084; 2225; 2487; 2779; 2833,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+10545,SERUM CREATININE,,Creatinine,64; 66; 634; 925; 1082; 1184; 1458; 1459; 1461; 1500; 1768; 1772; 1810; 1878; 2041; 2059; 2301; 2446; 2522; 2764,20 master parameters share this normalized name (unit disambiguation narrowed to 20),medium
+12193,Serum Albumin,,Albumin,544; 570; 576; 1784; 1883; 2123; 2443,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12194,Albumin Spot Urine,,Albumin (Spot Urine),574; 577; 1836; 2179; 2264,5 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12196,ALP - Alkaline phosphatase,,Alkalaine Phosphatase,1021; 1635; 1636; 1736; 1834; 1841; 1950; 2065,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12198,Serum Amylase,,Amylase,581; 1195; 1545; 1572; 1951; 2302; 2533; 2920,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12200,Bicarbonate (HCO-3),,Serum Bicarbonate,478; 583; 640; 861; 1216; 1401; 2238; 2525,8 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12208,C4 (Complement Level 4),,C4 (Complement Level 4),592; 1181; 2520,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12209,CPK-Creatine phosphokinase,,C.P.K,593; 871; 1403; 1467; 1886; 1953; 2222; 2265; 2547,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12212,Serum Calcium,,Serum Calcium,818; 1954,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12219,GAMMA GT,,Gamma GT,605; 1194; 1628; 1782; 1882; 1885,6 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12222,HDL (CHOLESTEROL),,HDL Cholesterol,611; 622; 772; 1088; 1188; 1486; 1776; 1787; 1892; 2044; 2061; 2118; 2527; 2562; 2706,15 master parameters share this normalized name (unit disambiguation narrowed to 15),medium
+12224,Serum LDH,,L.D.H.,598; 872; 955; 1404; 1405; 1468; 1581; 1835; 1955; 2101; 2548,11 master parameters share this normalized name (unit disambiguation narrowed to 11),medium
+12225,L.D.L (CHOLESTEROL),,LDL Cholesterol,613; 771; 1089; 1231; 1487; 1777; 1803; 2045; 2119; 2563; 2707; 2708; 2935,13 master parameters share this normalized name (unit disambiguation narrowed to 13),medium
+12228,PHOSPHATE,,Phosphate (Serum),627; 1193; 1730,3 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12235,S.G.O.T (A.S.T),,S.G.O.T (A.S.T),635; 790; 1190; 1884; 2531,5 master parameters share this normalized name (unit disambiguation narrowed to 5),medium
+12236,S.G.P.T (A.L.T),,SGPT (ALT),21; 615; 769; 833; 901; 1191; 1502; 1633; 1780; 1846; 1981; 2077; 2448; 2837; 2919; 2941,16 master parameters share this normalized name (unit disambiguation narrowed to 16),medium
+12237,SERUM CHLORIDE,,Serum Chloride,477; 636; 860; 1960; 2449; 2908,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12238,Serum Cholesterol,,Serum Cholesterol,620; 862; 959; 1775; 1811; 1890; 2042; 2561,8 master parameters share this normalized name (unit disambiguation narrowed to 8),medium
+12241,SERUM GLOBULIN,,Globulins,619; 869; 1122; 1125; 1592; 1785; 1792; 2364; 2655; 2912,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium
+12242,Serum Iron,,Iron,646; 691; 1409; 2453,4 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12243,Serum Lipase,,Serum Lipase,642; 1228; 1550; 1579; 2559; 2806,6 master parameters share this normalized name (unit disambiguation narrowed to 6),medium
+12244,Magnesium (Mg),,Serum Magnesium,643; 873; 1209; 1408; 1964,5 master parameters share this normalized name (unit disambiguation narrowed to 3),medium
+12245,Potassium (K+),,Serum Potassium,12; 476; 638; 859; 1471; 1963; 2331; 2450; 2909,9 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12246,Sodium (Na+),,Serum Sodium,475; 637; 1470; 1584; 1962; 2451; 2910,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12247,Serum Triglycerides,,Triglycerides,621; 926; 1773; 1812; 1891; 2043; 2526,7 master parameters share this normalized name (unit disambiguation narrowed to 7),medium
+12248,Uric Acid,,Uric Acid,358; 644; 696; 858; 1168; 1185; 1671; 1889; 2060; 2316; 2339; 2523; 2545; 2932,14 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12249,T.I.B.C,,T.I.B.C.,645; 1822; 2452; 2495,4 master parameters share this normalized name (unit disambiguation narrowed to 4),medium
+12250,Total Protein,,Total Protein,543; 569; 618; 846; 922; 1590; 1783; 2089; 2122; 2534; 2729,11 master parameters share this normalized name (unit disambiguation narrowed to 9),medium
+12255,URINE SUGAR FASTING,,Blood Sugar Fasting,154; 1187,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12312,Phosphorous PO4,,Serum Phosphorus,1411; 2035,2 master parameters share this normalized name (unit disambiguation narrowed to 2),medium
+12315,ALT(SGPT),,SGPT (ALT),21; 615; 769; 833; 901; 1191; 1502; 1633; 1780; 1846; 1981; 2077; 2448; 2837; 2919; 2941,16 master parameters share this normalized name (unit disambiguation narrowed to 16),medium
+12316,AST (SGOT),,SGOT (AST),599; 616; 868; 1464; 1503; 1634; 1781; 1887; 1982; 2550,10 master parameters share this normalized name (unit disambiguation narrowed to 10),medium

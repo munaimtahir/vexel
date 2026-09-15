@@ -1,0 +1,330 @@
+test_id,test_name,status,reason,mapped_parameter_count
+15,BLOOD C/E,MAPPING_EXTRACTED,,33
+20,CALCIUM/CREATININE RATIO,MAPPING_EXTRACTED,,3
+32,DLC,MAPPING_EXTRACTED,,13
+40,GCT (GLUCOSE CHALLANGE TEST),MAPPING_EXTRACTED,,2
+42,HB. ELECTROPHORESIS,MAPPING_EXTRACTED,,25
+54,PERIPHERAL BLOOD SMEARS,MAPPING_EXTRACTED,,14
+60,PROTHROMBIN TIME (PT with INR),MAPPING_EXTRACTED,,2
+76,BLOOD GROUP & Rh FACTOR,MAPPING_EXTRACTED,,2
+78,BLOOD C/E WITH ESR,MAPPING_EXTRACTED,,33
+83,DLC,MAPPING_EXTRACTED,,13
+93,BLOOD C/E,MAPPING_EXTRACTED,,33
+94,PROTHROMBIN TIME (PT with INR),MAPPING_EXTRACTED,,2
+160,Cross Match & Screening,MAPPING_EXTRACTED,,16
+175,CBC with Peripheral Film,MAPPING_EXTRACTED,,26
+192,CALCIUM/CREATININE RATIO,MAPPING_EXTRACTED,,3
+196,CREATININE (24 hrs urine),MAPPING_EXTRACTED,,2
+200,GCT (GLUCOSE CHALLANGE TEST),MAPPING_EXTRACTED,,4
+202,HB. ELECTROPHORESIS,MAPPING_EXTRACTED,,24
+205,Peripheral blood Film,MAPPING_EXTRACTED,,13
+209,Reticulocyte Count,MAPPING_EXTRACTED,,3
+212,Complete Blood Count- CBC,MAPPING_EXTRACTED,,18
+213,PROTHROMBIN TIME (PT with INR),MAPPING_EXTRACTED,,3
+214,APTT,MAPPING_EXTRACTED,,2
+215,Blood Group,MAPPING_EXTRACTED,,2
+216,CROSS MATCH with Screening,MAPPING_EXTRACTED,,12
+219,Malarial Parasite (MP) ICT,MAPPING_EXTRACTED,,2
+221,CBC For Dengue,MAPPING_EXTRACTED,,5
+223,Prothrombin Time (PT with INR),MAPPING_EXTRACTED,,3
+225,"PT, APTT, INR",MAPPING_EXTRACTED,,5
+231,Complete Blood Count- CBC with ESR,MAPPING_EXTRACTED,,19
+232,Complete Blood Count- CBC with Blood Group,MAPPING_EXTRACTED,,19
+233,Complete Blood Count- CBC,MAPPING_EXTRACTED,,19
+234,Complete Blood Count- CBC with Peripheral smear,MAPPING_EXTRACTED,,19
+235,Hemoglobin (Hb) with RBC indices,MAPPING_EXTRACTED,,7
+409,STOOL REDUCING SUBSTANCE,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+459,ANTI HIV -1&2 Elisa,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+464,MONOSPOT TEST,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+468,Salmonella Typhi Antigen (Serum),MAPPING_EXTRACTED,,2
+470,WIDAL TEST,MAPPING_EXTRACTED,,4
+471,Typhidot,MAPPING_EXTRACTED,,3
+472,V.D.R.L ICT SCREENING,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+473,Urine for Pregnancy (UPT),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+475,TB (Screening) IgM & IgG,MAPPING_EXTRACTED,,2
+477,HIV Screening,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+478,"HCV, HBsAg ICT",MAPPING_EXTRACTED,,2
+479,Salmonella Typhi Antigen (Stool),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+480,RA Factor,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+638,Beta 2 Glycoprotein-1 IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+639,Beta 2 Glycoprotein-1 IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+646,Creatinine Clearance (24 Hrs Urine & Serum),MAPPING_EXTRACTED,,4
+649,IgE Level,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+738,Stool Complete Examination,MAPPING_EXTRACTED,,9
+741,Urine Complete Examination,MAPPING_EXTRACTED,,20
+845,Beta HCG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+850,GROWTH HORMONE,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+853,"LH , FSH , SERUM PROLACTIN",MAPPING_EXTRACTED,,3
+859,Thyroid Profile (TFT),MAPPING_EXTRACTED,,3
+955,Fluid Complete Examination,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1306,Anti GBM (ANTI GLOMERULAR BASEMENT MEMBRANE),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1310,Anti HB Core,MAPPING_EXTRACTED,,2
+1314,ANTI HBs,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1316,ANTI HEV IgG,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+1317,ANTI HEV IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1336,COPPER (24 HRS URINE),MAPPING_EXTRACTED,,2
+1338,CORTISOL (URINE 24 HRS),MAPPING_EXTRACTED,,2
+1347,ENA PROFILE,MAPPING_EXTRACTED,,7
+1355,HAV IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1356,HAV IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1358,HBeAg,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1366,HOMOCYSTINE (URINE),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1371,"Immunoglobulin (IgA,IgG,IgM)",MAPPING_EXTRACTED,,3
+1378,Microalbuminuria (24 Hrs urine),MAPPING_EXTRACTED,,2
+1386,Progesterone Level,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1395,SERUM PROTEIN ELECTROPHORESIS,MAPPING_EXTRACTED,,7
+1408,VMA (24 HRS URINE),MAPPING_EXTRACTED,,2
+1512,ANA PROFILE,MAPPING_EXTRACTED,,15
+1689,BILIRUBIN TOTAL,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1914,A/G RATIO,MAPPING_EXTRACTED,,4
+1915,24 Hours Urine Protein,MAPPING_EXTRACTED,,2
+1916,Urine Albumin / Creatinine Ratio- ACR (Spot),MAPPING_EXTRACTED,,3
+1925,BILIRUBIN CONJUGATED,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1926,BILIRUBIN UNCONJUGATED,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1927,Blood Glucose Fasting (FBS),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1928,Blood Sugar Random (RBS),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1929,Blood Urea,MAPPING_EXTRACTED,,2
+1930,Blood Urea Nitrogen (BUN),MAPPING_EXTRACTED,,2
+1937,Cardiac Enzymes,MAPPING_EXTRACTED,,4
+1945,GLUCOSE TOLERANCE TEST (G.T.T),MAPPING_EXTRACTED,,4
+1955,Urine Protein/ Creatinine Ratio (Spot),MAPPING_EXTRACTED,,3
+1958,RFT (RENAL FUNCTION TEST),MAPPING_EXTRACTED,,4
+1963,Serum Creatinine,MAPPING_EXTRACTED,,2
+1964,Serum Electrolyte,MAPPING_EXTRACTED,,4
+1975,Iron Studies  (Iron & TIBC),MAPPING_EXTRACTED,,2
+1981,Bilirubin,MAPPING_EXTRACTED,,3
+1987,Lipid Profile,MAPPING_EXTRACTED,,6
+2120,HBsAg Elisa,MAPPING_EXTRACTED,,2
+2121,Anti HCV Elisa,MAPPING_EXTRACTED,,2
+2122,"HCV, HBsAg (Elisa)",MAPPING_EXTRACTED,,2
+2161,HBV DNA By PCR - (Qualitative) Real Time,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+2163,HCV by  PCR - (Qualitative) Real Time,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+2165,HCV GENOTYPING,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+2488,Semen Analysis,MAPPING_EXTRACTED,,16
+2499,RENAL STONE ANALYSIS,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+7,ALBUMIN (FLUID),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+11,BASOPHIL COUNT,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+19,BUN/ CREATININE RATIO,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+26,COOMBS TEST (INDIRECT),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+27,COOMBS TEST DIRECT,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+36,EOSINOPHIL COUNT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+41,HB,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+43,Hct,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+46,MALARIAL PARASITE (M.P.),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+47,MALARIAL PARASITE (THICK & THIN),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+48,MCH,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+49,MCHC,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+50,MCV,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+59,PLATELET COUNT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+62,RETICULOCYTES,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+65,TOTAL LIPIDS,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+66,TOTAL RBC,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+71,V.L.D.L,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+73,WBC Count (TLC),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+84,Hct,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+87,TOTAL LIPIDS,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+89,HB,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+90,WBC Count (TLC),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+92,PLATELET COUNT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+98,RETICULOCYTES,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+177,APTT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+178,ABSOLUTE EOSINOPHIL COUNT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+179,ABSOLUTE LYMPHOCYTE COUNT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+180,ABSOLUTE MONOCYTE COUNT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+181,ABSOLUTE NEUTROPHILE COUNT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+182,ABSOLUTE VALUES/CELL COUNT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+183,ALBUMIN (FLUID),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+184,AMYLASE (FLUID),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+185,AMYLASE (SPOT URINE),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+186,BASOPHIL COUNT,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+187,BILE PIGMENT (URINE),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+188,BILE SALT (URINE),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+191,BUN/ CREATININE RATIO,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+193,CHOLESTROL (FLUID),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+194,Coombs Test Indirect,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+195,Coombs Test Direct,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+197,CREATININE (FLUID),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+198,ESR,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+203,L.D.H (CSF),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+204,LIPASE (FLUID),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+206,PHOSPHATE (SPOT URINE),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+207,Platelets Count,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+208,RED CELL FOLIC ACID,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+210,V.L.D.L,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+211,WBC Count (TLC),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+217,Bleeding Time (BT),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+218,Clotting Time (CT),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+220,APTT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+227,MALARIAL PARASITE (THICK & THIN),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+229,ABSOLUTE NEUTROPHIL COUNT,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+390,ACE levels ( Angiotensin converting levels ),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+458,ANA Screen IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+460,ASO TITER (Qualitative),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+461,Dengue NS1 Antigen (ELISA),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+462,HBsAg Screening,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+463,HCV Screening,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+465,R.A FACTOR IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+466,R.A FACTOR IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+467,Rh. Antibodies Titer,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+474,Rheumatoid Factor (Quantitative),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+506,VDRL BY ELISA,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+629,AFP- Alpha fetoprotein,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+630,Anti-CCP (Anti-Citrullinated Peptide Antibody),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+631,Anti ds DNA IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+632,ANTI HDV IgG,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+633,ANTI HDV IgM,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+634,Anti H Pylori Screening,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+635,Anti Tissue Transglutaminase IgA,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+636,Anti Tissue Transglutaminase IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+640,CA 125,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+641,CA 19-9,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+642,CORTISOL (A.M),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+643,Cortisol PM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+647,CRP (HIGH SENSITIVITY),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+648,Serum Folic Acid,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+650,PIVKA-II,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+651,R.A FACTOR (QUANTITATIVE),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+652,Stool for Calprotectin,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+653,Stool for H. Pylori Antigen,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+654,Vitamin B12,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+657,C-Reactive Protien (CRP) (Quantitative),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+739,Stool for Occult Blood,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+740,URINE SUGAR,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+787,FREE T3,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+846,Free T3,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+847,Free T4,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+848,FREE TESTOSTERONE,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+849,FSH,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+851,Intact parathyroid hormone (i PTH) (FASTING),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+852,LH,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+854,PTH (FASTING),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+855,Serum Prolactin,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+856,Total T3,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+857,Total T4,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+858,Serum Testosterone,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+860,TSH,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+861,FREE T3,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+862,FREE T4,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+951,BIOPSY SLIDE FOR REVIEW,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+1112,P.S.A. Total,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1290,25-OH Vitamin D3,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1291,17-OH PROGESTERONE,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1292,ACTH - Adrenocorticotropic hormone,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1293,Adenosine Deaminase (ADA)- Serum,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1294,Aldosterone level,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1296,ANCA - P (MPO ANTIBODIES),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1297,ANCA-C (P-3 ANTIBODIES),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1298,ANCA-C IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1299,ANCA-C IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1300,ANDROGEN LEVEL,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1301,ANTI CARDIOLIPIN IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1302,ANTI CARDIOLIPIN IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1304,Anti Endomysial IgA,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1305,Anti Endomysial IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1307,Anti Gliadin IgA,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1308,Anti Gliadin IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1311,ANTI HBC IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1312,ANTI HBc IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1318,ANTI KIDNEY LIVER MICROSOMAL ANTIBODIES,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1319,ANTI MITOCHONDRIAL ANTIBODY (A.M.A),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1320,Anti Mullerian Hormone (AMH),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1322,ANTI PHOSPHOLIPID IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1323,ANTI PHOSPHOLIPID IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1324,ANTI SCL-70,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1325,ANTI SMOOTH MUSCLE Abs (A.S.M.A),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1326,ANTI SPERM ANTI BODIES,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1327,Anti Thyroglobulin Antibodies (Anti TG),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1328,Anti Thyroid Peroxidase (Blood TPO),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1329,BRUCELLA TEST (IgG),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1330,BRUCELLA TEST (IgM),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1331,C-Peptide Level (Fasting),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1332,CEA (Carcinoembryonic Antigen),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1333,CA 15-3 (Blood),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1334,CMV IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1335,CMV IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1337,CORTISOL (SPOT URINE),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1342,DENGUE IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1343,DENGUE IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1344,DHEA SO4,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+1345,DIGOXIN,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1348,Estradiol,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1349,Estrogen,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1350,F.D.P's (D-DIMER),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1353,Fibrinogen Level,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1357,HBA1c,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1359,H. Pylori IgA,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1360,H. Pylori IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1361,H. Pylori IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1362,HERPES IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1363,HERPES IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1365,HOMOCYSTINE (BLOOD),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1368,IgA Level,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1369,IgG Level,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1370,IgM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1372,Insulin (Random),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1373,Insulin Growth Factor-1 (IGF-1),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1374,IONIZED CALCIUM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1376,LACTATE LEVEL (BLOOD),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1377,LUPUS ANTICOAGULANT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1379,MTB BY PCR,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+1380,MYCODOT (IgG),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1381,MYCODOT (IgM),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1382,Serum Osmolality,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1383,Total PSA,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1384,ProBNP (N-t) II,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1385,Procalcitonin (PCT),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1389,QuantiFeron-TB Gold Test,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1390,RUBELLA ANTIBODIES (IgG),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1391,RUBELLA ANTIBODIES (IgM),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1392,Serum Ferritin,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1393,Serum Insulin Level (FASTING),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1394,SERUM LITHIUM,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1400,TPHA (Syphilis),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1402,Troponin-T,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1404,URIC ACID CREATININE RATIO,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1405,Urine for Microalbuminuria (Spot),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1410,Troponin-I,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1411,Anti Mullerian Hormone (AMH),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1412,H. Pylori IgG,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1423,F.D.P's (D-DIMER),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1624,D-DIMER (F.D.P's),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1672,Urine for Ketones,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1867,SERUM CREATININE,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1917,Serum Albumin,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1918,Albumin Spot Urine,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1920,ALP - Alkaline phosphatase,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1922,Serum Amylase,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1924,Bicarbonate (HCO-3),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1931,C3 (Complement Level 3),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1932,C4 (Complement Level 4),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1933,CPK-Creatine phosphokinase,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1936,Serum Calcium,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1940,CK-MB,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1943,GAMMA GT,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1946,HDL (CHOLESTEROL),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1947,L.D.H (FLUID),NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
+1948,Serum LDH,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1949,L.D.L (CHOLESTEROL),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1952,PHOSPHATE,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1954,Urine Protein (Spot) Qualitative,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1959,S.G.O.T (A.S.T),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1960,S.G.P.T (A.L.T),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1961,SERUM CHLORIDE,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1962,Serum Cholesterol,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1965,SERUM GLOBULIN,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1966,Serum Iron,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1967,Serum Lipase,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1968,Magnesium (Mg),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1969,Potassium (K+),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1970,Sodium (Na+),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1971,Serum Triglycerides,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1972,Uric Acid,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1973,T.I.B.C,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1974,Total Protein,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1979,URINE SUGAR FASTING,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1983,Phosphorous PO4,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1985,ALT(SGPT),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+1986,AST (SGOT),SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+2025,ALDOLASE LEVEL,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+2103,TIBC,SINGLE_PARAMETER_TEST,only one parameter row found despite Multi report type,1
+2482,ECG,NO_PARAMETERS_RETURNED,test detail page returned zero parameter rows,0
