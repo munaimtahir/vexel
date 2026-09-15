@@ -1,0 +1,330 @@
+externalId,userCode,name,department,sampleTypeExternalId,specimenType,method,loincCode,price,isActive
+t2000,legacy-7,ALBUMIN (FLUID),HAEMATOLOGY,s2014,FLUID (All Body Fluid),,,500.00,true
+t2001,legacy-11,BASOPHIL COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,500.00,true
+t2002,legacy-15,BLOOD C/E,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2003,legacy-19,BUN/ CREATININE RATIO,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2004,legacy-20,CALCIUM/CREATININE RATIO,HAEMATOLOGY,s2021,Urine (Random/Spot),,,600.00,true
+t2005,legacy-26,COOMBS TEST (INDIRECT),HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2006,legacy-27,COOMBS TEST DIRECT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2007,legacy-32,DLC,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2008,legacy-36,EOSINOPHIL COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2009,legacy-40,GCT (GLUCOSE CHALLANGE TEST),HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,350.00,true
+t2010,legacy-41,HB,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,250.00,true
+t2011,legacy-42,HB. ELECTROPHORESIS,HAEMATOLOGY,s2000,10cc EDTA Whole Blood,,,1800.00,true
+t2012,legacy-43,Hct,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2013,legacy-46,MALARIAL PARASITE (M.P.),HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2014,legacy-47,MALARIAL PARASITE (THICK & THIN),HAEMATOLOGY,s2006,3-5 ml Frozen EDTA Plasma,,,300.00,true
+t2015,legacy-48,MCH,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,250.00,true
+t2016,legacy-49,MCHC,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,250.00,true
+t2017,legacy-50,MCV,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,250.00,true
+t2018,legacy-54,PERIPHERAL BLOOD SMEARS,HAEMATOLOGY,s2004,3 Clotted Blood Samples,,,500.00,true
+t2019,legacy-59,PLATELET COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2020,legacy-60,PROTHROMBIN TIME (PT with INR),HAEMATOLOGY,s2019,Sodium Citrate Tube (PT Vial),,,450.00,true
+t2021,legacy-62,RETICULOCYTES,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,450.00,true
+t2022,legacy-65,TOTAL LIPIDS,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,250.00,true
+t2023,legacy-66,TOTAL RBC,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2024,legacy-71,V.L.D.L,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2025,legacy-73,WBC Count (TLC),HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2026,legacy-92,STOOL REDUCING SUBSTANCE,SEROLOGY / VIROLOGY,s2018,STOOL,,,800.00,true
+t2027,legacy-148,FREE T3,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1200.00,true
+t2028,legacy-298,P.S.A. Total,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,3000.00,true
+t2029,legacy-347,BILIRUBIN TOTAL,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,200.00,true
+t2030,legacy-349,BLOOD GROUP & Rh FACTOR,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,100.00,true
+t2031,legacy-5489,BLOOD C/E WITH ESR,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2032,legacy-5599,DLC,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2033,legacy-5609,Hct,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2034,legacy-5647,TOTAL LIPIDS,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,250.00,true
+t2035,legacy-5696,HB,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,250.00,true
+t2036,legacy-5697,WBC Count (TLC),HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2037,legacy-5699,PLATELET COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2038,legacy-5700,BLOOD C/E,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2039,legacy-5701,PROTHROMBIN TIME (PT with INR),HAEMATOLOGY,s2019,Sodium Citrate Tube (PT Vial),,,350.00,true
+t2040,legacy-5705,RETICULOCYTES,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2041,legacy-10545,SERUM CREATININE,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,600.00,true
+t2042,legacy-10552,Cross Match & Screening,HAEMATOLOGY,,,,,1000.00,true
+t2043,legacy-10701,CBC with Peripheral Film,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,650.00,true
+t2044,legacy-11957,APTT,HAEMATOLOGY,s2019,Sodium Citrate Tube (PT Vial),,,300.00,true
+t2045,legacy-11958,ABSOLUTE EOSINOPHIL COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2046,legacy-11959,ABSOLUTE LYMPHOCYTE COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2047,legacy-11960,ABSOLUTE MONOCYTE COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2048,legacy-11961,ABSOLUTE NEUTROPHILE COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2049,legacy-11962,ABSOLUTE VALUES/CELL COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2050,legacy-11963,ALBUMIN (FLUID),HAEMATOLOGY,s2014,FLUID (All Body Fluid),,,340.00,true
+t2051,legacy-11964,AMYLASE (FLUID),HAEMATOLOGY,s2014,FLUID (All Body Fluid),,,900.00,true
+t2052,legacy-11965,AMYLASE (SPOT URINE),HAEMATOLOGY,s2021,Urine (Random/Spot),,,900.00,true
+t2053,legacy-11966,BASOPHIL COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2054,legacy-11967,BILE PIGMENT (URINE),HAEMATOLOGY,s2021,Urine (Random/Spot),,,1400.00,true
+t2055,legacy-11968,BILE SALT (URINE),HAEMATOLOGY,s2021,Urine (Random/Spot),,,400.00,true
+t2056,legacy-11971,BUN/ CREATININE RATIO,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,600.00,true
+t2057,legacy-11972,CALCIUM/CREATININE RATIO,HAEMATOLOGY,s2021,Urine (Random/Spot),,,650.00,true
+t2058,legacy-11974,CHOLESTROL (FLUID),HAEMATOLOGY,s2014,FLUID (All Body Fluid),,,350.00,true
+t2059,legacy-11975,Coombs Test Indirect,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2060,legacy-11976,Coombs Test Direct,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,500.00,true
+t2061,legacy-11977,CREATININE (24 hrs urine),HAEMATOLOGY,s2002,24 Hrs Urine,,,350.00,true
+t2062,legacy-11978,CREATININE (FLUID),HAEMATOLOGY,s2014,FLUID (All Body Fluid),,,350.00,true
+t2063,legacy-11979,ESR,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,100.00,true
+t2064,legacy-11981,GCT (GLUCOSE CHALLANGE TEST),HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2065,legacy-11983,HB. ELECTROPHORESIS,HAEMATOLOGY,s2000,10cc EDTA Whole Blood,,,2000.00,true
+t2066,legacy-11984,L.D.H (CSF),HAEMATOLOGY,s2012,CSF,,,1000.00,true
+t2067,legacy-11985,LIPASE (FLUID),HAEMATOLOGY,s2014,FLUID (All Body Fluid),,,950.00,true
+t2068,legacy-11986,Peripheral blood Film,HAEMATOLOGY,s2004,3 Clotted Blood Samples,,,600.00,true
+t2069,legacy-11987,PHOSPHATE (SPOT URINE),HAEMATOLOGY,s2021,Urine (Random/Spot),,,430.00,true
+t2070,legacy-11988,Platelets Count,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,280.00,true
+t2071,legacy-11989,RED CELL FOLIC ACID,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,1150.00,true
+t2072,legacy-11990,Reticulocyte Count,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,1000.00,true
+t2073,legacy-11991,V.L.D.L,HAEMATOLOGY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2074,legacy-11992,WBC Count (TLC),HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,350.00,true
+t2075,legacy-11993,ANA Screen IgG,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2076,legacy-11994,ANTI HIV -1&2 Elisa,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,3500.00,true
+t2077,legacy-11995,ASO TITER (Qualitative),SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2078,legacy-11996,Dengue NS1 Antigen (ELISA),SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,3000.00,true
+t2079,legacy-11997,HBsAg Screening,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2080,legacy-11998,HBsAg Elisa,VIRAL HEPATITIS REPORT,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2081,legacy-11999,HCV Screening,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2082,legacy-12000,MONOSPOT TEST,SEROLOGY / VIROLOGY,,,,,1200.00,true
+t2083,legacy-12001,R.A FACTOR IgG,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,650.00,true
+t2084,legacy-12002,R.A FACTOR IgM,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,1100.00,true
+t2085,legacy-12003,Rh. Antibodies Titer,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,1400.00,true
+t2086,legacy-12004,Salmonella Typhi Antigen (Serum),SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2087,legacy-12006,25-OH Vitamin D3,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2800.00,true
+t2088,legacy-12007,AFP- Alpha fetoprotein,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2089,legacy-12008,Anti-CCP (Anti-Citrullinated Peptide Antibody),CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2090,legacy-12009,Anti ds DNA IgG,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,1350.00,true
+t2091,legacy-12010,ANTI HDV IgG,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,1600.00,true
+t2092,legacy-12011,ANTI HDV IgM,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,1600.00,true
+t2093,legacy-12012,Anti H Pylori Screening,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2094,legacy-12013,Anti Tissue Transglutaminase IgA,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2095,legacy-12014,Anti Tissue Transglutaminase IgG,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2096,legacy-12016,Beta 2 Glycoprotein-1 IgG,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2097,legacy-12017,Beta 2 Glycoprotein-1 IgM,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2098,legacy-12018,Beta HCG,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2099,legacy-12019,CA 125,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2100,legacy-12020,CA 19-9,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,1930.00,true
+t2101,legacy-12021,CORTISOL (A.M),CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2102,legacy-12022,Cortisol PM,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2103,legacy-12025,Creatinine Clearance (24 Hrs Urine & Serum),CHEMICAL PATHOLOGY,s2003,24 Hrs urine & Serum,,,1000.00,true
+t2104,legacy-12026,CRP (HIGH SENSITIVITY),CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,600.00,true
+t2105,legacy-12027,Serum Folic Acid,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,3500.00,true
+t2106,legacy-12028,IgE Level,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2107,legacy-12029,PIVKA-II,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,5500.00,true
+t2108,legacy-12030,R.A FACTOR (QUANTITATIVE),CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2109,legacy-12031,Stool for Calprotectin,CHEMICAL PATHOLOGY,s2018,STOOL,,,4500.00,true
+t2110,legacy-12032,Stool for H. Pylori Antigen,CHEMICAL PATHOLOGY,s2018,STOOL,,,1000.00,true
+t2111,legacy-12033,Vitamin B12,CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,3500.00,true
+t2112,legacy-12035,Stool Complete Examination,MICROBIOLOGY,s2018,STOOL,,,800.00,true
+t2113,legacy-12036,Stool for Occult Blood,MICROBIOLOGY,s2021,Urine (Random/Spot),,,800.00,true
+t2114,legacy-12037,Urine for Ketones,URINE C/E,s2021,Urine (Random/Spot),,,200.00,true
+t2115,legacy-12038,URINE SUGAR,MICROBIOLOGY,s2021,Urine (Random/Spot),,,200.00,true
+t2116,legacy-12039,Free T3,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2117,legacy-12040,Free T4,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2118,legacy-12041,FREE TESTOSTERONE,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1450.00,true
+t2119,legacy-12042,FSH,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2120,legacy-12043,GROWTH HORMONE,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1650.00,true
+t2121,legacy-12044,Intact parathyroid hormone (i PTH) (FASTING),HORMONES,s2005,3 EDTA vials containing 3cc blood in each vial,,,1650.00,true
+t2122,legacy-12045,LH,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1700.00,true
+t2123,legacy-12046,"LH , FSH , SERUM PROLACTIN",HORMONES,,,,,6000.00,true
+t2124,legacy-12047,PTH (FASTING),HORMONES,s2005,3 EDTA vials containing 3cc blood in each vial,,,1760.00,true
+t2125,legacy-12048,Serum Prolactin,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2126,legacy-12049,Total T3,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2127,legacy-12050,Total T4,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1900.00,true
+t2128,legacy-12051,Serum Testosterone,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1700.00,true
+t2129,legacy-12052,Thyroid Profile (TFT),HORMONES,s2007,3-5cc Clotted Blood or Serum,,,4500.00,true
+t2130,legacy-12053,TSH,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2131,legacy-12059,BIOPSY SLIDE FOR REVIEW,HISTOPATHOLOGY,,,,,1500.00,true
+t2132,legacy-12063,Fluid Complete Examination,HISTOPATHOLOGY,,,,,1230.00,true
+t2133,legacy-12068,17-OH PROGESTERONE,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2030.00,true
+t2134,legacy-12069,ACTH - Adrenocorticotropic hormone,SPECIAL TESTS,s2005,3 EDTA vials containing 3cc blood in each vial,,,1950.00,true
+t2135,legacy-12070,Adenosine Deaminase (ADA)- Serum,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,3400.00,true
+t2136,legacy-12071,Aldosterone level,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,4000.00,true
+t2137,legacy-12073,ANCA - P (MPO ANTIBODIES),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,5000.00,true
+t2138,legacy-12074,ANCA-C (P-3 ANTIBODIES),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,4000.00,true
+t2139,legacy-12075,ANCA-C IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2140,legacy-12076,ANCA-C IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2141,legacy-12077,ANDROGEN LEVEL,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,3280.00,true
+t2142,legacy-12078,ANTI CARDIOLIPIN IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1930.00,true
+t2143,legacy-12079,ANTI CARDIOLIPIN IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1930.00,true
+t2144,legacy-12081,Anti Endomysial IgA,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,4000.00,true
+t2145,legacy-12082,Anti Endomysial IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2150.00,true
+t2146,legacy-12083,Anti GBM (ANTI GLOMERULAR BASEMENT MEMBRANE),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,3100.00,true
+t2147,legacy-12084,Anti Gliadin IgA,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1780.00,true
+t2148,legacy-12085,Anti Gliadin IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1780.00,true
+t2149,legacy-12087,Anti HB Core,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1120.00,true
+t2150,legacy-12088,ANTI HBC IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1210.00,true
+t2151,legacy-12089,ANTI HBc IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1210.00,true
+t2152,legacy-12091,ANTI HBs,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1180.00,true
+t2153,legacy-12093,ANTI HEV IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1280.00,true
+t2154,legacy-12094,ANTI HEV IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,3500.00,true
+t2155,legacy-12095,ANTI KIDNEY LIVER MICROSOMAL ANTIBODIES,SPECIAL TESTS,,,,,2250.00,true
+t2156,legacy-12096,ANTI MITOCHONDRIAL ANTIBODY (A.M.A),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1680.00,true
+t2157,legacy-12097,Anti Mullerian Hormone (AMH),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,6000.00,true
+t2158,legacy-12099,ANTI PHOSPHOLIPID IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1630.00,true
+t2159,legacy-12100,ANTI PHOSPHOLIPID IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1630.00,true
+t2160,legacy-12101,ANTI SCL-70,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1850.00,true
+t2161,legacy-12102,ANTI SMOOTH MUSCLE Abs (A.S.M.A),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1840.00,true
+t2162,legacy-12103,ANTI SPERM ANTI BODIES,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1830.00,true
+t2163,legacy-12104,Anti Thyroglobulin Antibodies (Anti TG),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1670.00,true
+t2164,legacy-12105,Anti Thyroid Peroxidase (Blood TPO),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2165,legacy-12106,BRUCELLA TEST (IgG),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,940.00,true
+t2166,legacy-12107,BRUCELLA TEST (IgM),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,940.00,true
+t2167,legacy-12108,C-Peptide Level (Fasting),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,4000.00,true
+t2168,legacy-12109,CEA (Carcinoembryonic Antigen),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,4000.00,true
+t2169,legacy-12110,CA 15-3 (Blood),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,3100.00,true
+t2170,legacy-12111,CMV IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1250.00,true
+t2171,legacy-12112,CMV IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1250.00,true
+t2172,legacy-12113,COPPER (24 HRS URINE),SPECIAL TESTS,s2002,24 Hrs Urine,,,1580.00,true
+t2173,legacy-12114,CORTISOL (SPOT URINE),SPECIAL TESTS,s2021,Urine (Random/Spot),,,1250.00,true
+t2174,legacy-12115,CORTISOL (URINE 24 HRS),SPECIAL TESTS,s2002,24 Hrs Urine,,,1320.00,true
+t2175,legacy-12119,DENGUE IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1520.00,true
+t2176,legacy-12120,DENGUE IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1520.00,true
+t2177,legacy-12121,DHEA SO4,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1580.00,true
+t2178,legacy-12122,DIGOXIN,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1540.00,true
+t2179,legacy-12124,ENA PROFILE,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,6200.00,true
+t2180,legacy-12125,Estradiol,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2181,legacy-12126,Estrogen,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2182,legacy-12127,F.D.P's (D-DIMER),SPECIAL TESTS,s2019,Sodium Citrate Tube (PT Vial),,,2950.00,true
+t2183,legacy-12130,Fibrinogen Level,SPECIAL TESTS,s2019,Sodium Citrate Tube (PT Vial),,,1350.00,true
+t2184,legacy-12132,HAV IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2700.00,true
+t2185,legacy-12133,HAV IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2700.00,true
+t2186,legacy-12134,HBA1c,SPECIAL TESTS,s2009,3cc EDTA BLOOD (Purple Vial),,,1800.00,true
+t2187,legacy-12135,HBeAg,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2188,legacy-12136,H. Pylori IgA,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,650.00,true
+t2189,legacy-12137,H. Pylori IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,650.00,true
+t2190,legacy-12138,H. Pylori IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,650.00,true
+t2191,legacy-12139,HERPES IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1280.00,true
+t2192,legacy-12140,HERPES IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1280.00,true
+t2193,legacy-12142,HOMOCYSTINE (BLOOD),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1450.00,true
+t2194,legacy-12143,HOMOCYSTINE (URINE),SPECIAL TESTS,s2021,Urine (Random/Spot),,,1450.00,true
+t2195,legacy-12145,IgA Level,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2196,legacy-12146,IgG Level,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,980.00,true
+t2197,legacy-12147,IgM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,980.00,true
+t2198,legacy-12148,"Immunoglobulin (IgA,IgG,IgM)",SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,3500.00,true
+t2199,legacy-12149,Insulin (Random),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1620.00,true
+t2200,legacy-12150,Insulin Growth Factor-1 (IGF-1),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1730.00,true
+t2201,legacy-12151,IONIZED CALCIUM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,600.00,true
+t2202,legacy-12153,LACTATE LEVEL (BLOOD),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1700.00,true
+t2203,legacy-12154,LUPUS ANTICOAGULANT,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2810.00,true
+t2204,legacy-12155,Microalbuminuria (24 Hrs urine),SPECIAL TESTS,s2021,Urine (Random/Spot),,,2000.00,true
+t2205,legacy-12156,MTB BY PCR,SPECIAL TESTS,s2009,3cc EDTA BLOOD (Purple Vial),,,3200.00,true
+t2206,legacy-12157,MYCODOT (IgG),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1230.00,true
+t2207,legacy-12158,MYCODOT (IgM),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1230.00,true
+t2208,legacy-12159,Serum Osmolality,SPECIAL TESTS,s2010,3cc Serum and Fluoride Sample,,,1410.00,true
+t2209,legacy-12160,Total PSA,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2210,legacy-12161,ProBNP (N-t) II,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2580.00,true
+t2211,legacy-12162,Procalcitonin (PCT),SPECIAL TESTS,,,,,6800.00,true
+t2212,legacy-12163,Progesterone Level,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2213,legacy-12166,QuantiFeron-TB Gold Test,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,12000.00,true
+t2214,legacy-12167,RUBELLA ANTIBODIES (IgG),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,750.00,true
+t2215,legacy-12168,RUBELLA ANTIBODIES (IgM),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1280.00,true
+t2216,legacy-12169,Serum Ferritin,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2217,legacy-12170,Serum Insulin Level (FASTING),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2218,legacy-12171,SERUM LITHIUM,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2219,legacy-12172,SERUM PROTEIN ELECTROPHORESIS,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2220,legacy-12177,TPHA (Syphilis),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2221,legacy-12179,Troponin-T,SPECIAL TESTS,s2009,3cc EDTA BLOOD (Purple Vial),,,2000.00,true
+t2222,legacy-12181,URIC ACID CREATININE RATIO,SPECIAL TESTS,s2021,Urine (Random/Spot),,,650.00,true
+t2223,legacy-12182,Urine for Microalbuminuria (Spot),SPECIAL TESTS,s2021,Urine (Random/Spot),,,1800.00,true
+t2224,legacy-12185,VMA (24 HRS URINE),SPECIAL TESTS,s2002,24 Hrs Urine,,,4000.00,true
+t2225,legacy-12190,A/G RATIO,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2226,legacy-12191,24 Hours Urine Protein,BIOCHEMISTRY,s2002,24 Hrs Urine,,,1800.00,true
+t2227,legacy-12192,Urine Albumin / Creatinine Ratio- ACR (Spot),BIOCHEMISTRY,s2021,Urine (Random/Spot),,,2000.00,true
+t2228,legacy-12193,Serum Albumin,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,800.00,true
+t2229,legacy-12194,Albumin Spot Urine,BIOCHEMISTRY,s2021,Urine (Random/Spot),,,2000.00,true
+t2230,legacy-12196,ALP - Alkaline phosphatase,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2231,legacy-12198,Serum Amylase,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2232,legacy-12200,Bicarbonate (HCO-3),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,800.00,true
+t2233,legacy-12201,BILIRUBIN CONJUGATED,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,250.00,true
+t2234,legacy-12202,BILIRUBIN UNCONJUGATED,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,250.00,true
+t2235,legacy-12203,Blood Glucose Fasting (FBS),BIOCHEMISTRY,s2020,Sodium Fluoride Vial (Sugar Vial),,,50.00,true
+t2236,legacy-12204,Blood Sugar Random (RBS),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,50.00,true
+t2237,legacy-12205,Blood Urea,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2238,legacy-12206,Blood Urea Nitrogen (BUN),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2239,legacy-12207,C3 (Complement Level 3),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2240,legacy-12208,C4 (Complement Level 4),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2241,legacy-12209,CPK-Creatine phosphokinase,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1000.00,true
+t2242,legacy-12212,Serum Calcium,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,500.00,true
+t2243,legacy-12213,Cardiac Enzymes,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1000.00,true
+t2244,legacy-12216,CK-MB,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,450.00,true
+t2245,legacy-12219,GAMMA GT,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2246,legacy-12221,GLUCOSE TOLERANCE TEST (G.T.T),BIOCHEMISTRY,,,,,500.00,true
+t2247,legacy-12222,HDL (CHOLESTEROL),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2248,legacy-12223,L.D.H (FLUID),BIOCHEMISTRY,s2014,FLUID (All Body Fluid),,,450.00,true
+t2249,legacy-12224,Serum LDH,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1050.00,true
+t2250,legacy-12225,L.D.L (CHOLESTEROL),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,350.00,true
+t2251,legacy-12228,PHOSPHATE,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,450.00,true
+t2252,legacy-12230,Urine Protein (Spot) Qualitative,BIOCHEMISTRY,s2021,Urine (Random/Spot),,,200.00,true
+t2253,legacy-12231,Urine Protein/ Creatinine Ratio (Spot),BIOCHEMISTRY,s2021,Urine (Random/Spot),,,1800.00,true
+t2254,legacy-12234,RFT (RENAL FUNCTION TEST),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1000.00,true
+t2255,legacy-12235,S.G.O.T (A.S.T),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,200.00,true
+t2256,legacy-12236,S.G.P.T (A.L.T),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,200.00,true
+t2257,legacy-12237,SERUM CHLORIDE,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,450.00,true
+t2258,legacy-12238,Serum Cholesterol,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,400.00,true
+t2259,legacy-12239,Serum Creatinine,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2260,legacy-12240,Serum Electrolyte,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1000.00,true
+t2261,legacy-12241,SERUM GLOBULIN,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2262,legacy-12242,Serum Iron,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1000.00,true
+t2263,legacy-12243,Serum Lipase,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2264,legacy-12244,Magnesium (Mg),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,2000.00,true
+t2265,legacy-12245,Potassium (K+),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,450.00,true
+t2266,legacy-12246,Sodium (Na+),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,450.00,true
+t2267,legacy-12247,Serum Triglycerides,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,550.00,true
+t2268,legacy-12248,Uric Acid,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2269,legacy-12249,T.I.B.C,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1000.00,true
+t2270,legacy-12250,Total Protein,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,250.00,true
+t2271,legacy-12251,Iron Studies  (Iron & TIBC),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,2800.00,true
+t2272,legacy-12255,URINE SUGAR FASTING,BIOCHEMISTRY,,,,,100.00,true
+t2273,legacy-12256,Anti HCV Elisa,VIRAL HEPATITIS REPORT,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2274,legacy-12257,HBV DNA By PCR - (Qualitative) Real Time,MOLECULAR DIAGNOSTIC SECTION,s2007,3-5cc Clotted Blood or Serum,,,4000.00,true
+t2275,legacy-12259,HCV by  PCR - (Qualitative) Real Time,MOLECULAR DIAGNOSTIC SECTION,s2007,3-5cc Clotted Blood or Serum,,,4500.00,true
+t2276,legacy-12261,HCV GENOTYPING,MOLECULAR DIAGNOSTIC SECTION,,,,,3500.00,true
+t2277,legacy-12265,RENAL STONE ANALYSIS,STONE FOR ANALYSIS,s2017,STONE,,,2000.00,true
+t2278,legacy-12280,Complete Blood Count- CBC,HAEMATOLOGY,s2013,EDTA And Clotted Blood,,,600.00,true
+t2279,legacy-12282,PROTHROMBIN TIME (PT with INR),HAEMATOLOGY,,,,,600.00,true
+t2280,legacy-12283,APTT,HAEMATOLOGY,s2019,Sodium Citrate Tube (PT Vial),,,300.00,true
+t2281,legacy-12284,Urine Complete Examination,MICROBIOLOGY,s2021,Urine (Random/Spot),,,600.00,true
+t2282,legacy-12287,WIDAL TEST,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,1400.00,true
+t2283,legacy-12288,Typhidot,SEROLOGY / VIROLOGY,,,,,450.00,true
+t2284,legacy-12289,Semen Analysis,SEMEN ANALYSIS,s2016,SEMEN,,,1000.00,true
+t2285,legacy-12290,V.D.R.L ICT SCREENING,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,800.00,true
+t2286,legacy-12291,Urine for Pregnancy (UPT),SEROLOGY / VIROLOGY,s2021,Urine (Random/Spot),,,100.00,true
+t2287,legacy-12292,Blood Group,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,50.00,true
+t2288,legacy-12293,Rheumatoid Factor (Quantitative),SEROLOGY / VIROLOGY,s2013,EDTA And Clotted Blood,,,800.00,true
+t2289,legacy-12294,TB (Screening) IgM & IgG,SEROLOGY / VIROLOGY,,,,,800.00,true
+t2290,legacy-12296,HIV Screening,SEROLOGY / VIROLOGY,s2013,EDTA And Clotted Blood,,,600.00,true
+t2291,legacy-12297,C-Reactive Protien (CRP) (Quantitative),CHEMICAL PATHOLOGY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2292,legacy-12298,Bilirubin,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2293,legacy-12299,CROSS MATCH with Screening,HAEMATOLOGY,s2001,2 EDTA vials containing 3cc blood in each vial,,,2000.00,true
+t2294,legacy-12300,Troponin-I,SPECIAL TESTS,s2015,Heparinized or EDTA Blood,,,1000.00,true
+t2295,legacy-12301,Bleeding Time (BT),HAEMATOLOGY,,,,,300.00,true
+t2296,legacy-12302,Clotting Time (CT),HAEMATOLOGY,,,,,300.00,true
+t2297,legacy-12303,Malarial Parasite (MP) ICT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,500.00,true
+t2298,legacy-12304,Anti Mullerian Hormone (AMH),SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2299,legacy-12305,APTT,HAEMATOLOGY,s2019,Sodium Citrate Tube (PT Vial),,,600.00,true
+t2300,legacy-12306,CBC For Dengue,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,90.00,true
+t2301,legacy-12309,Prothrombin Time (PT with INR),HAEMATOLOGY,s2019,Sodium Citrate Tube (PT Vial),,,600.00,true
+t2302,legacy-12312,Phosphorous PO4,BIOCHEMISTRY,,,,,800.00,true
+t2303,legacy-12315,ALT(SGPT),BIOCHEMISTRY,s2008,3cc Clotted & 3cc EDTA,,,300.00,true
+t2304,legacy-12316,AST (SGOT),BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,300.00,true
+t2305,legacy-12318,Lipid Profile,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,1000.00,true
+t2306,legacy-12320,FREE T3,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2307,legacy-12321,FREE T4,HORMONES,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2308,legacy-12322,"PT, APTT, INR",HAEMATOLOGY,s2019,Sodium Citrate Tube (PT Vial),,,1000.00,true
+t2309,legacy-12323,"HCV, HBsAg ICT",SEROLOGY / VIROLOGY,s2013,EDTA And Clotted Blood,,,600.00,true
+t2310,legacy-12324,"HCV, HBsAg (Elisa)",VIRAL HEPATITIS REPORT,s2007,3-5cc Clotted Blood or Serum,,,3000.00,true
+t2311,legacy-12325,H. Pylori IgG,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,450.00,true
+t2312,legacy-12329,MALARIAL PARASITE (THICK & THIN),HAEMATOLOGY,s2006,3-5 ml Frozen EDTA Plasma,,,350.00,true
+t2313,legacy-12332,ABSOLUTE NEUTROPHIL COUNT,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2314,legacy-12334,Salmonella Typhi Antigen (Stool),SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,1500.00,true
+t2315,legacy-12343,Complete Blood Count- CBC with ESR,HAEMATOLOGY,s2013,EDTA And Clotted Blood,,,600.00,true
+t2316,legacy-12344,Complete Blood Count- CBC with Blood Group,HAEMATOLOGY,s2013,EDTA And Clotted Blood,,,550.00,true
+t2317,legacy-12346,Complete Blood Count- CBC,HAEMATOLOGY,s2013,EDTA And Clotted Blood,,,600.00,true
+t2318,legacy-12347,Complete Blood Count- CBC with Peripheral smear,HAEMATOLOGY,s2013,EDTA And Clotted Blood,,,2000.00,true
+t2319,legacy-12348,Hemoglobin (Hb) with RBC indices,HAEMATOLOGY,s2009,3cc EDTA BLOOD (Purple Vial),,,300.00,true
+t2320,legacy-12382,RA Factor,SEROLOGY / VIROLOGY,s2004,3 Clotted Blood Samples,,,1500.00,true
+t2321,legacy-13110,F.D.P's (D-DIMER),SPECIAL TESTS,s2019,Sodium Citrate Tube (PT Vial),,,3000.00,true
+t2322,legacy-13357,ANA PROFILE,SPECIAL TESTS,s2007,3-5cc Clotted Blood or Serum,,,8000.00,true
+t2323,legacy-13376,ALDOLASE LEVEL,BIOCHEMISTRY,s2007,3-5cc Clotted Blood or Serum,,,2500.00,true
+t2324,legacy-14295,VDRL BY ELISA,SEROLOGY / VIROLOGY,s2007,3-5cc Clotted Blood or Serum,,,3000.00,true
+t2325,legacy-14307,D-DIMER (F.D.P's),SPECIAL TESTS,s2019,Sodium Citrate Tube (PT Vial),,,2500.00,true
+t2326,legacy-14372,TIBC,BIOCHEMISTRY,s2011,8cc Clotted Blood or Serum,,,1800.00,true
+t2327,legacy-15485,ECG,RADIOLOGY,,,,,600.00,true
+t2328,legacy-15678,ACE levels ( Angiotensin converting levels ),HAEMATOLOGY,,,,,4000.00,true

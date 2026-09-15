@@ -1,0 +1,209 @@
+parameterExternalId,testExternalId,raw_normal_range,unit,reason
+p2232,t2011,"Adult: 25 - 40, Child: 45- 70",%,unrecognized pattern
+p2254,t2011,"Adult: 55 - 70, Child: 20 - 45",%,unrecognized pattern
+p2163,t2011,"Adult: 01 - 05, Child: 02 - 07",%,unrecognized pattern
+p2191,t2042,Negative,-,unrecognized pattern
+p2047,t2042,Negative,-,unrecognized pattern
+p2207,t2042,Negative,-,unrecognized pattern
+p2304,t2042,Negative,-,unrecognized pattern
+p2236,t2042,Negative,-,unrecognized pattern
+p2232,t2065,"Adult: 25 - 40, Child: 45- 70",%,unrecognized pattern
+p2254,t2065,"Adult: 55 - 70, Child: 20 - 45",%,unrecognized pattern
+p2163,t2065,"Adult: 01 - 05, Child: 02 - 07",%,unrecognized pattern
+p2299,t2072,Adult:   0.5 - 2.5Infant:  0.5 - 3.0Newborn: 2.5 - 6.5,%,unrecognized pattern
+p2005,t2072,0.5-1.0 x 10^12/L,10^12/l,unrecognized pattern
+p2300,t2072,RPI <2: inadequate marrow responseRPI =2: suggests adequate marrow response in anaemia,,unrecognized pattern
+p2078,t2280,34 Sec,Sec,unrecognized pattern
+p2132,t2280,34 Sec,Sec,unrecognized pattern
+p2191,t2293,Negative,-,unrecognized pattern
+p2047,t2293,Negative,-,unrecognized pattern
+p2207,t2293,Negative,-,unrecognized pattern
+p2304,t2293,Negative,-,unrecognized pattern
+p2236,t2293,Negative,-,unrecognized pattern
+p2234,t2297,Negative,,unrecognized pattern
+p2235,t2297,Negative,,unrecognized pattern
+p2265,t2026,Neutral,,unrecognized pattern
+p2051,t2076,Negative: < 0.9Borderline: 0.9 to 1.2Positive: > 1.2,S/CO,unrecognized pattern
+p2246,t2082,Negative : < 9.0Grey zone :9.0 to 11.0Positive : > 11.0,,unrecognized pattern
+p2312,t2086,Negative,,unrecognized pattern
+p2310,t2086,Negative,,unrecognized pattern
+p2314,t2282,Significant Titer 1:80,Ratio,unrecognized pattern
+p2313,t2282,Significant Titer 1:80,Ratio,unrecognized pattern
+p2309,t2282,Significant Titer 1:80,Ratio,unrecognized pattern
+p2311,t2282,Significant Titer 1:80,Ratio,unrecognized pattern
+p2355,t2283,Negative,,unrecognized pattern
+p2354,t2283,Negative,,unrecognized pattern
+p2366,t2285,Negative,,unrecognized pattern
+p2342,t2289,Negative,,unrecognized pattern
+p2341,t2289,Negative,,unrecognized pattern
+p2052,t2290,Non- Reactive,-,unrecognized pattern
+p2191,t2309,Negative,,unrecognized pattern
+p2193,t2309,Negative,,unrecognized pattern
+p2087,t2096,Negative < 10.0Positive > 10.0,U/ml,unrecognized pattern
+p2088,t2097,Negative < 10.0Positive > 10.0,U/ml,unrecognized pattern
+p2130,t2281,Pale Yellow - Yellow,,unrecognized pattern
+p2077,t2281,Clear,,unrecognized pattern
+p2278,t2281,Negative,,unrecognized pattern
+p2180,t2281,Negative,,unrecognized pattern
+p2222,t2281,Negative,,unrecognized pattern
+p2090,t2281,Negative,,unrecognized pattern
+p2255,t2281,Negative,,unrecognized pattern
+p2096,t2281,Negative,,unrecognized pattern
+p2365,t2281,Normal: 3-25Increased: >25,umol/L,unrecognized pattern
+p2089,t2098,"Female;Non Pregnant < 10.00Pregnant Female3-7   Days     5     - 501-2   Weeks    10    - 4722-3   Weeks    90    - 4,5903-4   Weeks    462   - 10,9404-5   Weeks    1,065 - 68,2485-6   Weeks    7,458 - 118,5156-7   Weeks    14,423- 175,6387-8   Weeks    31,510- 184,6288-12  Weeks    28,639- 224,91912-16 Weeks    9,870 - 106,91716-18 Weeks    7,924 - 56,552Male < 10.00",mIU/ml,unrecognized pattern
+p2182,t2120,(See below),ng/ml,unrecognized pattern
+p2228,t2123,Male: 1.5 – 12.4 mIU/mLFemale (Follicular phase): 3.5 – 12.5 mIU/mLFemale (Mid-cycle / Ovulatory): 4.7 – 21.5 mIU/mLFemale (Luteal phase): 1.7 – 7.7 mIU/mLPostmenopausal Female: 25.8 – 134.8 mIU/mL,mIU/ml,unrecognized pattern
+p2175,t2123,Male: 1.5 – 12.4 mIU/mlFemale (Follicular phase): 3.5 – 12.5 mIU/mlFemale (Mid-cycle peak / Ovulatory phase): 4.7 – 21.5 mIU/mlFemale (Luteal phase): 1.7 – 7.7 mIU/mlPostmenopausal Female: 25.8 – 134.8 mIU/ml,mIU/ml,unrecognized pattern
+p2275,t2123,Male: 2.5 – 27.0 ng/mLFemale (Non-pregnant): 5.2 – 27.0 ng/mLPregnant (1st Trimester): 80.0 – 400.0 ng/mLPregnant (2nd Trimester): 110.0 – 330.0 ng/mLPregnant (3rd Trimester): 137.0 – 372.0 ng/mLPostmenopausal Female: 1.9 – 18.4 ng/mL,ng/ml,unrecognized pattern
+p2038,t2146,Negative: < 0.90Grayzone: 0.90 to 1.10Positive: > 1.10,-,unrecognized pattern
+p2264,t2152,Negative: <20Positive: >20,U/ml,unrecognized pattern
+p2049,t2154,Negative: < 0.9Equivocal: 0.9 to 1.1Positive: > 1.1,S/CO,unrecognized pattern
+p2067,t2179,(See below),U/ml,unrecognized pattern
+p2068,t2179,(See below),U/ml,unrecognized pattern
+p2071,t2179,(See below),U/ml,unrecognized pattern
+p2072,t2179,(See below),U/ml,unrecognized pattern
+p2064,t2179,(See below),U/ml,unrecognized pattern
+p2065,t2179,(See below),U/ml,unrecognized pattern
+p2053,t2179,(See below),U/ml,unrecognized pattern
+p2183,t2184,Negative: < 0.8Equivocal: 0.8 to 1.2Positive: > 1.2,S/CO,unrecognized pattern
+p2202,t2185,Negative: < 0.8Equivocal: 0.8 to 1.2Positive: > 1.2,U/ml,unrecognized pattern
+p2203,t2187,Negative= < 0.9Borderline= 0.9 - 1.1Positive= > 1.1,S/CO,unrecognized pattern
+p2274,t2212,Male: 0.50 - 5.20FemaleFollicular Phase: 0.50 - 6.50Luteal Phase: 8.00 - 87.00Pregnant Female1st trimester 01-12W: 10.0-182.02nd trimester 13-24W: 60.0-332.03rd trimester 25-40W: 185.0-960.0,nmol/l,unrecognized pattern
+p2058,t2322,(See below),U/ml,unrecognized pattern
+p2035,t2322,(See below),U/ml,unrecognized pattern
+p2050,t2322,(See below),U/ml,unrecognized pattern
+p2067,t2322,(See below),U/ml,unrecognized pattern
+p2059,t2322,(See below),U/ml,unrecognized pattern
+p2063,t2322,(See below),U/ml,unrecognized pattern
+p2068,t2322,(See below),U/ml,unrecognized pattern
+p2071,t2322,(See below),U/ml,unrecognized pattern
+p2072,t2322,(See below),U/ml,unrecognized pattern
+p2064,t2322,(See below),U/ml,unrecognized pattern
+p2065,t2322,(See below),U/ml,unrecognized pattern
+p2033,t2322,(See below),U/ml,unrecognized pattern
+p2062,t2322,(See below),U/ml,unrecognized pattern
+p2053,t2322,(See below),U/ml,unrecognized pattern
+p2055,t2322,(See below),U/ml,unrecognized pattern
+p2092,t2029,(See below),mg/dl,unrecognized pattern
+p2011,t2225,AdultAge 18-60 years: 3.5 - 5.5Above 60 years: 3.4 - 4.8ChildAge 14-18 years: 3.2 - 4.54days - 14years: 3.8 - 5.4Newborns: 2.8 - 4.4,g/dl,unrecognized pattern
+p2363,t2226,<80<300 (pregnancy),mg/24 Hours,unrecognized pattern
+p2012,t2227,(See Note),mg/g,unrecognized pattern
+p2114,t2243,Men : 24 - 204Women : 24 - 173,U/L,unrecognized pattern
+p2279,t2253,0.2,,unrecognized pattern
+p2142,t2254,Male: 0.7 - 1.2Female: 0.6 - 1.1Child1 Day: 0.6 - 1.23 Months: 0.2 - 0.41 Year: 0.3 - 0.72-12 Years: 0.35 - 1.0,mg/dl,unrecognized pattern
+p2142,t2259,Male: 0.7 - 1.2Female: 0.6 - 1.1Child1 Day: 0.6 - 1.23 Months: 0.2 - 0.41 Year: 0.3 - 0.72-12 Years: 0.35 - 1.0,mg/dl,unrecognized pattern
+p2179,t2259,>60 Normal Kidney15-60: Kidney disease<15: Kidney Failure,mL/Min/1.73m^2,unrecognized pattern
+p2092,t2292,"Adult: 0.2 - 1.2Newborns, premature:24 Hours:        < 8.82nd Day:         1.3 - 11.33rd Day:         0.7 - 12.74th-6th Day:     0.1 - 12.6Child:>1 month:  0.2 - 1.0",mg/dl,unrecognized pattern
+p2318,t2305,Desirable: < 200Boderline High: 200 - 239High: > 240,mg/dl,unrecognized pattern
+p2350,t2305,Normal:< 150Borderline: 150 - 199High: 200 - 499Very High: > 500,mg/dl,unrecognized pattern
+p2194,t2305,Normal: 35 - 60High Risk: < 35,mg/dl,unrecognized pattern
+p2226,t2305,Normal: < 130Borderline: 130 - 159High: > 160,mg/dl,unrecognized pattern
+p2125,t2305,Normal: 3.5 to 5.0High: > 5.0,mg/dl,unrecognized pattern
+p2367,t2305,Normal: < 30Borderline High: 30 to 40,mg/dl,unrecognized pattern
+p2190,t2080,Negative <0.9Border Line 0.9 - 1.0Positive >1.0,,unrecognized pattern
+p2046,t2273,Negative: < 0.9Borderline: 0.9 to 1.2Positive: > 1.2,S/CO,unrecognized pattern
+p2204,t2310,Negative: < 0.9Borderline: 0.9 to 1.2Positive: > 1.2,S/CO,unrecognized pattern
+p2044,t2310,Negative: < 0.9Borderline: 0.9 to 1.2Positive: > 1.2,S/CO,unrecognized pattern
+p2130,t2284,Grayish White to Pale Yellow,,unrecognized pattern
+p2230,t2284,With in 30 min,Minutes,unrecognized pattern
+p2131,t2284,Viscid,,unrecognized pattern
+p2333,t2284,> 15 Million,million/ml,unrecognized pattern
+p2007,t2284,> 50 %,%,unrecognized pattern
+p2331,t2284,< 30 %,%,unrecognized pattern
+p2174,t2284,Positive,,unrecognized pattern
+p2326,t2277,Adults: 2.5 - 4.5Child:  4.0 - 7.0,mg/dl,unrecognized pattern
+p2299,t2021,Adult: 0.20 - 2.0Newborn: 2.00 - 6.0,%,unrecognized pattern
+p2367,t2024,Normal: < 30Borderline High: 30 to 40High: 40 to 100Very High: > 100,mg/dl,unrecognized pattern
+p2299,t2040,Adult:	0.20 - 2.0New Born:	2.00 - 6.0,%,unrecognized pattern
+p2135,t2059,Negative,,unrecognized pattern
+p2134,t2060,Negative,,unrecognized pattern
+p2367,t2073,Normal: < 30Borderline High: 30 to 40High: 40 to 100Very High: > 100,mg/dl,unrecognized pattern
+p2006,t2328,8 - 52 U/L,U/L,unrecognized pattern
+p2080,t2077,Adult: Less than 200Child: Less than 150,lu/ml,unrecognized pattern
+p2151,t2078,Negative < 0.9Borderline 0.9-1.2Positive >1.2,S/CO,unrecognized pattern
+p2191,t2079,Negative,,unrecognized pattern
+p2193,t2081,Negative,,unrecognized pattern
+p2288,t2083,Negative: < 20Positive: > 20,IU/ml,unrecognized pattern
+p2289,t2084,Negative: < 25.0Positive: > 25.0Indication of Rheumatoid Arthritis: > 70,IU/ml,unrecognized pattern
+p2301,t2085,Negative,,unrecognized pattern
+p2368,t2324,NON REACTIVE < 1.0BORDER LINE 1.0-4.0REACTIVE > 4.0,-,unrecognized pattern
+p2032,t2089,< 17 Negative> 17 Positive,U/mL,unrecognized pattern
+p2034,t2090,Negative: < 0.8Borderline: 0.8 to 1.2Positive: > 1.2,IU/ml,unrecognized pattern
+p2048,t2093,Negative,,unrecognized pattern
+p2075,t2094,< 18 Negative18 - 22 Borderline> 22 Positive,U/ml,unrecognized pattern
+p2076,t2095,< 18 Negative18 - 22 Borderline> 22 Positive,U/mL,unrecognized pattern
+p2334,t2109,Normal: <50Slightly Elevated: 50 - 120Significantly Elevated: >120,ug/g,unrecognized pattern
+p2335,t2110,Negative,,unrecognized pattern
+p2336,t2113,Negative,,unrecognized pattern
+p2173,t2118,"Male: 15.0 - 50.0, Female: < 4.20",Pg/ml,unrecognized pattern
+p2175,t2119,Male: 1.5 – 12.4 mIU/mlFemale (Follicular phase): 3.5 – 12.5 mIU/mlFemale (Mid-cycle peak / Ovulatory phase): 4.7 – 21.5 mIU/mlFemale (Luteal phase): 1.7 – 7.7 mIU/mlPostmenopausal Female: 25.8 – 134.8 mIU/ml,mIU/ml,unrecognized pattern
+p2228,t2122,Male: 1.5 – 12.4 mIU/mLFemale (Follicular phase): 3.5 – 12.5 mIU/mLFemale (Mid-cycle / Ovulatory): 4.7 – 21.5 mIU/mLFemale (Luteal phase): 1.7 – 7.7 mIU/mLPostmenopausal Female: 25.8 – 134.8 mIU/mL,mIU/ml,unrecognized pattern
+p2275,t2125,Male: 2.5 – 27.0 ng/mLFemale (Non-pregnant): 5.2 – 27.0 ng/mLPregnant (1st Trimester): 80.0 – 400.0 ng/mLPregnant (2nd Trimester): 110.0 – 330.0 ng/mLPregnant (3rd Trimester): 137.0 – 372.0 ng/mLPostmenopausal Female: 1.9 – 18.4 ng/mL,ng/ml,unrecognized pattern
+p2343,t2128,Males: 175 - 780Females: 10 - 75,ng/dL,unrecognized pattern
+p2281,t2028,< 40 years: 0.01 - 1.5140 - 49 years: 0.00 - 2.2750 - 59 years: 0.02 - 2.89> 60 years: 0.29 - 4.96,ng/ml,unrecognized pattern
+p2001,t2087,Deficiency: <10Insufficiency: 10-29Sufficiency: 30-100Potential Toxicity: >100,ng/ml,unrecognized pattern
+p2000,t2133,Reference ValuesPediatric Boy1 month 0.0 - 8.02 months 3.6 - 13.73 months 1.7 - 4.0Pediatric Girl1 month 2.4 - 16.8 2 months 1.6 - 9.7 3 months 0.1 - 3.1Pre- Peubertal Child 0.1-1.7 Adult FemaleFemale Follicular Phase 0.1 - 0.8Luteal Phase 0.6 - 2.3Ovulatory phase 0.3 - 1.4Late pregnancy 2.0 - 12Menopause 0.13 - 0.51Male Adult Male 0.5 - 2.1,ng/mL,unrecognized pattern
+p2008,t2135,Serum < 15CSF < 9Fluid < 30,U/L,unrecognized pattern
+p2028,t2137,Negative: < 0.9Equivocal: 0.9 to 1.1Positive: > 1.1,-,unrecognized pattern
+p2027,t2138,Negative: < 0.9Equivocal: 0.9 to 1.1Positive: > 1.1,-,unrecognized pattern
+p2025,t2139,Negative: < 0.9Equivocal: 0.9 to 1.1Positive: > 1.1,,unrecognized pattern
+p2026,t2140,Negative: < 0.9Equivocal: 0.9 to 1.1Positive: > 1.1,,unrecognized pattern
+p2030,t2142,Negative: < 10.0Positive: > 10.0,U/ml,unrecognized pattern
+p2031,t2143,Negative: < 10.0Positive: > 10.0,U/ml,unrecognized pattern
+p2036,t2144,Negative < 9.0Borderline 9.0 - 11.0Positive > 11.0,U/ml,unrecognized pattern
+p2037,t2145,Negative < 9.0Borderline 9.0 - 11.0Positive > 11.0,U/ml,unrecognized pattern
+p2039,t2147,Negative: <15Positive: >15,U/ml,unrecognized pattern
+p2040,t2148,Negative: <15Positive: >15,U/ml,unrecognized pattern
+p2042,t2150,Non-Reactive: < 1.0Reactive: > 1.0,-,unrecognized pattern
+p2043,t2151,Non-Reactive: < 1.1Reactive: > 1.1,-,unrecognized pattern
+p2054,t2155,Negative: <15Positive: >15,U/ml,unrecognized pattern
+p2021,t2156,Negative: < 0.90Grayzone: 0.90 to 1.10Positive: > 1.10,AU/ml,unrecognized pattern
+p2056,t2157,Males:>2 Years 14-466>18 Years 0.73-16.05Females:18-25 Years 0.96 - 13.3426-30 Years 0.17 - 7.3731-35 Years 0.07 - 7.3536-40 Years 0.03 - 7.1541-45 Years 0.00 - 3.27=>46 Years 0.00 - 1.15,ng/mL,unrecognized pattern
+p2060,t2158,Negative: < 10.0Positive: > 10.0,,unrecognized pattern
+p2061,t2159,Negative: < 10.0Positive: > 10.0,,unrecognized pattern
+p2070,t2162,Negative : <60.0Equivocal : 60.0 to 100.0Positive : >= 100.0,-,unrecognized pattern
+p2073,t2163,Normal 4.11High  =4.11,IU/ml,unrecognized pattern
+p2110,t2165,Negative: < 0.90Grayzone: 0.90 to 1.10Positive: > 1.10,IU/ml,unrecognized pattern
+p2111,t2166,Negative: < 0.9Borderline: 0.9 to 1.1Positive: > 1.1,IU/ml,unrecognized pattern
+p2113,t2168,Smoker: 1.0 - 7.0Non-Smoker: 0.0 - 5.0,ng/ml,unrecognized pattern
+p2120,t2169,Less Than: 30,U/ml,unrecognized pattern
+p2128,t2170,Negative: < 0.90Grayzone: 0.90 to 1.10Positive: > 1.10,IU/ml,unrecognized pattern
+p2129,t2171,Negative: < 0.90Grayzone: 0.90 to 1.10Positive: > 1.10,IU/ml,unrecognized pattern
+p2152,t2175,Negative: < 9.0Borderline: 9.0 to 11.0Positive: > 11.0,,unrecognized pattern
+p2153,t2176,Negative: < 0.9Borderline: 0.9 to 1.1Positive: > 1.1,,unrecognized pattern
+p2166,t2180,Male: < 87Female:Follicular Phase: 15 - 112Periovulatory Phase: 136 - 251Luteal Phase: 48 - 172Post Menopausal: 10 - 66Hormonal Contraceptives: 15 - 95,pg/mL,unrecognized pattern
+p2167,t2181,Male : < 87Female :Follicular Phase 15 - 112Preovulatory Phase 136 - 251Luteal Phase 48 - 172Post Menopausal 10 - 66Hormonal Contraceptives 15 - 95,pg/mL,unrecognized pattern
+p2189,t2186,Normal          <5.7%Pre-Diabetes  5.7 - 6.4%Diabetes:       >6.4%,%,unrecognized pattern
+p2197,t2188,Negative: < 0.9Equivocal: 0.9 to 1.1Positive: > 1.1,U/ml,unrecognized pattern
+p2198,t2189,Negative: < 0.9Borderline: 1.0 - 1.1Positive: > 1.2,U/ml,unrecognized pattern
+p2199,t2190,< 0.8 Negative0.8 - 1.2 Borderline> 1.2 Positive,S/CO,unrecognized pattern
+p2205,t2191,Negative: < 0.9Equivocal: 0.9 to 1.1Positive: > 1.1,IU/ml,unrecognized pattern
+p2206,t2192,Negative: < 0.9Equivocal: 0.9 to 1.1Positive: > 1.1,IU/ml,unrecognized pattern
+p2218,t2199,Child upto 12 years: < 10Adult (Normal): 0.7 - 9.0Diabetic (Type 2): 0.7 - 25,uIU/ml,unrecognized pattern
+p2217,t2200,1 - 5 years 45 - 3056 - 10 years 50 - 41011 - 15 years 80 - 90016 - 20 years 75 - 850> 20 years 60 - 350,ng/ml,unrecognized pattern
+p2057,t2203,Negative < 10.0Positive > 10.0,U/ml,unrecognized pattern
+p2249,t2206,Negative: < 0.9Borderline: 0.9 to 1.1Positive: > 1.1,-,unrecognized pattern
+p2250,t2207,Negative: < 0.8Borderline: 0.8 to 1.2Positive: > 1.2,-,unrecognized pattern
+p2287,t2213,(See below),IU/ml,unrecognized pattern
+p2305,t2214,Negative: < 0.9Borderline: 0.9 to 1.1Positive: > 1.1,IU/mL,unrecognized pattern
+p2306,t2215,Negative: < 0.8Equivocal: 0.8 to 0.9Positive: > 1.0,IU/ml,unrecognized pattern
+p2320,t2216,Males : 25 - 350Females : 13 - 232,ng/ml,unrecognized pattern
+p2324,t2218,Therapeutic Level: 0.6 - 1.2Toxic Level: > 2.0,mmol/l,unrecognized pattern
+p2349,t2220,Non-Reactive: < 0.9Borderline: 0.9 to 1.1Reactive: > 1.1,,unrecognized pattern
+p2352,t2221,Negative,-,unrecognized pattern
+p2056,t2298,Female:< 10 years 0.08 - 10.610 - 20 -  0.62 - 10.921 - 30 -  0.08 - 10.231 - 40 -  0.15 - 10.641 - 50 -  0.08 - 6.12> 50    -  0.08 - 0.40Male:1 - 11  -  39.1 - 33012 - 20 -  1.15 - 142> 20    -  0.60 - 18.20,ng/mL,unrecognized pattern
+p2198,t2311,Negative < 5.0Borderline 5 - 10Positive >10.0,IU/ml,unrecognized pattern
+p2150,t2325,0.0-1.35  Recommended that each laboratory   establish its own reference range.,mg/L,unrecognized pattern
+p2362,t2114,Negative,,unrecognized pattern
+p2142,t2041,Male: 0.7 - 1.2Female: 0.6 - 1.1Child1 Day: 0.6 - 1.23 Months: 0.2 - 0.41 Year: 0.3 - 0.72-12 Years: 0.35 - 1.0,mg/dl,unrecognized pattern
+p2114,t2241,Men : 24 - 204Women : 24 - 173,U/L,unrecognized pattern
+p2316,t2242,Adult:8.4 - 10.2Children:7.6 - 11.0,mg/dl,unrecognized pattern
+p2223,t2249,Adult: 240-480,U/L,unrecognized pattern
+p2226,t2250,Desirable: < 99Above Desirable: 100-129Borderline: 130 - 159High: 160 - 189Very High: > 190,mg/dl,unrecognized pattern
+p2266,t2251,Adult: 2.5 - 5.0Child: 4.0 - 7.0,mg/dl,unrecognized pattern
+p2364,t2252,Negative,,unrecognized pattern
+p2318,t2258,Desirable: < 200Boderline High: 200 - 239High: > 240,mg/dl,unrecognized pattern
+p2325,t2264,Newbonr 1.2 - 2.6Children 1.5 - 2.3Women 1.9 - 2.5Men 1.8 - 2.6,mg/dl,unrecognized pattern
+p2350,t2267,Normal:< 150Borderline: 150 - 199High: 200 - 499Very High: > 500,mg/dl,unrecognized pattern
+p2347,t2270,Adult: 6.6 - 8.7ChildPre-matures: 3.4 - 5.0Newborns: 4.6 - 6.8Upto 1 Years: 6.0 - 8.0Above 1 Years: 4.8 - 7.6,g/dL,unrecognized pattern
+p2326,t2302,Adults: 2.5 - 4.5Child:  4.0 - 7.0,mg/dl,unrecognized pattern

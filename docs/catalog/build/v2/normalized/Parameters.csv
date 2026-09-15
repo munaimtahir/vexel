@@ -1,0 +1,374 @@
+externalId,userCode,name,resultType,defaultUnit,decimals,allowedValues,loincCode,defaultValue,isActive
+p2000,17_OH_PROGESTERONE,17-OH Progesterone,numeric,ng/mL,,,,,true
+p2001,25_OH_VITAMIN_D3,25-OH Vitamin - D3,numeric,ng/ml,,,,,true
+p2002,A_B12_HOLOTRANSCOBALAMIN,A-B12/Holotranscobalamin.,text,pmol/L,,,,,true
+p2003,A_G_RATIO,A/G Ratio,numeric,,,,,,true
+p2004,ABNORMAL,Abnormal,text,%,,,,,true
+p2005,ABSOLUTE_RETICULOCYTE_CO,Absolute Reticulocyte Count,text,10^12/l,,,,,true
+p2006,ACE_LEVEL,ACE Level,text,U/L,,,,,true
+p2007,ACTIVELY_MOTILE_SPERM,Actively Motile Sperm,text,%,,,,,true
+p2008,ADENOSINE_DEAMINASE_ADA,Adenosine Deaminase (ADA),numeric,U/L,,,,,true
+p2009,ADRENOCORTICOTROPIC_HORM,Adrenocorticotropic Hormone (ACTH),numeric,pg/ml,,,,,true
+p2010,AFTER_INTAKE_OF_GLUCOSE,After intake of Glucose,numeric,g,,,,,true
+p2011,ALBUMIN,Albumin,numeric,g/dl,,,,,true
+p2012,ALBUMIN_CREATININE_RATIO,Albumin / Creatinine Ratio,text,mg/g,,,,,true
+p2013,ALBUMIN_FLUID,Albumin (Fluid),numeric,g/dl,,,,,true
+p2014,ALBUMIN_SPOT_URINE,Albumin (Spot Urine),numeric,mg/L,,,,,true
+p2015,ALDOLASE_SERUM,Aldolase Serum,numeric,U/L,,,,,true
+p2016,ALDOSTERONE_LEVEL,Aldosterone Level,numeric,ng/ml,,,,,true
+p2017,ALKALAINE_PHOSPHATASE,Alkalaine Phosphatase,numeric,U/L,,,,,true
+p2018,ALPHA_1_ABSOLUTE,"Alpha-1, Absolute",numeric,g/dL,,,,,true
+p2019,ALPHA_2_ABSOLUTE,"Alpha-2, Absolute",numeric,g/dL,,,,,true
+p2020,ALPHA_FETO_PROTEIN,Alpha Feto-Protein,numeric,ng/ml,,,,,true
+p2021,AMA_ANTI_MICROSOMAL_ANTI,AMA (Anti Microsomal Antibodies) Blood,numeric,AU/ml,,,,,true
+p2022,AMYLASE,Amylase,numeric,U/L,,,,,true
+p2023,AMYLASE_SPOT_URINE,Amylase (Spot Urine),numeric,U/L,,,,,true
+p2024,ANA_SCREEN_IGG,ANA Screen IgG,text,,,,,,true
+p2025,ANCA_C_IGG,ANCA-C IgG,numeric,,,,,,true
+p2026,ANCA_C_IGM,ANCA-C IgM,numeric,,,,,,true
+p2027,ANCA_C_P_3_ANTIBODIES,ANCA-C (P-3 Antibodies),numeric,-,,,,,true
+p2028,ANCA_P_MPO_ANTIBODIES,ANCA-P (MPO Antibodies),numeric,-,,,,,true
+p2029,ANDROGEN_LEVEL,Androgen Level,numeric,ng/dl,,,,,true
+p2030,ANTI_CARDIOLIPIN_IGG,Anti Cardiolipin IgG,text,U/ml,,,,,true
+p2031,ANTI_CARDIOLIPIN_IGM,Anti Cardiolipin IgM,text,U/ml,,,,,true
+p2032,ANTI_CCP_ANTIBODY,ANTI CCP ANTIBODY,text,U/mL,,,,,true
+p2033,ANTI_CENTROMERE_B,Anti Centromere B,numeric,U/ml,,,,,true
+p2034,ANTI_DS_DNA_IGG,Anti Ds DNA IgG,numeric,IU/ml,,,,,true
+p2035,ANTI_DSDNA_IGG,Anti dsDNA IgG,numeric,U/ml,,,,,true
+p2036,ANTI_ENDOMYSIAL_IGA,Anti Endomysial IgA,numeric,U/ml,,,,,true
+p2037,ANTI_ENDOMYSIAL_IGG,Anti Endomysial IgG,numeric,U/ml,,,,,true
+p2038,ANTI_GBM_ANTI_GLOMERULAR,Anti GBM (Anti Glomerular Basement Membrane),numeric,-,,,,,true
+p2039,ANTI_GLIADIN_IGA,Anti Gliadin IgA,numeric,U/ml,,,,,true
+p2040,ANTI_GLIADIN_IGG,Anti Gliadin IgG,text,U/ml,,,,,true
+p2041,ANTI_HBC,Anti HBc,text,,,,,,true
+p2042,ANTI_HBC_IGG,Anti HBc IgG,numeric,-,,,,,true
+p2043,ANTI_HBC_IGM,Anti HBc IgM,numeric,-,,,,,true
+p2044,ANTI_HCV_ELISA,Anti HCV (Elisa),text,S/CO,,,,,true
+p2045,ANTI_HCV_ELISA_RESULT,Anti HCV Elisa Result,coded,,,,,,true
+p2046,ANTI_HCV_PATIENT_S_INDEX,Anti HCV Patient's index value,numeric,S/CO,,,,,true
+p2047,ANTI_HCV_SCREENING,Anti HCV (Screening),coded,-,,,,,true
+p2048,ANTI_HELICOBACTER_PYLORI,Anti Helicobacter Pylori Screening,coded,,,,,,true
+p2049,ANTI_HEV_IGM,ANTI HEV IgM:,text,S/CO,,,,,true
+p2050,ANTI_HISTONES,Anti Histones,numeric,U/ml,,,,,true
+p2051,ANTI_HIV_I_II_ELISA,Anti HIV I & II Elisa,text,S/CO,,,,,true
+p2052,ANTI_HIV_SCREENING,Anti HIV (Screening),coded,-,,,,,true
+p2053,ANTI_JO_1_IGG,Anti Jo-1 IgG,numeric,U/ml,,,,,true
+p2054,ANTI_KIDNEY_LIVER_MICROS,Anti Kidney Liver Microsomal Antibodies (KLM),numeric,U/ml,,,,,true
+p2055,ANTI_MITOCHONDRIAL_M2_AB,Anti Mitochondrial-M2 Ab (AMA-M2),numeric,U/ml,,,,,true
+p2056,ANTI_MULLERIAN_HORMONE_A,Anti Mullerian Hormone (AMH),numeric,ng/mL,,,,,true
+p2057,ANTI_NUCLEOSOME_LUPUS_AN,Anti Nucleosome (Lupus Antibodies) Anti Coagulant,text,U/ml,,,,,true
+p2058,ANTI_NUCLEOSOMES_IGG,Anti Nucleosomes IgG,numeric,U/ml,,,,,true
+p2059,ANTI_PCNA_IGG,Anti PCNA IgG,numeric,U/ml,,,,,true
+p2060,ANTI_PHOSPHOLIPID_IGG,Anti Phospholipid IgG,numeric,,,,,,true
+p2061,ANTI_PHOSPHOLIPID_IGM,Anti Phospholipid IgM,numeric,,,,,,true
+p2062,ANTI_PM_SCL_IGG,Anti PM/Scl IgG,numeric,U/ml,,,,,true
+p2063,ANTI_RIBOSOME_PROTEIN_IG,Anti Ribosome Protein IgG,numeric,U/ml,,,,,true
+p2064,ANTI_RO_52,Anti RO-52,numeric,U/ml,,,,,true
+p2065,ANTI_SCI_70_IGG,Anti ScI-70 IgG,numeric,U/ml,,,,,true
+p2066,ANTI_SCL_70_IGG,Anti SCL-70 IgG,numeric,AU/ml,,,,,true
+p2067,ANTI_SM_IGG,Anti Sm IgG,numeric,U/ml,,,,,true
+p2068,ANTI_SM_RNP_IGG,Anti Sm/RNP IgG,numeric,U/ml,,,,,true
+p2069,ANTI_SMOOTH_MUSCLE_ANTIB,Anti Smooth Muscle Antibodies (SMA),numeric,Au/ml,,,,,true
+p2070,ANTI_SPERM_ANTIBODIES_SE,Anti Sperm Antibodies (Serum),numeric,-,,,,,true
+p2071,ANTI_SS_A,Anti SS-A,numeric,U/ml,,,,,true
+p2072,ANTI_SS_B,Anti SS-B,numeric,U/ml,,,,,true
+p2073,ANTI_THYROGLOBULIN_ANTIB,Anti Thyroglobulin Antibodies (Anti TG),numeric,IU/ml,,,,,true
+p2074,ANTI_THYROID_PEROXIDASE_,Anti Thyroid Peroxidase (Anti TPO),text,IU/ml,,,,,true
+p2075,ANTI_TISSUE_TRANSGLUTAMI,Anti Tissue Transglutaminase IgA,numeric,U/ml,,,,,true
+p2076,ANTI_TISSUE_TRANSGLUTAMI,Anti Tissue Transglutaminase IgG,numeric,U/mL,,,,,true
+p2077,APPEARANCE,Appearance,text,,,,,,true
+p2078,APTT,APTT,numeric,Seconds,,,,,true
+p2079,APTT_CONTROL,APTT Control,numeric,Seconds,,,,,true
+p2080,ASO_TITER,ASO titer,text,lu/ml,,,,,true
+p2081,ATYPICAL_MONONUCLEAR_BLA,Atypical Mononuclear/ Blast cells,numeric,%,,,,,true
+p2082,BACTERIA,Bacteria,text,,,,,,true
+p2083,BAND_CELLS,Band Cells,numeric,%,,,,,true
+p2084,BASOPHIL_ABSOLUTE,"Basophil, Absolute",numeric,*10^9/l,,,,,true
+p2085,BASOPHILS,Basophils,numeric,%,,,,,true
+p2086,BETA,Beta,numeric,g/dL,,,,,true
+p2087,BETA_2_GLYCOPROTEIN_1_IG,Beta 2 Glycoprotein-1 IgG,numeric,U/ml,,,,,true
+p2088,BETA_2_GLYCOPROTEIN_1_IG,Beta 2 Glycoprotein-1 IgM,text,U/ml,,,,,true
+p2089,BETA_HCG,BETA HCG,numeric,mIU/ml,,,,,true
+p2090,BILIRUBIN,Bilirubin,text,,,,,,true
+p2091,BILIRUBIN_CONJUGATED,Bilirubin Conjugated,numeric,mg/dl,,,,,true
+p2092,BILIRUBIN_TOTAL,Bilirubin Total,numeric,mg/dl,,,,,true
+p2093,BILIRUBIN_UNCONJUGATED,Bilirubin Unconjugated,numeric,mg/dl,,,,,true
+p2094,BLAST_CELLS,Blast Cells,text,%,,,,,true
+p2095,BLEEDING_TIME_BT,Bleeding Time (BT),text,minutes,,,,,true
+p2096,BLOOD,Blood,text,,,,,,true
+p2097,BLOOD_BAG_NUMBER,Blood Bag Number,text,-,,,,,true
+p2098,BLOOD_COLLECTION_DATE,Blood Collection Date,text,-,,,,,true
+p2099,BLOOD_GLUCOSE_1_HR,Blood Glucose 1 hr.,numeric,mg/dl,,,,,true
+p2100,BLOOD_GLUCOSE_2_HRS,Blood Glucose 2 hrs.,numeric,mg/dl,,,,,true
+p2101,BLOOD_GLUCOSE_FASTING,Blood Glucose Fasting,numeric,mg/dl,,,,,true
+p2102,BLOOD_GROUP,Blood Group,text,,,,,,true
+p2103,BLOOD_SUGAR_1_HRS,Blood Sugar 1-HRS,numeric,mg/dl,,,,,true
+p2104,BLOOD_SUGAR_2HRS,Blood Sugar - 2HRS,numeric,mg/dl,,,,,true
+p2105,BLOOD_SUGAR_FASTING,Blood Sugar Fasting,numeric,mg/dl,,,,,true
+p2106,BLOOD_SUGAR_RANDOM,Blood Sugar Random,numeric,mg/dl,,,,,true
+p2107,BLOOD_UREA_NITROGEN_BUN,Blood Urea Nitrogen (BUN),numeric,mg/dl,,,,,true
+p2108,BOVINE_ALBUMIN_PHASE_AT_,Bovine Albumin Phase at 37 C,text,-,,,,,true
+p2109,BOVINE_ALBUMIN_PHASE_AT_,Bovine Albumin Phase at R.T.,text,-,,,,,true
+p2110,BRUCELLA_IGG,Brucella IgG,numeric,IU/ml,,,,,true
+p2111,BRUCELLA_IGM,Brucella IgM,numeric,IU/ml,,,,,true
+p2112,BUN_CREATININE_RATIO,BUN/Creatinine Ratio,numeric,,,,,,true
+p2113,C_E_A,C.E.A,numeric,ng/ml,,,,,true
+p2114,C_P_K,C.P.K,numeric,U/L,,,,,true
+p2115,C_PEPTIDE_LEVEL,C-Peptide Level,numeric,ng/ml,,,,,true
+p2116,C_REACTIVE_PROTEIN_CRP,C-Reactive Protein (CRP),numeric,mg/L,,,,,true
+p2117,C3_COMPLEMENT_LEVEL_3,C3 (Complement Level 3),numeric,g/l,,,,,true
+p2118,C4_COMPLEMENT_LEVEL_4,C4 (Complement Level 4),numeric,mg/dl,,,,,true
+p2119,CA_125,CA-125,numeric,U/ml,,,,,true
+p2120,CA_15_3_BLOOD,CA 15-3 (Blood),numeric,U/ml,,,,,true
+p2121,CA_19_9,CA-19-9,numeric,u/ml,,,,,true
+p2122,CALCIUM,Calcium,numeric,mg/dl,,,,,true
+p2123,CALCIUM_CREATININE_SPOT_,Calcium/Creatinine (Spot Urine),numeric,,,,,,true
+p2124,CALCIUM_SPOT_URINE,Calcium (Spot Urine),numeric,mg/L,,,,,true
+p2125,CHOLESTEROL_HDL_CHOLESTE,Cholesterol / HDL Cholesterol Ratio,numeric,mg/dl,,,,,true
+p2126,CKMB,CKMB,numeric,u/l,,,,,true
+p2127,CLOTTING_TIME_CT,Clotting Time (CT),text,minutes,,,,,true
+p2128,CMV_IGG_CYTOMEGALOVIRUS,CMV IgG (Cytomegalovirus),numeric,IU/ml,,,,,true
+p2129,CMV_IGM_CYTOMEGALOVIRUS,CMV IgM (Cytomegalovirus),numeric,IU/ml,,,,,true
+p2130,COLOR,Color,text,,,,,,true
+p2131,CONSISTENCY,Consistency,text,,,,,,true
+p2132,CONTROL,Control,numeric,Sec,,,,,true
+p2133,COOMBS_PHASE_AT_37_C,Coombs Phase at 37 C,text,-,,,,,true
+p2134,COOMBS_TEST_DIRECT,Coombs Test Direct,text,,,,,,true
+p2135,COOMBS_TEST_INDIRECT,Coombs Test Indirect,text,,,,,,true
+p2136,COPPER_24_HRS_URINE,Copper (24 hrs Urine),numeric,ug/24hrs,,,,,true
+p2137,CORRECTED_WBC_S,Corrected WBC's,numeric,/cmm,,,,,true
+p2138,CORTISOL,Cortisol,numeric,ug/24h,,,,,true
+p2139,CORTISOL_AM,Cortisol AM,numeric,nmol/l,,,,,true
+p2140,CORTISOL_PM,Cortisol PM,numeric,nmol/l,,,,,true
+p2141,CORTISOLE_SPOT_URINE,Cortisole (Spot Urine),numeric,ug/l,,,,,true
+p2142,CREATININE,Creatinine,numeric,mg/dl,,,,,true
+p2143,CREATININE_24_HRS_URINE,Creatinine (24 hrs urine),numeric,G/24 hrs,,,,,true
+p2144,CREATININE_CLEARANCE,Creatinine Clearance,numeric,ml/min,,,,,true
+p2145,CREATININE_SPOT_URINE,Creatinine (Spot Urine),numeric,mg/dl,,,,,true
+p2146,CROSS_MATCH,Cross Match,text,-,,,,,true
+p2147,CRP_HIGH_SENSITIVITY,CRP (High Sensitivity),numeric,mg/L,,,,,true
+p2148,CRYSTAL,Crystal,text,,,,,,true
+p2149,CUT_OFF_VALUE,Cut Off Value,text,,,,,,true
+p2150,D_DIMER_F_D_P_S,D-DIMER (F.D.P's),text,mg/L,,,,,true
+p2151,DENGUE_NS1_ANTIGEN,Dengue NS1 Antigen,text,S/CO,,,,,true
+p2152,DENGUE_VIRUS_IGG,Dengue Virus (IgG),numeric,,,,,,true
+p2153,DENGUE_VIRUS_IGM,Dengue Virus (IgM),numeric,,,,,,true
+p2154,DIGOXIN,Digoxin,numeric,ng/ml,,,,,true
+p2155,DIRECT_BILIRUBIN,Direct Bilirubin,numeric,mg/dl,,,,,true
+p2156,DLC,DLC,text,,,,,,true
+p2157,DONOR_BLOOD_GROUP,Donor Blood Group,coded,-,,,,,true
+p2158,DONOR_HEAMOGLOBIN_HB,Donor Heamoglobin (HB),numeric,g/dl,,,,,true
+p2159,DONOR_NAME,Donor Name,text,-,,,,,true
+p2160,E_S_R,E.S.R,numeric,mm/1st hr,,,,,true
+p2161,EOSINOPHIL,Eosinophil,numeric,%,,,,,true
+p2162,EOSINOPHIL_ABSOLUTE,"Eosinophil, Absolute",numeric,*10^9/l,,,,,true
+p2163,EOSINOPHILS,Eosinophils,numeric,%,,,,,true
+p2164,EPITHELIAL_CELLS,Epithelial Cells,text,,,,,,true
+p2165,ESR,ESR,numeric,mm/1st hr,,,,,true
+p2166,ESTRADIOL,Estradiol,numeric,pg/mL,,,,,true
+p2167,ESTROGEN,Estrogen,numeric,pg/mL,,,,,true
+p2168,F_D_P_S_D_DIMER,F.D.P's (D-DIMER),numeric,ng/ml,,,,,true
+p2169,FIBRINOGEN_LEVEL,Fibrinogen Level,numeric,mg/dl,,,,,true
+p2170,FOLIC_ACID,Folic Acid,numeric,ng/ml,,,,,true
+p2171,FREE_T3,Free T3,numeric,pg/ml,,,,,true
+p2172,FREE_T4,FREE T4,text,pmol/L,,,,,true
+p2173,FREE_TESTOSTERONE_SERUM,Free Testosterone Serum,numeric,Pg/ml,,,,,true
+p2174,FRUCTOSE,Fructose,coded,,,,,,true
+p2175,FSH,FSH,text,mIU/ml,,,,,true
+p2176,GAMMA,Gamma,numeric,g/dL,,,,,true
+p2177,GAMMA_GT,Gamma GT,numeric,U/L,,,,,true
+p2178,GLOBULINS,Globulins,numeric,g/dl,,,,,true
+p2179,GLOMERULAR_FILTERATION_R,Glomerular Filteration Rate (GFR),numeric,mL/Min/1.73m^2,,,,,true
+p2180,GLUCOSE,Glucose,text,,,,,,true
+p2181,GRANULAR_CAST_LPF,Granular Cast/LPF,text,,,,,,true
+p2182,GROWTH_HORMONE_GH,Growth Hormone (GH),numeric,ng/ml,,,,,true
+p2183,HAV_IGG,HAV IgG,text,S/CO,,,,,true
+p2184,HB_A,HB-A,numeric,%,,,,,true
+p2185,HB_A2,HB-A2,numeric,%,,,,,true
+p2186,HB_C,HB-C,numeric,%,,,,,true
+p2187,HB_F,HB-F,numeric,%,,,,,true
+p2188,HB_S_D,HB-S/D,numeric,%,,,,,true
+p2189,HBA1C,HbA1c,numeric,%,,,,,true
+p2190,HBSAG_PATIENT_S_INDEX_VA,HBsAg Patient's index value,text,,,,,,true
+p2191,HBSAG_SCREENING,HBsAg (Screening),coded,-,,,,,true
+p2192,HCT_PCV,HCT (PCV),numeric,%,,,,,true
+p2193,HCV_SCREENING,HCV Screening,coded,,,,,,true
+p2194,HDL_CHOLESTEROL,HDL Cholesterol,numeric,mg/dl,,,,,true
+p2195,HEAD_DEFECT,Head Defect,text,%,,,,,true
+p2196,HEAMOGLOBIN,Heamoglobin,numeric,g/dl,,,,,true
+p2197,HELICOBACTER_PYLORI_ABS_,Helicobacter Pylori Abs (IgA),numeric,U/ml,,,,,true
+p2198,HELICOBACTER_PYLORI_ABS_,Helicobacter Pylori Abs (IgG),numeric,U/ml,,,,,true
+p2199,HELICOBACTER_PYLORI_ABS_,Helicobacter Pylori Abs IgM,text,S/CO,,,,,true
+p2200,HEMATOCRIT_HCT,Hematocrit (HCT),text,%,,,,,true
+p2201,HEMOGLOBIN_HB,Hemoglobin (HB),numeric,g/dl,,,,,true
+p2202,HEPATITIS_A_VIRUS_IGM,Hepatitis A Virus IgM,text,U/ml,,,,,true
+p2203,HEPATITIS_B_E_ANTIGEN,"Hepatitis B ""e"" Antigen",text,S/CO,,,,,true
+p2204,HEPATITIS_B_SURFACE_ANTI,Hepatitis B Surface Antigen,coded,S/CO,,,,,true
+p2205,HERPES_IGG,Herpes IgG,numeric,IU/ml,,,,,true
+p2206,HERPES_IGM,Herpes IgM,numeric,IU/ml,,,,,true
+p2207,HIV_SCREENING,HIV (Screening),coded,-,,,,,true
+p2208,HOMOCYSTINE_BLOOD,Homocystine (Blood),numeric,µmol/l,,,,,true
+p2209,HOMOCYSTINE_URINE,Homocystine (Urine),numeric,µmol/l,,,,,true
+p2210,IGA,IgA,numeric,mg/dl,,,,,true
+p2211,IGE,IgE,numeric,IU/ml,,,,,true
+p2212,IGG_LEVEL,IgG Level,numeric,mg/dl,,,,,true
+p2213,IGM,IgM,numeric,mg/dl,,,,,true
+p2214,IMMOTILE,Immotile,text,%,,,,,true
+p2215,INDIRECT_BILIRUBIN,Indirect Bilirubin,numeric,mg/dl,,,,,true
+p2216,INR,INR,numeric,Ratio,,,,,true
+p2217,INSULIN_GROWTH_FACTOR_1_,Insulin Growth Factor-1 (IGF-1),numeric,ng/ml,,,,,true
+p2218,INSULIN_RANDOM,Insulin (Random),numeric,uIU/ml,,,,,true
+p2219,INTACT_PARATHYROID_HORMO,Intact Parathyroid Hormone (IPTH) (Fasting),numeric,pg/mL,,,,,true
+p2220,IONIZED_CALCIUM,Ionized Calcium,numeric,mmol/l,,,,,true
+p2221,IRON,Iron,numeric,µg/dL,,,,,true
+p2222,KETONES,Ketones,text,,,,,,true
+p2223,L_D_H,L.D.H.,numeric,U/L,,,,,true
+p2224,L_D_H_CSF,L.D.H (CSF),numeric,,,,,,true
+p2225,LACTATE_LEVEL,Lactate Level,numeric,mg/dl,,,,,true
+p2226,LDL_CHOLESTEROL,LDL Cholesterol,numeric,mg/dl,,,,,true
+p2227,LEUCOCYTES,Leucocytes,text,,,,,,true
+p2228,LH,LH,text,mIU/ml,,,,,true
+p2229,LIPASE_FLUID,lipase (Fluid),numeric,U/L,,,,,true
+p2230,LIQUIFICATION_TIME,Liquification Time,numeric,Minutes,,,,,true
+p2231,LYMPHOCYTE_ABSOLUTE,"Lymphocyte, Absolute",numeric,*10^9/l,,,,,true
+p2232,LYMPHOCYTES,Lymphocytes,numeric,%,,,,,true
+p2233,MALARIAL_PARASITE_MP,Malarial Parasite (MP),text,,,,,,true
+p2234,MALARIAL_PARASITE_PF,Malarial Parasite PF,coded,,,,,,true
+p2235,MALARIAL_PARASITE_PV,Malarial Parasite PV,coded,,,,,,true
+p2236,MALARIL_PARASITE_MP,Malaril Parasite (MP),coded,-,,,,,true
+p2237,MEAN_CELL_HB_CONC_MCHC,Mean Cell Hb Conc (MCHC),numeric,g/dl,,,,,true
+p2238,MEAN_CELL_HEMOGLOBIN_MCH,Mean Cell Hemoglobin (MCH),numeric,pg,,,,,true
+p2239,MEAN_CELL_VOLUME_MCV,Mean Cell Volume (MCV),numeric,fl,,,,,true
+p2240,MEAN_PLATELET_VOLUME_MPV,Mean Platelet Volume (MPV),numeric,fL,,,,,true
+p2241,METAMYELOCYCTES,Metamyelocyctes,numeric,%,,,,,true
+p2242,METAMYELOCYTES,Metamyelocytes,numeric,%,,,,,true
+p2243,MICRO_ALBUMIN,Micro Albumin,numeric,mg/24 Hours,,,,,true
+p2244,MONOCYTE_ABSOLUTE,"Monocyte, Absolute",numeric,*10^9/l,,,,,true
+p2245,MONOCYTES,Monocytes,numeric,%,,,,,true
+p2246,MONOSPOT_TEST,Monospot Test,numeric,,,,,,true
+p2247,MUCOUS_THREADS,Mucous Threads,coded,,,,,,true
+p2248,MUCUS,Mucus,text,,,,,,true
+p2249,MYCODOT_IGG,MycoDot (IgG),numeric,-,,,,,true
+p2250,MYCODOT_IGM,MycoDot (IgM),numeric,-,,,,,true
+p2251,MYELOCYCTES,Myelocyctes,numeric,%,,,,,true
+p2252,MYELOCYTES,Myelocytes,numeric,%,,,,,true
+p2253,NEUTROPHIL_ABSOLUTE,"Neutrophil, Absolute",numeric,*10^9/L,,,,,true
+p2254,NEUTROPHILS,Neutrophils,numeric,%,,,,,true
+p2255,NITRATE,Nitrate,text,,,,,,true
+p2256,NUCLEATED_RBCS,Nucleated RBCs,numeric,/100 WBC's,,,,,true
+p2257,OCCULT_BLOOD,Occult Blood,text,,,,,,true
+p2258,OSMOLALIYT_BLOOD,Osmolaliyt (Blood),numeric,mosmol/kg,,,,,true
+p2259,OVA,Ova,text,,,,,,true
+p2260,P_LCC,P-LCC,numeric,*10^9/l,,,,,true
+p2261,P_LCR,P-LCR,numeric,-,,,,,true
+p2262,PARASITE,Parasite,text,,,,,,true
+p2263,PATIENT_BLOOD_GROUP,Patient Blood Group,coded,-,,,,,true
+p2264,PATIENT_S_VALUE,Patient's Value,numeric,U/ml,,,,,true
+p2265,PH,PH,coded,,,,,,true
+p2266,PHOSPHATE_SERUM,Phosphate (Serum),numeric,mg/dl,,,,,true
+p2267,PHOSPHATE_SPOT_URINE,Phosphate Spot Urine,numeric,mg/24 Hours,,,,,true
+p2268,PIVKA_II,PIVKA-II,text,mAU/mL,,,,,true
+p2269,PLATELET_DISTRIBUTION_WI,Platelet Distribution Width (PDW),numeric,-,,,,,true
+p2270,PLATELETCRIT_PCT,Plateletcrit (PCT),numeric,mL/L,,,,,true
+p2271,PLATELETS_COUNT,Platelets Count,numeric,*10^9/l,,,,,true
+p2272,PROBNP_N_T_II,ProBNP (N-t) II,numeric,pg/ml,,,,,true
+p2273,PROCALCITONIN_PCT,Procalcitonin (PCT),numeric,ng/mL,,,,,true
+p2274,PROGESTERONE_LEVEL,Progesterone Level,numeric,nmol/l,,,,,true
+p2275,PROLACTIN,Prolactin,numeric,ng/ml,,,,,true
+p2276,PROMEYELOCYCTES,Promeyelocyctes,numeric,%,,,,,true
+p2277,PROMYELOCYTES,Promyelocytes,numeric,%,,,,,true
+p2278,PROTEIN,Protein,text,,,,,,true
+p2279,PROTEIN_CREATININE_RATIO,Protein / Creatinine Ratio (Spot Urine),numeric,,,,,,true
+p2280,PROTEIN_SPOT_URINE,Protein (Spot Urine),numeric,mg/dl,,,,,true
+p2281,PSA_PROSTATE_SPECIFIC_AN,PSA (Prostate Specific Antigen) Total,text,ng/ml,,,,,true
+p2282,PT,PT,text,Seconds,,,,,true
+p2283,PT_CONTROL,PT Control,numeric,Seconds,,,,,true
+p2284,PTH,PTH,numeric,pg/mL,,,,,true
+p2285,PUS_CELLS,Pus Cells,text,,,,,,true
+p2286,PUS_CELLS_WBC,Pus Cells/WBC,text,,,,,,true
+p2287,QUANTIFERON_TB_GOLD_TEST,QuantiFeron-TB Gold Test,numeric,IU/ml,,,,,true
+p2288,R_A_FACTOR_IGG,R.A Factor IgG,numeric,IU/ml,,,,,true
+p2289,R_A_FACTOR_IGM,R.A Factor IgM,numeric,IU/ml,,,,,true
+p2290,R_A_FACTOR_QUANTITATIVE,R.A. Factor (Quantitative),text,IU/mL,,,,,true
+p2291,RA_FACTOR,RA Factor,numeric,IU/ml,,,,,true
+p2292,RBC,RBC,text,,,,,,true
+p2293,RED_BLOOD_CELL_RBC,Red Blood Cell (RBC),numeric,*10^12/l,,,,,true
+p2294,RED_BLOOD_CELLS,Red Blood Cells,text,,,,,,true
+p2295,RED_CELL_DIST_WIDTH_RDW_,Red Cell Dist. Width (RDW-CV),numeric,%,,,,,true
+p2296,RED_CELL_DIST_WIDTH_RDW_,Red Cell Dist. Width (RDW-SD),numeric,fl,,,,,true
+p2297,RED_CELL_FOLATE,Red Cell Folate,numeric,nmol/l,,,,,true
+p2298,REMARKS,Remarks,text,,,,,,true
+p2299,RETICULOCYTE_COUNT,Reticulocyte Count,numeric,%,,,,,true
+p2300,RETICULOCYTE_INDEX,Reticulocyte Index,numeric,,,,,,true
+p2301,RH_ANTIBODY_TITER,Rh Antibody Titer,text,,,,,,true
+p2302,RH_FACTOR,RH Factor,coded,,,,,,true
+p2303,RHEUMATOID_FACTOR_RH,Rheumatoid Factor (Rh),numeric,iu/ml,,,,,true
+p2304,RPR_VDRL,RPR (VDRL),coded,-,,,,,true
+p2305,RUBELLA_IGG,Rubella IgG,numeric,IU/mL,,,,,true
+p2306,RUBELLA_IGM,Rubella IgM,numeric,IU/ml,,,,,true
+p2307,S_G_O_T_A_S_T,S.G.O.T (A.S.T),numeric,U/L,,,,,true
+p2308,SALINE_PHASE_AT_37_C,Saline Phase at 37 C,text,-,,,,,true
+p2309,SALMONELLA_PARA_TYPHI_A,"salmonella Para Typhi ""A""",text,Ratio,,,,,true
+p2310,SALMONELLA_PARA_TYPHI_AN,Salmonella Para Typhi Antigen (Serum),text,,,,,,true
+p2311,SALMONELLA_PARA_TYPHI_B,"salmonella Para Typhi ""B""",text,Ratio,,,,,true
+p2312,SALMONELLA_TYPHI_ANTIGEN,Salmonella Typhi Antigen (Serum),text,,,,,,true
+p2313,SALMONELLA_TYPHI_H,"Salmonella Typhi ""H""",coded,Ratio,,,,,true
+p2314,SALMONELLA_TYPHI_O,"Salmonella Typhi ""O""",coded,Ratio,,,,,true
+p2315,SERUM_BICARBONATE,Serum Bicarbonate,numeric,mmol/L,,,,,true
+p2316,SERUM_CALCIUM,SERUM CALCIUM,text,mg/dl,,,,,true
+p2317,SERUM_CHLORIDE,Serum Chloride,numeric,mmol/L,,,,,true
+p2318,SERUM_CHOLESTEROL,Serum Cholesterol,numeric,mg/dl,,,,,true
+p2319,SERUM_CREATININE,Serum Creatinine,numeric,mg/dl,,,,,true
+p2320,SERUM_FERRITIN,Serum Ferritin,numeric,ng/ml,,,,,true
+p2321,SERUM_GLOBULIN,SERUM GLOBULIN,text,mg/dl,,,,,true
+p2322,SERUM_INSULIN_LEVEL_FAST,Serum Insulin Level (Fasting),numeric,uIU/ml,,,,,true
+p2323,SERUM_LIPASE,Serum Lipase,numeric,U/l,,,,,true
+p2324,SERUM_LITHIUM,Serum Lithium,numeric,mmol/l,,,,,true
+p2325,SERUM_MAGNESIUM,Serum Magnesium,numeric,mg/dl,,,,,true
+p2326,SERUM_PHOSPHORUS,Serum Phosphorus,numeric,mg/dl,,,,,true
+p2327,SERUM_POTASSIUM,Serum Potassium,text,mmol/L,,,,,true
+p2328,SERUM_SODIUM,Serum Sodium,numeric,mmol/L,,,,,true
+p2329,SGOT_AST,SGOT (AST),numeric,U/l,,,,,true
+p2330,SGPT_ALT,SGPT (ALT),text,U/L,,,,,true
+p2331,SLUGGISH_MOTILE_SPERM,Sluggish Motile Sperm,text,%,,,,,true
+p2332,SPECIFIC_GRAVITY,Specific Gravity,text,,,,,,true
+p2333,SPERM_CONCENTRATION,Sperm Concentration,text,million/ml,,,,,true
+p2334,STOOL_FOR_CALPROTECTIN,Stool for Calprotectin,numeric,ug/g,,,,,true
+p2335,STOOL_FOR_H_PYLORI_ANTIG,STOOL FOR H.PYLORI ANTIGEN,text,,,,,,true
+p2336,STOOL_FOR_OCCULT_BLOOD,Stool for Occult Blood,coded,,,,,,true
+p2337,T_I_B_C,T.I.B.C.,numeric,µg/dL,,,,,true
+p2338,T3,T3,text,nmol/l,,,,,true
+p2339,T4,T4,text,nmol/L,,,,,true
+p2340,TAIL_DEFECTS,Tail Defects,text,%,,,,,true
+p2341,TB_SCREENING_IGG,TB (Screening) IgG,coded,,,,,,true
+p2342,TB_SCREENING_IGM,TB (Screening) IgM,coded,,,,,,true
+p2343,TESTOSTERONE,Testosterone,numeric,ng/dL,,,,,true
+p2344,TIBC,TIBC,text,ug/dL,,,,,true
+p2345,TOTAL_CELL_COUNT,Total Cell Count,numeric,/cu.mm,,,,,true
+p2346,TOTAL_LIPIDS,Total Lipids,numeric,mg/dl,,,,,true
+p2347,TOTAL_PROTEIN,Total Protein,numeric,g/dL,,,,,true
+p2348,TOTAL_VOLUME,Total Volume,numeric,ml,,,,,true
+p2349,TPHA_SYPHILIS,TPHA (Syphilis),numeric,,,,,,true
+p2350,TRIGLYCERIDES,Triglycerides,numeric,mg/dl,,,,,true
+p2351,TROPONIN_I,Troponin-I,text,ng/ml,,,,,true
+p2352,TROPONIN_T,Troponin-T,text,-,,,,,true
+p2353,TSH,TSH,text,µIU/mL,,,,,true
+p2354,TYPHIDOT_IGG,Typhidot igG,text,,,,,,true
+p2355,TYPHIDOT_IGM,Typhidot igM,text,,,,,,true
+p2356,UREA,Urea,numeric,mg/dl,,,,,true
+p2357,URIC_ACID,Uric Acid,numeric,mg/dl,,,,,true
+p2358,URIC_ACID_CREATININE_RAT,Uric Acid Creatinine Ratio,numeric,RATIO,,,,,true
+p2359,URINE_CREATININE,Urine Creatinine,numeric,mg/dl,,,,,true
+p2360,URINE_FOR_MICROALBUMINUR,Urine for Microalbuminuria (Spot),numeric,mg/L,,,,,true
+p2361,URINE_FOR_PREGNANCY,Urine for Pregnancy,coded,,,,,,true
+p2362,URINE_KETONES,Urine Ketones,coded,,,,,,true
+p2363,URINE_PROTEIN,Urine Protein,numeric,mg/24 Hours,,,,,true
+p2364,URINE_PROTEIN_SPOT_QUALI,Urine Protein (Spot) Qualitative,coded,,,,,,true
+p2365,UROBILIRUBIN,Urobilirubin,coded,umol/L,,,,,true
+p2366,V_D_R_L_SYPHILIS_ICT,V.D.R.L ( Syphilis ) ICT,coded,,,,,,true
+p2367,V_L_D_L,V.L.D.L,numeric,mg/dl,,,,,true
+p2368,VDRL_BY_ELISA,(VDRL) BY ELISA,numeric,-,,,,,true
+p2369,VMA_24_HRS_URINE,VMA (24 Hrs Urine),numeric,mg/24 Hrs,,,,,true
+p2370,VOLUME,Volume,numeric,ml,,,,,true
+p2371,WHITE_BLOOD_CELL_WBC_TLC,White Blood Cell (WBC/TLC),numeric,*10^9/l,,,,,true
+p2372,YEAST_CELLS,Yeast Cells,text,,,,,,true

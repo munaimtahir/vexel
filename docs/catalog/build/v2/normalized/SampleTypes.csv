@@ -1,0 +1,23 @@
+externalId,userCode,name,description,isActive
+s2000,10CC_EDTA_WHOLE_,10cc EDTA Whole Blood,,true
+s2001,2_EDTA_VIALS_CON,2 EDTA vials containing 3cc blood in each vial,,true
+s2002,24_HRS_URINE,24 Hrs Urine,,true
+s2003,24_HRS_URINE_SER,24 Hrs urine & Serum,,true
+s2004,3_CLOTTED_BLOOD_,3 Clotted Blood Samples,,true
+s2005,3_EDTA_VIALS_CON,3 EDTA vials containing 3cc blood in each vial,,true
+s2006,3_5_ML_FROZEN_ED,3-5 ml Frozen EDTA Plasma,,true
+s2007,3_5CC_CLOTTED_BL,3-5cc Clotted Blood or Serum,,true
+s2008,3CC_CLOTTED_3CC_,3cc Clotted & 3cc EDTA,,true
+s2009,3CC_EDTA_BLOOD_P,3cc EDTA BLOOD (Purple Vial),,true
+s2010,3CC_SERUM_AND_FL,3cc Serum and Fluoride Sample,,true
+s2011,8CC_CLOTTED_BLOO,8cc Clotted Blood or Serum,,true
+s2012,CSF,CSF,,true
+s2013,EDTA_AND_CLOTTED,EDTA And Clotted Blood,,true
+s2014,FLUID_ALL_BODY_F,FLUID (All Body Fluid),,true
+s2015,HEPARINIZED_OR_E,Heparinized or EDTA Blood,,true
+s2016,SEMEN,SEMEN,,true
+s2017,STONE,STONE,,true
+s2018,STOOL,STOOL,,true
+s2019,SODIUM_CITRATE_T,Sodium Citrate Tube (PT Vial),,true
+s2020,SODIUM_FLUORIDE_,Sodium Fluoride Vial (Sugar Vial),,true
+s2021,URINE_RANDOM_SPO,Urine (Random/Spot),,true
