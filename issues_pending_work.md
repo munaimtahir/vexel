@@ -122,7 +122,7 @@ Dependencies to respect:
 |---|---|---|---|---|
 | T0.1 Production security | P0 | IN PROGRESS | Server owner + maintenance window | — |
 | T0.2 Dependency security | P0 | IN PROGRESS | Runtime dependency triage | — |
-| T1.1 Workflow/specification lock | P0 prerequisite | IN PROGRESS | Owner decisions D1–D10 | — |
+| T1.1 Workflow/specification lock | P0 prerequisite | PASS | Owner decisions D1–D10 | `docs(lims): lock per-test workflow decisions` |
 | T1.2 Atomic audit writes | P0 | IN PROGRESS | Transaction-aware audit helper | — |
 | T1.3 Audit tenant isolation | P0 | IN PROGRESS | T1.4 fixtures; OpenAPI + SDK | — |
 | T1.4 Two-tenant test fixtures | P0 prerequisite | IN PROGRESS | Disposable Tenant A/B data | — |

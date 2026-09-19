@@ -29,6 +29,22 @@
    - audit events for workflow commands + admin changes
 8) **No legacy compatibility** in v1.
 
+## B.2) LIMS per-test workflow and reporting (locked)
+
+1) Sampling, result entry, verification, correction, cancellation, and report
+   selection operate on an individual ordered test. Encounter status is a
+   derived summary only.
+2) Cancelled tests do not block completion. Cancelling a partly-paid test
+   creates a pro-rata refundable credit, capped at the amount paid for that test.
+3) Verification generates and publishes the report automatically. If rendering
+   fails, verification remains valid and an authorized user retries the failed
+   document.
+4) Printing remains a separate action and defaults to every verified test.
+5) The per-test `Single Page` catalogue option (`printAlone`) forces the test to
+   print by itself on one page.
+6) Reports contain verified tests only and identify pending non-cancelled tests
+   with a `PARTIAL` label.
+
 ## B.1) OPD Module — MVP Scope (LOCKED)
 
 OPD MVP scope is governance-locked and defined authoritatively in `docs/specs/opd/OPD_MVP_SPEC.md`.
