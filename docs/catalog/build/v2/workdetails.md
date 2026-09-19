@@ -3,7 +3,12 @@
 > **Read this first.** This document is written so that a new engineer or AI agent can
 > understand, without any other context, what the v2 catalog is, how it was produced,
 > what is finished, what needs refinement, and what has not been started.
-> Last updated: 2026-09-19. Branch: `main`.
+> Last updated: 2026-09-20. Branch: `main`.
+> **Key update 2026-09-20:** an audit of the Vexel code (§11) found that the catalogue is not only
+> a data-loading task — Vexel itself is missing features needed to hold the legacy normal ranges,
+> paragraph/heading result rows, and several result-entry features are wired incorrectly. The earlier
+> advice to "delete the 208 blank range rows before upload" is **withdrawn**: those ranges are a
+> real requirement and must be kept (as text) until Vexel can store them. See §7‑I and §11.
 
 ---
 
@@ -48,10 +53,12 @@ Guiding principles carried through all of the work below:
 | F | Structural self‑validation of the workbook | **DONE** (passes) |
 | G | Commit + push to `origin/main` | **DONE** |
 | H | **Dry‑run / real import into a Vexel tenant** | **NOT STARTED** ← next critical step |
-| I | Reference ranges: 208 unparsed, blank‑bounds hazard | **NEEDS REFINEMENT** |
-| J | 28 "coded" parameters without option lists | **NEEDS REFINEMENT** |
-| K | 18 tests without a sample type | **NEEDS REFINEMENT** |
-| L | 24 tests with zero parameters | **NEEDS REFINEMENT** (legacy has none) |
+| W | **Vexel platform gaps** — cannot store/print the legacy ranges, no paragraph result type, no heading rows (see §11) | **NOT STARTED — BLOCKER for full catalogue** |
+| X | **Vexel wiring bugs** — number/dropdown/default-value/critical-flag features exist but don't work (see §11.2) | **NOT STARTED — needs verification then fix** |
+| I | Reference ranges: 208 legacy ranges Vexel cannot hold today (must NOT be deleted) | **NEEDS REFINEMENT — blocked by W** |
+| J | 28 "coded" (choice) parameters without option lists | **NEEDS REFINEMENT** |
+| K | 18 tests without a sample type | **NEEDS REFINEMENT** (not a blocker — fill later, e.g. web lookup) |
+| L | 24 legacy *tests* with no result fields at all | **NEEDS REFINEMENT** (most need result types from W) |
 | M | Canonical parameter review (unit/type conflicts, HCT typed `Text`) | **NEEDS REFINEMENT** |
 | N | `isActive` assumed `true` for all tests (legacy Disabled status not captured) | **NEEDS REFINEMENT** |
 | O | Legacy **Custom** report‑type tests with price > 0 (34) | **NOT STARTED** |
@@ -270,41 +277,67 @@ Reference‑range parse outcome over the 796 legacy range strings:
 
 ## 7. NEEDS REFINEMENT — work started, not finished
 
-### I. Reference ranges (208 unparsed rows + an import hazard)
-- **What:** 208 rows in `ReferenceRanges.csv` have `notes = MANUAL_REVIEW: <legacy text>` and **empty
-  `lowValue`/`highValue`**. Categories: age‑banded tables (`Adult: 25 - 40, Child: 45- 70`,
-  `Adult/Infant/Newborn`), qualitative/interpretive results (`Negative`, `Non-Reactive`, `Clear`),
-  multi‑tier thresholds (`Negative: < 0.9 Borderline: 0.9 to 1.2 Positive: > 1.2`), multi‑phase/trimester
-  hormone tables (Beta‑HCG, LH/FSH/Prolactin, Progesterone, AMH), `(See below)` placeholders,
-  unit‑embedded ranges (`0.5-1.0 x 10^12/L`), text like `34 Sec`. Full list: `reports/reference_ranges_manual_review.csv`.
-- ⚠️ **Import hazard (verified by reading `_importReferenceRange`):** the importer does not persist the
-  `notes` column (the `ReferenceRange` model has no notes field) and creates a row even when both bounds
-  are empty. **Uploading the workbook as‑is would create 208 empty range rows and lose the legacy text.**
-  **Before any real import: delete those 208 rows from the *workbook's* `ReferenceRanges` sheet** (keep
-  them in the review CSV), then curate and re‑add structured versions. Recommended approach for age/gender
-  tables: one `ReferenceRange` row per band using `gender`, `ageMinYears`, `ageMaxYears`; qualitative
-  results belong in `coded`/`text` parameters with `allowedValues`/`defaultValue`, not in ranges.
-- Also: `criticalLow`/`criticalHigh` are all blank. Legacy `parameters.csv` has `Valid` and `Highligh`
-  columns (e.g. `0 - 500`, `0 - 30`) that may be validity limits / abnormal highlight thresholds — **semantics
-  not yet verified**, unused.
-- Two duplicate range keys exist (same parameter/test/gender/age) — see §7‑M duplicates.
+### I. Legacy normal ranges that Vexel cannot hold today (208 rows) — MUST BE KEPT, NOT DELETED
+Normal ranges are a **requirement** of the test list. The 208 rows in `ReferenceRanges.csv` with
+`notes = MANUAL_REVIEW: <legacy text>` (empty `lowValue`/`highValue`) are legacy ranges the current
+parser could not turn into numbers. They are only **~102 distinct texts** repeated across tests, so the
+curation job is smaller than 208 suggests. Full list: `reports/reference_ranges_manual_review.csv`.
 
-### J. 28 `coded` parameters have no `allowedValues`
+They fall into 5 kinds (counts are rows in the review CSV):
+
+| # | Kind | Rows | Examples | What Vexel needs (see §11.1) |
+|---|---|---|---|---|
+| 1 | Words only | 71 | `Negative`, `Neutral`, `Non- Reactive`, `Clear`, `Pale Yellow - Yellow`, `(See below)` | "Expected text result" — normal is this word, anything else is abnormal |
+| 2 | Number plus a note / unit / condition | 29 | `34 Sec`, `0.5-1.0 x 10^12/L`, `<80<300 (pregnancy)`, `RPI <2: inadequate marrow response…` | Free-text reference note shown next to the range |
+| 3 | Age groups | 27 | `Adult: 25 - 40, Child: 45- 70`, `Adult 0.5-2.5 / Infant 0.5-3.0 / Newborn 2.5-6.5` | Age in days/months + a label per band |
+| 4 | Result bands | 69 | `Negative: < 0.9 Borderline: 0.9 to 1.2 Positive: > 1.2`, `Significant Titer 1:80` | Named bands that map to flags (Negative/Borderline/Positive) |
+| 5 | Hormone / pregnancy tables | 12 | Beta‑HCG by gestational week, LH/FSH/Prolactin by cycle phase & menopause, Progesterone by trimester | Pregnancy / trimester / cycle‑phase / menopause conditions (or a printable reference table text) |
+
+**Import hazard (verified by reading `_importReferenceRange`):** the importer does **not** persist the
+`notes` column (the `ReferenceRange` model has no notes field) and it **does** create a row when both bounds
+are empty. So uploading the workbook as-is would (a) create 208 empty range rows and (b) throw the legacy
+wording away. **Earlier advice to delete those rows is withdrawn** — deleting them would also lose the
+requirement. Correct approach:
+1. Keep the legacy text (it lives in `reports/reference_ranges_manual_review.csv` and in the `notes` column of the sheet).
+2. Add the platform capability first (§11.1 Step 1: a free-text "reference text" on ranges, shown on the result
+   screen and printed on the report). Then load these 208 ranges as reference text.
+3. Later (§11.1 Step 2) replace the text with proper structured bands so flags (HIGH/LOW/POSITIVE) work.
+Until Step 1 exists, do **not** import the 208 rows.
+
+Also: `criticalLow`/`criticalHigh` are all blank. Legacy `parameters.csv` has `Valid` and `Highligh` columns
+(e.g. `0 - 500`, `0 - 30`) that may be validity limits / abnormal highlight thresholds — **semantics not yet
+verified**, unused. Two duplicate range keys exist (same parameter/test/gender/age) — see §7‑M.
+
+### J. 28 `coded` (choice) parameters have no option lists
 Legacy "List" type; option lists are not readable from the admin UI. Examples: Blood Group RH Factor,
 HBsAg/Anti‑HCV/HIV screening results, Donor Blood Group, Fructose, Urine appearance/PH… Filter
 `Parameters.csv` for `resultType=coded`. Options to fill: (a) lab director supplies lists, (b) inspect the
 result‑entry screen of an existing patient report (`/Labs.aspx`) — read‑only browsing only, avoid patient data
-exposure, (c) standard sets (Positive/Negative etc.) after clinical sign‑off.
+exposure, (c) standard sets (Positive/Negative etc.) after clinical sign‑off. Note that even after the lists
+are known, Vexel's dropdown is currently broken (§11.2), and the way lists are saved is inconsistent (§11.2).
 
-### K. 18 tests have no sample type
+### K. 18 tests have no sample type — not a blocker
 Legacy specimen was `---Not-Defined---` (e.g. Cross Match & Screening, PT with INR (12282), Typhidot,
-Clotting Time, Bleeding Time, HCV Genotyping, ECG, …). Left blank on purpose. Assign manually.
+Clotting Time, Bleeding Time, HCV Genotyping, ECG, …). Left blank on purpose. **Decision (owner, 2026-09-20):**
+sample types can be looked up later (e.g. simple web search / standard references) and completed after go‑live
+prep; they do not block the import.
 
-### L. 24 tests have zero parameters
-Real, priced, active legacy tests with no parameter rows (PCR/genotyping/screening: HCV Genotyping, HBV/HCV DNA PCR,
-Salmonella Typhi Ag (Stool), ANTI HEV IgG, plus single‑type placeholders such as Coombs, Bile pigment/salt, ECG,
-MTB by PCR, DHEA SO4…). They import as Tests with no mappings; a lab must define their result fields.
-Status list: `docs/migration/legacy_lims_mapping/legacy_mapping_extraction_status.csv` (`NO_PARAMETERS_RETURNED`).
+### L. 24 legacy TESTS have no result fields at all
+To be precise: these are **tests in the old system** that have no parameters configured (not parameters
+without values). All 24 are priced and active. They import as Tests with no mappings. By kind (best reading of the
+names — confirm with the lab):
+- **Choice‑type results (Positive/Negative etc.):** COOMBS TEST (INDIRECT), COOMBS TEST DIRECT, MALARIAL PARASITE (THICK & THIN) x2,
+  ANTI HEV IgG, ANTI HDV IgG, ANTI HDV IgM, Salmonella Typhi Antigen (Stool).
+- **PCR / molecular results:** HBV DNA By PCR, HCV by PCR, HCV GENOTYPING, MTB BY PCR.
+- **Paragraph / narrative reports:** BIOPSY SLIDE FOR REVIEW, ECG.
+- **Numeric results:** BASOPHIL COUNT x2, ABSOLUTE NEUTROPHIL COUNT, BILE PIGMENT (URINE), BILE SALT (URINE), CHOLESTROL (FLUID),
+  CREATININE (FLUID), L.D.H (FLUID), DHEA SO4, URINE SUGAR.
+Most of these need the result types in §11.1 (choice, paragraph). Source list:
+`docs/migration/legacy_lims_mapping/legacy_mapping_extraction_status.csv` (`NO_PARAMETERS_RETURNED`).
+Related idea (owner): a *parameter* with no value can be used as a **section heading** inside a multi‑parameter
+report (e.g. "Differential Count"). In the legacy data a row such as "DLC" in Peripheral Blood Film (Text type, range `-`,
+no unit) looks like exactly that. Vexel has no heading rows today (§11.1). The list of such heading‑like rows in
+`legacy_test_parameter_mapping.csv` has not yet been compiled.
 
 ### M. Canonical parameter quality
 - 14 canonical parameters had **inconsistent units** across legacy occurrences and 7 had **inconsistent legacy
@@ -339,7 +372,7 @@ price would import as active. Capture status (the same `LabFees.aspx` DataTable/
 
 ### H. Import into Vexel (highest priority, ~small effort)
 1. Choose target tenant/environment; ensure LIMS module enabled (`POST /tenants/{id}:enable-lims`; decide whether to seed base catalogue first).
-2. Apply §7‑I fix (drop the 208 blank range rows from the *upload* workbook).
+2. **Do not import the 208 blank/`MANUAL_REVIEW` range rows yet** (§7‑I): until Vexel can store reference text (§11.1 Step 1), either import everything *except* those rows into a dev tenant purely to test the pipeline, or wait for Step 1. Never import them as empty rows.
 3. `POST /catalog/import/workbook?validate=true&mode=UPSERT_PATCH` (dry run) with `catalog_v2_legacy_migration.xlsx`
    (Admin UI Import/Export screen uses `POST /catalog/import`). Fix every reported error.
 4. Real import; then `GET /catalog/export/workbook.xlsx` and diff against the source workbook (round‑trip check).
@@ -427,17 +460,110 @@ Importer semantics: `ReferenceRanges.gender` ∈ {`M`,`F`}; bounds may be given 
 ### 9.4 Validation checklist (re‑run after any edit)
 Header equality with `generateWorkbookTemplate()`; unique `externalId` per sheet **and unique `userCode` per sheet**;
 all FK references resolve; `resultType ∈ {numeric,text,boolean,coded}`; `gender ∈ {M,F,''}`; price ≥ 0;
-`externalId` regexes; no duplicate `(testExternalId,parameterExternalId)`; no `ReferenceRanges` row with both bounds empty (see §7‑I).
+`externalId` regexes; no duplicate `(testExternalId,parameterExternalId)`; no `ReferenceRanges` row with both bounds empty **unless** Vexel can store reference text for it (see §7‑I, §11.1).
 
 ---
 
 ## 10. Suggested next steps (in order)
 
-1. **§8‑H prep**: create an upload copy of the workbook without the 208 blank range rows; dry‑run against a dev tenant; fix errors.
+1. **§11 first (platform work):** build Step 1 of §11.1 (reference text on ranges) and fix the wiring bugs in §11.2, so the catalogue can be loaded *completely* (nothing dropped). Verify §11.2 findings by actually running the app — they come from reading code only.
 2. **§7‑N**: capture legacy Active/Disabled status; set `isActive`.
 3. **§7‑M**: resolve the 2 duplicate MCV rows; renumber `displayOrder`; review `text` parameters that should be numeric (HCT).
 4. **§7‑K/J/L**: fill sample types, coded option lists, and zero‑parameter tests with lab staff.
-5. **§7‑I**: curate the 208 ranges (age/gender bands) with the lab director; add as structured rows.
+5. **§7‑I / §11.1 Step 2:** load the 208 ranges as reference text, then convert to structured bands with the lab director.
 6. **§8‑O/P/Q**: investigate Custom tests (34 priced), decide on zero‑price tests, extract Packages → Panels.
 7. **§8‑R/S**: turnaround times, print templates.
 8. Real import + round‑trip export diff + UI spot checks; clinical sign‑off; tag release notes (`docs/catalog/build/v2/release-notes/`, mirroring v1).
+
+---
+
+## 11. Vexel platform capability gaps (audit of 2026-09-20)
+
+**Why this section exists.** The goal is a complete basic LIMS catalogue. The owner pointed out that the
+legacy normal ranges, and result types such as choice / pre‑filled / one‑word / paragraph / number, are mandatory
+parts of any good LIMS. Two read‑only code audits (backend + frontend) checked what Vexel does today.
+**Caveat: these are findings from reading the code, not from running the app. Anything marked "suspected"
+must be confirmed by running it before fixing.** Repo paths below are relative to the repo root.
+
+### 11.1 Features Vexel does not have (must be built) — in priority order
+
+**Step 1 — quick win that lets the whole catalogue load with nothing lost**
+1. **Free‑text reference text on `ReferenceRange`** (new column, e.g. `referenceText`). Store the legacy wording exactly
+   (`Negative`, `Adult: 25 - 40, Child: 45- 70`, the Beta‑HCG table…). Show it on the result screen and print it on the
+   report. Also make the catalog import read the sheet's `notes`/new column (today the `notes` column is silently dropped:
+   `apps/api/src/catalog/catalog-import-export.service.ts`, `_importReferenceRange`, ~l.912‑1010) and stop creating
+   empty range rows.
+2. **Paragraph (long text) result type**: new `resultType` (e.g. `paragraph`), a multi‑line `<textarea>` on the operator
+   result screens, admin editor support, and multi‑line rendering in the PDF. Needed for biopsy/ECG‑style reports.
+3. **Heading rows inside a multi‑parameter test**: a way to mark a test‑parameter row as a heading/group label
+   (e.g. `rowType = heading` on `TestParameterMapping` or a flag on `Parameter`), skipped by result entry and value
+   validation, rendered as a bold sub‑title in the printed report. Today the only workaround is a fake parameter, which
+   shows a useless input box and a blank row.
+4. **Date, and possibly formula/calculated, result types** (legacy has Date and Formula types; Date currently maps to `text`;
+   Formula maps to `numeric` and is not calculated).
+
+**Step 2 — proper structured ranges (so flags work for the 208 too)**
+5. **Expected‑text results**: for words‑only ranges (`Negative`), mark which value is normal; anything else flags abnormal.
+6. **Named result bands**: e.g. Negative `<0.9` / Borderline `0.9‑1.2` / Positive `>1.2`, each mapping to a flag
+   (`normal`/`borderline`/`positive`). Today a range row holds only one low/high pair.
+7. **Age in days/months/weeks** (today only whole years: `ageMinYears`/`ageMaxYears` integers; matching uses
+   `Math.floor(years)` in `apps/api/src/results/results.service.ts` ~l.73‑75, so a 3‑day‑old and an 11‑month‑old are the same).
+   Also fix `ageMinYears = 0` being stored as null by the importer (0 is treated as empty).
+8. **Pregnancy / trimester / gestational‑week / menstrual‑phase / menopausal‑status** qualifiers (and `gender` beyond `M`/`F`).
+9. **Inclusive vs exclusive bounds** (`≤`/`≥` currently collapse to `<`/`>`), **negative bounds** in flag logic.
+10. **Critical/panic values actually used**: `criticalLow`/`criticalHigh` exist in the DB and import but are never evaluated;
+    the `critical` flag is never produced; no panic alert.
+11. **Structured range on the printed report** (the PDF renderer treats the range as one opaque string), so band/age tables
+    can be printed properly instead of being squeezed into one `low-high` string.
+12. **Specimen/method‑specific ranges** and a **per‑parameter comment/interpretation field** (the `NARRATIVE_SECTION` PDF block
+    reads a top‑level `interpretation` field that nothing populates).
+
+### 11.2 Features that exist but appear broken or unwired (suspected — verify by running the app)
+1. **Type‑name mismatch.** API sends `dataType = parameter.resultType` with values `numeric|text|boolean|enum`
+   (`results.service.ts` ~l.269), but the operator UI branches on `'number'` and `'select'`
+   (`apps/operator/src/app/(protected)/lims/results/[orderedTestId]/page.tsx` ~l.46, 398, 431 and
+   `results/encounters/[encounterId]/page.tsx` ~l.503‑534). Effect: numeric params render as plain text, enum params never
+   become dropdowns, live auto‑flag never fires. Only `boolean` matches. The OpenAPI contract also lists two different
+   vocabularies (`dataType`: numeric/text/boolean/coded; `resultType`: numeric/text/boolean/enum).
+2. **Choice‑list storage format is inconsistent.** DB column `Parameter.allowedValues` is a `String`; contract says array;
+   admin form posts an array (comma‑split); operator UI needs `Array.isArray`; import stores the raw cell string with no
+   defined delimiter. The admin save likely fails against the `String?` column. **Decide one format** (e.g. JSON array or
+   pipe‑delimited) and use it everywhere, including the workbook column `allowedValues`.
+3. **Default value never reaches the result screen.** UI pre‑fills `p.defaultValue`, but the `GET /results/tests/{orderedTestId}`
+   response does not include it (`results.service.ts` ~l.256‑278), so nothing is pre‑filled. (Also: defaults are per parameter,
+   not per test.)
+4. **No server‑side validation of result values.** `saveResults` accepts any string for any type; `decimals` is never applied;
+   `TestParameterMapping.isRequired` is never enforced (`results.controller.ts` l.52‑64; `results.service.ts` l.303‑404).
+5. **Critical flag never produced; flag logic fragile.** `computeFlag()` (`results.service.ts` l.6‑24) only yields
+   low/high/normal, re‑parses the range *string* with a regex that cannot read negative numbers, and returns null for
+   non‑numeric values. The operator‑side flag override is not sent to the backend.
+6. **Range picking may prefer the wrong row.** `resolveReferenceRanges` orders `testId desc`; in Postgres nulls sort first on
+   `desc`, so parameter‑global rows may beat test‑scoped rows. First match wins; no "most specific" scoring. Also, once a range
+   is stored on a result it is never re‑resolved.
+7. **Admin reference‑range form sends fields the DB does not have** (`normalText`, `interpretation`, `isActive`), so saving
+   expression‑type ranges probably fails (`apps/admin/src/app/(protected)/catalog/reference-ranges/page.tsx`;
+   `catalog.service.ts` `createReferenceRange` spreads the body into Prisma).
+8. **Printed report quirks:** empty flag prints "Normal" even for text/choice parameters; the block‑template table prints the raw
+   flag string uncoloured; long text wraps in a narrow cell (`apps/pdf/Program.cs`).
+9. **Legacy per‑encounter result path** (`EncountersService.enterResult`, `encounters.service.ts` ~l.392‑430) accepts arbitrary
+   value/unit/range/flag with no validation.
+
+### 11.3 What already works (do not rebuild)
+- Gender (`M`/`F`) + whole‑year age‑band ranges, test‑scoped or parameter‑global, one‑sided ranges (`<N`, `>N`) — schema, admin
+  form and import support them.
+- Boolean (Yes/No) inputs; single‑line text input; numeric range flagging low/high/normal on the backend for plain numeric ranges.
+- Admin fields for `defaultValue`, `defaultUnit`, `decimals`, comma‑separated `allowedValues`; catalog Import/Export screen
+  (upload `.xlsx`, Validate, then Apply); template studio blocks `SECTION_TITLE` and `NARRATIVE_SECTION` (layout only,
+  not tied to test data).
+
+### 11.4 Suggested build order (needs owner approval before any code is changed)
+1. Verify §11.2 by running the app (operator result entry for a numeric, an enum and a boolean parameter; admin save of a
+   parameter with allowed values; a range with critical limits).
+2. Fix §11.2 items 1‑4 (type names, allowed‑values format, default value delivery, server validation).
+3. Build §11.1 Step 1 (reference text, paragraph type, heading rows, date type) — including the importer changes, workbook
+   columns and PDF rendering.
+4. Re‑generate the v2 workbook: put the 208 legacy range texts into the new reference‑text column, mark heading rows,
+   set paragraph/choice types on the 24 empty tests as agreed with the lab, fill choice lists. Re‑run validation (§9.4).
+5. Dry‑run import (`validate=true`) into a dev tenant, then real import, then round‑trip export diff.
+6. Build §11.1 Step 2 (structured bands, age in days, pregnancy/cycle conditions, critical values, structured printing) and convert
+   the reference texts to structured ranges with the lab director.
