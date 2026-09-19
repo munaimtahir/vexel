@@ -6028,6 +6028,59 @@ paths:
       parameters:
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/LimitParam'
+        - name: actorUserId
+          in: query
+          schema:
+            type: string
+        - name: entityType
+          in: query
+          schema:
+            type: string
+        - name: entityId
+          in: query
+          schema:
+            type: string
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: correlationId
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Audit events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditEvent'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /audit-events/platform:
+    get:
+      operationId: listPlatformAuditEvents
+      summary: List audit events across tenants (platform super-admin only)
+      tags: [Audit]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
         - name: tenantId
           in: query
           schema:
@@ -6064,7 +6117,7 @@ paths:
             format: date-time
       responses:
         "200":
-          description: Audit events
+          description: Platform audit events
           content:
             application/json:
               schema:

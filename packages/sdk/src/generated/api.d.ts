@@ -1538,6 +1538,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/audit-events/platform": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List audit events across tenants (platform super-admin only) */
+        get: operations["listPlatformAuditEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/system-logs": {
         parameters: {
             query?: never;
@@ -8473,7 +8490,6 @@ export interface operations {
             query?: {
                 page?: components["parameters"]["PageParam"];
                 limit?: components["parameters"]["LimitParam"];
-                tenantId?: string;
                 actorUserId?: string;
                 entityType?: string;
                 entityId?: string;
@@ -8489,6 +8505,40 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Audit events */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["AuditEvent"][];
+                        pagination?: components["schemas"]["Pagination"];
+                    };
+                };
+            };
+        };
+    };
+    listPlatformAuditEvents: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["PageParam"];
+                limit?: components["parameters"]["LimitParam"];
+                tenantId?: string;
+                actorUserId?: string;
+                entityType?: string;
+                entityId?: string;
+                action?: string;
+                correlationId?: string;
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Platform audit events */
             200: {
                 headers: {
                     [name: string]: unknown;
