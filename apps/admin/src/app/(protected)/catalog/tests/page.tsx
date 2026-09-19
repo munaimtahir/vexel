@@ -482,7 +482,7 @@ export default function CatalogTestsPage() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="test-print-alone" checked={form.printAlone} onChange={(e) => setForm({ ...form, printAlone: e.target.checked })} style={{ width: '16px', height: '16px' }} />
-                <label htmlFor="test-print-alone" style={{ fontSize: '14px', color: 'hsl(var(--foreground))', cursor: 'pointer' }}>Print on separate page in lab report</label>
+                <label htmlFor="test-print-alone" style={{ fontSize: '14px', color: 'hsl(var(--foreground))', cursor: 'pointer' }}>Single Page — print this test alone in lab reports</label>
               </div>
             </div>
             <div style={{ marginTop: '24px', display: 'flex', gap: '10px' }}>

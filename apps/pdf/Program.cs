@@ -393,16 +393,20 @@ class LabReportDocument : IDocument
 
             if (_payload.TryGetProperty("tests", out var testsEl) && testsEl.ValueKind == JsonValueKind.Array)
             {
-                bool isFirst = true;
-                foreach (var test in testsEl.EnumerateArray())
+                var testList = testsEl.EnumerateArray().ToList();
+                for (var index = 0; index < testList.Count; index++)
                 {
+                    var test = testList[index];
                     var printAlone = test.TryGetProperty("printAlone", out var pa) &&
                                      (pa.ValueKind == JsonValueKind.True ||
                                       (pa.ValueKind == JsonValueKind.String && pa.GetString() == "true"));
-                    if (!isFirst && printAlone)
+                    if (index > 0 && printAlone)
                         col.Item().PageBreak();
                     col.Item().Element(c => ComposeTestSection(c, test));
-                    isFirst = false;
+                    // A Single Page test must also force its successor onto a
+                    // new page. Do not add a trailing break after the last test.
+                    if (printAlone && index < testList.Count - 1)
+                        col.Item().PageBreak();
                 }
             }
             else
@@ -801,16 +805,17 @@ class LabReportDocumentV2 : IDocument
             if (_payload.TryGetProperty("tests", out var testsEl) && testsEl.ValueKind == JsonValueKind.Array)
             {
                 var testList = testsEl.EnumerateArray().ToList();
-                bool isFirst = true;
-                foreach (var test in testList)
+                for (var index = 0; index < testList.Count; index++)
                 {
+                    var test = testList[index];
                     var printAlone = test.TryGetProperty("printAlone", out var pa) &&
                                      (pa.ValueKind == JsonValueKind.True ||
                                       (pa.ValueKind == JsonValueKind.String && pa.GetString() == "true"));
-                    if (!isFirst && printAlone)
+                    if (index > 0 && printAlone)
                         col.Item().PageBreak();
                     col.Item().Element(c => ComposeTestSectionV2(c, test));
-                    isFirst = false;
+                    if (printAlone && index < testList.Count - 1)
+                        col.Item().PageBreak();
                 }
             }
             else
