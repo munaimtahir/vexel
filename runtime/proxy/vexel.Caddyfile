@@ -28,7 +28,7 @@
 #      sudo caddy reload --config /etc/caddy/Caddyfile
 
 # VEXEL MONOREPO
-vexel.alshifalab.pk {
+vexel.alshifalab.pk, tenant-b.vexel.alshifalab.pk {
 	encode zstd gzip
 	import std_headers
 	import std_log vexel

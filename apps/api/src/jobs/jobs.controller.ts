@@ -17,15 +17,24 @@ export class JobsController {
 
   @Get()
   @RequirePermissions(Permission.JOB_READ)
-  listJobs(@Query() q: any) { return this.svc.list(q); }
+  listJobs(@Req() req: Request, @Query() q: any) {
+    const user = (req as any).user;
+    return this.svc.list(q, { tenantId: user.tenantId, isSuperAdmin: user.isSuperAdmin });
+  }
 
   @Get('failed')
   @RequirePermissions(Permission.JOB_READ)
-  listFailed(@Query() q: any) { return this.svc.listFailed(q); }
+  listFailed(@Req() req: Request, @Query() q: any) {
+    const user = (req as any).user;
+    return this.svc.listFailed(q, { tenantId: user.tenantId, isSuperAdmin: user.isSuperAdmin });
+  }
 
   @Get('failed-count')
   @RequirePermissions(Permission.JOB_READ)
-  getFailedCount() { return this.svc.failedCount(); }
+  getFailedCount(@Req() req: Request) {
+    const user = (req as any).user;
+    return this.svc.failedCount({ tenantId: user.tenantId, isSuperAdmin: user.isSuperAdmin });
+  }
 
   @Post(':id\\:retry')
   @HttpCode(HttpStatus.OK)
@@ -40,6 +49,7 @@ export class JobsController {
       tenantId: user.tenantId,
       actorUserId: user.userId,
       correlationId,
+      isSuperAdmin: user.isSuperAdmin,
     });
   }
 }

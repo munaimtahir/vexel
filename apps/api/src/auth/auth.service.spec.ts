@@ -74,6 +74,10 @@ describe('AuthService (Tenant-Aware and Hardened)', () => {
         include: expect.any(Object),
       });
       expect(res.accessToken).toBe('mock-jwt-token');
+      expect(jwt.sign).toHaveBeenCalledWith(
+        expect.not.objectContaining({ permissions: expect.anything() }),
+        { expiresIn: '1h' },
+      );
       expect(audit.log).toHaveBeenCalledWith({
         tenantId: 'tenant-A',
         actorUserId: 'user-1',

@@ -1,6 +1,7 @@
 const UNSAFE_DEFAULTS = new Set([
   'vexel-dev-secret-change-in-production',
   'vexel-dev-secret-REPLACE-IN-PRODUCTION',
+  'vexel',
   'vexel_secret_2026',
   'REPLACE_WITH_64_BYTE_HEX_SECRET',
 ]);

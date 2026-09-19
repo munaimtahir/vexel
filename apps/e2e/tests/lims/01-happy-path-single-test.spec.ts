@@ -69,16 +69,15 @@ test.describe('@lims @smoke LIMS — Happy Path Single Test', () => {
     await page.goto(`/lims/encounters/${encounter.id}/verify`);
     await expect(page.locator('main').first()).toBeVisible({ timeout: 8_000 });
 
-    // ── 5. Open verify modal via data-testid ──────────────────────────────
-    await page.locator('[data-testid="verify-open-modal"]').click();
+    // ── 5. Verify directly from the current per-encounter workflow ─────────
+    const verifyButton = page.getByRole('button', { name: /verify & publish/i });
+    await expect(verifyButton).toBeVisible({ timeout: 8_000 });
+    await verifyButton.click();
+    await page.getByRole('button', { name: /confirm verify/i }).click();
 
-    // ── 6. Confirm in modal ────────────────────────────────────────────────
-    const confirmBtn = page.locator('[data-testid="verify-confirm"]');
-    await expect(confirmBtn).toBeVisible({ timeout: 8_000 });
-    await confirmBtn.click();
-
-    // ── 7. Wait for modal to close ─────────────────────────────────────────
-    await expect(page.locator('[data-testid="verify-confirm"]')).not.toBeVisible({ timeout: 15_000 });
+    // ── 6. Wait for verification to complete and the report to be generated
+    await expect(page.getByText(/report ready/i)).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('button', { name: /verify & publish/i })).not.toBeVisible({ timeout: 5_000 });
 
     // ── 8. Verify via API that encounter is in verified/published state ──────
     const enc = await apiGet<{ status: string }>(`/encounters/${encounter.id}`, accessToken);

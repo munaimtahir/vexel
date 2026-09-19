@@ -13,7 +13,6 @@ export interface JwtPayload {
   email: string;
   tenantId: string;
   roles: string[];
-  permissions: string[];
   isSuperAdmin: boolean;
 }
 
@@ -46,14 +45,11 @@ export class AuthService {
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
     const roles = user.userRoles.map((ur) => ur.role.name);
-    const permissions = Array.from(new Set(user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission))));
-
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       tenantId: user.tenantId,
       roles,
-      permissions,
       isSuperAdmin: user.isSuperAdmin,
     };
 
@@ -119,14 +115,11 @@ export class AuthService {
     });
 
     const roles = user.userRoles.map((ur) => ur.role.name);
-    const permissions = Array.from(new Set(user.userRoles.flatMap((ur) => ur.role.rolePermissions.map((rp) => rp.permission))));
-
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       tenantId: user.tenantId,
       roles,
-      permissions,
       isSuperAdmin: user.isSuperAdmin,
     };
 

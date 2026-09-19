@@ -7,6 +7,49 @@
 > **Status: APPROVED FOR EXECUTION.** Tasks marked **IN PROGRESS** may begin.
 > Updating this plan records approval; it does not by itself mean product code has changed.
 
+## Mega-sprint execution update — 2026-09-19
+
+The approved seven-workstream plan has been executed against the latest `main`
+branch (`60fa9ec` at sprint start). The older task tables below are retained as
+the original audit record; the status below is the current source of truth.
+
+### Completed in this sprint
+
+- Production hardening: API and worker run in production mode; storage and
+  database credentials are no longer hardcoded; restore remains disabled by
+  default; Swagger is disabled in production; JWTs no longer carry a copied
+  permissions list.
+- Operational observability: the Admin Jobs view now reads the four real BullMQ
+  queues, filters by tenant, reports real job state, and retries only jobs the
+  caller is allowed to access.
+- Workflow proof: result entry, invalid transitions, verification, automatic
+  report generation, PDF download, tenant isolation, and protected-route
+  redirects are live-tested.
+- Dependency repair: production dependency findings were reduced from the
+  initial 154 to 47. Remaining high/critical findings are confined to the
+  non-shipped mobile dependency tree or build-only tooling and are recorded as
+  release-risk follow-up; they are not silently treated as fixed.
+- Backup and restore safety: a full encrypted backup was created and the
+  matching restore dry-run completed successfully. No destructive restore was
+  applied to the live database.
+- Tenant rollout: `tenant-b.vexel.alshifalab.pk` was provisioned, LIMS enabled
+  with an empty catalogue, DNS was already present, and the live Caddy route
+  was validated with the API health endpoint.
+
+### Remaining before declaring the full plan closed
+
+- Build a disposable restore target and run a real restore-apply drill there;
+  the primary production database must not be used as the drill target.
+- Replace the two skipped PDF failure-injection browser tests with a controlled
+  test-environment run, then prove FAILED → retry → PUBLISHED end to end.
+- Rotate the demo application user passwords and distribute the new values
+  through the owner's secret-management process; this was not done silently
+  because the checked-in handoff still documents the current demo accounts.
+- T6.0–T6.3 and catalogue C1–C4 need their stated migration/live verification
+  evidence reconciled against the current branch; the API and UI gates pass,
+  but the PDF-service build is not available from the host's local toolchain.
+- Run the remote GitHub Actions confirmation after pushing the final commit.
+
 ---
 
 ## 0. How to read this document
@@ -30,9 +73,11 @@ Priority labels used by the earlier audit:
 
 ### 1.1 Overall verdict (from the 2026-09-01 audit)
 
-**LIMS is NOT READY for production.** A single test can be ordered, sampled, resulted, verified, turned into a PDF and downloaded — that works. But five serious problems (P0) and five important problems (P1) stop it from being safe for a real lab.
-
-Only documentation has been committed since that audit (no code changes), so the findings still stand.
+**Historical audit verdict:** LIMS was **NOT READY for production** on
+2026-09-01. A single test could be ordered, sampled, resulted, verified,
+turned into a PDF and downloaded, but five serious problems (P0) and five
+important problems (P1) remained at that point. The mega-sprint execution update
+above records the changes and evidence collected after that audit.
 Source documents: `docs/discovery/LIMS_PRODUCTION_READINESS_AUDIT.md`, `docs/discovery/LIMS_RELEASE_GAP_LEDGER.md`, `docs/discovery/_work/LIMS_AGENT_FINDINGS.md`, and `docs/catalog/build/v2/workdetails.md` (catalogue work).
 
 ### 1.2 Initial blocker list (from the audit, with the task that fixes each one)
