@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { isLookLikeMobile, normalizeMobile } from '../common/mobile.utils';
@@ -108,31 +108,28 @@ export class SampleCollectionService {
         ? specimenItemIds
         : encounter.specimenItems.filter((s) => s.status === 'PENDING').map((s) => s.id);
 
+    if (targetIds.length === 0) throw new ConflictException('No pending specimens to collect');
     const now = new Date();
-    await this.prisma.specimenItem.updateMany({
-      where: { id: { in: targetIds }, tenantId, encounterId },
-      data: { status: 'COLLECTED', collectedAt: now, collectedById: actorId },
-    });
-
-    // Advance encounter status if all items are no longer PENDING
-    const remaining = await this.prisma.specimenItem.count({
-      where: { encounterId, tenantId, status: 'PENDING' },
-    });
-    if (remaining === 0) {
-      await this.prisma.encounter.update({
-        where: { id: encounterId },
-        data: { status: 'specimen_collected' },
+    await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.specimenItem.updateMany({
+        where: { id: { in: targetIds }, tenantId, encounterId, status: 'PENDING' },
+        data: { status: 'COLLECTED', collectedAt: now, collectedById: actorId },
       });
-    }
+      if (updated.count !== targetIds.length) throw new ConflictException('One or more specimens are no longer pending');
 
-    await this.audit.log({
-      tenantId,
-      actorUserId: actorId,
-      action: 'SPECIMEN_COLLECTED',
-      entityType: 'SpecimenItem',
-      entityId: encounterId,
-      after: { specimenItemIds: targetIds },
-      correlationId,
+      const remaining = await tx.specimenItem.count({ where: { encounterId, tenantId, status: 'PENDING' } });
+      if (remaining === 0) {
+        await tx.encounter.update({ where: { id: encounterId }, data: { status: 'specimen_collected' } });
+      }
+      await this.audit.logInTransaction(tx, {
+        tenantId,
+        actorUserId: actorId,
+        action: 'SPECIMEN_COLLECTED',
+        entityType: 'SpecimenItem',
+        entityId: encounterId,
+        after: { specimenItemIds: targetIds },
+        correlationId,
+      });
     });
 
     return this.prisma.encounter.findFirst({
@@ -158,24 +155,17 @@ export class SampleCollectionService {
     });
     if (!item) throw new NotFoundException('SpecimenItem not found');
 
-    const updated = await this.prisma.specimenItem.update({
-      where: { id: specimenItemId },
-      data: {
-        status: 'POSTPONED',
-        postponedAt: new Date(),
-        postponedById: actorId,
-        postponeReason: reason,
-      },
-    });
-
-    await this.audit.log({
-      tenantId,
-      actorUserId: actorId,
-      action: 'SPECIMEN_POSTPONED',
-      entityType: 'SpecimenItem',
-      entityId: specimenItemId,
-      after: { status: 'POSTPONED', reason },
-      correlationId,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const next = await tx.specimenItem.update({
+        where: { id: specimenItemId },
+        data: { status: 'POSTPONED', postponedAt: new Date(), postponedById: actorId, postponeReason: reason },
+      });
+      await this.audit.logInTransaction(tx, {
+        tenantId, actorUserId: actorId, action: 'SPECIMEN_POSTPONED',
+        entityType: 'SpecimenItem', entityId: specimenItemId,
+        after: { status: 'POSTPONED', reason }, correlationId,
+      });
+      return next;
     });
 
     return updated;
@@ -199,20 +189,23 @@ export class SampleCollectionService {
         ? specimenItemIds
         : encounter.specimenItems.filter((s) => s.status === 'COLLECTED').map((s) => s.id);
 
+    if (targetIds.length === 0) throw new ConflictException('No collected specimens to receive');
     const now = new Date();
-    await this.prisma.specimenItem.updateMany({
-      where: { id: { in: targetIds }, tenantId, encounterId },
-      data: { status: 'RECEIVED', receivedAt: now, receivedById: actorId },
-    });
-
-    await this.audit.log({
-      tenantId,
-      actorUserId: actorId,
-      action: 'SPECIMEN_RECEIVED',
-      entityType: 'SpecimenItem',
-      entityId: encounterId,
-      after: { specimenItemIds: targetIds },
-      correlationId,
+    await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.specimenItem.updateMany({
+        where: { id: { in: targetIds }, tenantId, encounterId, status: 'COLLECTED' },
+        data: { status: 'RECEIVED', receivedAt: now, receivedById: actorId },
+      });
+      if (updated.count !== targetIds.length) throw new ConflictException('One or more specimens are not collected');
+      await this.audit.logInTransaction(tx, {
+        tenantId,
+        actorUserId: actorId,
+        action: 'SPECIMEN_RECEIVED',
+        entityType: 'SpecimenItem',
+        entityId: encounterId,
+        after: { specimenItemIds: targetIds },
+        correlationId,
+      });
     });
 
     return this.prisma.encounter.findFirst({

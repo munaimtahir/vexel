@@ -67,49 +67,33 @@ Expected:
 - login returns access token
 - `/api/me` returns authenticated user payload
 
-### Document pipeline smoke (verify → auto-generate → RENDERED → manual publish → download)
+### Document pipeline smoke (verify → auto-generate/publish → download)
 
-**Command-only workflow state is enforced end-to-end.** As of `da2047f`
-the worker never mutates `Encounter.status` and never auto-publishes a
-`LAB_REPORT`. The compliant path, live-verified 2026-08-27:
+**Command-only workflow state is enforced end-to-end.** Verification is a
+per-test command. It automatically queues rendering and publication of a
+report containing every currently verified test. The report is labelled
+`PARTIAL` while a non-cancelled test remains unverified.
 
-1. `POST /encounters/{id}:verify` (requires `result.verify`) — moves the
-   encounter `resulted → verified`, and as a side effect auto-generates a
-   `LAB_REPORT` `Document` (creates/reuses `QUEUED`, enqueues a render job).
-   This does **not** touch `Encounter.status` — Document creation isn't a
-   workflow-state mutation, so it's fine for it to be automatic.
-2. Worker renders the document: `QUEUED → RENDERING → RENDERED` (or
-   `FAILED`). Confirm it lands on `RENDERED`, **not** `PUBLISHED` —
-   `GET /api/documents?sourceRef=<encounterId>&sourceType=ENCOUNTER&docType=LAB_REPORT&limit=1`.
-3. Operator/verifier manually calls `POST /encounters/{id}:publish-report`
-   (requires `document.publish`). This is idempotent (safe to call twice —
-   second call returns `200` with the same already-`PUBLISHED` document/
-   `published` encounter, does not error or re-mutate) and is the **only**
-   path that moves the document to `PUBLISHED` and the encounter to
-   `published`, in one audited command (`encounter.publish_report`).
-4. Download: `GET /api/documents/{id}/download` returns `application/pdf`
-   bytes.
+1. `POST /ordered-tests/{id}:verify` (requires `result.verify`) verifies one
+   submitted test, recomputes the encounter summary, and creates/reuses a
+   `QUEUED` `LAB_REPORT` document.
+2. Worker renders and publishes the document: `QUEUED → RENDERING → RENDERED
+   → PUBLISHED`, or `FAILED`. A failure leaves clinical verification intact and
+   exposes an authorized, audited retry action.
+3. Download: `GET /api/documents/{id}/download` returns `application/pdf`
+   bytes once published.
 
 API check example (replace `$TOKEN`, `$EID`, `$LOID` from a real run):
 
 ```bash
-# after :verify — confirm RENDERED, not PUBLISHED
+# after per-test verification — wait for PUBLISHED (or FAILED)
 curl -fsS "http://127.0.0.1:9021/api/documents?sourceRef=$EID&sourceType=ENCOUNTER&docType=LAB_REPORT&limit=1" \
-  -H "Authorization: Bearer $TOKEN" | jq '.[0].status'   # expect "RENDERED"
-
-# manual publish
-curl -fsS -X POST "http://127.0.0.1:9021/api/encounters/$EID:publish-report" \
-  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
-  | jq '{encounterStatus: .encounter.status, documentStatus: .document.status}'
-# expect {"encounterStatus":"published","documentStatus":"PUBLISHED"}
+  -H "Authorization: Bearer $TOKEN" | jq '.[0].status'   # expect "PUBLISHED" or "FAILED"
 ```
 
 Expected:
-- LAB_REPORT reaches `RENDERED` automatically after verify, and stays
-  there until a human explicitly publishes it — it must **not** reach
-  `PUBLISHED` on its own.
-- `:publish-report` is idempotent and audited; calling it again after
-  publish returns `200`, doesn't error, doesn't double-transition.
+- LAB_REPORT reaches `PUBLISHED` automatically after verification. A failed
+  report is visible and retryable without undoing verification.
 - download opens/saves a valid PDF.
 
 ### Tenant isolation smoke (live-verified 2026-08-27)
