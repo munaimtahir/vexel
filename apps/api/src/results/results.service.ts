@@ -346,7 +346,7 @@ export class ResultsService {
     const paramMap = new Map(params.map((p) => [p.id, p]));
     const mappingMap = new Map(mappings.map((m) => [m.parameterId, m]));
 
-    const upserts: any[] = [];
+    const upserts: Array<{ existingId?: string; data: any }> = [];
 
     for (const { parameterId, value } of values) {
       const existing = existingMap.get(parameterId);
@@ -380,24 +380,26 @@ export class ResultsService {
       };
 
       if (existing) {
-        upserts.push(this.prisma.labResult.update({ where: { id: (existing as any).id }, data }));
+        upserts.push({ existingId: (existing as any).id, data });
       } else {
-        upserts.push(this.prisma.labResult.create({ data }));
+        upserts.push({ data });
       }
     }
 
-    if (upserts.length > 0) {
-      await this.prisma.$transaction(upserts);
-    }
-
-    await this.audit.log({
-      tenantId,
-      actorUserId: actorId,
-      action: 'TEST_RESULTS_SAVE',
-      entityType: 'LabOrder',
-      entityId: orderedTestId,
-      after: { parameterCount: values.length },
-      correlationId,
+    await this.prisma.$transaction(async (tx) => {
+      for (const upsert of upserts) {
+        if (upsert.existingId) await tx.labResult.update({ where: { id: upsert.existingId }, data: upsert.data });
+        else await tx.labResult.create({ data: upsert.data });
+      }
+      await this.audit.logInTransaction(tx, {
+        tenantId,
+        actorUserId: actorId,
+        action: 'TEST_RESULTS_SAVE',
+        entityType: 'LabOrder',
+        entityId: orderedTestId,
+        after: { parameterCount: values.length },
+        correlationId,
+      });
     });
 
     return this.getOrderedTestDetail(tenantId, orderedTestId);
@@ -424,41 +426,34 @@ export class ResultsService {
     }
 
     const now = new Date();
-    await this.prisma.labOrder.update({
-      where: { id: orderedTestId },
-      data: { resultStatus: 'SUBMITTED', submittedAt: now, submittedById: actorId },
-    });
-
-    // Late-entry lock: once submitted, any parameter that already has a value
-    // is locked against further edits. Parameters left empty at submit time
-    // stay editable (e.g. a late-arriving analyte added afterward via :save).
-    await this.prisma.labResult.updateMany({
-      where: { labOrderId: orderedTestId, value: { not: '' } },
-      data: { locked: true },
-    });
-
-    // Advance encounter status based on whether all orders are submitted
-    const allOrders = await this.prisma.labOrder.findMany({
-      where: { encounterId: order.encounterId, tenantId },
-      select: { id: true, resultStatus: true },
-    });
-    const allSubmitted = allOrders.every(
-      (o) => o.id === orderedTestId || o.resultStatus === 'SUBMITTED',
-    );
-    const newEncounterStatus = allSubmitted ? 'resulted' : 'partial_resulted';
-    await this.prisma.encounter.update({
-      where: { id: order.encounterId },
-      data: { status: newEncounterStatus },
-    });
-
-    await this.audit.log({
-      tenantId,
-      actorUserId: actorId,
-      action: 'TEST_RESULTS_SUBMIT',
-      entityType: 'LabOrder',
-      entityId: orderedTestId,
-      after: { resultStatus: 'SUBMITTED', encounterStatus: newEncounterStatus },
-      correlationId,
+    const newEncounterStatus = await this.prisma.$transaction(async (tx) => {
+      await tx.labOrder.update({
+        where: { id: orderedTestId },
+        data: { resultStatus: 'SUBMITTED', submittedAt: now, submittedById: actorId },
+      });
+      await tx.labResult.updateMany({
+        where: { labOrderId: orderedTestId, value: { not: '' } },
+        data: { locked: true },
+      });
+      const allOrders = await tx.labOrder.findMany({
+        where: { encounterId: order.encounterId, tenantId },
+        select: { id: true, resultStatus: true, status: true },
+      });
+      const activeOrders = allOrders.filter((o) => o.status !== 'cancelled');
+      const status = activeOrders.every((o) => o.id === orderedTestId || o.resultStatus === 'SUBMITTED')
+        ? 'resulted'
+        : 'partial_resulted';
+      await tx.encounter.update({ where: { id: order.encounterId }, data: { status } });
+      await this.audit.logInTransaction(tx, {
+        tenantId,
+        actorUserId: actorId,
+        action: 'TEST_RESULTS_SUBMIT',
+        entityType: 'LabOrder',
+        entityId: orderedTestId,
+        after: { resultStatus: 'SUBMITTED', encounterStatus: status },
+        correlationId,
+      });
+      return status;
     });
 
     return this.getOrderedTestDetail(tenantId, orderedTestId);
@@ -470,75 +465,10 @@ export class ResultsService {
     orderedTestId: string,
     correlationId?: string,
   ) {
-    const order = await this.prisma.labOrder.findFirst({
-      where: { id: orderedTestId, tenantId },
-      include: { encounter: true },
-    });
-    if (!order) throw new NotFoundException('Ordered test not found');
-    if (!SPECIMEN_READY_STATUSES.includes(order.encounter.status)) {
-      throw new ForbiddenException('Sample not collected');
-    }
-
-    const now = new Date();
-
-    // Submit if not already submitted
-    if (order.resultStatus !== 'SUBMITTED') {
-      await this.prisma.labOrder.update({
-        where: { id: orderedTestId },
-        data: { resultStatus: 'SUBMITTED', submittedAt: now, submittedById: actorId },
-      });
-      await this.prisma.labResult.updateMany({
-        where: { labOrderId: orderedTestId, value: { not: '' } },
-        data: { locked: true },
-      });
-      await this.audit.log({
-        tenantId,
-        actorUserId: actorId,
-        action: 'TEST_RESULTS_SUBMIT',
-        entityType: 'LabOrder',
-        entityId: orderedTestId,
-        after: { resultStatus: 'SUBMITTED' },
-        correlationId,
-      });
-    }
-
-    // Mark results as verified
-    await this.prisma.labResult.updateMany({
-      where: { labOrderId: orderedTestId, value: { not: '' } },
-      data: { verifiedAt: now, verifiedBy: actorId, locked: true },
-    });
-
-    // Set encounter to verified
-    await this.prisma.encounter.update({
-      where: { id: order.encounterId },
-      data: { status: 'verified' },
-    });
-
-    await this.audit.log({
-      tenantId,
-      actorUserId: actorId,
-      action: 'TEST_RESULTS_VERIFY',
-      entityType: 'LabOrder',
-      entityId: orderedTestId,
-      after: { verifiedBy: actorId, encounterId: order.encounterId },
-      correlationId,
-    });
-
-    // Enqueue document generation (best-effort)
-    let documentJobId: string | null = null;
-    try {
-      const result = await this.documents.generateFromEncounter(
-        tenantId,
-        order.encounterId,
-        actorId,
-        correlationId ?? '',
-      );
-      documentJobId = (result as any).document?.id ?? null;
-    } catch (err) {
-      console.error('[ResultsService] Failed to enqueue document generation:', err);
-    }
-
-    const orderedTest = await this.getOrderedTestDetail(tenantId, orderedTestId);
-    return { orderedTest, documentJobId };
+    void tenantId;
+    void actorId;
+    void orderedTestId;
+    void correlationId;
+    throw new ForbiddenException('submit-and-verify is retired; submit results and use per-test verification');
   }
 }

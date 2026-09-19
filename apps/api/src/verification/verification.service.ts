@@ -245,6 +245,15 @@ export class VerificationService {
         where: { id: encounterId },
         data: { status: newEncounterStatus },
       });
+      await this.audit.logInTransaction(tx, {
+        tenantId,
+        actorUserId: actorId,
+        action: 'ENCOUNTER_VERIFIED',
+        entityType: 'Encounter',
+        entityId: encounterId,
+        correlationId,
+        after: { status: newEncounterStatus, verifiedBy: actorId },
+      });
     });
 
     let documentJobId: string | null = null;
@@ -262,16 +271,6 @@ export class VerificationService {
         (err as Error).message,
       );
     }
-
-    await this.audit.log({
-      tenantId,
-      actorUserId: actorId,
-      action: 'ENCOUNTER_VERIFIED',
-      entityType: 'Encounter',
-      entityId: encounterId,
-      correlationId,
-      after: { status: newEncounterStatus, verifiedBy: actorId },
-    });
 
     return { encounterId, status: newEncounterStatus, documentJobId };
   }
@@ -323,20 +322,19 @@ export class VerificationService {
         where: { id: encounterId },
         data: { status: 'specimen_received' },
       });
-    });
-
-    await this.audit.log({
-      tenantId,
-      actorUserId: actorId,
-      action: 'ENCOUNTER_RETURNED_FOR_CORRECTION',
-      entityType: 'Encounter',
-      entityId: encounterId,
-      correlationId,
-      after: {
-        status: 'specimen_received',
-        correctedTestsCount: submittedOrders.length,
-        reason: reason?.trim() || null,
-      },
+      await this.audit.logInTransaction(tx, {
+        tenantId,
+        actorUserId: actorId,
+        action: 'ENCOUNTER_RETURNED_FOR_CORRECTION',
+        entityType: 'Encounter',
+        entityId: encounterId,
+        correlationId,
+        after: {
+          status: 'specimen_received',
+          correctedTestsCount: submittedOrders.length,
+          reason: reason?.trim() || null,
+        },
+      });
     });
 
     return {

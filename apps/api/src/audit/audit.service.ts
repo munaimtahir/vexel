@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface AuditEventInput {
@@ -53,6 +54,19 @@ export class AuditService {
 
   async logRequired(event: AuditEventInput): Promise<void> {
     return this.log(event, { mode: 'required' });
+  }
+
+  /**
+   * Writes a mandatory audit event through the caller's Prisma transaction.
+   * Use this for every command that mutates workflow or financial state so a
+   * failed audit insert rolls back the domain mutation.
+   */
+  async logInTransaction(tx: Prisma.TransactionClient, event: AuditEventInput): Promise<void> {
+    try {
+      await tx.auditEvent.create({ data: event });
+    } catch {
+      throw new InternalServerErrorException('Required audit event write failed');
+    }
   }
 
   async logBestEffort(event: AuditEventInput): Promise<void> {
