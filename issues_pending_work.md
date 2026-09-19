@@ -85,6 +85,7 @@ This is the original list of 13 release gaps, exactly as the audit recorded them
 | D8 | The old advice "delete the 208 blank reference-range rows" is **withdrawn** — those ranges are a real requirement and must be kept. | 2026-09-20 |
 | D9 | **Live report progress after verify.** Right after verify the screen shows "Building report…" then Completed, or Failed with a Retry button, in the same flow. | 2026-09-20 |
 | D10 | **Verification always generates the report automatically** (build + publish). No separate generate/publish buttons. Printing stays a separate operator action. | 2026-09-20 |
+| D11 | **Verification stays saved even if the report fails to build.** The report then shows Failed with a Retry button. The verifier's work is never lost because of a PDF problem. | 2026-09-20 |
 
 ---
 
@@ -282,7 +283,7 @@ What already works and will be reused: per-test result **save** and **submit** e
 
 #### T4.4 — Live report status after verify, failure and retry (P1-005) — decision D9
 - **Issue:** If the PDF fails to render, Vexel treats it as "best effort" and carries on. A verified patient can be left without a report and staff have no reliable way to retry. The two browser tests for this are skipped.
-- **Solution:** Right after the verifier presses verify, the same screen shows the report progress live: **"Building report…" → "Completed"** (with a link to open it) **or "Failed" with a Retry button**. Retry is an audited command. Behind the scenes the PDF is still made by the background worker, so the screen checks the status every second or two until it finishes. Design rule (recommended, confirm with owner — see O6): the **verification itself is saved immediately and stays saved even if the report fails**, so the verifier's work is never lost; a failed report simply shows Failed + Retry. Enable and fix the two skipped tests.
+- **Solution:** Right after the verifier presses verify, the same screen shows the report progress live: **"Building report…" → "Completed"** (with a link to open it) **or "Failed" with a Retry button**. Retry is an audited command. Behind the scenes the PDF is still made by the background worker, so the screen checks the status every second or two until it finishes. Design rule (decision D11): the **verification itself is saved immediately and stays saved even if the report fails**, so the verifier's work is never lost; a failed report simply shows Failed + Retry. Enable and fix the two skipped tests.
 - **Done when:** after verify the screen shows building → completed; a forced failure shows Failed and Retry works; the report then renders, publishes and downloads; the two skipped tests run and pass.
 - **Size:** M.
 
@@ -402,7 +403,6 @@ C5 expected-text results (e.g. "Negative" is normal) · C6 named result bands (N
 | O3 | Which tests are "print alone"? | Engineers propose a list from the 329 tests (CBC, LFT, RFT, Lipid Profile, Urine R/E, any test with many parameters); owner confirms. |
 | O4 | Will other people (not the owner) test and give lab sign-off? | Name the lab director / senior technologist for K7 and G8. |
 | O5 | How should the refund entry look for cancelled tests that were only partly paid? | Decide after T3.2 investigation of the billing code. |
-| O6 | If the report fails after a verify, should the verification stay saved (report shows Failed + Retry)? | Yes — never lose the verifier's work because of a PDF problem. |
 
 ---
 
