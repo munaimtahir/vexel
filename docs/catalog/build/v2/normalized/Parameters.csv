@@ -75,7 +75,7 @@ p2072,ANTI_SS_B,Anti SS-B,numeric,U/ml,,,,,true
 p2073,ANTI_THYROGLOBULIN_ANTIB,Anti Thyroglobulin Antibodies (Anti TG),numeric,IU/ml,,,,,true
 p2074,ANTI_THYROID_PEROXIDASE_,Anti Thyroid Peroxidase (Anti TPO),text,IU/ml,,,,,true
 p2075,ANTI_TISSUE_TRANSGLUTAMI,Anti Tissue Transglutaminase IgA,numeric,U/ml,,,,,true
-p2076,ANTI_TISSUE_TRANSGLUTAMI,Anti Tissue Transglutaminase IgG,numeric,U/mL,,,,,true
+p2076,ANTI_TISSUE_TRANSG_p2076,Anti Tissue Transglutaminase IgG,numeric,U/mL,,,,,true
 p2077,APPEARANCE,Appearance,text,,,,,,true
 p2078,APTT,APTT,numeric,Seconds,,,,,true
 p2079,APTT_CONTROL,APTT Control,numeric,Seconds,,,,,true
@@ -87,7 +87,7 @@ p2084,BASOPHIL_ABSOLUTE,"Basophil, Absolute",numeric,*10^9/l,,,,,true
 p2085,BASOPHILS,Basophils,numeric,%,,,,,true
 p2086,BETA,Beta,numeric,g/dL,,,,,true
 p2087,BETA_2_GLYCOPROTEIN_1_IG,Beta 2 Glycoprotein-1 IgG,numeric,U/ml,,,,,true
-p2088,BETA_2_GLYCOPROTEIN_1_IG,Beta 2 Glycoprotein-1 IgM,text,U/ml,,,,,true
+p2088,BETA_2_GLYCOPROTEI_p2088,Beta 2 Glycoprotein-1 IgM,text,U/ml,,,,,true
 p2089,BETA_HCG,BETA HCG,numeric,mIU/ml,,,,,true
 p2090,BILIRUBIN,Bilirubin,text,,,,,,true
 p2091,BILIRUBIN_CONJUGATED,Bilirubin Conjugated,numeric,mg/dl,,,,,true
@@ -108,7 +108,7 @@ p2105,BLOOD_SUGAR_FASTING,Blood Sugar Fasting,numeric,mg/dl,,,,,true
 p2106,BLOOD_SUGAR_RANDOM,Blood Sugar Random,numeric,mg/dl,,,,,true
 p2107,BLOOD_UREA_NITROGEN_BUN,Blood Urea Nitrogen (BUN),numeric,mg/dl,,,,,true
 p2108,BOVINE_ALBUMIN_PHASE_AT_,Bovine Albumin Phase at 37 C,text,-,,,,,true
-p2109,BOVINE_ALBUMIN_PHASE_AT_,Bovine Albumin Phase at R.T.,text,-,,,,,true
+p2109,BOVINE_ALBUMIN_PHA_p2109,Bovine Albumin Phase at R.T.,text,-,,,,,true
 p2110,BRUCELLA_IGG,Brucella IgG,numeric,IU/ml,,,,,true
 p2111,BRUCELLA_IGM,Brucella IgM,numeric,IU/ml,,,,,true
 p2112,BUN_CREATININE_RATIO,BUN/Creatinine Ratio,numeric,,,,,,true
@@ -197,8 +197,8 @@ p2194,HDL_CHOLESTEROL,HDL Cholesterol,numeric,mg/dl,,,,,true
 p2195,HEAD_DEFECT,Head Defect,text,%,,,,,true
 p2196,HEAMOGLOBIN,Heamoglobin,numeric,g/dl,,,,,true
 p2197,HELICOBACTER_PYLORI_ABS_,Helicobacter Pylori Abs (IgA),numeric,U/ml,,,,,true
-p2198,HELICOBACTER_PYLORI_ABS_,Helicobacter Pylori Abs (IgG),numeric,U/ml,,,,,true
-p2199,HELICOBACTER_PYLORI_ABS_,Helicobacter Pylori Abs IgM,text,S/CO,,,,,true
+p2198,HELICOBACTER_PYLOR_p2198,Helicobacter Pylori Abs (IgG),numeric,U/ml,,,,,true
+p2199,HELICOBACTER_PYLOR_p2199,Helicobacter Pylori Abs IgM,text,S/CO,,,,,true
 p2200,HEMATOCRIT_HCT,Hematocrit (HCT),text,%,,,,,true
 p2201,HEMOGLOBIN_HB,Hemoglobin (HB),numeric,g/dl,,,,,true
 p2202,HEPATITIS_A_VIRUS_IGM,Hepatitis A Virus IgM,text,U/ml,,,,,true
@@ -295,7 +295,7 @@ p2292,RBC,RBC,text,,,,,,true
 p2293,RED_BLOOD_CELL_RBC,Red Blood Cell (RBC),numeric,*10^12/l,,,,,true
 p2294,RED_BLOOD_CELLS,Red Blood Cells,text,,,,,,true
 p2295,RED_CELL_DIST_WIDTH_RDW_,Red Cell Dist. Width (RDW-CV),numeric,%,,,,,true
-p2296,RED_CELL_DIST_WIDTH_RDW_,Red Cell Dist. Width (RDW-SD),numeric,fl,,,,,true
+p2296,RED_CELL_DIST_WIDT_p2296,Red Cell Dist. Width (RDW-SD),numeric,fl,,,,,true
 p2297,RED_CELL_FOLATE,Red Cell Folate,numeric,nmol/l,,,,,true
 p2298,REMARKS,Remarks,text,,,,,,true
 p2299,RETICULOCYTE_COUNT,Reticulocyte Count,numeric,%,,,,,true
