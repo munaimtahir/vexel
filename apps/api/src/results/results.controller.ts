@@ -20,10 +20,11 @@ import { ResultsService } from './results.service';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request } from 'express';
 import { getTenantId } from '../common/tenant-context';
+import { LimsFeatureGuard } from '../common/lims-feature.guard';
 
 @ApiTags('Results')
 @Controller('results')
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+@UseGuards(JwtAuthGuard, LimsFeatureGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class ResultsController {
   constructor(private readonly svc: ResultsService) {}

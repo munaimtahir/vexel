@@ -8,10 +8,11 @@ import { EncountersService } from './encounters.service';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request } from 'express';
 import { getTenantId } from '../common/tenant-context';
+import { LimsFeatureGuard } from '../common/lims-feature.guard';
 
 @ApiTags('Encounters')
 @Controller('encounters')
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+@UseGuards(JwtAuthGuard, LimsFeatureGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class EncountersController {
   constructor(private readonly svc: EncountersService) {}

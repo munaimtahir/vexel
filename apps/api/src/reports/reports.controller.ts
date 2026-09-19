@@ -7,10 +7,11 @@ import { RequirePermissions } from '../rbac/require-permissions.decorator';
 import { Permission } from '../rbac/permissions';
 import { getTenantId } from '../common/tenant-context';
 import { ReportsService } from './reports.service';
+import { LimsFeatureGuard } from '../common/lims-feature.guard';
 
 @ApiTags('Reports')
 @Controller('reports')
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+@UseGuards(JwtAuthGuard, LimsFeatureGuard, PermissionsGuard)
 @ApiBearerAuth()
 @RequirePermissions(Permission.REPORTS_READ)
 export class ReportsController {

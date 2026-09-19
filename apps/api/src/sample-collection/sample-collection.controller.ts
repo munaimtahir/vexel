@@ -12,10 +12,11 @@ import { FeatureFlagsService } from '../feature-flags/feature-flags.service';
 import { CORRELATION_ID_HEADER } from '../common/correlation-id.middleware';
 import { Request } from 'express';
 import { getTenantId } from '../common/tenant-context';
+import { LimsFeatureGuard } from '../common/lims-feature.guard';
 
 @ApiTags('Sample Collection')
 @Controller()
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+@UseGuards(JwtAuthGuard, LimsFeatureGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class SampleCollectionController {
   constructor(
