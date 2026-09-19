@@ -1687,6 +1687,17 @@ components:
                 enum: [normal, high, low, critical]
                 nullable: true
 
+    OrderedTestVerificationResult:
+      type: object
+      required: [orderedTestId, encounterId, encounterStatus]
+      properties:
+        orderedTestId:
+          type: string
+        encounterId:
+          type: string
+        encounterStatus:
+          type: string
+
     SampleCollectionEncounter:
       type: object
       description: Row item for sample collection worklist
@@ -7672,6 +7683,74 @@ paths:
                     type: integer
         "409":
           description: No submitted tests available for correction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /verification/tests/{orderedTestId}:verify:
+    post:
+      operationId: verifyOrderedTest
+      summary: Verify one submitted test without changing sibling tests
+      tags: [Verification]
+      parameters:
+        - name: orderedTestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Test verified and encounter summary refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderedTestVerificationResult'
+        "409":
+          description: Test cannot transition from its current state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+
+  /verification/tests/{orderedTestId}:return-for-correction:
+    post:
+      operationId: returnOrderedTestForCorrection
+      summary: Return one submitted test to result entry without changing sibling tests
+      tags: [Verification]
+      parameters:
+        - name: orderedTestId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string }
+      responses:
+        "200":
+          description: Test returned and encounter summary refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderedTestVerificationResult'
+        "409":
+          description: Test cannot transition from its current state
           content:
             application/json:
               schema:

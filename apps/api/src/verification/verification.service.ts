@@ -27,6 +27,32 @@ export class VerificationService {
     private readonly documents: DocumentsService,
   ) {}
 
+  /** Derive the encounter roll-up from its active ordered tests inside a transaction. */
+  private async refreshEncounterStatus(
+    tx: Parameters<Parameters<PrismaService['$transaction']>[0]>[0],
+    tenantId: string,
+    encounterId: string,
+  ): Promise<string> {
+    const orders = await tx.labOrder.findMany({
+      where: { tenantId, encounterId },
+      select: { status: true, resultStatus: true },
+    });
+    const active = orders.filter((order) => order.status !== 'cancelled');
+    let status = 'lab_ordered';
+
+    if (active.length === 0) status = 'cancelled';
+    else if (active.every((order) => order.status === 'verified')) status = 'verified';
+    else if (active.some((order) => order.resultStatus === 'SUBMITTED')) {
+      status = active.every((order) => order.resultStatus === 'SUBMITTED' || order.status === 'verified')
+        ? 'resulted'
+        : 'partial_resulted';
+    } else if (active.some((order) => order.status === 'processing')) status = 'specimen_received';
+    else if (active.some((order) => order.status === 'specimen_collected')) status = 'specimen_collected';
+
+    await tx.encounter.update({ where: { id: encounterId }, data: { status } });
+    return status;
+  }
+
   async getVerificationQueue(
     tenantId: string,
     filters: { search?: string; page?: number; limit?: number; view?: 'pending' | 'verified_today' } = {},
@@ -273,6 +299,92 @@ export class VerificationService {
     }
 
     return { encounterId, status: newEncounterStatus, documentJobId };
+  }
+
+  /** Verify precisely one submitted test; other tests remain independently actionable. */
+  async verifyOrderedTest(
+    tenantId: string,
+    actorId: string,
+    orderedTestId: string,
+    correlationId?: string,
+  ): Promise<{ orderedTestId: string; encounterId: string; encounterStatus: string }> {
+    const order = await this.prisma.labOrder.findFirst({
+      where: { id: orderedTestId, tenantId },
+      select: { id: true, encounterId: true, resultStatus: true, status: true },
+    });
+    if (!order) throw new NotFoundException('Ordered test not found');
+    if (order.status === 'verified') throw new ConflictException('Test is already verified');
+    if (order.status === 'cancelled') throw new ConflictException('Cancelled tests cannot be verified');
+    if (order.resultStatus !== 'SUBMITTED') throw new ConflictException('Test results must be submitted before verification');
+
+    const encounterStatus = await this.prisma.$transaction(async (tx) => {
+      const now = new Date();
+      const updated = await tx.labOrder.updateMany({
+        where: { id: orderedTestId, tenantId, resultStatus: 'SUBMITTED', status: { notIn: ['verified', 'cancelled'] } },
+        data: { status: 'verified' },
+      });
+      if (updated.count !== 1) throw new ConflictException('Test is no longer available for verification');
+      await tx.labResult.updateMany({
+        where: { tenantId, labOrderId: orderedTestId, value: { not: '' } },
+        data: { verifiedAt: now, verifiedBy: actorId, locked: true },
+      });
+      const status = await this.refreshEncounterStatus(tx, tenantId, order.encounterId);
+      await this.audit.logInTransaction(tx, {
+        tenantId,
+        actorUserId: actorId,
+        action: 'TEST_VERIFIED',
+        entityType: 'LabOrder',
+        entityId: orderedTestId,
+        correlationId,
+        after: { status: 'verified', encounterStatus: status },
+      });
+      return status;
+    });
+
+    return { orderedTestId, encounterId: order.encounterId, encounterStatus };
+  }
+
+  /** Return precisely one submitted test to result entry without unlocking siblings. */
+  async returnOrderedTestForCorrection(
+    tenantId: string,
+    actorId: string,
+    orderedTestId: string,
+    reason: string | undefined,
+    correlationId?: string,
+  ): Promise<{ orderedTestId: string; encounterId: string; encounterStatus: string }> {
+    const order = await this.prisma.labOrder.findFirst({
+      where: { id: orderedTestId, tenantId },
+      select: { id: true, encounterId: true, resultStatus: true, status: true },
+    });
+    if (!order) throw new NotFoundException('Ordered test not found');
+    if (order.status === 'verified') throw new ConflictException('Verified tests cannot be returned for correction');
+    if (order.status === 'cancelled') throw new ConflictException('Cancelled tests cannot be returned for correction');
+    if (order.resultStatus !== 'SUBMITTED') throw new ConflictException('Only submitted tests can be returned for correction');
+
+    const encounterStatus = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.labOrder.updateMany({
+        where: { id: orderedTestId, tenantId, resultStatus: 'SUBMITTED', status: { notIn: ['verified', 'cancelled'] } },
+        data: { resultStatus: 'PENDING', submittedAt: null, submittedById: null, status: 'processing' },
+      });
+      if (updated.count !== 1) throw new ConflictException('Test is no longer available for correction');
+      await tx.labResult.updateMany({
+        where: { tenantId, labOrderId: orderedTestId, verifiedAt: null },
+        data: { locked: false },
+      });
+      const status = await this.refreshEncounterStatus(tx, tenantId, order.encounterId);
+      await this.audit.logInTransaction(tx, {
+        tenantId,
+        actorUserId: actorId,
+        action: 'TEST_RETURNED_FOR_CORRECTION',
+        entityType: 'LabOrder',
+        entityId: orderedTestId,
+        correlationId,
+        after: { resultStatus: 'PENDING', encounterStatus: status, reason: reason?.trim() || null },
+      });
+      return status;
+    });
+
+    return { orderedTestId, encounterId: order.encounterId, encounterStatus };
   }
 
   async returnForCorrection(

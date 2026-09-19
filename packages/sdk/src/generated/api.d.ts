@@ -2221,6 +2221,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/verification/tests/{orderedTestId}:verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify one submitted test without changing sibling tests */
+        post: operations["verifyOrderedTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/verification/tests/{orderedTestId}:return-for-correction": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Return one submitted test to result entry without changing sibling tests */
+        post: operations["returnOrderedTestForCorrection"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/reports/registrations": {
         parameters: {
             query?: never;
@@ -4255,6 +4289,11 @@ export interface components {
                 /** @enum {string|null} */
                 flag?: "normal" | "high" | "low" | "critical" | null;
             }[];
+        };
+        OrderedTestVerificationResult: {
+            orderedTestId: string;
+            encounterId: string;
+            encounterStatus: string;
         };
         /** @description Row item for sample collection worklist */
         SampleCollectionEncounter: {
@@ -10002,6 +10041,80 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description No submitted tests available for correction */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    verifyOrderedTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderedTestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Test verified and encounter summary refreshed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderedTestVerificationResult"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Test cannot transition from its current state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    returnOrderedTestForCorrection: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderedTestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    reason?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Test returned and encounter summary refreshed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderedTestVerificationResult"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Test cannot transition from its current state */
             409: {
                 headers: {
                     [name: string]: unknown;

@@ -70,6 +70,31 @@ export class VerificationController {
     );
   }
 
+  @Post('tests/:orderedTestId\\:verify')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.RESULT_VERIFY)
+  verifyOrderedTest(
+    @Req() req: Request,
+    @Param('orderedTestId') orderedTestId: string,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    return this.svc.verifyOrderedTest(this.resolveTenantId(req), (req as any).user.userId, orderedTestId, correlationId);
+  }
+
+  @Post('tests/:orderedTestId\\:return-for-correction')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.RESULT_VERIFY)
+  returnOrderedTestForCorrection(
+    @Req() req: Request,
+    @Param('orderedTestId') orderedTestId: string,
+    @Body() body: { reason?: string },
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    return this.svc.returnOrderedTestForCorrection(
+      this.resolveTenantId(req), (req as any).user.userId, orderedTestId, body?.reason, correlationId,
+    );
+  }
+
   @Post('encounters/:encounterId\\:return-for-correction')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.RESULT_VERIFY)
