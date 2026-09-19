@@ -52,10 +52,10 @@ This is the original list of 13 release gaps, exactly as the audit recorded them
 
 | ID | Problem in plain words | Why it matters | Fixed by |
 |---|---|---|---|
-| LIMS-P1-005 | If a report PDF fails to render, Vexel carries on quietly and staff have no reliable retry. The two browser tests for this are skipped. | A verified patient can be left without a report. | T4.4 (Sprint 4) |
+| LIMS-P1-005 | If a report PDF fails to render, Vexel carries on quietly and staff have no reliable retry. The two browser tests for this are skipped. | A verified patient can be left without a report. | T4.4 (Sprint 4) — live status + retry (D9) |
 | LIMS-P1-006 | The job-monitoring screen watches a queue nothing uses, not the four queues that do the work. | Failures are invisible and cannot be retried safely. | T5.2 (Sprint 5) |
 | LIMS-P1-007 | The routine that fingerprints a report's data can treat different data as the same. | The wrong PDF could be reused for a different report. | T4.6 (Sprint 4) |
-| LIMS-P1-008 | The verification screen says "auto-publish started", but reports actually wait for a manual publish. | Staff think a report is available when it is not. | T4.5 (Sprint 4) |
+| LIMS-P1-008 | The verification screen says "auto-publish started", but reports actually wait for a manual publish. | Staff think a report is available when it is not. | T4.5 (Sprint 4) — verify auto-generates and publishes (D10) |
 | LIMS-P1-009 | The "LIMS module on/off" switch is checked in only some places. | A lab with LIMS switched off could still use parts of it. | T5.1 (Sprint 5) |
 
 **P2 — should be fixed; improves safety and reliability (3)**
@@ -83,6 +83,8 @@ This is the original list of 13 release gaps, exactly as the audit recorded them
 | D6 | **Printing defaults to ALL verified tests, every time** — whether or not they were printed before. The print screen shows a checklist of all verified tests, all ticked by default. The operator may untick tests already printed, or print a single test. Reason: "print" only opens a PDF in a new tab; Vexel cannot know whether paper really came out (printer jam, forgot to print, computer crash). | 2026-09-20 |
 | D7 | **Profile tests such as CBC, LFT etc. always print alone on their own page**, even if that leaves empty space. | 2026-09-20 |
 | D8 | The old advice "delete the 208 blank reference-range rows" is **withdrawn** — those ranges are a real requirement and must be kept. | 2026-09-20 |
+| D9 | **Live report progress after verify.** Right after verify the screen shows "Building report…" then Completed, or Failed with a Retry button, in the same flow. | 2026-09-20 |
+| D10 | **Verification always generates the report automatically** (build + publish). No separate generate/publish buttons. Printing stays a separate operator action. | 2026-09-20 |
 
 ---
 
@@ -278,17 +280,17 @@ What already works and will be reused: per-test result **save** and **submit** e
 - **Done when:** a PDF with CBC followed by another test shows CBC alone on its page and the next test on a new page; the flag is set correctly after import.
 - **Size:** S (PDF) + S (catalogue).
 
-#### T4.4 — Report failure has no recovery (P1-005)
+#### T4.4 — Live report status after verify, failure and retry (P1-005) — decision D9
 - **Issue:** If the PDF fails to render, Vexel treats it as "best effort" and carries on. A verified patient can be left without a report and staff have no reliable way to retry. The two browser tests for this are skipped.
-- **Solution:** Show a clear **FAILED** state on the document, add an audited "retry" command, and show it in the operator screen. Enable and fix the two skipped tests.
-- **Done when:** a forced failure shows FAILED, retry works, and the report then renders, publishes and downloads.
+- **Solution:** Right after the verifier presses verify, the same screen shows the report progress live: **"Building report…" → "Completed"** (with a link to open it) **or "Failed" with a Retry button**. Retry is an audited command. Behind the scenes the PDF is still made by the background worker, so the screen checks the status every second or two until it finishes. Design rule (recommended, confirm with owner — see O6): the **verification itself is saved immediately and stays saved even if the report fails**, so the verifier's work is never lost; a failed report simply shows Failed + Retry. Enable and fix the two skipped tests.
+- **Done when:** after verify the screen shows building → completed; a forced failure shows Failed and Retry works; the report then renders, publishes and downloads; the two skipped tests run and pass.
 - **Size:** M.
 
-#### T4.5 — Misleading "auto-publish started" message (P1-008)
-- **Issue:** The verification screen says auto-publish started, but the lab report deliberately stays "RENDERED" until someone publishes it manually.
-- **Solution:** Fix the wording and make the review-and-publish step explicit and visible, following the per-test report flow (T4.1, T4.2).
-- **Done when:** the screen text matches reality and a browser test clicks publish and checks the document, audit and status.
-- **Size:** S.
+#### T4.5 — Verification automatically generates and publishes the report (P1-008) — decision D10
+- **Issue:** The verification screen says "auto-publish started", but the lab report deliberately stays "RENDERED" until someone publishes it manually, so the message is false and staff need an extra step.
+- **Solution:** **Verification always means report generation.** When tests are verified, the system automatically builds and publishes the report for **all verified tests of that visit** (this fits D6 and the partial-report rule of T4.1: verify test A → report with A marked PARTIAL; verify test B → new report with A and B). Remove the separate "generate report" and "publish" buttons from the LIMS flow. The only manual step left is **print** (T4.2). The message on screen is replaced by the live status of T4.4. If a verified test is later returned for correction, the old published report is kept in history and a new version is created when it is verified again (see G7).
+- **Done when:** one click on Verify results in a published report with no further button press; a browser test verifies a test and asserts the published document, the audit records and the visit status; no "publish"/"generate" button remains in the LIMS screens.
+- **Size:** M (includes removing the manual publish path and updating the tests that call it).
 
 #### T4.6 — Document identity (hash) can collide (P1-007)
 - **Issue:** The routine that turns report data into a fixed fingerprint (`apps/api/src/documents/canonical.ts`) treats some different values as the same and does not escape text. Two different reports could get the same fingerprint, so the wrong PDF might be reused.
@@ -400,6 +402,7 @@ C5 expected-text results (e.g. "Negative" is normal) · C6 named result bands (N
 | O3 | Which tests are "print alone"? | Engineers propose a list from the 329 tests (CBC, LFT, RFT, Lipid Profile, Urine R/E, any test with many parameters); owner confirms. |
 | O4 | Will other people (not the owner) test and give lab sign-off? | Name the lab director / senior technologist for K7 and G8. |
 | O5 | How should the refund entry look for cancelled tests that were only partly paid? | Decide after T3.2 investigation of the billing code. |
+| O6 | If the report fails after a verify, should the verification stay saved (report shows Failed + Retry)? | Yes — never lose the verifier's work because of a PDF problem. |
 
 ---
 
