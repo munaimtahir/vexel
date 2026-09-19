@@ -414,9 +414,17 @@ export class DocumentsService {
       },
     });
     if (!encounter) throw new NotFoundException('Encounter not found');
-    if (!['verified', 'published'].includes(encounter.status)) {
-      throw new ConflictException('Encounter must be verified before generating report');
+    // Reports are snapshots of verified tests, never of an encounter-wide
+    // status. This permits an accurate partial report after test A is verified
+    // while test B is still being worked, without leaking B into the PDF.
+    const verifiedOrders = encounter.labOrders.filter((order: any) => order.status === 'verified');
+    if (verifiedOrders.length === 0) {
+      throw new ConflictException('At least one test must be verified before generating report');
     }
+    const pendingTestNames = encounter.labOrders
+      .filter((order: any) => order.status !== 'verified' && order.status !== 'cancelled')
+      .map((order: any) => order.test?.name ?? order.testNameSnapshot ?? 'Unknown test')
+      .sort((a, b) => a.localeCompare(b));
 
     const tenantConfig = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
 
@@ -447,7 +455,7 @@ export class DocumentsService {
     const issuedAt = (verifyAudit?.createdAt ?? encounter.createdAt).toISOString();
 
     // Resolve print template for deterministic identity inclusion
-    const printTemplate = await this.resolvePrintTemplate(tenantId, encounter.labOrders[0]?.testId);
+    const printTemplate = await this.resolvePrintTemplate(tenantId, verifiedOrders[0]?.testId);
 
     const payload: LabReportPayload = {
       reportNumber: `RPT-${encounterId.slice(0, 8).toUpperCase()}`,
@@ -461,7 +469,9 @@ export class DocumentsService {
       encounterCode: (encounter as any).encounterCode ?? undefined,
       orderedBy: undefined,
       sampleReceivedAt: (firstSpecimen as any)?.collectedAt?.toISOString() ?? firstSpecimen?.createdAt?.toISOString(),
-      reportStatus: encounter.status === 'verified' ? 'Verified' : encounter.status === 'published' ? 'Verified' : 'Provisional',
+      reportStatus: pendingTestNames.length > 0
+        ? `PARTIAL – pending: ${pendingTestNames.join(', ')}`
+        : 'Verified',
       reportHeaderLayout: (tenantConfig as any)?.reportHeaderLayout ?? 'default',
       // Template identity fields — included so payloadHash changes when template changes
       ...(printTemplate ? {
@@ -469,7 +479,7 @@ export class DocumentsService {
         templateVersion: printTemplate.templateVersion,
         templateFamily: printTemplate.templateFamily,
       } : {}),
-      tests: [...encounter.labOrders]
+      tests: [...verifiedOrders]
         // Deterministic test ordering: by test name (stable)
         .sort((a, b) => {
           const an = (a as any).test?.name ?? '';

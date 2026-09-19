@@ -1697,6 +1697,9 @@ components:
           type: string
         encounterStatus:
           type: string
+        documentJobId:
+          type: string
+          nullable: true
 
     SampleCollectionEncounter:
       type: object

@@ -4294,6 +4294,7 @@ export interface components {
             orderedTestId: string;
             encounterId: string;
             encounterStatus: string;
+            documentJobId?: string | null;
         };
         /** @description Row item for sample collection worklist */
         SampleCollectionEncounter: {

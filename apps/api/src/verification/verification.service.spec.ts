@@ -11,7 +11,8 @@ describe('VerificationService per-test commands', () => {
     $transaction: jest.fn(async (callback: (client: typeof tx) => unknown) => callback(tx)),
   };
   const audit = { logInTransaction: jest.fn() };
-  const service = new VerificationService(prisma as any, audit as any, {} as any);
+  const documents = { generateFromEncounter: jest.fn().mockResolvedValue({ document: { id: 'doc-a' } }) };
+  const service = new VerificationService(prisma as any, audit as any, documents as any);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -31,7 +32,7 @@ describe('VerificationService per-test commands', () => {
     });
 
     await expect(service.verifyOrderedTest('tenant-a', 'user-a', 'test-a', 'corr-a')).resolves.toEqual({
-      orderedTestId: 'test-a', encounterId: 'encounter-a', encounterStatus: 'partial_resulted',
+      orderedTestId: 'test-a', encounterId: 'encounter-a', encounterStatus: 'partial_resulted', documentJobId: 'doc-a',
     });
     expect(tx.labOrder.updateMany).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({ id: 'test-a', tenantId: 'tenant-a' }),
@@ -43,6 +44,7 @@ describe('VerificationService per-test commands', () => {
     expect(audit.logInTransaction).toHaveBeenCalledWith(tx, expect.objectContaining({
       action: 'TEST_VERIFIED', entityId: 'test-a', correlationId: 'corr-a',
     }));
+    expect(documents.generateFromEncounter).toHaveBeenCalledWith('tenant-a', 'encounter-a', 'user-a', 'corr-a');
   });
 
   it('returns only the selected submitted test for correction', async () => {

@@ -60,7 +60,7 @@ const mockEncounter = {
     gender: 'female',
     mobile: '03001234567',
   },
-  labOrders: [{ id: 'order-1' }],
+  labOrders: [{ id: 'order-1', status: 'verified', testId: 'test-1', test: { name: 'CBC' }, results: [] }],
 };
 
 function buildPrisma(docOverrides: Record<string, unknown> = {}) {
@@ -301,6 +301,25 @@ describe('DocumentsService', () => {
       expect(payload.issuedAt).toBe('2025-01-11T10:30:00.000Z');
       expect(payload.patientAge).toBe('25Y');
       expect(payload.printedAt).toBeUndefined();
+      expect(payload.reportStatus).toBe('Verified');
+    });
+
+    it('builds a partial report from verified tests only', async () => {
+      prisma.encounter.findFirst.mockResolvedValue({
+        ...mockEncounter,
+        status: 'partial_resulted',
+        labOrders: [
+          { id: 'order-verified', status: 'verified', testId: 'test-a', test: { name: 'CBC', parameterMappings: [] }, results: [] },
+          { id: 'order-pending', status: 'processing', testId: 'test-b', test: { name: 'Lipid Profile', parameterMappings: [] }, results: [] },
+        ],
+      });
+
+      await service.generateFromEncounter('tenant-1', 'enc-1', 'user-1', 'corr-1');
+
+      const payload = prisma.document.create.mock.calls[0][0].data.payloadJson;
+      expect(payload.reportStatus).toBe('PARTIAL – pending: Lipid Profile');
+      expect(payload.tests).toHaveLength(1);
+      expect(payload.tests[0].testName).toBe('CBC');
     });
   });
 

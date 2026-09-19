@@ -307,7 +307,7 @@ export class VerificationService {
     actorId: string,
     orderedTestId: string,
     correlationId?: string,
-  ): Promise<{ orderedTestId: string; encounterId: string; encounterStatus: string }> {
+  ): Promise<{ orderedTestId: string; encounterId: string; encounterStatus: string; documentJobId: string | null }> {
     const order = await this.prisma.labOrder.findFirst({
       where: { id: orderedTestId, tenantId },
       select: { id: true, encounterId: true, resultStatus: true, status: true },
@@ -341,7 +341,18 @@ export class VerificationService {
       return status;
     });
 
-    return { orderedTestId, encounterId: order.encounterId, encounterStatus };
+    // Document rendering is deliberately outside the clinical transaction: a
+    // renderer outage must never undo a completed verification. Failed jobs
+    // remain visible and retryable through the document workflow.
+    let documentJobId: string | null = null;
+    try {
+      const result = await this.documents.generateFromEncounter(tenantId, order.encounterId, actorId, correlationId ?? '');
+      documentJobId = (result as any).document?.id ?? null;
+    } catch (error) {
+      console.error('[verification] Failed to enqueue per-test report generation:', (error as Error).message);
+    }
+
+    return { orderedTestId, encounterId: order.encounterId, encounterStatus, documentJobId };
   }
 
   /** Return precisely one submitted test to result entry without unlocking siblings. */
