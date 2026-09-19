@@ -137,7 +137,7 @@ Dependencies to respect:
 | T4.3 Test Details Single Page option | P1 supporting | IN PROGRESS | T4.1; owner test list | — |
 | T4.4 Live document status and retry | P1 | IN PROGRESS | Real job registry; OpenAPI + SDK | — |
 | T4.5 Verify auto-generates and publishes | P1 | IN PROGRESS | T4.1; T4.4 | — |
-| T4.6 Versioned canonical document hash | P1 | IN PROGRESS | Historical-document compatibility policy | — |
+| T4.6 Versioned canonical document hash | P1 | PASS | Historical documents retain v1 hashes; new hashes are v2 domain-separated | `3494661`; canonical vectors pass |
 | T5.1 Central LIMS module gate | P1 | IN PROGRESS | LIMS route inventory | — |
 | T5.2 Real queue observability/retry | P1 | IN PROGRESS | Queue registry; T1.4 fixtures | — |
 
