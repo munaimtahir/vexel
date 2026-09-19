@@ -90,20 +90,4 @@ export class ResultsController {
     );
   }
 
-  @Post('tests/:orderedTestId\\:submit-and-verify')
-  @HttpCode(HttpStatus.OK)
-  @RequirePermissions(Permission.RESULT_VERIFY)
-  submitAndVerify(
-    @Req() req: Request,
-    @Param('orderedTestId') orderedTestId: string,
-    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
-  ) {
-    const user = (req as any).user;
-    return this.svc.submitAndVerify(
-      this.resolveTenantId(req),
-      user.userId,
-      orderedTestId,
-      correlationId,
-    );
-  }
 }

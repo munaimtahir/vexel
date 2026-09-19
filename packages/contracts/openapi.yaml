@@ -7513,47 +7513,6 @@ paths:
         "401":
           $ref: '#/components/responses/Unauthorized'
 
-  /results/tests/{orderedTestId}:submit-and-verify:
-    post:
-      operationId: submitAndVerifyTest
-      summary: Submit + verify + trigger report generation in one command (requires result.verify permission)
-      tags: [Results]
-      parameters:
-        - name: orderedTestId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              description: Optional body; command is idempotent
-      responses:
-        "200":
-          description: Test submitted and verified; document pipeline enqueued
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  orderedTest:
-                    $ref: '#/components/schemas/OrderedTestDetail'
-                  documentJobId:
-                    type: string
-                    nullable: true
-        "403":
-          description: Insufficient permissions or sample not collected
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        "404":
-          $ref: '#/components/responses/NotFound'
-        "401":
-          $ref: '#/components/responses/Unauthorized'
-
   # ─── Verification ─────────────────────────────────────────────────
 
   /verification/encounters/pending:

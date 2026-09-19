@@ -458,17 +458,4 @@ export class ResultsService {
 
     return this.getOrderedTestDetail(tenantId, orderedTestId);
   }
-
-  async submitAndVerify(
-    tenantId: string,
-    actorId: string,
-    orderedTestId: string,
-    correlationId?: string,
-  ) {
-    void tenantId;
-    void actorId;
-    void orderedTestId;
-    void correlationId;
-    throw new ForbiddenException('submit-and-verify is retired; submit results and use per-test verification');
-  }
 }
