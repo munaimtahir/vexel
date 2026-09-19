@@ -1,16 +1,32 @@
 import * as crypto from 'crypto';
 
-export function canonicalJson(obj: unknown): string {
-    if (obj === null || obj === undefined) return '';
-    if (typeof obj !== 'object') return String(obj);
-    if (Array.isArray(obj)) return '[' + obj.map(canonicalJson).join(',') + ']';
+/** New hashes are deliberately domain-separated from legacy v1 hashes. */
+export const CANONICAL_JSON_VERSION = 'v2';
 
-    const keys = Object.keys(obj as object).sort();
-    return '{' + keys.map(k => `"${k}":${canonicalJson((obj as any)[k])}`).join(',') + '}';
+export function canonicalJson(obj: unknown): string {
+  if (obj === null) return 'null';
+  if (obj === undefined) return '{"$undefined":true}';
+  if (typeof obj === 'string') return JSON.stringify(obj);
+  if (typeof obj === 'boolean') return obj ? 'true' : 'false';
+  if (typeof obj === 'number') {
+    if (Number.isFinite(obj)) return JSON.stringify(obj);
+    return `{"$number":${JSON.stringify(String(obj))}}`;
+  }
+  if (typeof obj === 'bigint') return `{"$bigint":${JSON.stringify(obj.toString())}}`;
+  if (obj instanceof Date) return `{"$date":${JSON.stringify(obj.toISOString())}}`;
+  if (Array.isArray(obj)) return '[' + obj.map(canonicalJson).join(',') + ']';
+  if (typeof obj === 'object') {
+    const record = obj as Record<string, unknown>;
+    return '{' + Object.keys(record).sort()
+      .map((key) => `${JSON.stringify(key)}:${canonicalJson(record[key])}`).join(',') + '}';
+  }
+  throw new TypeError(`Unsupported canonical JSON value: ${typeof obj}`);
 }
 
 export function payloadHash(obj: unknown): string {
-  return crypto.createHash('sha256').update(canonicalJson(obj)).digest('hex');
+  return crypto.createHash('sha256')
+    .update(`${CANONICAL_JSON_VERSION}\n${canonicalJson(obj)}`)
+    .digest('hex');
 }
 
 // ─── Receipt Payload ──────────────────────────────────────────────────────

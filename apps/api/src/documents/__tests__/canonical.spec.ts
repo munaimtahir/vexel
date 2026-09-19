@@ -1,4 +1,4 @@
-import { canonicalJson, payloadHash } from '../canonical';
+import { CANONICAL_JSON_VERSION, canonicalJson, payloadHash } from '../canonical';
 
 describe('canonicalJson', () => {
   it('produces same output regardless of key insertion order', () => {
@@ -32,22 +32,22 @@ describe('canonicalJson', () => {
     expect(canonicalJson(a)).not.toBe(canonicalJson(b));
   });
 
-  it('handles null and undefined by returning empty string', () => {
-    expect(canonicalJson(null)).toBe('');
-    expect(canonicalJson(undefined)).toBe('');
+  it('keeps null and undefined distinct', () => {
+    expect(canonicalJson(null)).toBe('null');
+    expect(canonicalJson(undefined)).toBe('{"$undefined":true}');
+    expect(payloadHash(null)).not.toBe(payloadHash(undefined));
   });
 
-  it('returns String representation for primitives (unquoted strings)', () => {
-    expect(canonicalJson('hello')).toBe('hello');
+  it('serializes primitives with type-safe JSON syntax', () => {
+    expect(canonicalJson('hello')).toBe('"hello"');
     expect(canonicalJson(123)).toBe('123');
     expect(canonicalJson(true)).toBe('true');
+    expect(payloadHash('123')).not.toBe(payloadHash(123));
   });
 
   it('handles nested objects with null/undefined values correctly', () => {
     const obj = { a: null, b: 3 };
-    // keys: a, b
-    // result: {"a":,"b":3}
-    expect(canonicalJson(obj)).toBe('{"a":,"b":3}');
+    expect(canonicalJson(obj)).toBe('{"a":null,"b":3}');
   });
 
   it('handles empty objects and arrays', () => {
@@ -66,7 +66,13 @@ describe('canonicalJson', () => {
         x: 'foo'
       }
     };
-    const expected = '{"a":{"x":foo,"y":10},"z":[{"a":1,"c":3},{"b":2,"d":}]}';
+    const expected = '{"a":{"x":"foo","y":10},"z":[{"a":1,"c":3},{"b":2,"d":null}]}';
     expect(canonicalJson(input)).toBe(expected);
+  });
+
+  it('escapes keys and text and domain-separates the versioned hash', () => {
+    expect(canonicalJson({ 'quote"key': 'line\n\u{1F9EA}' }))
+      .toBe('{"quote\\"key":"line\\n🧪"}');
+    expect(CANONICAL_JSON_VERSION).toBe('v2');
   });
 });

@@ -10,7 +10,7 @@ import IORedis from 'ioredis';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { StorageService } from '../storage/storage.service';
-import { payloadHash, canonicalJson } from './canonical';
+import { payloadHash, canonicalJson, CANONICAL_JSON_VERSION } from './canonical';
 
 const DOCUMENT_RENDER_QUEUE = 'document-render';
 
@@ -205,7 +205,8 @@ export class DocumentsService {
       sourceRef,
     );
 
-    // Compute hash using canonical serialiser
+    // Legacy documents retain their v1 hashes. New v2 hashes are domain-
+    // separated, so identical historical payloads are never overwritten.
     const jsonPayload = JSON.parse(JSON.stringify(normalizedPayload)) as any;
     const hash = payloadHash(jsonPayload);
 
@@ -272,7 +273,7 @@ export class DocumentsService {
       entityType: 'Document',
       entityId: doc.id,
       correlationId,
-      after: { type, status: 'RENDERING', payloadHash: hash, templateId: template.id },
+      after: { type, status: 'RENDERING', payloadHash: hash, payloadHashVersion: CANONICAL_JSON_VERSION, templateId: template.id },
     });
 
     return { document: doc, created: true };
