@@ -43,7 +43,7 @@ function parseRange(referenceRange?: string | null): { low: number; high: number
 }
 
 function derivedFlagForValue(p: any, value: string): string | null {
-  if (p?.dataType !== 'number') return null;
+  if (p?.dataType !== 'numeric') return null;
   const n = Number(value);
   if (value === '' || Number.isNaN(n)) return null;
   const range = parseRange(p.referenceRange);
@@ -51,6 +51,30 @@ function derivedFlagForValue(p: any, value: string): string | null {
   if (n < range.low) return 'low';
   if (n > range.high) return 'high';
   return 'normal';
+}
+
+function formulaPreview(formulaJson: string | null | undefined, values: Record<string, string>, decimals?: number | null): string {
+  try {
+    const definition = JSON.parse(formulaJson ?? '{}');
+    const evaluateNode = (node: any): number | null => {
+      if (node?.type === 'parameter') {
+        const raw = values[node.parameterId];
+        if (!raw || raw === '*') return null;
+        const number = Number(raw);
+        return Number.isFinite(number) ? number : null;
+      }
+      if (node?.type === 'number') return Number.isFinite(Number(node.value)) ? Number(node.value) : null;
+      const left = evaluateNode(node?.left); const right = evaluateNode(node?.right);
+      if (left == null || right == null) return null;
+      if (node.operator === '+') return left + right;
+      if (node.operator === '-') return left - right;
+      if (node.operator === '*') return left * right;
+      if (node.operator === '/' && right !== 0) return left / right;
+      return null;
+    };
+    const result = evaluateNode(definition.expression);
+    return result == null ? '—' : (decimals != null ? result.toFixed(decimals) : String(result));
+  } catch { return '—'; }
 }
 
 function FlagBadge({ flag, locked, onClick }: { flag: string | null; locked: boolean; onClick: () => void }) {
@@ -99,6 +123,7 @@ export default function ResultsEntryPage() {
   const [error, setError] = useState('');
   const [localValues, setLocalValues] = useState<Record<string, string>>({});
   const [localFlags, setLocalFlags] = useState<Record<string, string | null>>({});
+  const [confirmedDefaults, setConfirmedDefaults] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState('');
@@ -118,7 +143,7 @@ export default function ResultsEntryPage() {
       const initFlags: Record<string, string | null> = {};
       const params_list = (data as any).parameters ?? [];
       for (const p of params_list) {
-        initValues[p.parameterId] = p.value ?? p.defaultValue ?? '';
+        initValues[p.parameterId] = p.omitted ? '*' : (p.value ?? p.defaultValue ?? '');
         initFlags[p.parameterId] = p.flag ?? null;
       }
       setLocalValues(initValues);
@@ -152,8 +177,13 @@ export default function ResultsEntryPage() {
       const api = getApiClient(getToken() ?? undefined);
       const params_list = (detail.parameters ?? []) as any[];
       const values = params_list
-        .filter(p => !p.locked && localValues[p.parameterId] !== undefined && localValues[p.parameterId] !== '')
-        .map(p => ({ parameterId: p.parameterId, value: localValues[p.parameterId] }));
+        .filter(p => !p.locked)
+        .map(p => ({
+          parameterId: p.parameterId,
+          value: localValues[p.parameterId] ?? '',
+          omitted: (localValues[p.parameterId] ?? '') === '*',
+          defaultConfirmed: confirmedDefaults[p.parameterId] === true,
+        }));
       // @ts-ignore
       const { data, error: apiErr } = await api.POST('/results/tests/{orderedTestId}:save', {
         params: { path: { orderedTestId } },
@@ -167,7 +197,7 @@ export default function ResultsEntryPage() {
         const newVals: Record<string, string> = {};
         const newFlags: Record<string, string | null> = {};
         for (const p of params_list2) {
-          newVals[p.parameterId] = localValues[p.parameterId] ?? p.value ?? '';
+          newVals[p.parameterId] = p.omitted ? '*' : (localValues[p.parameterId] ?? p.value ?? '');
           newFlags[p.parameterId] = localFlags[p.parameterId] ?? p.flag ?? null;
         }
         setLocalValues(newVals);
@@ -395,13 +425,24 @@ export default function ResultsEntryPage() {
                     : resolvedFlag === 'normal'
                       ? 'text-[hsl(var(--status-success-fg))] border-[hsl(var(--status-success-border))]'
                       : '';
-                  if (p.dataType === 'select' && Array.isArray(p.allowedValues) && p.allowedValues.length > 0) {
+                  const updateValue = (value: string) => {
+                    setLocalValues((v) => ({ ...v, [p.parameterId]: value }));
+                    setConfirmedDefaults((confirmed) => ({ ...confirmed, [p.parameterId]: true }));
+                  };
+                  if (p.dataType === 'formula') {
+                    return <span className="text-sm font-medium text-muted-foreground">{formulaPreview(p.formulaJson, localValues, p.decimals)} <span className="text-xs">(calculated)</span></span>;
+                  }
+                  if (p.dataType === 'heading') {
+                    return <span className="text-sm font-semibold text-foreground">Section heading</span>;
+                  }
+                  if (p.dataType === 'enum' && Array.isArray(p.allowedValues) && p.allowedValues.length > 0) {
                     return (
                       <select
                         ref={(el) => { inputRefs.current[p.parameterId] = el; }}
                         disabled={isLocked}
                         value={currentValue}
-                        onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
+                        onChange={(e) => updateValue(e.target.value)}
+                        onFocus={() => setConfirmedDefaults((confirmed) => ({ ...confirmed, [p.parameterId]: true }))}
                         onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
                         className={cn(inputCls(isLocked), valueToneClass)}
                       >
@@ -418,7 +459,8 @@ export default function ResultsEntryPage() {
                         ref={(el) => { inputRefs.current[p.parameterId] = el; }}
                         disabled={isLocked}
                         value={currentValue}
-                        onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
+                        onChange={(e) => updateValue(e.target.value)}
+                        onFocus={() => setConfirmedDefaults((confirmed) => ({ ...confirmed, [p.parameterId]: true }))}
                         onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
                         className={cn(inputCls(isLocked), valueToneClass)}
                       >
@@ -428,27 +470,40 @@ export default function ResultsEntryPage() {
                       </select>
                     );
                   }
-                  if (p.dataType === 'number') {
+                  if (p.dataType === 'numeric') {
                     return (
                       <input
                         ref={(el) => { inputRefs.current[p.parameterId] = el; }}
-                        type="number"
-                        step="any"
+                        type="text"
+                        inputMode="decimal"
                         readOnly={isLocked}
                         value={currentValue}
-                        onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
+                        onChange={(e) => updateValue(e.target.value)}
+                        onFocus={() => setConfirmedDefaults((confirmed) => ({ ...confirmed, [p.parameterId]: true }))}
                         onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
                         className={cn(inputCls(isLocked), valueToneClass)}
+                      />
+                    );
+                  }
+                  if (p.dataType === 'paragraph') {
+                    return (
+                      <textarea
+                        disabled={isLocked}
+                        value={currentValue}
+                        onChange={(e) => updateValue(e.target.value)}
+                        onFocus={() => setConfirmedDefaults((confirmed) => ({ ...confirmed, [p.parameterId]: true }))}
+                        className={cn(inputCls(isLocked), 'min-h-24 w-72')}
                       />
                     );
                   }
                   return (
                     <input
                       ref={(el) => { inputRefs.current[p.parameterId] = el; }}
-                      type="text"
+                      type={p.dataType === 'date' ? 'date' : 'text'}
                       readOnly={isLocked}
                       value={currentValue}
-                      onChange={(e) => setLocalValues((v) => ({ ...v, [p.parameterId]: e.target.value }))}
+                      onChange={(e) => updateValue(e.target.value)}
+                      onFocus={() => setConfirmedDefaults((confirmed) => ({ ...confirmed, [p.parameterId]: true }))}
                       onKeyDown={(e) => handleGridKeyDown(e, p.parameterId)}
                       className={cn(inputCls(isLocked), valueToneClass)}
                     />

@@ -1,25 +1,26 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { DocumentsService } from '../documents/documents.service';
 
-function computeFlag(value: string, referenceRange: string | null): string | null {
-  if (!referenceRange || !value) return null;
-  const num = parseFloat(value);
-  if (isNaN(num)) return null;
-  const rangeMatch = referenceRange.match(/^([\d.]+)-([\d.]+)$/);
-  if (rangeMatch) {
-    const low = parseFloat(rangeMatch[1]);
-    const high = parseFloat(rangeMatch[2]);
-    if (num < low) return 'low';
-    if (num > high) return 'high';
-    return 'normal';
-  }
-  const gtMatch = referenceRange.match(/^>([\d.]+)$/);
-  if (gtMatch && num <= parseFloat(gtMatch[1])) return 'low';
-  const ltMatch = referenceRange.match(/^<([\d.]+)$/);
-  if (ltMatch && num >= parseFloat(ltMatch[1])) return 'high';
-  return 'normal';
+function allowedValues(value?: string | null): string[] | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed) && parsed.every((item) => typeof item === 'string')) return parsed;
+  } catch { /* legacy comma-separated values are handled below */ }
+  return value.split(',').map((item) => item.trim()).filter(Boolean);
+}
+
+function computeFlag(value: string, range: any): string | null {
+  if (!range || value === '') return null;
+  const num = Number(value);
+  if (!Number.isFinite(num)) return null;
+  if (range.criticalLow != null && num < range.criticalLow) return 'critical';
+  if (range.criticalHigh != null && num > range.criticalHigh) return 'critical';
+  if (range.lowValue != null && num < range.lowValue) return 'low';
+  if (range.highValue != null && num > range.highValue) return 'high';
+  return range.lowValue != null || range.highValue != null ? 'normal' : null;
 }
 
 const SPECIMEN_READY_STATUSES = [
@@ -40,6 +41,7 @@ export class ResultsService {
 
   private formatReferenceRange(row: any): string | null {
     if (!row) return null;
+    if (row.referenceText) return row.referenceText;
     if (row.lowValue != null && row.highValue != null) return `${row.lowValue}-${row.highValue}`;
     if (row.lowValue != null) return `>${row.lowValue}`;
     if (row.highValue != null) return `<${row.highValue}`;
@@ -52,7 +54,7 @@ export class ResultsService {
     parameterId: string,
     patientGender?: string | null,
     patientDob?: Date | null,
-  ): Promise<{ referenceRange: string | null; unit: string | null }> {
+  ): Promise<any> {
     const res = await this.resolveReferenceRanges(
       tenantId,
       testId,
@@ -69,7 +71,7 @@ export class ResultsService {
     parameterIds: string[],
     patientGender?: string | null,
     patientDob?: Date | null,
-  ): Promise<Map<string, { referenceRange: string | null; unit: string | null }>> {
+  ): Promise<Map<string, any>> {
     const ageYears = patientDob
       ? Math.floor((Date.now() - new Date(patientDob).getTime()) / (365.25 * 24 * 3600 * 1000))
       : null;
@@ -83,7 +85,7 @@ export class ResultsService {
       orderBy: [{ testId: 'desc' }, { ageMinYears: 'desc' }, { createdAt: 'asc' }],
     });
 
-    const results = new Map<string, { referenceRange: string | null; unit: string | null }>();
+    const results = new Map<string, any>();
 
     // Group candidates by parameterId
     const candidatesByParam = new Map<string, any[]>();
@@ -107,6 +109,10 @@ export class ResultsService {
         results.set(parameterId, {
           referenceRange: this.formatReferenceRange(row),
           unit: row.unit ?? null,
+          lowValue: row.lowValue,
+          highValue: row.highValue,
+          criticalLow: row.criticalLow,
+          criticalHigh: row.criticalHigh,
         });
         found = true;
         break;
@@ -117,6 +123,47 @@ export class ResultsService {
     }
 
     return results;
+  }
+
+  private validateValue(param: any, value: string, defaultConfirmed?: boolean) {
+    const type = param?.resultType ?? param?.dataType ?? 'numeric';
+    if (param?.defaultRequiresConfirmation && value === param.defaultValue && !defaultConfirmed) {
+      throw new BadRequestException(`Confirm or change the pre-filled value for ${param.name}`);
+    }
+    if (type === 'numeric') {
+      if (!/^-?\d+(?:\.\d+)?$/.test(value)) throw new BadRequestException(`${param.name} must be a number`);
+      const places = value.includes('.') ? value.split('.')[1].length : 0;
+      if (param.decimals != null && places > param.decimals) {
+        throw new BadRequestException(`${param.name} allows at most ${param.decimals} decimal places`);
+      }
+      return;
+    }
+    if (type === 'boolean' && !['true', 'false'].includes(value.toLowerCase())) {
+      throw new BadRequestException(`${param.name} must be Yes or No`);
+    }
+    if (type === 'enum') {
+      const choices = allowedValues(param.allowedValues) ?? [];
+      if (!choices.includes(value)) throw new BadRequestException(`${param.name} must use one of its configured choices`);
+    }
+    if (type === 'date' && Number.isNaN(Date.parse(value))) throw new BadRequestException(`${param.name} must be a date`);
+  }
+
+  private evaluateFormula(node: any, values: Map<string, string>): number | null {
+    if (!node) return null;
+    if (node.type === 'parameter') {
+      const value = Number(values.get(node.parameterId));
+      return Number.isFinite(value) ? value : null;
+    }
+    if (node.type === 'number') return Number.isFinite(Number(node.value)) ? Number(node.value) : null;
+    if (node.type !== 'operator') return null;
+    const left = this.evaluateFormula(node.left, values);
+    const right = this.evaluateFormula(node.right, values);
+    if (left == null || right == null) return null;
+    if (node.operator === '+') return left + right;
+    if (node.operator === '-') return left - right;
+    if (node.operator === '*') return left * right;
+    if (node.operator === '/' && right !== 0) return left / right;
+    return null;
   }
 
   async getPendingTests(
@@ -266,11 +313,22 @@ export class ResultsService {
         parameterId: m.parameterId,
         name: m.parameter.name,
         unit: existing?.unit ?? m.unitOverride ?? resolvedRange.unit ?? m.parameter.defaultUnit,
-        dataType: m.parameter.resultType ?? m.parameter.dataType,
-        allowedValues: m.parameter.allowedValues,
+        dataType: m.parameter.resultType ?? m.parameter.dataType ?? 'numeric',
+        allowedValues: allowedValues(m.parameter.allowedValues),
+        decimals: m.parameter.decimals ?? null,
+        defaultValue: m.parameter.defaultValue ?? null,
+        defaultRequiresConfirmation: m.parameter.defaultRequiresConfirmation,
+        isRequired: m.parameter.isRequired,
+        allowComment: m.parameter.allowComment,
+        commentRequired: m.parameter.commentRequired,
+        printFlag: m.parameter.printFlag,
+        formulaJson: m.parameter.formulaJson ?? null,
         referenceRange: existing?.referenceRange ?? resolvedRange.referenceRange,
         value: existing?.value ?? null,
         flag: existing?.flag ?? null,
+        omitted: existing?.omitted ?? false,
+        comment: existing?.comment ?? null,
+        source: existing?.source ?? 'manual',
         locked,
         enteredAt: existing?.enteredAt ?? null,
         verifiedAt: existing?.verifiedAt ?? null,
@@ -304,7 +362,7 @@ export class ResultsService {
     tenantId: string,
     actorId: string,
     orderedTestId: string,
-    values: Array<{ parameterId: string; value: string }>,
+    values: Array<{ parameterId: string; value?: string; omitted?: boolean; comment?: string; defaultConfirmed?: boolean }>,
     correlationId?: string,
   ) {
     const order = await this.prisma.labOrder.findFirst({
@@ -317,7 +375,16 @@ export class ResultsService {
     }
 
     const now = new Date();
-    const parameterIds = values.map((v) => v.parameterId);
+    const allMappings = await this.prisma.testParameterMapping.findMany({
+      where: { tenantId, testId: order.testId }, include: { parameter: true }, orderBy: { displayOrder: 'asc' },
+    });
+    const supplied = new Map(values.map((value) => [value.parameterId, value]));
+    for (const id of supplied.keys()) {
+      if (!allMappings.some((mapping) => mapping.parameterId === id)) {
+        throw new BadRequestException('A submitted parameter does not belong to this test');
+      }
+    }
+    const parameterIds = allMappings.map((mapping) => mapping.parameterId);
 
     const [existingResults, params, mappings, resolvedRanges] = await Promise.all([
       this.prisma.labResult.findMany({
@@ -326,13 +393,7 @@ export class ResultsService {
       this.prisma.parameter.findMany({
         where: { id: { in: parameterIds }, tenantId },
       }),
-      this.prisma.testParameterMapping.findMany({
-        where: {
-          tenantId,
-          testId: order.testId,
-          parameterId: { in: parameterIds },
-        },
-      }),
+      Promise.resolve(allMappings),
       this.resolveReferenceRanges(
         tenantId,
         order.testId,
@@ -348,15 +409,22 @@ export class ResultsService {
 
     const upserts: Array<{ existingId?: string; data: any }> = [];
 
-    for (const { parameterId, value } of values) {
+    for (const mapping of allMappings as any[]) {
+      const parameterId = mapping.parameterId;
+      const submitted = supplied.get(parameterId);
       const existing = existingMap.get(parameterId);
       if (existing?.locked) continue;
 
       const param = paramMap.get(parameterId);
-      const mapping = mappingMap.get(parameterId);
+      const mapped = mappingMap.get(parameterId);
+      const value = submitted?.value ?? '';
+      const omitted = submitted?.omitted === true || value.trim() === '' || value.trim() === '*';
+
+      if (param?.resultType === 'formula' || param?.resultType === 'heading') continue;
+      if (!omitted) this.validateValue(param, value, submitted?.defaultConfirmed);
 
       const effectiveUnit =
-        (mapping as any)?.unitOverride ?? param?.defaultUnit ?? (param as any)?.unit ?? null;
+        (mapped as any)?.unitOverride ?? param?.defaultUnit ?? (param as any)?.unit ?? null;
       const resolvedRange = resolvedRanges.get(parameterId) ?? {
         referenceRange: null,
         unit: null,
@@ -364,17 +432,22 @@ export class ResultsService {
 
       const referenceRange = existing?.referenceRange ?? resolvedRange.referenceRange;
       const unit = effectiveUnit ?? resolvedRange.unit;
-      const flag = computeFlag(value, referenceRange);
+      const flag = omitted ? null : computeFlag(value, resolvedRange);
 
       const data = {
         tenantId,
         labOrderId: orderedTestId,
         parameterId,
         parameterNameSnapshot: param?.name ?? null,
-        value,
+        value: omitted ? '' : value,
         unit,
         referenceRange,
         flag,
+        omitted,
+        omittedAt: omitted ? now : null,
+        omittedById: omitted ? actorId : null,
+        source: 'manual',
+        comment: submitted?.comment?.trim() || null,
         enteredAt: now,
         enteredById: actorId,
       };
@@ -384,6 +457,38 @@ export class ResultsService {
       } else {
         upserts.push({ data });
       }
+    }
+
+    // Formula Parameters are never accepted from the browser. They are computed
+    // from this test's manual values and saved with a traceable input snapshot.
+    const formulaInputs = new Map<string, string>();
+    for (const mapping of allMappings as any[]) {
+      const submitted = supplied.get(mapping.parameterId);
+      const existing = existingMap.get(mapping.parameterId);
+      const value = submitted?.value ?? existing?.value ?? '';
+      const omitted = submitted ? (submitted.omitted === true || !value || value === '*') : existing?.omitted;
+      if (value && value !== '*' && !omitted) formulaInputs.set(mapping.parameterId, value);
+    }
+    for (const mapping of allMappings as any[]) {
+      const param: any = mapping.parameter;
+      if (param.resultType !== 'formula') continue;
+      const existing = existingMap.get(mapping.parameterId);
+      let definition: any = null;
+      try { definition = param.formulaJson ? JSON.parse(param.formulaJson) : null; } catch { /* invalid definitions are omitted safely */ }
+      const calculated = this.evaluateFormula(definition?.expression, formulaInputs);
+      const omitted = calculated == null;
+      const value = omitted ? '' : (param.decimals != null ? calculated.toFixed(param.decimals) : String(calculated));
+      const range = resolvedRanges.get(mapping.parameterId) ?? {};
+      const data = {
+        tenantId, labOrderId: orderedTestId, parameterId: mapping.parameterId,
+        parameterNameSnapshot: param.name, value, unit: mapping.unitOverride ?? param.defaultUnit ?? range.unit ?? null,
+        referenceRange: range.referenceRange ?? null, flag: omitted ? null : computeFlag(value, range),
+        omitted, omittedAt: omitted ? now : null, omittedById: omitted ? actorId : null,
+        source: 'formula', sourcePayloadJson: JSON.stringify({ version: param.formulaVersion, definition, inputs: Object.fromEntries(formulaInputs) }),
+        enteredAt: now, enteredById: actorId,
+      };
+      if (existing) upserts.push({ existingId: (existing as any).id, data });
+      else upserts.push({ data });
     }
 
     await this.prisma.$transaction(async (tx) => {
@@ -397,7 +502,7 @@ export class ResultsService {
         action: 'TEST_RESULTS_SAVE',
         entityType: 'LabOrder',
         entityId: orderedTestId,
-        after: { parameterCount: values.length },
+        after: { parameterCount: allMappings.length },
         correlationId,
       });
     });
@@ -420,6 +525,20 @@ export class ResultsService {
       throw new ForbiddenException('Sample not collected');
     }
 
+    const [mappings, savedResults] = await Promise.all([
+      this.prisma.testParameterMapping.findMany({ where: { tenantId, testId: order.testId }, include: { parameter: true } }),
+      this.prisma.labResult.findMany({ where: { tenantId, labOrderId: orderedTestId } }),
+    ]);
+    const savedByParameter = new Map(savedResults.map((result) => [result.parameterId, result]));
+    for (const mapping of mappings as any[]) {
+      if (!savedByParameter.get(mapping.parameterId) && mapping.parameter.isRequired) {
+        throw new ConflictException('Save results before submitting this test');
+      }
+    }
+    if (!savedResults.some((result) => !result.omitted && result.value.trim() !== '')) {
+      throw new ConflictException('A test with every parameter omitted cannot be submitted');
+    }
+
     // Idempotent
     if (order.resultStatus === 'SUBMITTED') {
       return this.getOrderedTestDetail(tenantId, orderedTestId);
@@ -432,7 +551,7 @@ export class ResultsService {
         data: { resultStatus: 'SUBMITTED', submittedAt: now, submittedById: actorId },
       });
       await tx.labResult.updateMany({
-        where: { labOrderId: orderedTestId, value: { not: '' } },
+        where: { labOrderId: orderedTestId, value: { not: '' }, omitted: false },
         data: { locked: true },
       });
       const allOrders = await tx.labOrder.findMany({

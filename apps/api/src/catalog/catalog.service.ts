@@ -533,8 +533,9 @@ export class CatalogService {
     body: {
       name: string; unit?: string; dataType?: string;
       externalId?: string; userCode?: string; loincCode?: string;
-      resultType?: string; defaultUnit?: string; decimals?: number; allowedValues?: string;
-      defaultValue?: string;
+      resultType?: string; defaultUnit?: string; decimals?: number; allowedValues?: string | string[];
+      defaultValue?: string; defaultRequiresConfirmation?: boolean; isRequired?: boolean;
+      allowComment?: boolean; commentRequired?: boolean; printFlag?: boolean; formulaJson?: string;
     },
     actorUserId: string,
     correlationId?: string,
@@ -548,10 +549,15 @@ export class CatalogService {
       const dup = await this.prisma.parameter.findFirst({ where: { tenantId, userCode: body.userCode } });
       if (dup) throw new ConflictException(`Parameter userCode '${body.userCode}' already exists in tenant`);
     }
+    const { allowedValues: bodyAllowedValues, ...parameterBody } = body;
+    const allowedValues = Array.isArray(bodyAllowedValues)
+      ? JSON.stringify(bodyAllowedValues.map((value) => value.trim()).filter(Boolean))
+      : bodyAllowedValues;
     const param = await this.prisma.parameter.create({
       data: {
         tenantId,
-        ...body,
+        ...parameterBody,
+        ...(allowedValues !== undefined ? { allowedValues } : {}),
         name: normalizeCatalogName(body.name),
         ...(body.defaultUnit !== undefined ? { defaultUnit: normalizeUnit(body.defaultUnit) } : {}),
         ...(body.unit !== undefined ? { unit: normalizeUnit(body.unit) } : {}),
@@ -573,8 +579,9 @@ export class CatalogService {
     body: {
       name?: string; unit?: string; dataType?: string; isActive?: boolean;
       externalId?: string; userCode?: string; loincCode?: string;
-      resultType?: string; defaultUnit?: string; decimals?: number; allowedValues?: string;
-      defaultValue?: string;
+      resultType?: string; defaultUnit?: string; decimals?: number; allowedValues?: string | string[];
+      defaultValue?: string; defaultRequiresConfirmation?: boolean; isRequired?: boolean;
+      allowComment?: boolean; commentRequired?: boolean; printFlag?: boolean; formulaJson?: string;
     },
     actorUserId: string,
     correlationId?: string,
@@ -590,10 +597,15 @@ export class CatalogService {
       const dup = await this.prisma.parameter.findFirst({ where: { tenantId, userCode: body.userCode, NOT: { id } } });
       if (dup) throw new ConflictException(`Parameter userCode '${body.userCode}' already exists in tenant`);
     }
+    const { allowedValues: bodyAllowedValues, ...parameterBody } = body;
+    const allowedValues = Array.isArray(bodyAllowedValues)
+      ? JSON.stringify(bodyAllowedValues.map((value) => value.trim()).filter(Boolean))
+      : bodyAllowedValues;
     const updated = await this.prisma.parameter.update({
       where: { id },
       data: {
-        ...body,
+        ...parameterBody,
+        ...(allowedValues !== undefined ? { allowedValues } : {}),
         ...(body.name !== undefined ? { name: normalizeCatalogName(body.name) } : {}),
         ...(body.defaultUnit !== undefined ? { defaultUnit: normalizeUnit(body.defaultUnit) } : {}),
         ...(body.unit !== undefined ? { unit: normalizeUnit(body.unit) } : {}),
@@ -946,7 +958,7 @@ export class CatalogService {
     return { data, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
   }
 
-  async createReferenceRange(tenantId: string, body: { parameterId: string; testId?: string; gender?: string; ageMinYears?: number; ageMaxYears?: number; lowValue?: number; highValue?: number; criticalLow?: number; criticalHigh?: number; unit?: string }, actorUserId: string, correlationId?: string) {
+  async createReferenceRange(tenantId: string, body: { parameterId: string; testId?: string; gender?: string; ageMinYears?: number; ageMaxYears?: number; lowValue?: number; highValue?: number; criticalLow?: number; criticalHigh?: number; unit?: string; referenceText?: string }, actorUserId: string, correlationId?: string) {
     await this.getParameter(tenantId, body.parameterId);
     if (body.testId) {
       await this.getTest(tenantId, body.testId);

@@ -140,7 +140,7 @@ export default function ReferenceRangesPage() {
       criticalLow: r.criticalLow != null ? String(r.criticalLow) : '',
       criticalHigh: r.criticalHigh != null ? String(r.criticalHigh) : '',
       unit: r.unit ?? '',
-      normalText: r.normalText ?? '',
+      normalText: r.referenceText ?? '',
       interpretation: r.interpretation ?? '',
       isActive: r.isActive !== false,
     });
@@ -167,12 +167,10 @@ export default function ReferenceRangesPage() {
       if (form.highValue !== '') body.highValue = Number(form.highValue);
       if (form.unit) body.unit = form.unit;
     } else {
-      if (form.normalText) body.normalText = form.normalText;
+      if (form.normalText) body.referenceText = form.normalText;
     }
     if (form.criticalLow !== '') body.criticalLow = Number(form.criticalLow);
     if (form.criticalHigh !== '') body.criticalHigh = Number(form.criticalHigh);
-    if (form.interpretation) body.interpretation = form.interpretation;
-    body.isActive = form.isActive;
 
     let res: any;
     if (editingId) {

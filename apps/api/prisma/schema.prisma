@@ -41,6 +41,8 @@ model Tenant {
   testParameterMappings    TestParameterMapping[]
   panelTestMappings        PanelTestMapping[]
   referenceRanges          ReferenceRange[]
+  instruments              Instrument[]
+  instrumentResultMessages InstrumentResultMessage[]
   jobRuns                  JobRun[]
   documentTemplates        DocumentTemplate[]
   documents                Document[]
@@ -316,12 +318,20 @@ model Parameter {
   decimals      Int?
   allowedValues String?
   defaultValue  String? // pre-filled value shown in result entry
+  defaultRequiresConfirmation Boolean @default(false)
+  isRequired    Boolean  @default(true)
+  allowComment  Boolean  @default(true)
+  commentRequired Boolean @default(false)
+  printFlag     Boolean  @default(true)
+  formulaJson   String?  // safe guided-formula definition; never executable code
+  formulaVersion Int     @default(1)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   tenant          Tenant                 @relation(fields: [tenantId], references: [id])
   testMappings    TestParameterMapping[]
   referenceRanges ReferenceRange[]
+  instrumentMappings InstrumentParameterMapping[]
 
   @@unique([tenantId, externalId], name: "tenant_param_externalId")
   @@index([tenantId, isActive])
@@ -377,6 +387,7 @@ model ReferenceRange {
   criticalLow  Float?
   criticalHigh Float?
   unit         String?
+  referenceText String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -585,6 +596,12 @@ model LabResult {
   ucumCode              String?
   referenceRange        String?
   flag                  String? // normal | high | low | critical
+  omitted               Boolean   @default(false)
+  omittedAt             DateTime?
+  omittedById           String?
+  source                String    @default("manual") // manual | instrument | formula
+  sourcePayloadJson     String?   // immutable machine/formula provenance snapshot
+  comment               String?
   locked                Boolean   @default(false) // true once test is submitted
   enteredAt             DateTime  @default(now())
   enteredById           String?
@@ -597,6 +614,71 @@ model LabResult {
   @@index([tenantId])
   @@index([tenantId, labOrderId])
   @@map("lab_results")
+}
+
+// Foundations only: transport/listener work comes later. Every machine result
+// is first held for matching and review before it can become a LabResult.
+model Instrument {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  code      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant       Tenant                     @relation(fields: [tenantId], references: [id])
+  mappings     InstrumentParameterMapping[]
+  resultMessages InstrumentResultMessage[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, isActive])
+  @@map("instruments")
+}
+
+model InstrumentParameterMapping {
+  id             String   @id @default(uuid())
+  tenantId       String
+  instrumentId   String
+  parameterId    String
+  instrumentCode String
+  expectedUnit   String?
+  conversionJson String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  instrument Instrument @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
+  parameter  Parameter  @relation(fields: [parameterId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, instrumentId, instrumentCode])
+  @@index([tenantId, parameterId])
+  @@map("instrument_parameter_mappings")
+}
+
+model InstrumentResultMessage {
+  id                 String   @id @default(uuid())
+  tenantId           String
+  instrumentId       String
+  messageIdentity    String
+  status             String   @default("received") // received | unmatched | matched | rejected
+  barcode            String?
+  instrumentCode     String
+  rawValue           String?
+  rawUnit            String?
+  rawFlag            String?
+  observedAt         DateTime?
+  rawPayloadJson     String?
+  acceptedLabResultId String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id])
+  instrument Instrument @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, instrumentId, messageIdentity])
+  @@index([tenantId, status])
+  @@map("instrument_result_messages")
 }
 
 // ─── OPD / Billing (MVP scaffold; contract-first endpoints come later) ──────

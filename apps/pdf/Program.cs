@@ -514,6 +514,12 @@ class LabReportDocument : IDocument
                     foreach (var param in paramsEl.EnumerateArray())
                     {
                         var pName    = GetFrom(param, "parameterName", GetFrom(param, "name", "\u2014"));
+                        if (GetBool(param, "isHeading", false))
+                        {
+                            table.Cell().ColumnSpan(5).Background(Colors.Grey.Lighten3).Padding(4)
+                                .Text(pName).Bold().FontSize(8).FontColor(Colors.Grey.Darken3);
+                            continue;
+                        }
                         var pValue   = GetFrom(param, "value",         "\u2014");
                         var pUnit    = GetFrom(param, "unit",          "");
                         var pRange   = GetFrom(param, "referenceRange", GetFrom(param, "refRange", "\u2014"));
@@ -551,13 +557,13 @@ class LabReportDocument : IDocument
                         var flagCell = table.Cell().Background(rowBg).BorderBottom(0.5f)
                                            .BorderColor(Colors.Grey.Lighten2).Padding(3);
                         if (isCrit)
-                            flagCell.Text("CRITICAL").Bold().FontSize(7).FontColor(Colors.Red.Darken3);
+                            flagCell.Text("↑!").Bold().FontSize(8).FontColor(Colors.Red.Darken3);
                         else if (isHigh)
-                            flagCell.Text("HIGH").Bold().FontSize(7).FontColor(Colors.Red.Medium);
+                            flagCell.Text("↑").Bold().FontSize(8).FontColor(Colors.Red.Medium);
                         else if (isLow)
-                            flagCell.Text("LOW").Bold().FontSize(7).FontColor(Colors.Blue.Medium);
+                            flagCell.Text("↓").Bold().FontSize(8).FontColor(Colors.Blue.Medium);
                         else
-                            flagCell.Text("Normal").FontSize(7).FontColor(Colors.Grey.Darken1);
+                            flagCell.Text("").FontSize(7);
                     }
                 });
             }
@@ -955,6 +961,12 @@ class LabReportDocumentV2 : IDocument
                     foreach (var param in paramsEl.EnumerateArray())
                     {
                         var pName  = GetFrom(param, "parameterName", GetFrom(param, "name", "\u2014"));
+                        if (GetBool(param, "isHeading", false))
+                        {
+                            table.Cell().ColumnSpan(5).Background(Colors.Grey.Lighten3).Padding(4)
+                                .Text(pName).Bold().FontSize(8 + ReadabilityBumpPt).FontColor(Colors.Grey.Darken3);
+                            continue;
+                        }
                         var pValue = GetFrom(param, "value",          "\u2014");
                         var pUnit  = GetFrom(param, "unit",           "");
                         var pRange = GetFrom(param, "referenceRange", GetFrom(param, "refRange", "\u2014"));
@@ -994,11 +1006,11 @@ class LabReportDocumentV2 : IDocument
                         var flagCell = table.Cell().Background(rowBg).BorderBottom(0.5f)
                                            .BorderColor(Colors.Grey.Lighten2).Padding(3);
                         if (isCrit)
-                            flagCell.Text("CRIT").Bold().FontSize(7).FontColor(Colors.Red.Darken3);
+                            flagCell.AlignCenter().Text("\u2191!").Bold().FontSize(8).FontColor(Colors.Red.Darken3);
                         else if (isHigh)
-                            flagCell.AlignCenter().Text("H \u2191").Bold().FontSize(7).FontColor(Colors.Red.Medium);
+                            flagCell.AlignCenter().Text("\u2191").Bold().FontSize(8).FontColor(Colors.Red.Medium);
                         else if (isLow)
-                            flagCell.AlignCenter().Text("L \u2193").Bold().FontSize(7).FontColor(Colors.Blue.Medium);
+                            flagCell.AlignCenter().Text("\u2193").Bold().FontSize(8).FontColor(Colors.Blue.Medium);
                         else
                             flagCell.Text("").FontSize(7);
                     }

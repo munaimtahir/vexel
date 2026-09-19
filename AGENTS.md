@@ -158,6 +158,10 @@ All LIMS routes are under `/lims/*`:
 
 We are rebuilding the Vexel Health Platform from the ground up as a **multi-tenant health platform**. LIMS (Laboratory Information Management System) ships first, but the core architecture is designed to support additional modules (RIMS, OPD, etc.) without refactoring.
 
+## Owner Communication Rule
+
+The project owner is not a technology expert. Use plain English for planning, decision requests, progress reports and discussions. Explain an unavoidable technical term in the same sentence, lead with its effect on laboratory work, and do not require the owner to interpret code or infrastructure details to make a product decision.
+
 **This is a greenfield rebuild.** There is no legacy compatibility in v1. We build right from day one.
 
 ## Non-Negotiable Guardrails (The Law)

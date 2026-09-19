@@ -3797,7 +3797,7 @@ export interface components {
              * @description Data type (renamed from dataType for clarity)
              * @enum {string}
              */
-            resultType?: "numeric" | "text" | "boolean" | "enum";
+            resultType?: "numeric" | "text" | "boolean" | "enum" | "paragraph" | "date" | "formula" | "heading";
             /** @description UCUM unit string; required for numeric resultType */
             defaultUnit?: string | null;
             /** @description Decimal places for numeric results */
@@ -3806,6 +3806,10 @@ export interface components {
             allowedValues?: string[] | null;
             /** @description Default value for this parameter */
             defaultValue?: string | null;
+            defaultRequiresConfirmation?: boolean;
+            isRequired?: boolean;
+            printFlag?: boolean;
+            formulaJson?: string | null;
         };
         TestParameterMapping: {
             id: string;
@@ -3935,6 +3939,7 @@ export interface components {
             criticalLow?: number | null;
             criticalHigh?: number | null;
             unit?: string;
+            referenceText?: string | null;
         };
         JobRun: {
             id: string;
@@ -4206,17 +4211,25 @@ export interface components {
             name?: string;
             unit?: string | null;
             /**
-             * @default number
+             * @default numeric
              * @enum {string}
              */
-            dataType: "number" | "text" | "select" | "boolean";
-            /** @description For dataType=select */
+            dataType: "numeric" | "text" | "boolean" | "enum" | "paragraph" | "date" | "formula" | "heading";
+            /** @description For dataType=enum */
             allowedValues?: string[] | null;
+            decimals?: number | null;
+            defaultValue?: string | null;
+            defaultRequiresConfirmation?: boolean;
+            isRequired?: boolean;
+            printFlag?: boolean;
+            formulaJson?: string | null;
             referenceRange?: string | null;
             /** @description Current entered value (if any) */
             value?: string | null;
             /** @enum {string|null} */
             flag?: "normal" | "high" | "low" | "critical" | null;
+            omitted?: boolean;
+            comment?: string | null;
             /**
              * @description True if test submitted and value is non-empty
              * @default false
@@ -9840,7 +9853,10 @@ export interface operations {
                 "application/json": {
                     values: {
                         parameterId: string;
-                        value: string;
+                        value?: string;
+                        omitted?: boolean;
+                        comment?: string;
+                        defaultConfirmed?: boolean;
                     }[];
                 };
             };

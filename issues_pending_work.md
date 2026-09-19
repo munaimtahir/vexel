@@ -4,13 +4,14 @@
 > Audience: the project owner (not a technical expert) and the engineers/AI agents doing the work.
 > Written in plain English on purpose. Technical file names are given in brackets so engineers can find things.
 >
-> **Status: PLAN ONLY. No code has been changed for anything in this document.**
-> Work starts only when the owner says "go".
+> **Status: APPROVED FOR EXECUTION.** Tasks marked **IN PROGRESS** may begin.
+> Updating this plan records approval; it does not by itself mean product code has changed.
 
 ---
 
 ## 0. How to read this document
 
+- **Owner communication rule** — the owner is not a technology expert. Plans, discussions, decision requests and progress reports must use plain English. Explain any unavoidable technical word in the same sentence, and lead with the impact on laboratory work rather than implementation details.
 - **Section 1** — where we stand, the initial blocker list (with the task that fixes each), and the decisions the owner has already made.
 - **Section 2** — the sprint plan at a glance (what happens in what order).
 - **Section 3** — every task in detail: the issue (what is wrong, in plain words), the planned solution, and how we know it is finished ("Done when").
@@ -140,6 +141,27 @@ Dependencies to respect:
 | T4.6 Versioned canonical document hash | P1 | PASS | Historical documents retain v1 hashes; new hashes are v2 domain-separated | `3494661`; canonical vectors pass |
 | T5.1 Central LIMS module gate | P1 | IN PROGRESS | LIMS route inventory | — |
 | T5.2 Real queue observability/retry | P1 | IN PROGRESS | Queue registry; T1.4 fixtures | — |
+
+---
+
+### Result-entry and catalogue execution tracker
+
+> The owner has approved the work below to start. `IN PROGRESS` means design,
+> contract or implementation work can begin now. A task may still wait for a
+> preceding task before its final code change is merged.
+
+| Task | Status | What can start now | Dependency / note |
+|---|---|---|---|
+| T6.0 Live result-entry confirmation | IN PROGRESS | Start the local stack and run the agreed numeric, choice-list, yes/no, range and PDF checks. | Code repair is complete; live confirmation is still required. |
+| T6.1 Result-entry foundation | IMPLEMENTED — awaiting migration/live verification | Parameter-level formats, choices, defaults, omissions (`*`), flags and server validation are implemented. | Migration `20260920090000_result_entry_foundation` must be applied. |
+| T6.2 Result-entry UI and PDF repair | IMPLEMENTED — awaiting PDF build/live verification | Operator entry, omission handling, arrow flags, paragraph/date fields and PDF payload changes are implemented. | TypeScript checks pass; .NET PDF build is blocked locally (see §6). |
+| T6.3 Formula and future analyser foundation | IMPLEMENTED — awaiting migration/live verification | Formula result source/provenance and analyser-ready data models are implemented; no listener or auto-release is enabled. | Formula inputs are limited to the same test. |
+| C1 Reference-text ranges | IMPLEMENTED — awaiting migration/live verification | Reference text is stored, returned, imported from workbook notes and included in result range display. | Needed before catalogue import. |
+| C2 Paragraph result format | IMPLEMENTED — awaiting PDF build/live verification | Multi-line result entry and PDF payload support are implemented. | Requires PDF-service build verification. |
+| C3 Heading rows | IMPLEMENTED — awaiting PDF build/live verification | Heading Parameters are non-entry rows and are emitted as PDF section headings. | Requires PDF-service build verification. |
+| C4 Date result format | IMPLEMENTED — awaiting migration/live verification | Date picker entry and server date validation are implemented. | Calculated/formula Parameters are handled by T6.3. |
+| Catalogue workbook import | WAITING | Prepare source workbook while C1–C4 are built. | Dry-run/real import starts only after C1–C4 pass. |
+| Advanced catalogue features C5–C12 | WAITING | — | Starts after go-live unless a clinical requirement brings one forward. |
 
 ---
 
@@ -351,6 +373,74 @@ What already works and will be reused: per-test result **save** and **submit** e
 
 > **All items here were found by reading code, not by running the app.** First task is to run each one and confirm; fix only what is really broken.
 
+#### Sprint 6 design decision — result-entry settings belong to the Parameter
+
+The reusable **Parameter** is the single place that defines how a result is entered. A test only chooses which parameters it contains and their display order. This prevents the same parameter from behaving differently in different screens.
+
+Each Parameter must hold its result-entry setup:
+- result format: number, whole number, choice list (for example Negative / Positive / Borderline), yes/no, short text, paragraph/multi-line text, or date;
+- decimal places and unit for numbers;
+- allowed choices for a choice list;
+- starting behaviour: empty, pre-filled choice/value, or editable standard text;
+- whether the value is required;
+- whether a comment is permitted or required;
+- the applicable normal and critical reference limits.
+
+Safety rule: a pre-filled value is visibly marked as a starting value. It must be confirmed or deliberately changed before submission; Vexel must not silently treat it as a result entered by the worker.
+
+#### Sprint 6 decisions finalised — result-entry gap closure
+
+These decisions are locked for the result-entry repair. Engineers must implement them consistently in the database, API contract, Admin catalogue, operator screen, import/export and PDF report.
+
+| # | Final decision | Plain-English effect |
+|---|---|---|
+| RE1 | **Parameter-level setup is the source of truth.** | Each reusable Parameter defines how its result is entered. A test only includes Parameters and chooses their display order. |
+| RE2 | **Supported result formats are number, choice list, yes/no, short text, paragraph and date.** | A worker sees the appropriate box: number field, dropdown, yes/no selector, short line, large multi-line report box, or date picker. A whole number is a number with zero decimal places. |
+| RE3 | **Choice-list values are a real ordered list.** | Values such as Negative / Positive / Borderline are saved and exchanged as a list, never as unreliable comma-separated text. |
+| RE4 | **A Parameter defines its starting behaviour.** | It may open empty, with a visibly pre-filled choice/value, or with editable standard report text. |
+| RE5 | **Draft and submission are different.** | When a worker saves, every empty manual Parameter is automatically recorded as an intentional omission (`*`) rather than an unknown blank. A worker may later replace it with a real value. Submission is allowed only when every required Parameter has a real value or is intentionally omitted. |
+| RE6 | **Vexel validates results on the server.** | The system, not only the screen, checks number format, decimal places, permitted choices, yes/no values, required fields and that the Parameter belongs to the selected test. |
+| RE7 | **Vexel calculates result warnings on the server.** | High, Low and Critical warnings use the stored numeric limits, including negative values. A missing range never means “Normal.” |
+| RE8 | **The applied range and warning are saved with the result.** | A later catalogue change cannot silently change an already-entered or already-published patient result. |
+| RE9 | **Normal and critical ranges are configured at Parameter level and selected by patient facts.** | Vexel selects the appropriate range using the patient’s age and sex. Conflicting active ranges must be rejected rather than guessed. |
+| RE10 | **PDFs show only a real warning.** | No warning is printed as blank or “no reference range”; High, Low and Critical are clearly shown; paragraphs wrap and remain readable. |
+| RE11 | **Manual and analyser-entered results use the same safety rules.** | A future machine connection cannot bypass validation, review, verification, tenant separation or the audit history. |
+| RE12 | **Empty values automatically become `*` when saved.** | An empty manual field means “do not report this Parameter” unless the worker later enters a real value. Vexel records this as an intentional omission, not as the literal laboratory result `*`. A worker may also type `*` directly. |
+| RE13 | **An intentionally omitted Parameter stays available for later entry, but is excluded everywhere else.** | It remains visible on the result-entry screen with the `*` marker so a worker can update it later. It does not appear in the verifier’s result list, does not print on the PDF, and does not count as a missing required value. The audit history still records who omitted it and when. |
+| RE14 | **A test with every Parameter omitted cannot be submitted as a normal result.** | The worker must instead use the proper cancel / sample-rejection / absent-result process, so an empty test cannot look completed. |
+| RE15 | **Flag printing is configurable for each Parameter.** | Admin can choose whether High, Low and Critical warnings appear beside that Parameter on the PDF. This setting changes display only; Vexel still calculates and stores the warning for safety. |
+| RE16 | **Flags use simple coloured arrows.** | High is a red upward arrow, Low is a blue downward arrow, and Critical is a prominent red alert arrow. “Normal” has no arrow. |
+| RE17 | **A Parameter may be manual or formula-calculated.** | A formula Parameter is read-only for the worker. It shows its calculated value immediately whenever one of its named input Parameters changes. Its formula, input fields, unit and decimal places are configured in the Parameter catalogue and are fully traceable. |
+
+#### Still to decide later (not a blocker for the Sprint 6 repair)
+
+- Which Parameters receive a standard pre-filled phrase, and which require the worker to actively confirm it.
+- The laboratory’s exact critical-result escalation procedure: visible warning only, acknowledgement, telephone notification, or all three.
+- Formula/calculated results and the approved formula for each applicable Parameter.
+- The exact analyser models, their RS-232/network format, and their approved Instrument-to-Parameter mappings.
+- The clinical formula and input fields for each formula-calculated Parameter; formula Parameters must not be enabled until the laboratory director approves them.
+
+#### Sprint 6 future readiness — analyser / instrument connectors
+
+Vexel will later be able to receive results from laboratory analysers through an RS-232 serial cable or a network connection. This is **not** permission to auto-publish clinical results now. Sprint 6 must instead create the foundations so manual entry and machine entry use the same Parameter fields and the same safety checks.
+
+Build now:
+1. Add an entry-source record to each saved result: `manual` or `instrument`, plus entered/received time and the responsible user or instrument.
+2. Preserve the received machine value, unit, analyser flag and result time alongside Vexel's accepted result, so the original machine output can be reviewed.
+3. Give each Parameter a stable local code and optional LOINC code. These are the identifiers a future connector uses to find the correct result field.
+4. Define an Instrument-to-Parameter mapping record: tenant, analyser, analyser test/code, target Parameter, expected unit, active/inactive status and any approved conversion rule.
+5. Define a received-result holding area with a unique message/result identity. A repeated analyser message must not create a second patient result.
+6. Match received values to an existing order by barcode/specimen/order number and Parameter mapping. An unmatched value stays in a visible review queue; it must never be attached by guesswork.
+7. Put machine values through exactly the same type, required-value, range, critical-value and audit checks as manual values.
+
+Do later, after live analyser validation and laboratory sign-off:
+- RS-232/network listener service;
+- support for common analyser messages (ASTM and HL7 laboratory-result messages);
+- automated matching and auto-release/auto-verification;
+- critical-value notifications and analyser quality-control workflows.
+
+**Done when for this foundation:** a future connector can send a value only to a mapped Parameter; duplicate or unmatched messages are safe; every accepted machine value remains traceable to its original message; and no machine result bypasses result validation, verification, tenant isolation or audit history.
+
 #### T6.0 — Confirm by running the app
 Run the operator result screen with a numeric, a dropdown ("enum"/coded) and a yes/no parameter; save a parameter with allowed values in Admin; save a range with critical limits; record what really happens for R1–R9. **Size:** S.
 
@@ -358,13 +448,19 @@ Run the operator result screen with a numeric, a dropdown ("enum"/coded) and a y
 |---|---|---|
 | R1 | The API calls types `numeric`/`enum`; the operator screen looks for `number`/`select`. So numbers show as plain text, dropdowns never appear, and automatic high/low marking never fires. (`apps/api/src/results/results.service.ts` ~l.269; operator results pages.) | Use one vocabulary everywhere (contract, API, screen). |
 | R2 | The list of allowed choices is stored in inconsistent ways (text in DB, array in contract, comma text in admin form, raw text in import). Saving from Admin probably fails. | Choose one format (a list) and use it in database, contract, admin, import and workbook. |
-| R3 | The default value is set on the parameter but never sent to the result screen, so nothing is pre-filled. | Include the default in the response; decide per-test vs per-parameter defaults. |
+| R3 | The default value is set on the parameter but never sent to the result screen, so nothing is pre-filled. | Include the Parameter-level starting behaviour in the response and mark a pre-filled value as needing confirmation. |
 | R4 | The server accepts any text for any result type; decimal places and "required" are never checked. The old visit-level result route checks nothing at all. | Validate by result type on the server (also removed by T3.3 for the old route). |
 | R5 | The "critical" flag is never produced; the flag routine re-reads the range text and cannot read negative numbers; text results get no flag. | Build a proper flag evaluator that uses the stored numbers and the critical limits. |
 | R6 | When several ranges exist, the wrong one may win (a parameter-wide range beating a test-specific one). Stored ranges are never re-checked. | Pick the most specific range; define when to re-resolve. |
 | R7 | The Admin range form sends fields the database does not have, so some saves probably fail. | Align the form with the schema. |
 | R8 | The printed report shows "Normal" for empty flags on text/choice results; flags are not coloured; long text wraps badly. | Fix the PDF templates. |
 | R9 | The old visit-level result path accepts anything without validation. | Removed with T3.3. |
+
+**Implementation rule for `*`:** on every save, the API converts an empty editable manual field (or a literal `*`) to an explicit `omitted` state with the actor and time; it must not store `*` as the ordinary result value. The returned result detail keeps the Parameter visible and marks it omitted so the worker can replace it with a real value later. Verification queries and PDF generation exclude omitted Parameters consistently.
+
+**Implementation rule for flags:** add a Parameter-level “Print flag on report” setting. When enabled, the PDF shows `↑` for High, `↓` for Low, and a clearly stronger red `↑!` for Critical. When disabled, the warning remains in Vexel for safety and audit purposes but is not printed beside that Parameter.
+
+**Implementation rule for formula Parameters:** Formula configuration belongs to the Parameter catalogue, alongside result format and defaults. It contains: a safe approved formula (not executable code), the named input Parameter codes, the output unit, decimal places and rounding rule. The operator screen shows the formula field as read-only and refreshes its displayed value immediately whenever an input changes. At first delivery, inputs must be from the same test. A later extension may use associated tests from the same visit only after clear matching and workflow rules are approved. Vexel saves the formula version, the input values used and the calculated result together. If an input is omitted (`*`) or unavailable, the calculated result is also omitted and is not verified or printed. Cycles (A depends on B while B depends on A) are prohibited. Manual override of a calculated result is prohibited unless a later, audited correction workflow explicitly allows it.
 
 - **Done when:** each item is either confirmed-and-fixed or confirmed-not-a-problem, with a test.
 - **Size:** L in total.
@@ -428,7 +524,7 @@ C5 expected-text results (e.g. "Negative" is normal) · C6 named result bands (N
 
 | Ref | Question | Suggestion |
 |---|---|---|
-| O1 | Go-ahead to start Sprints 0–1 (and then 2–3)? | Start with S0 and S1 (T1.1–T1.4). |
+| O1 | Go-ahead to start approved work? | **DECIDED:** owner approved all tasks marked `IN PROGRESS` in the execution trackers. |
 | O2 | Who controls the server for T0.1 (password/secret rotation and restart window)? | Name a person and a time window. |
 | O3 | Which tests are "print alone"? | Engineers propose a list from the 329 tests (CBC, LFT, RFT, Lipid Profile, Urine R/E, any test with many parameters); owner confirms. |
 | O4 | Will other people (not the owner) test and give lab sign-off? | Name the lab director / senior technologist for K7 and G8. |
@@ -463,5 +559,6 @@ These follow the project's own rules (`CLAUDE.md`):
 
 - P0/P1/P2 findings come from the audit dated **2026-09-01** and were spot-checked against the current code on 2026-09-20 (audit endpoint still accepts a client `tenantId`; the three visit-level shortcuts in T2.0 exist as described). No code commits since then.
 - **Not run:** the app was not started for this review. Anything in Sprint 6 (R1–R9) and the exact multi-test behaviour beyond the audit's runtime proof must be confirmed by running the app.
+- **Current verification blocker (2026-09-20):** API, Admin and Operator TypeScript checks pass; API tests pass (37 suites, 270 tests); SDK generation passes. The PDF C# project could not be built because the `dotnet` command is not installed in this workspace. Install the .NET SDK or run the PDF build in the Docker image before marking PDF-related Sprint 6/C2/C3 tasks `PASS`.
 - Billing (T3.2) and the exact PDF page-break change (T4.3) have been read only lightly; sizes may change once investigated.
 - Related documents: `docs/discovery/LIMS_PRODUCTION_READINESS_AUDIT.md`, `docs/discovery/LIMS_RELEASE_GAP_LEDGER.md`, `docs/discovery/_work/LIMS_AGENT_FINDINGS.md`, `docs/catalog/build/v2/workdetails.md`, `docs/specs/LIMS_WORKFLOWS.md`.

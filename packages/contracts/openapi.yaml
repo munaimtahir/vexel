@@ -648,7 +648,7 @@ components:
           nullable: true
         resultType:
           type: string
-          enum: [numeric, text, boolean, enum]
+          enum: [numeric, text, boolean, enum, paragraph, date, formula, heading]
           description: Data type (renamed from dataType for clarity)
         defaultUnit:
           type: string
@@ -667,6 +667,15 @@ components:
         defaultValue:
           type: string
           description: Default value for this parameter
+          nullable: true
+        defaultRequiresConfirmation:
+          type: boolean
+        isRequired:
+          type: boolean
+        printFlag:
+          type: boolean
+        formulaJson:
+          type: string
           nullable: true
 
     TestParameterMapping:
@@ -956,6 +965,9 @@ components:
           nullable: true
         unit:
           type: string
+        referenceText:
+          type: string
+          nullable: true
 
     JobRun:
       type: object
@@ -1528,14 +1540,29 @@ components:
           nullable: true
         dataType:
           type: string
-          enum: [number, text, select, boolean]
-          default: number
+          enum: [numeric, text, boolean, enum, paragraph, date, formula, heading]
+          default: numeric
         allowedValues:
           type: array
           items:
             type: string
           nullable: true
-          description: For dataType=select
+          description: For dataType=enum
+        decimals:
+          type: integer
+          nullable: true
+        defaultValue:
+          type: string
+          nullable: true
+        defaultRequiresConfirmation:
+          type: boolean
+        isRequired:
+          type: boolean
+        printFlag:
+          type: boolean
+        formulaJson:
+          type: string
+          nullable: true
         referenceRange:
           type: string
           nullable: true
@@ -1546,6 +1573,11 @@ components:
         flag:
           type: string
           enum: [normal, high, low, critical]
+          nullable: true
+        omitted:
+          type: boolean
+        comment:
+          type: string
           nullable: true
         locked:
           type: boolean
@@ -7468,12 +7500,18 @@ paths:
                   type: array
                   items:
                     type: object
-                    required: [parameterId, value]
+                    required: [parameterId]
                     properties:
                       parameterId:
                         type: string
                       value:
                         type: string
+                      omitted:
+                        type: boolean
+                      comment:
+                        type: string
+                      defaultConfirmed:
+                        type: boolean
       responses:
         "200":
           description: Values saved; test still in current status

@@ -631,7 +631,7 @@ export class CatalogImportExportService {
         const defaultUnit = this._valOrNull(row, 'defaultUnit') ?? this._valOrNull(row, 'unit');
         if (defaultUnit !== undefined) data.defaultUnit = normalizeUnit(defaultUnit);
         const decimals = this._val(row, 'decimals'); if (decimals !== undefined) data.decimals = decimals ? parseInt(decimals, 10) : null;
-        const allowedValues = this._valOrNull(row, 'allowedValues'); if (allowedValues !== undefined) data.allowedValues = allowedValues;
+        const allowedValues = this._valOrNull(row, 'allowedValues'); if (allowedValues !== undefined) data.allowedValues = allowedValues ? JSON.stringify(allowedValues.split(',').map((value) => value.trim()).filter(Boolean)) : null;
         const defaultValue = this._valOrNull(row, 'defaultValue'); if (defaultValue !== undefined) data.defaultValue = defaultValue;
         const isActive = this._val(row, 'isActive'); if (isActive !== undefined) data.isActive = isActive === 'true';
         await this.prisma.parameter.update({ where: { id: existing.id }, data });
@@ -654,7 +654,7 @@ export class CatalogImportExportService {
             resultType: this._val(row, 'resultType') ?? 'numeric',
             defaultUnit: normalizeUnit(this._valOrNull(row, 'defaultUnit') ?? this._valOrNull(row, 'unit') ?? undefined),
             decimals: this._val(row, 'decimals') ? parseInt(this._val(row, 'decimals')!, 10) : 2,
-            allowedValues: this._valOrNull(row, 'allowedValues') ?? undefined,
+            allowedValues: this._valOrNull(row, 'allowedValues') ? JSON.stringify(this._valOrNull(row, 'allowedValues')!.split(',').map((value) => value.trim()).filter(Boolean)) : undefined,
             defaultValue: this._valOrNull(row, 'defaultValue') ?? undefined,
             isActive: this._val(row, 'isActive') !== 'false',
           },
@@ -986,6 +986,7 @@ export class CatalogImportExportService {
             criticalLow: this._val(row, 'criticalLow') ? Number(this._val(row, 'criticalLow')) : null,
             criticalHigh: this._val(row, 'criticalHigh') ? Number(this._val(row, 'criticalHigh')) : null,
             unit: normalizeUnit(this._valOrNull(row, 'unit') ?? undefined) ?? null,
+            referenceText: this._valOrNull(row, 'notes') ?? null,
           },
         });
       }
@@ -1007,6 +1008,7 @@ export class CatalogImportExportService {
           criticalLow: this._val(row, 'criticalLow') ? Number(this._val(row, 'criticalLow')) : null,
           criticalHigh: this._val(row, 'criticalHigh') ? Number(this._val(row, 'criticalHigh')) : null,
           unit: normalizeUnit(this._valOrNull(row, 'unit') ?? undefined) ?? null,
+          referenceText: this._valOrNull(row, 'notes') ?? null,
         },
       });
     }

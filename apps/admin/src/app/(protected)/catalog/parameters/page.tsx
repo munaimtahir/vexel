@@ -4,11 +4,13 @@ import { getApiClient } from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 import { DataTable } from '@vexel/ui-system';
 
-const RESULT_TYPES = ['numeric', 'text', 'boolean', 'enum'];
+const RESULT_TYPES = ['numeric', 'text', 'boolean', 'enum', 'paragraph', 'date', 'formula', 'heading'];
 
 const emptyForm = () => ({
   name: '', externalId: '', userCode: '', resultType: 'numeric',
   defaultUnit: '', decimals: '', allowedValues: '', loincCode: '', defaultValue: '', isActive: true,
+  defaultRequiresConfirmation: false, isRequired: true, printFlag: true,
+  formulaLeft: '', formulaOperator: '+', formulaRight: '',
 });
 
 export default function ParametersPage() {
@@ -46,13 +48,21 @@ export default function ParametersPage() {
     setForm(f => ({ ...f, externalId: nextId }));
   }
   function openEdit(p: any) {
+    let configuredChoices = p.allowedValues ?? '';
+    if (typeof configuredChoices === 'string') {
+      try { const parsed = JSON.parse(configuredChoices); if (Array.isArray(parsed)) configuredChoices = parsed.join(', '); } catch { /* legacy comma list */ }
+    }
+    let formula: any = null;
+    try { formula = p.formulaJson ? JSON.parse(p.formulaJson) : null; } catch { /* invalid legacy config is shown empty */ }
     setEditingId(p.id);
     setForm({
       name: p.name ?? '', externalId: p.externalId ?? '',
       userCode: p.userCode ?? '', resultType: p.resultType ?? 'numeric',
       defaultUnit: p.defaultUnit ?? '', decimals: p.decimals != null ? String(p.decimals) : '',
-      allowedValues: Array.isArray(p.allowedValues) ? p.allowedValues.join(', ') : (p.allowedValues ?? ''),
+      allowedValues: Array.isArray(configuredChoices) ? configuredChoices.join(', ') : configuredChoices,
       loincCode: p.loincCode ?? '', defaultValue: p.defaultValue ?? '', isActive: p.isActive !== false,
+      defaultRequiresConfirmation: !!p.defaultRequiresConfirmation, isRequired: p.isRequired !== false, printFlag: p.printFlag !== false,
+      formulaLeft: formula?.expression?.left?.parameterId ?? '', formulaOperator: formula?.expression?.operator ?? '+', formulaRight: formula?.expression?.right?.parameterId ?? '',
     });
     setError(null); setDrawerOpen(true);
   }
@@ -70,12 +80,22 @@ export default function ParametersPage() {
     if (form.userCode) body.userCode = form.userCode;
     if (form.loincCode) body.loincCode = form.loincCode;
     if (form.defaultValue) body.defaultValue = form.defaultValue;
+    body.defaultRequiresConfirmation = form.defaultRequiresConfirmation;
+    body.isRequired = form.isRequired;
+    body.printFlag = form.printFlag;
     if (form.resultType === 'numeric') {
       if (form.defaultUnit) body.defaultUnit = form.defaultUnit;
       if (form.decimals !== '') body.decimals = Number(form.decimals);
     }
     if (form.resultType === 'enum' && form.allowedValues) {
       body.allowedValues = form.allowedValues.split(',').map((v: string) => v.trim()).filter(Boolean);
+    }
+    if (form.resultType === 'formula' && form.formulaLeft && form.formulaRight) {
+      body.formulaJson = JSON.stringify({ expression: {
+        type: 'operator', operator: form.formulaOperator,
+        left: { type: 'parameter', parameterId: form.formulaLeft },
+        right: { type: 'parameter', parameterId: form.formulaRight },
+      }});
     }
 
     let res: any;
@@ -230,6 +250,13 @@ export default function ParametersPage() {
                   <input value={form.allowedValues} onChange={(e) => setForm({ ...form, allowedValues: e.target.value })} style={inputStyle} placeholder="positive, negative, borderline" />
                 </div>
               )}
+              {form.resultType === 'formula' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '8px', alignItems: 'end' }}>
+                  <div><label style={labelStyle}>First input</label><select value={form.formulaLeft} onChange={(e) => setForm({ ...form, formulaLeft: e.target.value })} style={inputStyle}><option value="">Choose parameter</option>{params.filter((p) => p.id !== editingId).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
+                  <div><label style={labelStyle}>Operation</label><select value={form.formulaOperator} onChange={(e) => setForm({ ...form, formulaOperator: e.target.value })} style={inputStyle}>{['+', '-', '*', '/'].map((op) => <option key={op}>{op}</option>)}</select></div>
+                  <div><label style={labelStyle}>Second input</label><select value={form.formulaRight} onChange={(e) => setForm({ ...form, formulaRight: e.target.value })} style={inputStyle}><option value="">Choose parameter</option>{params.filter((p) => p.id !== editingId).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
+                </div>
+              )}
               <div>
                 <label style={labelStyle}>LOINC Code</label>
                 <input value={form.loincCode} onChange={(e) => setForm({ ...form, loincCode: e.target.value })} style={inputStyle} />
@@ -237,6 +264,11 @@ export default function ParametersPage() {
               <div>
                 <label style={labelStyle}>Default Value</label>
                 <input value={form.defaultValue} onChange={(e) => setForm({ ...form, defaultValue: e.target.value })} style={inputStyle} placeholder="Pre-fills result entry for this parameter" />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '13px', color: 'hsl(var(--foreground))' }}><input type="checkbox" checked={form.defaultRequiresConfirmation} onChange={(e) => setForm({ ...form, defaultRequiresConfirmation: e.target.checked })} /> Confirm default before submit</label>
+                <label style={{ fontSize: '13px', color: 'hsl(var(--foreground))' }}><input type="checkbox" checked={form.isRequired} onChange={(e) => setForm({ ...form, isRequired: e.target.checked })} /> Required parameter</label>
+                <label style={{ fontSize: '13px', color: 'hsl(var(--foreground))' }}><input type="checkbox" checked={form.printFlag} onChange={(e) => setForm({ ...form, printFlag: e.target.checked })} /> Print high/low/critical arrows</label>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="param-active" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} style={{ width: '16px', height: '16px' }} />

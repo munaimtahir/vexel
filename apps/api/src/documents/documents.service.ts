@@ -406,7 +406,7 @@ export class DocumentsService {
         patient: true,
         labOrders: {
           include: {
-            test: { include: { parameterMappings: true } },
+            test: { include: { parameterMappings: { include: { parameter: true } } } },
             results: { orderBy: { enteredAt: 'asc' } },
             specimen: true,
           },
@@ -496,20 +496,37 @@ export class DocumentsService {
             return m?.displayOrder ?? m?.ordering ?? 999;
           };
           // Sort results deterministically: by displayOrder, then parameterNameSnapshot
-          const sortedResults = [...((order as any).results ?? [])].sort((a, b) => {
+          const sortedResults = [...((order as any).results ?? [])]
+            .filter((result: any) => !result.omitted)
+            .sort((a, b) => {
             const aOrd = getMappingOrder(a.parameterId);
             const bOrd = getMappingOrder(b.parameterId);
             if (aOrd !== bOrd) return aOrd - bOrd;
             return (a.parameterNameSnapshot ?? '').localeCompare(b.parameterNameSnapshot ?? '');
-          });
-          const parameters = sortedResults.map((r: any) => ({
+            });
+          const resultByParameter = new Map(sortedResults.map((result: any) => [result.parameterId, result]));
+          const mappedParameters = [...mappings]
+            .sort((a: any, b: any) => (a.displayOrder ?? a.ordering ?? 0) - (b.displayOrder ?? b.ordering ?? 0))
+            .flatMap((mapping: any) => {
+              if (mapping.parameter?.resultType === 'heading') {
+                return [{ parameterName: mapping.parameter.name, isHeading: true }];
+              }
+              const result = resultByParameter.get(mapping.parameterId);
+              return result ? [result] : [];
+            });
+          const legacyParameters = sortedResults.filter((result: any) => !mappings.some((mapping: any) => mapping.parameterId === result.parameterId));
+          const parameters = [...mappedParameters, ...legacyParameters].map((r: any) => {
+            if (r.isHeading) return r;
+            const mapping = mappings.find((item: any) => item.parameterId === r.parameterId);
+            return ({
             parameterCode: r.parameterId ?? 'result',
             parameterName: r.parameterNameSnapshot ?? 'Result',
             value: r.value,
             unit: r.unit ?? undefined,
             referenceRange: r.referenceRange ?? undefined,
-            flag: r.flag ?? undefined,
-          }));
+            flag: mapping?.parameter?.printFlag === false ? undefined : (r.flag ?? undefined),
+            });
+          });
           return {
             testCode: testMeta?.userCode ?? testMeta?.externalId ?? order.id,
             testName: testMeta?.name ?? 'Unknown',
