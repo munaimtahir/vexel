@@ -81,7 +81,7 @@ This is the original list of 13 release gaps, exactly as the audit recorded them
 | D4 | **A cancelled test does not stop the visit.** The rest of the visit carries on and can complete without it. | 2026-09-20 |
 | D5 | **Cancelling a test reduces the invoice automatically and creates a manual-refund entry.** | 2026-09-20 |
 | D6 | **Printing defaults to ALL verified tests, every time** — whether or not they were printed before. The print screen shows a checklist of all verified tests, all ticked by default. The operator may untick tests already printed, or print a single test. Reason: "print" only opens a PDF in a new tab; Vexel cannot know whether paper really came out (printer jam, forgot to print, computer crash). | 2026-09-20 |
-| D7 | **Profile tests such as CBC, LFT etc. always print alone on their own page**, even if that leaves empty space. | 2026-09-20 |
+| D7 | **Profile tests such as CBC, LFT etc. always print alone on their own page**, even if that leaves empty space. This is controlled by a per-test **Single Page** option in Test Details (as shown for the CBC configuration). | 2026-09-20 |
 | D8 | The old advice "delete the 208 blank reference-range rows" is **withdrawn** — those ranges are a real requirement and must be kept. | 2026-09-20 |
 | D9 | **Live report progress after verify.** Right after verify the screen shows "Building report…" then Completed, or Failed with a Retry button, in the same flow. | 2026-09-20 |
 | D10 | **Verification always generates the report automatically** (build + publish). No separate generate/publish buttons. Printing stays a separate operator action. | 2026-09-20 |
@@ -111,6 +111,35 @@ Dependencies to respect:
 - S0 can run in parallel with anything; it is deployment/security work, not feature work.
 - S6 must start with "confirm by running the app" — those bugs were found by reading code only.
 - S7 import must not happen until reference-text support exists (otherwise 208 empty range rows would be created and the legacy wording lost).
+
+### P0/P1 execution tracker
+
+> Coordination status: **IN PROGRESS** as of 2026-09-20. This table is the
+> handoff source of truth for agents working in parallel. A task may move to
+> `PASS` only with its stated “Done when” evidence committed and linked here.
+
+| Task | Priority | Status | Dependency | Evidence / completion note |
+|---|---|---|---|---|
+| T0.1 Production security | P0 | IN PROGRESS | Server owner + maintenance window | — |
+| T0.2 Dependency security | P0 | IN PROGRESS | Runtime dependency triage | — |
+| T1.1 Workflow/specification lock | P0 prerequisite | IN PROGRESS | Owner decisions D1–D10 | — |
+| T1.2 Atomic audit writes | P0 | IN PROGRESS | Transaction-aware audit helper | — |
+| T1.3 Audit tenant isolation | P0 | IN PROGRESS | T1.4 fixtures; OpenAPI + SDK | — |
+| T1.4 Two-tenant test fixtures | P0 prerequisite | IN PROGRESS | Disposable Tenant A/B data | — |
+| T2.1 Per-test data model | P0 | IN PROGRESS | T1.2; safe migration | — |
+| T2.2 Encounter-status derivation | P0 | IN PROGRESS | T2.1 | — |
+| T2.3 Per-test sample commands | P0 | IN PROGRESS | T1.2; T2.1–T2.2; OpenAPI + SDK | — |
+| T3.1 Per-test verification/return | P0 | IN PROGRESS | T1.2; T2.1–T2.2; OpenAPI + SDK | — |
+| T3.2 Per-test cancellation/refund | P0 | IN PROGRESS | T1.2; T2.1–T2.2; pro-rata paid credit policy | — |
+| T3.3 Retire visit-level shortcuts | P0 | IN PROGRESS | T2.3; T3.1–T3.2 consumer migration | — |
+| T4.1 Verified-test partial reports | P0 | IN PROGRESS | T2–T3; document payload changes | — |
+| T4.2 Verified-test print checklist | P1 supporting | IN PROGRESS | T4.1; OpenAPI + SDK | — |
+| T4.3 Test Details Single Page option | P1 supporting | IN PROGRESS | T4.1; owner test list | — |
+| T4.4 Live document status and retry | P1 | IN PROGRESS | Real job registry; OpenAPI + SDK | — |
+| T4.5 Verify auto-generates and publishes | P1 | IN PROGRESS | T4.1; T4.4 | — |
+| T4.6 Versioned canonical document hash | P1 | IN PROGRESS | Historical-document compatibility policy | — |
+| T5.1 Central LIMS module gate | P1 | IN PROGRESS | LIMS route inventory | — |
+| T5.2 Real queue observability/retry | P1 | IN PROGRESS | Queue registry; T1.4 fixtures | — |
 
 ---
 
@@ -275,10 +304,11 @@ What already works and will be reused: per-test result **save** and **submit** e
 #### T4.3 — Profile tests always print alone (D7)
 - **Issue:** The catalogue already has a "print alone" flag (`printAlone` in `apps/api/prisma/schema.prisma`; admin checkbox in the catalogue test page). But the PDF only starts a new page **before** such a test (`apps/pdf/Program.cs` around lines 399 and 807). The next test then prints on the same page as CBC.
 - **Solution:**
-  1. In the PDF service, add a page break **after** a print-alone test as well as before it (both templates), so it always sits alone even when space is left over.
-  2. Make sure per-test reports (T4.1/T4.2) keep the flag.
-  3. In the v2 catalogue workbook add the print-alone column and turn it on for the agreed list of profile tests (CBC, LFT, RFT, Lipid Profile, …). **The owner confirms the list** (see open decision O3).
-- **Done when:** a PDF with CBC followed by another test shows CBC alone on its page and the next test on a new page; the flag is set correctly after import.
+  1. Expose a per-test **Single Page** checkbox/toggle in the Test Details configuration screen, matching the existing CBC configuration shown in the reference image. Persist it as the catalogue `printAlone` value.
+  2. In the PDF service, add a page break **after** a Single Page test as well as before it (both templates), so it always sits alone even when space is left over.
+  3. Make sure per-test reports (T4.1/T4.2) preserve and honor the setting.
+  4. In the v2 catalogue workbook add the Single Page/print-alone column and turn it on for the agreed list of profile tests (CBC, LFT, RFT, Lipid Profile, …). **The owner confirms the list** (see open decision O3).
+- **Done when:** the Test Details screen can enable/disable Single Page for an individual test; the saved value survives reload/export/import; a PDF with CBC followed by another test shows CBC alone on its page and the next test on a new page; and the flag is set correctly after catalogue import.
 - **Size:** S (PDF) + S (catalogue).
 
 #### T4.4 — Live report status after verify, failure and retry (P1-005) — decision D9
