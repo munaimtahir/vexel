@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuditService } from '../audit/audit.service';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { createHash } from 'crypto';
 
 describe('AuthService (Tenant-Aware and Hardened)', () => {
   let service: AuthService;
@@ -16,10 +17,11 @@ describe('AuthService (Tenant-Aware and Hardened)', () => {
     const prismaMock = {
       user: {
         findFirst: jest.fn(),
+        findMany: jest.fn().mockResolvedValue([]),
       },
       refreshToken: {
         create: jest.fn(),
-        findMany: jest.fn(),
+        findFirst: jest.fn(),
         update: jest.fn(),
         updateMany: jest.fn(),
       },
@@ -107,20 +109,19 @@ describe('AuthService (Tenant-Aware and Hardened)', () => {
   describe('refresh', () => {
     it('throws UnauthorizedException if user status is not active', async () => {
       const tokenHash = await bcrypt.hash('refresh-raw', 10);
-      (prisma.refreshToken.findMany as jest.Mock).mockResolvedValue([
-        {
-          id: 'rt-1',
-          token: tokenHash,
-          user: {
-            id: 'user-1',
-            email: 'test@email.com',
-            tenantId: 'tenant-A',
-            status: 'inactive',
-            isSuperAdmin: false,
-            userRoles: [],
-          },
+      (prisma.refreshToken.findFirst as jest.Mock).mockResolvedValue({
+        id: 'rt-1',
+        token: tokenHash,
+        tokenLookupHash: createHash('sha256').update('refresh-raw').digest('hex'),
+        user: {
+          id: 'user-1',
+          email: 'test@email.com',
+          tenantId: 'tenant-A',
+          status: 'inactive',
+          isSuperAdmin: false,
+          userRoles: [],
         },
-      ] as any);
+      } as any);
 
       await expect(service.refresh('refresh-raw')).rejects.toThrow(
         new UnauthorizedException('User is inactive or disabled'),

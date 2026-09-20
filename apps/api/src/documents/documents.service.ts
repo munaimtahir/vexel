@@ -232,7 +232,7 @@ export class DocumentsService {
             data: {
               templateId: template.id,
               payloadJson: jsonPayload,
-              status: 'RENDERING',
+              status: 'QUEUED',
               sourceRef,
               sourceType,
               errorMessage: null,
@@ -248,14 +248,14 @@ export class DocumentsService {
               templateId: template.id,
               payloadJson: jsonPayload,
               payloadHash: hash,
-              status: 'RENDERING',
+              status: 'QUEUED',
               sourceRef,
               sourceType,
               createdBy: actorUserId,
             },
           });
 
-    // Enqueue BullMQ job (status already RENDERING — no race with worker)
+    // Enqueue BullMQ job while the document remains visibly QUEUED.
     await this.renderQueue.add(
       'render',
       { documentId: doc.id, tenantId, correlationId },
@@ -273,10 +273,57 @@ export class DocumentsService {
       entityType: 'Document',
       entityId: doc.id,
       correlationId,
-      after: { type, status: 'RENDERING', payloadHash: hash, payloadHashVersion: CANONICAL_JSON_VERSION, templateId: template.id },
+      after: { type, status: 'QUEUED', payloadHash: hash, payloadHashVersion: CANONICAL_JSON_VERSION, templateId: template.id },
     });
 
     return { document: doc, created: true };
+  }
+
+  async retryDocument(
+    tenantId: string,
+    id: string,
+    actorUserId: string,
+    correlationId: string,
+  ) {
+    const existing = await this.prisma.document.findUnique({ where: { id } });
+    if (!existing || existing.tenantId !== tenantId) {
+      throw new NotFoundException(`Document ${id} not found`);
+    }
+    if (existing.status !== 'FAILED') {
+      throw new ConflictException(
+        `Document ${id} cannot be retried — current status: ${existing.status}`,
+      );
+    }
+
+    const document = await this.prisma.document.update({
+      where: { id },
+      data: {
+        status: 'QUEUED',
+        errorMessage: null,
+        pdfHash: null,
+        storageKey: null,
+        publishedAt: null,
+      },
+    });
+
+    await this.renderQueue.add(
+      'render',
+      { documentId: id, tenantId, correlationId },
+      { attempts: 3, backoff: { type: 'exponential', delay: 2000 } },
+    );
+
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'document.retry',
+      entityType: 'Document',
+      entityId: id,
+      correlationId,
+      before: { status: existing.status, errorMessage: existing.errorMessage },
+      after: { status: 'QUEUED' },
+    });
+
+    return document;
   }
 
   async publishDocument(

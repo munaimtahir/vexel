@@ -1901,6 +1901,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/documents/{id}:retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry a failed document render (audited command) */
+        post: operations["retryDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/documents/{id}:publish": {
         parameters: {
             query?: never;
@@ -4330,7 +4347,7 @@ export interface components {
             payloadHash?: string;
             pdfHash?: string | null;
             /** @enum {string} */
-            status?: "DRAFT" | "RENDERING" | "RENDERED" | "PUBLISHED" | "FAILED";
+            status?: "DRAFT" | "QUEUED" | "RENDERING" | "RENDERED" | "PUBLISHED" | "FAILED";
             version?: number;
             sourceRef?: string | null;
             sourceType?: string | null;
@@ -9345,7 +9362,7 @@ export interface operations {
     listDocuments: {
         parameters: {
             query?: {
-                status?: "DRAFT" | "RENDERING" | "RENDERED" | "PUBLISHED" | "FAILED";
+                status?: "DRAFT" | "QUEUED" | "RENDERING" | "RENDERED" | "PUBLISHED" | "FAILED";
                 limit?: number;
                 /** @description Filter documents by encounter ID */
                 encounterId?: string;
@@ -9393,7 +9410,40 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+        };
+    };
+    retryDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Failed document re-queued for rendering */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            /** @description Document is not failed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
     publishDocument: {

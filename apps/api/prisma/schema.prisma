@@ -135,6 +135,7 @@ model RefreshToken {
   id        String    @id @default(uuid())
   userId    String
   token     String    @unique // hashed token stored
+  tokenLookupHash String? @unique // sha256(raw token), used to avoid bcrypt-scanning all tokens
   expiresAt DateTime
   revokedAt DateTime?
   createdAt DateTime  @default(now())
@@ -142,6 +143,7 @@ model RefreshToken {
   user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
+  @@index([tokenLookupHash])
   @@index([token])
   @@map("refresh_tokens")
 }

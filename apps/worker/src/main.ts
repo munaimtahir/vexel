@@ -54,7 +54,10 @@ const opsBackupPrisma = getPrismaClient();
 const opsBackupWorker = new Worker(
   'ops-backup',
   async (job) => processOpsBackup(job, opsBackupPrisma),
-  { connection, concurrency: 1 },
+  // Full backup/restore commands invoke Docker and may block the processor
+  // event loop for several minutes. Keep the BullMQ lock alive long enough
+  // that a legitimate maintenance job is not marked stalled mid-restore.
+  { connection, concurrency: 1, lockDuration: 15 * 60 * 1000 },
 );
 
 catalogImportWorker.on('completed', (job) => console.log(`[catalog-import] Job ${job.id} completed`));

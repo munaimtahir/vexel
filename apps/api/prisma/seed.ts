@@ -3,6 +3,18 @@ import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+function requiredSeedPassword(name: string): string {
+  const value = process.env[name]?.trim();
+  if (!value) throw new Error(`${name} must be set before seeding users`);
+  return value;
+}
+
+const seedPasswords = {
+  admin: requiredSeedPassword('SEED_ADMIN_PASSWORD'),
+  operator: requiredSeedPassword('SEED_OPERATOR_PASSWORD'),
+  verifier: requiredSeedPassword('SEED_VERIFIER_PASSWORD'),
+};
+
 const SYSTEM_PERMISSIONS = [
   'admin.super',
   'account.profile.read-self',
@@ -185,7 +197,7 @@ export async function main() {
   console.log('✅ tenant-admin role:', tenantAdminRole.id);
 
   // Create super-admin user
-  const passwordHash = await bcrypt.hash('Admin@vexel123!', 12);
+  const passwordHash = await bcrypt.hash(seedPasswords.admin, 12);
   const superAdmin = await prisma.user.upsert({
     where: { tenantId_email: { tenantId: 'system', email: 'admin@vexel.system' } },
     update: {},
@@ -208,7 +220,6 @@ export async function main() {
   });
 
   console.log('✅ Super-admin user:', superAdmin.email);
-  console.log('   Password: Admin@vexel123!');
 
   // ── Demo roles ─────────────────────────────────────────────────────────────
   const operatorRole = await prisma.role.upsert({
@@ -340,8 +351,8 @@ export async function main() {
 
   // ── Demo users ─────────────────────────────────────────────────────────────
   const demoUsers = [
-    { email: 'operator@demo.vexel.pk', firstName: 'Demo', lastName: 'Operator', password: 'Operator@demo123!', roleId: operatorRole.id },
-    { email: 'verifier@demo.vexel.pk', firstName: 'Demo', lastName: 'Verifier', password: 'Verifier@demo123!', roleId: verifierRole.id },
+    { email: 'operator@demo.vexel.pk', firstName: 'Demo', lastName: 'Operator', password: seedPasswords.operator, roleId: operatorRole.id },
+    { email: 'verifier@demo.vexel.pk', firstName: 'Demo', lastName: 'Verifier', password: seedPasswords.verifier, roleId: verifierRole.id },
   ];
 
   for (const u of demoUsers) {
@@ -356,7 +367,7 @@ export async function main() {
       update: {},
       create: { userId: created.id, roleId: u.roleId, grantedBy: superAdmin.id },
     });
-    console.log(`✅ Demo user: ${u.email}  password: ${u.password}`);
+    console.log(`✅ Demo user provisioned: ${u.email}`);
   }
 
   // Canonical OPD clinician used by local smoke/browser journeys. The explicit

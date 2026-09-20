@@ -4,6 +4,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { createHash } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
@@ -18,6 +19,10 @@ export interface JwtPayload {
 
 const REFRESH_TOKEN_TTL_DAYS = 7;
 const BCRYPT_ROUNDS = 12;
+
+function refreshTokenLookupHash(rawToken: string): string {
+  return createHash('sha256').update(rawToken).digest('hex');
+}
 
 @Injectable()
 export class AuthService {
@@ -64,6 +69,7 @@ export class AuthService {
       data: {
         userId: user.id,
         token: refreshTokenHash,
+        tokenLookupHash: refreshTokenLookupHash(refreshTokenRaw),
         expiresAt,
       },
     });
@@ -85,8 +91,9 @@ export class AuthService {
 
   async refresh(refreshTokenRaw: string, correlationId?: string) {
     const now = new Date();
-    const candidates = await this.prisma.refreshToken.findMany({
-      where: { revokedAt: null, expiresAt: { gt: now } },
+    const lookupHash = refreshTokenLookupHash(refreshTokenRaw);
+    const candidate = await this.prisma.refreshToken.findFirst({
+      where: { tokenLookupHash: lookupHash, revokedAt: null, expiresAt: { gt: now } },
       include: {
         user: {
           include: {
@@ -96,10 +103,25 @@ export class AuthService {
       },
     });
 
-    let matchedRecord: typeof candidates[0] | null = null;
-    for (const record of candidates) {
-      const match = await bcrypt.compare(refreshTokenRaw, record.token);
-      if (match) { matchedRecord = record; break; }
+    // Legacy rows created before the lookup column was deployed may have no
+    // digest. They use a one-time compatibility fallback and are upgraded on
+    // their next refresh; all new sessions use the indexed lookup above.
+    let matchedRecord: typeof candidate = null;
+    if (candidate && await bcrypt.compare(refreshTokenRaw, candidate.token)) {
+      matchedRecord = candidate;
+    }
+
+    if (!matchedRecord) {
+      const legacyCandidates = await this.prisma.refreshToken.findMany({
+        where: { tokenLookupHash: null, revokedAt: null, expiresAt: { gt: now } },
+        include: { user: { include: { userRoles: { include: { role: { include: { rolePermissions: true } } } } } } },
+      });
+      for (const legacy of legacyCandidates) {
+        if (await bcrypt.compare(refreshTokenRaw, legacy.token)) {
+          matchedRecord = legacy;
+          break;
+        }
+      }
     }
 
     if (!matchedRecord) throw new UnauthorizedException('Invalid or expired refresh token');
@@ -131,8 +153,20 @@ export class AuthService {
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
 
     await this.prisma.refreshToken.create({
-      data: { userId: user.id, token: newRefreshHash, expiresAt },
+      data: {
+        userId: user.id,
+        token: newRefreshHash,
+        tokenLookupHash: refreshTokenLookupHash(newRefreshRaw),
+        expiresAt,
+      },
     });
+
+    if (matchedRecord.tokenLookupHash === null || matchedRecord.tokenLookupHash === undefined) {
+      await this.prisma.refreshToken.update({
+        where: { id: matchedRecord.id },
+        data: { tokenLookupHash: lookupHash },
+      });
+    }
 
     await this.auditService.log({
       tenantId: user.tenantId,

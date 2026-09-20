@@ -1778,7 +1778,7 @@ components:
           nullable: true
         status:
           type: string
-          enum: [DRAFT, RENDERING, RENDERED, PUBLISHED, FAILED]
+          enum: [DRAFT, QUEUED, RENDERING, RENDERED, PUBLISHED, FAILED]
         version:
           type: integer
         sourceRef:
@@ -6938,7 +6938,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [DRAFT, RENDERING, RENDERED, PUBLISHED, FAILED]
+            enum: [DRAFT, QUEUED, RENDERING, RENDERED, PUBLISHED, FAILED]
         - name: limit
           in: query
           schema:
@@ -6993,9 +6993,39 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         "403":
           $ref: '#/components/responses/Forbidden'
+
+  /documents/{id}:retry:
+    post:
+      operationId: retryDocument
+      summary: Retry a failed document render (audited command)
+      tags: [Documents]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Failed document re-queued for rendering
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
         "404":
           $ref: '#/components/responses/NotFound'
-
+        "409":
+          description: Document is not failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /documents/{id}:publish:
     post:
       operationId: publishDocument

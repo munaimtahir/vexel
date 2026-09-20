@@ -27,6 +27,7 @@ VEXEL_ROOT="${VEXEL_ROOT:-/home/munaim/srv/apps/vexel}"
 LOG_DIR="$VEXEL_ROOT/runtime/data/logs"
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 WORK_DIR="$VEXEL_ROOT/runtime/tmp/vexel-restore-${TIMESTAMP}"
+MINIO_WAS_RUNNING=false
 
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/restore_full_${TIMESTAMP}.log"
@@ -35,7 +36,12 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 echo "[$(date -Iseconds)] ===== Vexel Full Restore START ====="
 echo "[$(date -Iseconds)] Package: $BACKUP_PKG"
 
-cleanup() { rm -rf "$WORK_DIR"; }
+cleanup() {
+  if [ "$MINIO_WAS_RUNNING" = "true" ]; then
+    docker start vexel-minio-1 >/dev/null 2>&1 || true
+  fi
+  rm -rf "$WORK_DIR"
+}
 trap cleanup EXIT
 
 error_exit() {
@@ -97,6 +103,11 @@ echo "[$(date -Iseconds)] Database restored."
 # --- 4. Restore MinIO data ------------------------------------------------
 if [ -f "$WORK_DIR/minio/minio_data.tar.gz" ]; then
   echo "[$(date -Iseconds)] Restoring MinIO volume..."
+  if [ "$(docker inspect vexel-minio-1 --format '{{.State.Status}}' 2>/dev/null || true)" = "running" ]; then
+    echo "[$(date -Iseconds)] Stopping MinIO before replacing its volume..."
+    docker stop --time 30 vexel-minio-1 >/dev/null || error_exit "Failed to stop MinIO before restore"
+    MINIO_WAS_RUNNING=true
+  fi
   docker run --rm \
     -v vexel_minio_data:/minio_data \
     -v "$WORK_DIR/minio":/backup:ro \
@@ -104,26 +115,41 @@ if [ -f "$WORK_DIR/minio/minio_data.tar.gz" ]; then
     sh -c "rm -rf /minio_data/* && tar xzf /backup/minio_data.tar.gz -C /minio_data" \
     || error_exit "MinIO restore failed"
   echo "[$(date -Iseconds)] MinIO restored."
+  docker start vexel-minio-1 >/dev/null || error_exit "Failed to restart MinIO after restore"
+  MINIO_WAS_RUNNING=false
 fi
 
 # --- 5. Restore vexel.Caddyfile + re-link --------------------------------
 if [ -f "$WORK_DIR/proxy/vexel.Caddyfile" ]; then
   echo "[$(date -Iseconds)] Restoring Caddy config..."
   mkdir -p "$VEXEL_ROOT/runtime/proxy"
+
+  # The worker container does not necessarily have the host proxy tree
+  # mounted. Restore the repository-owned config always, and only update a
+  # host override symlink when that integration path exists.
+  CADDY_OVERRIDE_DIR="/home/munaim/srv/proxy/caddy/overrides"
+  # A prior containerized restore may have created this file as root. Remove
+  # it first so the host operator can replace it in the writable runtime dir.
+  rm -f "$VEXEL_ROOT/runtime/proxy/vexel.Caddyfile"
   cp "$WORK_DIR/proxy/vexel.Caddyfile" "$VEXEL_ROOT/runtime/proxy/vexel.Caddyfile"
+  chmod 0644 "$VEXEL_ROOT/runtime/proxy/vexel.Caddyfile"
+  if [ -d "$CADDY_OVERRIDE_DIR" ]; then
+    ln -sf "$VEXEL_ROOT/runtime/proxy/vexel.Caddyfile" \
+           "$CADDY_OVERRIDE_DIR/vexel.Caddyfile"
+  else
+    echo "[$(date -Iseconds)] WARN: Caddy override directory unavailable in this container; host reload required."
+  fi
 
-  # Ensure symlink in shared overrides
-  ln -sf "$VEXEL_ROOT/runtime/proxy/vexel.Caddyfile" \
-         /home/munaim/srv/proxy/caddy/overrides/vexel.Caddyfile
-
-  # Reload Caddy via admin API
-  CADDY_ADAPTED=$(caddy adapt --config /etc/caddy/Caddyfile 2>/dev/null)
-  if [ $? -eq 0 ]; then
-    echo "$CADDY_ADAPTED" | curl -sf -X POST \
-      -H "Content-Type: application/json" \
-      -d @- http://localhost:2019/load \
-      && echo "[$(date -Iseconds)] Caddy reloaded." \
-      || echo "[$(date -Iseconds)] WARN: Caddy reload failed — reload manually"
+  # Reload only when the Caddy admin API/config is available locally.
+  if command -v caddy >/dev/null 2>&1 && [ -f /etc/caddy/Caddyfile ]; then
+    CADDY_ADAPTED=$(caddy adapt --config /etc/caddy/Caddyfile 2>/dev/null || true)
+    if [ -n "$CADDY_ADAPTED" ] && command -v curl >/dev/null 2>&1; then
+      echo "$CADDY_ADAPTED" | curl -sf -X POST \
+        -H "Content-Type: application/json" \
+        -d @- http://localhost:2019/load \
+        && echo "[$(date -Iseconds)] Caddy reloaded." \
+        || echo "[$(date -Iseconds)] WARN: Caddy reload failed — reload manually"
+    fi
   fi
 fi
 

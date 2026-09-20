@@ -105,24 +105,32 @@ export async function processOpsBackup(job: Job, prisma: PrismaClient): Promise<
     }
 
     log(logStream, `=== SUCCEEDED ===`);
-    await prisma.opsBackupRun.update({
+    const persisted = await prisma.opsBackupRun.updateMany({
       where: { id: runId },
       data: { status: 'SUCCEEDED', finishedAt: new Date(), logPath },
     });
+    if (persisted.count === 0 && type === 'RESTORE') {
+      // A destructive restore replaces the database, including the source run row.
+      // The durable operation log is the source of truth in that case.
+      log(logStream, `Restore run row was replaced by the restored database; success recorded in log only.`);
+    }
 
     // Audit
-    await writeAuditEvent(prisma, run, 'succeeded');
+    await writeAuditEvent(prisma, run, 'succeeded', logStream);
 
   } catch (err: any) {
     const errMsg = err?.message ?? String(err);
     log(logStream, `=== FAILED: ${errMsg} ===`);
 
-    await prisma.opsBackupRun.update({
+    const persisted = await prisma.opsBackupRun.updateMany({
       where: { id: runId },
       data: { status: 'FAILED', finishedAt: new Date(), errorSummary: errMsg.slice(0, 500), logPath },
     });
+    if (persisted.count === 0 && type === 'RESTORE') {
+      log(logStream, `Restore failure row was replaced by the restored database; failure recorded in log only.`);
+    }
 
-    await writeAuditEvent(prisma, run, 'failed', errMsg);
+    await writeAuditEvent(prisma, run, 'failed', logStream, errMsg);
     throw err; // re-throw so BullMQ marks job as failed
   } finally {
     logStream.end();
@@ -521,16 +529,33 @@ export async function cleanupExpiredArtifacts(
   }
 }
 
-async function writeAuditEvent(prisma: PrismaClient, run: any, outcome: 'succeeded' | 'failed', error?: string) {
-  await prisma.auditEvent.create({
-    data: {
-      tenantId: run.tenantId ?? 'system',
-      actorUserId: run.initiatedByUserId ?? null,
-      action: `ops.${run.type.toLowerCase()}.${outcome}`,
-      entityType: 'OpsBackupRun',
-      entityId: run.id,
-      correlationId: run.correlationId,
-      ...(error ? { metadata: { error: error.slice(0, 500) } as any } : {}),
-    },
-  });
+async function writeAuditEvent(
+  prisma: PrismaClient,
+  run: any,
+  outcome: 'succeeded' | 'failed',
+  logStream?: fs.WriteStream,
+  error?: string,
+) {
+  try {
+    await prisma.auditEvent.create({
+      data: {
+        tenantId: run.tenantId ?? 'system',
+        actorUserId: run.initiatedByUserId ?? null,
+        action: `ops.${run.type.toLowerCase()}.${outcome}`,
+        entityType: 'OpsBackupRun',
+        entityId: run.id,
+        correlationId: run.correlationId,
+        ...(error ? { metadata: { error: error.slice(0, 500) } as any } : {}),
+      },
+    });
+  } catch (auditError: any) {
+    // The audit row may also have been replaced by a destructive restore. Keep
+    // the operation outcome durable in the per-run log and do not turn a
+    // completed restore into a BullMQ retry solely because its source row is gone.
+    if (logStream) {
+      log(logStream, `Audit event could not be persisted after ${outcome}: ${auditError?.message ?? auditError}`);
+    } else {
+      throw auditError;
+    }
+  }
 }

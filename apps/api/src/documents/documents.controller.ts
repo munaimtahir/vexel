@@ -94,6 +94,18 @@ export class DocumentsController {
     return this.svc.getDocument((req as any).user.tenantId, id);
   }
 
+  @Post(':id\\:retry')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions(Permission.DOCUMENT_GENERATE)
+  retry(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Headers(CORRELATION_ID_HEADER) correlationId?: string,
+  ) {
+    const user = (req as any).user;
+    return this.svc.retryDocument(user.tenantId, id, user.userId, correlationId ?? '');
+  }
+
   @Post(':id\\:publish')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions(Permission.DOCUMENT_PUBLISH)

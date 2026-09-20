@@ -354,4 +354,38 @@ describe('DocumentsService', () => {
       ).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('retryDocument', () => {
+    it('re-queues a failed document and writes an audit event', async () => {
+      prisma.document.findUnique.mockResolvedValue(mockDoc({ status: 'FAILED', errorMessage: 'PDF unavailable' }));
+
+      const result = await service.retryDocument('tenant-1', 'doc-1', 'user-1', 'corr-retry');
+
+      expect(result.status).toBe('QUEUED');
+      expect(prisma.document.update).toHaveBeenCalledWith(expect.objectContaining({
+        where: { id: 'doc-1' },
+        data: expect.objectContaining({ status: 'QUEUED', errorMessage: null }),
+      }));
+      expect(audit.log).toHaveBeenCalledWith(expect.objectContaining({
+        action: 'document.retry',
+        entityId: 'doc-1',
+      }));
+    });
+
+    it('rejects retry for a document that is not failed', async () => {
+      prisma.document.findUnique.mockResolvedValue(mockDoc({ status: 'RENDERED' }));
+
+      await expect(
+        service.retryDocument('tenant-1', 'doc-1', 'user-1', 'corr-retry'),
+      ).rejects.toThrow(ConflictException);
+    });
+
+    it('does not retry a document from another tenant', async () => {
+      prisma.document.findUnique.mockResolvedValue(mockDoc({ tenantId: 'other-tenant', status: 'FAILED' }));
+
+      await expect(
+        service.retryDocument('tenant-1', 'doc-1', 'user-1', 'corr-retry'),
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
 });

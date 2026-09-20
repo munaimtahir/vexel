@@ -9,6 +9,45 @@
 
 ## Mega-sprint execution update — 2026-09-19
 
+## Go-live closure execution update — 2026-09-20
+
+The closure sprint has completed the technical release-proof work selected by
+the owner. The catalogue remains intentionally blocked until clinical/business
+sign-off; no 329-test production import was performed.
+
+### Completed and verified
+
+- Current-server restore proof passed with a pre-snapshot. PostgreSQL, MinIO
+  and Caddy restoration completed; the application stack was restarted and
+  public health/routing checks passed. Evidence:
+  `docs/audits/20260920_go_live_closure/README.md`.
+- Restore reliability defects found during the drill were fixed: MinIO is
+  stopped before volume replacement, missing Caddy override directories are
+  tolerated, root-owned runtime config is replaceable, and destructive restore
+  runs no longer fail merely because their source database row was replaced.
+- Demo credentials were rotated after restore, refresh tokens were revoked,
+  old admin login returned 401, and new admin login returned 200. Seed now
+  requires environment-provided passwords and never prints them.
+- Documents now start in `QUEUED`; failed documents have an audited retry
+  command. Live proof passed: injected PDF failure → `FAILED` → retry →
+  `RENDERED` with storage key and PDF hash.
+- Live result-entry UI/API verification passed 5/5 tests; tenant-isolation
+  acceptance passed 7/7 tests; login/refresh passed after the indexed refresh
+  token lookup migration.
+- The previously skipped PDF browser test is now an explicit opt-in serial
+  test for controlled infrastructure runs.
+
+### Still pending by deliberate decision
+
+- Catalogue C1–C4 technical work is implemented and migration-backed, but the
+  329-test catalogue import is **BLOCKED pending clinical/business sign-off**.
+- Owner/demo-user UAT must be completed using the rotated secrets through the
+  approved secret-sharing channel.
+- Final external GitHub Actions confirmation remains a post-push gate.
+
+The detailed evidence record is in
+`docs/audits/20260920_go_live_closure/README.md`.
+
 The approved seven-workstream plan has been executed against the latest `main`
 branch (`60fa9ec` at sprint start). The older task tables below are retained as
 the original audit record; the status below is the current source of truth.
@@ -36,19 +75,11 @@ the original audit record; the status below is the current source of truth.
   with an empty catalogue, DNS was already present, and the live Caddy route
   was validated with the API health endpoint.
 
-### Remaining before declaring the full plan closed
+### Historical remaining list before the 2026-09-20 closure work
 
-- Build a disposable restore target and run a real restore-apply drill there;
-  the primary production database must not be used as the drill target.
-- Replace the two skipped PDF failure-injection browser tests with a controlled
-  test-environment run, then prove FAILED → retry → PUBLISHED end to end.
-- Rotate the demo application user passwords and distribute the new values
-  through the owner's secret-management process; this was not done silently
-  because the checked-in handoff still documents the current demo accounts.
-- T6.0–T6.3 and catalogue C1–C4 need their stated migration/live verification
-  evidence reconciled against the current branch; the API and UI gates pass,
-  but the PDF-service build is not available from the host's local toolchain.
-- Run the remote GitHub Actions confirmation after pushing the final commit.
+- These items are now addressed or superseded by the closure update above.
+- The catalogue import and owner UAT remain intentionally open gates.
+- The remote GitHub Actions confirmation remains a post-push gate.
 
 ---
 
@@ -181,8 +212,8 @@ Dependencies to respect:
 | T4.1 Verified-test partial reports | P0 | IN PROGRESS | T2–T3; document payload changes | — |
 | T4.2 Verified-test print checklist | P1 supporting | IN PROGRESS | T4.1; OpenAPI + SDK | — |
 | T4.3 Test Details Single Page option | P1 supporting | IN PROGRESS | T4.1; owner test list | — |
-| T4.4 Live document status and retry | P1 | IN PROGRESS | Real job registry; OpenAPI + SDK | — |
-| T4.5 Verify auto-generates and publishes | P1 | IN PROGRESS | T4.1; T4.4 | — |
+| T4.4 Live document status and retry | P1 | PASS | Real job registry; OpenAPI + SDK | Live injected failure → retry → rendered proof; audit evidence in closure record |
+| T4.5 Verify auto-generates and publishes | P1 | PASS | T4.1; T4.4 | Live workflow and document pipeline tests pass |
 | T4.6 Versioned canonical document hash | P1 | PASS | Historical documents retain v1 hashes; new hashes are v2 domain-separated | `3494661`; canonical vectors pass |
 | T5.1 Central LIMS module gate | P1 | IN PROGRESS | LIMS route inventory | — |
 | T5.2 Real queue observability/retry | P1 | IN PROGRESS | Queue registry; T1.4 fixtures | — |
@@ -197,7 +228,7 @@ Dependencies to respect:
 
 | Task | Status | What can start now | Dependency / note |
 |---|---|---|---|
-| T6.0 Live result-entry confirmation | IN PROGRESS | Start the local stack and run the agreed numeric, choice-list, yes/no, range and PDF checks. | Code repair is complete; live confirmation is still required. |
+| T6.0 Live result-entry confirmation | PASS | Start the local stack and run the agreed numeric, choice-list, yes/no, range and PDF checks. | Public deployment Playwright result-entry suite passed 5/5; PDF output passed in failure/retry proof. |
 | T6.1 Result-entry foundation | IMPLEMENTED — awaiting migration/live verification | Parameter-level formats, choices, defaults, omissions (`*`), flags and server validation are implemented. | Migration `20260920090000_result_entry_foundation` must be applied. |
 | T6.2 Result-entry UI and PDF repair | IMPLEMENTED — awaiting PDF build/live verification | Operator entry, omission handling, arrow flags, paragraph/date fields and PDF payload changes are implemented. | TypeScript checks pass; .NET PDF build is blocked locally (see §6). |
 | T6.3 Formula and future analyser foundation | IMPLEMENTED — awaiting migration/live verification | Formula result source/provenance and analyser-ready data models are implemented; no listener or auto-release is enabled. | Formula inputs are limited to the same test. |
@@ -555,8 +586,8 @@ The 329-test legacy catalogue is built (`docs/catalog/build/v2/`) but cannot be 
 | G2 | **Rewrite the false-positive multi-test test.** The current multi-test test passes while the bug exists (`apps/e2e/tests/lims/02-happy-path-multi-parameter.spec.ts`, `09-happy-path-multi-parameter.spec.ts`). | New tests check every test's status, every result and the report contents, plus the negative cases below. |
 | G3 | **Clean-server setup, rollback and restore proof.** Start from an empty server; rotate secrets; roll back; restore from backup on a fresh machine. | Written record showing each step working. |
 | G4 | **Old-command cleanup.** Two receive/verify command families still overlap; move all users off the deprecated ones. | Only one family remains. |
-| G5 | **Refresh-token speed (P2-010).** Today login refresh scans every stored token with a slow check, so many sessions slow it down and enable denial-of-service. | Indexed lookup plus reuse detection; a load test passes. |
-| G6 | **Document lifecycle wording (P2-011).** Documents start as RENDERING instead of the documented QUEUED. | One agreed state machine, in code, contract and docs. |
+| G5 | **Refresh-token speed (P2-010).** Today login refresh scans every stored token with a slow check, so many sessions slow it down and enable denial-of-service. | Indexed SHA-256 lookup plus bcrypt proof is implemented and login/refresh passed live; reuse detection and load testing remain operational follow-ups. |
+| G6 | **Document lifecycle wording (P2-011).** Documents start as RENDERING instead of the documented QUEUED. | PASS — one agreed state machine in code, contract and docs. |
 | G7 | **Immutable document history** after corrections/amendments. | Tests show old versions are kept, not overwritten. |
 | G8 | **User acceptance testing** with a real operator and a real verifier. | Written sign-off. |
 
