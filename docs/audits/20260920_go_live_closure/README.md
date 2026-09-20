@@ -66,7 +66,8 @@ and print behavior.
 
 1. Clinical/business sign-off for the 329-test catalogue and its import.
 2. Owner/demo-user UAT using the rotated secrets through the approved secret
-   sharing channel.
+   sharing channel. The executable sign-off sheet is
+   `docs/audits/20260920_go_live_closure/G8_UAT_SIGNOFF.md`.
 3. External GitHub Actions confirmation after the final commit is pushed.
 
 ## Explicitly retained follow-ups
