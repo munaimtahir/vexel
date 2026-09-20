@@ -64,7 +64,9 @@ and print behavior.
 ## Explicitly retained follow-ups
 
 - The 329-test catalogue remains blocked pending clinical/business approval.
-- The legacy visit-level command aliases and encounter pages still exist for
-  compatibility; active release navigation uses the newer per-test workflow.
+- Active operator navigation now uses only the newer per-test command family;
+  the five legacy encounter URLs are redirect-only compatibility routes and no
+  longer call deprecated APIs. Backend aliases remain only for existing
+  integrations.
 - Owner/demo-user UAT and external GitHub Actions confirmation require actions
   outside this local implementation session.

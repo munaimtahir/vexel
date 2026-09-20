@@ -136,37 +136,37 @@ export default function EncounterDetailPage() {
         )}
         {status === 'lab_ordered' && (
           <Button asChild className="bg-primary hover:bg-primary/90">
-            <Link href={`/lims/encounters/${id}/sample`}>Collect Sample</Link>
+            <Link href="/lims/sample-collection">Collect Sample</Link>
           </Button>
         )}
         {status === 'specimen_collected' && receiveSeparate && (
           <>
             <Button asChild className="bg-primary hover:bg-primary/90">
-              <Link href={`/lims/encounters/${id}/receive`}>Receive Specimen</Link>
+              <Link href="/lims/sample-collection">Receive Specimen</Link>
             </Button>
             <Button asChild>
-              <Link href={`/lims/encounters/${id}/results`}>Enter Results</Link>
+              <Link href={`/lims/results/encounters/${id}`}>Enter Results</Link>
             </Button>
           </>
         )}
         {status === 'specimen_collected' && !receiveSeparate && (
           <Button asChild>
-            <Link href={`/lims/encounters/${id}/results`}>Enter Results</Link>
+              <Link href={`/lims/results/encounters/${id}`}>Enter Results</Link>
           </Button>
         )}
         {status === 'specimen_received' && (
           <Button asChild>
-            <Link href={`/lims/encounters/${id}/results`}>Enter Results</Link>
+            <Link href={`/lims/results/encounters/${id}`}>Enter Results</Link>
           </Button>
         )}
         {status === 'resulted' && (
           <Button asChild className="bg-primary hover:bg-primary/90">
-            <Link href={`/lims/encounters/${id}/verify`}>Verify Results</Link>
+            <Link href={`/lims/verification/encounters/${id}`}>Verify Results</Link>
           </Button>
         )}
         {status === 'verified' && (
           <Button asChild className="bg-primary hover:bg-primary/90">
-            <Link href={`/lims/encounters/${id}/reports`}>View / Download Report</Link>
+            <Link href="/lims/reports">View / Download Report</Link>
           </Button>
         )}
         {status !== 'cancelled' && status !== 'verified' && (
@@ -209,14 +209,14 @@ export default function EncounterDetailPage() {
                   <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handlePrint(reportDoc)}>
                     🖨 Print Report
                   </Button>
-                  <Link href={`/lims/encounters/${id}/publish`} className="text-primary text-sm">
+                    <Link href="/lims/reports" className="text-primary text-sm">
                     View Report Details →
                   </Link>
                 </>
               )}
               {docStatus === 'FAILED' && (
                 <Button size="sm" asChild className="bg-primary hover:bg-primary/90">
-                  <Link href={`/lims/encounters/${id}/publish`}>Retry Report</Link>
+                  <Link href="/lims/reports">Retry Report</Link>
                 </Button>
               )}
             </div>

@@ -46,7 +46,17 @@ export function EncounterTimeline({
             const isDone = idx < current;
             const isFuture = idx > current;
             const isClickable = idx <= current + 1;
-            const to = step.href ? `/lims/encounters/${encounterId}/${step.href}` : `/lims/encounters/${encounterId}`;
+            const to = step.href === 'sample'
+              ? '/lims/sample-collection'
+              : step.href === 'results'
+                ? `/lims/results/encounters/${encounterId}`
+                : step.href === 'verify'
+                  ? `/lims/verification/encounters/${encounterId}`
+                  : step.href === 'publish'
+                    ? '/lims/reports'
+                    : step.href
+                      ? `/lims/encounters/${encounterId}/${step.href}`
+                      : `/lims/encounters/${encounterId}`;
 
             return (
               <div key={step.key} className="flex items-center gap-2">
@@ -88,4 +98,3 @@ export function EncounterTimeline({
     </div>
   );
 }
-
