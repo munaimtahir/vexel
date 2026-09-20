@@ -125,6 +125,27 @@ describe('Document Idempotency', () => {
     expect(result2.status).toBe('PUBLISHED');
   });
 
+  it('Test 2b: corrected payload creates a new document and preserves the old version', async () => {
+    const firstDoc = mockDoc({ id: 'doc-v1', payloadJson: { encounterId: 'enc-1', value: '5.4' } });
+    const secondDoc = mockDoc({ id: 'doc-v2', payloadJson: { encounterId: 'enc-1', value: '5.5' }, version: 2 });
+    prisma.document.findUnique.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
+    prisma.document.create.mockResolvedValueOnce(firstDoc).mockResolvedValueOnce(secondDoc);
+
+    const first = await service.generateDocument(
+      'tenant-1', 'LAB_REPORT', { encounterId: 'enc-1', value: '5.4' },
+      'enc-1', 'ENCOUNTER', 'user-1', 'corr-v1',
+    );
+    const corrected = await service.generateDocument(
+      'tenant-1', 'LAB_REPORT', { encounterId: 'enc-1', value: '5.5' },
+      'enc-1', 'ENCOUNTER', 'user-1', 'corr-v2',
+    );
+
+    expect(first.document.id).toBe('doc-v1');
+    expect(corrected.document.id).toBe('doc-v2');
+    expect(prisma.document.create).toHaveBeenCalledTimes(2);
+    expect(prisma.document.update).not.toHaveBeenCalled();
+  });
+
   it('Test 3: publish on DRAFT → 409 ConflictException', async () => {
     prisma.document.findUnique.mockResolvedValue(mockDoc({ status: 'DRAFT' }));
     await expect(

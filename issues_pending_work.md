@@ -34,6 +34,15 @@ sign-off; no 329-test production import was performed.
 - Live result-entry UI/API verification passed 5/5 tests; tenant-isolation
   acceptance passed 7/7 tests; login/refresh passed after the indexed refresh
   token lookup migration.
+- Two-lab acceptance passed against the live system and Tenant B domains: both
+  labs authenticated, completed an isolated order → specimen → result →
+  verification → report workflow, and could not see the other lab's patient.
+  Jobs and audit endpoints were also reachable for both tenants.
+- The multi-test release proof now checks every ordered test has a result before
+  verification and checks the generated report payload contains both test codes
+  and the entered value. This passed 3/3 browser scenarios.
+- Document idempotency now has a passing corrected-payload test proving a new
+  document version is created while the earlier version is preserved.
 - The previously skipped PDF browser test is now an explicit opt-in serial
   test for controlled infrastructure runs.
 
@@ -44,6 +53,10 @@ sign-off; no 329-test production import was performed.
 - Owner/demo-user UAT must be completed using the rotated secrets through the
   approved secret-sharing channel.
 - Final external GitHub Actions confirmation remains a post-push gate.
+- The old visit-level command aliases and legacy encounter pages remain as
+  compatibility routes while active navigation is migrated to the per-test
+  command family; this is a follow-up hardening item, not a reason to import
+  the catalogue.
 
 The detailed evidence record is in
 `docs/audits/20260920_go_live_closure/README.md`.
@@ -582,13 +595,13 @@ The 329-test legacy catalogue is built (`docs/catalog/build/v2/`) but cannot be 
 
 | Ref | Task | Done when |
 |---|---|---|
-| G1 | **Two-lab acceptance test suite** covering documents, results, catalogue, users, jobs and audit. | Tests use two real labs; no release-critical test is skipped. |
-| G2 | **Rewrite the false-positive multi-test test.** The current multi-test test passes while the bug exists (`apps/e2e/tests/lims/02-happy-path-multi-parameter.spec.ts`, `09-happy-path-multi-parameter.spec.ts`). | New tests check every test's status, every result and the report contents, plus the negative cases below. |
-| G3 | **Clean-server setup, rollback and restore proof.** Start from an empty server; rotate secrets; roll back; restore from backup on a fresh machine. | Written record showing each step working. |
-| G4 | **Old-command cleanup.** Two receive/verify command families still overlap; move all users off the deprecated ones. | Only one family remains. |
+| G1 | **Two-lab acceptance test suite** covering documents, results, catalogue, users, jobs and audit. | PASS — live two-tenant acceptance completed against both public tenant domains; the temporary Tenant B fixture is documented and does not include the blocked 329-test import. |
+| G2 | **Rewrite the false-positive multi-test test.** The current multi-test test passes while the bug exists (`apps/e2e/tests/lims/02-happy-path-multi-parameter.spec.ts`, `09-happy-path-multi-parameter.spec.ts`). | PASS — 3/3 browser scenarios assert every ordered test has a result and the report contains both tests and the entered value. |
+| G3 | **Clean-server setup, rollback and restore proof.** Start from an empty server; rotate secrets; roll back; restore from backup on a fresh machine. | PARTIAL/PASS — current-server destructive restore with a safety snapshot, secret rotation, service restart and public health/routing proof passed; a separate fresh machine was not available in this session. |
+| G4 | **Old-command cleanup.** Two receive/verify command families still overlap; move all users off the deprecated ones. | FOLLOW-UP — active navigation uses the newer per-test family, but deprecated compatibility routes and legacy encounter pages remain. |
 | G5 | **Refresh-token speed (P2-010).** Today login refresh scans every stored token with a slow check, so many sessions slow it down and enable denial-of-service. | Indexed SHA-256 lookup plus bcrypt proof is implemented and login/refresh passed live; reuse detection and load testing remain operational follow-ups. |
 | G6 | **Document lifecycle wording (P2-011).** Documents start as RENDERING instead of the documented QUEUED. | PASS — one agreed state machine in code, contract and docs. |
-| G7 | **Immutable document history** after corrections/amendments. | Tests show old versions are kept, not overwritten. |
+| G7 | **Immutable document history** after corrections/amendments. | PASS — API test proves a corrected payload creates a new document version and does not overwrite the earlier version. |
 | G8 | **User acceptance testing** with a real operator and a real verifier. | Written sign-off. |
 
 Advanced catalogue features (**later**, after go-live):

@@ -28,6 +28,17 @@ and print behavior.
   deployment (`lims/01`, `lims/02`, `lims/04`).
 - Tenant isolation proof: 7/7 Playwright tests passed against the public
   deployment (`tenancy/01`, `07-tenant-isolation`).
+- Two-lab acceptance proof passed against `vexel.alshifalab.pk` and
+  `tenant-b.vexel.alshifalab.pk`: both tenants completed a real isolated lab
+  workflow and each tenant's patient list excluded the other tenant's patient;
+  jobs and audit endpoints returned successfully for both.
+- Multi-test proof passed 3/3 scenarios after the backend was corrected to
+  create and verify every requested lab order. The test asserts every ordered
+  test has a result and the rendered report includes both test codes and the
+  entered value.
+- Corrected-payload document version proof passed in the API unit suite: a
+  changed payload creates a second document and does not update the earlier
+  document version.
 - Refresh-token lookup proof: login and refresh returned HTTP 200 after the
   indexed `tokenLookupHash` migration was applied.
 
@@ -50,3 +61,10 @@ and print behavior.
    sharing channel.
 3. External GitHub Actions confirmation after the final commit is pushed.
 
+## Explicitly retained follow-ups
+
+- The 329-test catalogue remains blocked pending clinical/business approval.
+- The legacy visit-level command aliases and encounter pages still exist for
+  compatibility; active release navigation uses the newer per-test workflow.
+- Owner/demo-user UAT and external GitHub Actions confirmation require actions
+  outside this local implementation session.

@@ -116,6 +116,14 @@ export class EncountersService {
       throw new ConflictException(`Cannot order lab for encounter in status '${encounter.status}'`);
     }
 
+    // A multi-test order is one command and must create one LabOrder per
+    // requested catalogue test. Keeping this branch separate preserves the
+    // established single-test financial path while fixing the false-positive
+    // multi-test workflow.
+    if (body.tests?.length && body.tests.length > 1) {
+      return this.orderMultipleLabTests(tenantId, encounterId, encounter, body, actorUserId, correlationId);
+    }
+
     // Resolve test: support { testId } OR { tests: [{ code }] }
     let resolvedTestId: string;
     if (body.testId) {
@@ -305,6 +313,100 @@ export class EncountersService {
     return updatedEncounter;
   }
 
+  private async orderMultipleLabTests(
+    tenantId: string,
+    encounterId: string,
+    encounter: any,
+    body: any,
+    actorUserId: string,
+    correlationId?: string,
+  ) {
+    const catalogTests: any[] = [];
+    for (const requested of body.tests) {
+      const code = requested.code ?? requested.externalId;
+      const test = await this.prisma.catalogTest.findFirst({
+        where: { tenantId, ...(code ? { externalId: code } : {}) },
+      });
+      if (!test) throw new NotFoundException(`Catalog test not found: ${code}`);
+      catalogTests.push(test);
+    }
+
+    const createdOrders = catalogTests.map((test) => this.prisma.labOrder.create({
+      data: {
+        tenant: { connect: { id: tenantId } },
+        encounter: { connect: { id: encounterId } },
+        test: { connect: { id: test.id } },
+        priority: body.priority ?? 'routine',
+        status: 'ordered',
+      },
+    }));
+    const [, updatedEncounter] = await this.prisma.$transaction([
+      ...createdOrders,
+      this.prisma.encounter.update({
+        where: { id: encounterId },
+        data: { status: 'lab_ordered' },
+        include: { patient: true, labOrders: { include: { specimen: true, results: true, test: true } } },
+      }),
+    ]).then((results: any[]) => [results.slice(0, -1), results[results.length - 1]]);
+
+    await this.audit.log({
+      tenantId,
+      actorUserId,
+      action: 'encounter.order-lab',
+      entityType: 'Encounter',
+      entityId: encounterId,
+      before: { status: encounter.status },
+      after: { status: 'lab_ordered', labOrderCount: catalogTests.length },
+      correlationId,
+    });
+
+    // Create one receipt containing every test in the command. Rendering is
+    // asynchronous and does not block the order workflow.
+    try {
+      const tenantCfg = await this.prisma.tenantConfig.findUnique({ where: { tenantId } });
+      const patient = updatedEncounter.patient;
+      const items = catalogTests.map((test) => ({
+        description: test.name,
+        quantity: 1,
+        unitPrice: test.price ? Number(test.price) : 0,
+        total: test.price ? Number(test.price) : 0,
+      }));
+      const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+      await this.documentsService.generateDocument(
+        tenantId,
+        'RECEIPT',
+        {
+          receiptNumber: `RCP-${encounterId.slice(0, 8).toUpperCase()}`,
+          issuedAt: new Date().toISOString(),
+          patientName: patient ? `${patient.firstName} ${patient.lastName}` : 'Unknown',
+          patientMrn: patient?.mrn ?? '',
+          items,
+          subtotal,
+          discount: 0,
+          tax: 0,
+          grandTotal: subtotal,
+          amountPaid: 0,
+          dueAmount: subtotal,
+          paymentMethod: 'Cash',
+          paymentComments: '',
+          encounterId,
+          tenantName: tenantCfg?.brandName ?? tenantId,
+          tenantLogoUrl: tenantCfg?.logoUrl ?? undefined,
+          reportHeader: tenantCfg?.reportHeader ?? undefined,
+          reportFooter: tenantCfg?.reportFooter ?? undefined,
+        },
+        encounterId,
+        'ENCOUNTER',
+        actorUserId,
+        correlationId ?? crypto.randomUUID(),
+      );
+    } catch (err) {
+      console.error('[encounters] Failed to auto-generate multi-test receipt:', (err as Error).message);
+    }
+
+    return updatedEncounter;
+  }
+
   async collectSpecimen(
     tenantId: string,
     encounterId: string,
@@ -319,7 +421,38 @@ export class EncountersService {
       throw new ConflictException(`Cannot collect specimen for encounter in status '${encounter.status}'`);
     }
 
-    // If no labOrderId provided, find the first ordered lab order
+    // If no labOrderId is provided for a multi-test encounter, collect every
+    // still-ordered test so result entry can proceed independently per test.
+    if (!body.labOrderId) {
+      const pendingOrders = await this.prisma.labOrder.findMany({
+        where: { encounterId, tenantId, status: 'ordered' },
+        orderBy: { createdAt: 'asc' },
+      });
+      if (pendingOrders.length > 1) {
+        const barcode = body.barcode ?? `BC-${Date.now()}`;
+        const [, updatedEncounter] = await this.prisma.$transaction([
+          ...pendingOrders.map((order: any, index: number) => this.prisma.specimen.create({
+            data: {
+              tenantId,
+              labOrderId: order.id,
+              barcode: `${barcode}-${index + 1}`,
+              type: body.type ?? 'blood',
+              status: 'collected',
+              collectedAt: new Date(),
+            },
+          })),
+          this.prisma.labOrder.updateMany({ where: { encounterId, tenantId, status: 'ordered' }, data: { status: 'specimen_collected' } }),
+          this.prisma.encounter.update({
+            where: { id: encounterId },
+            data: { status: 'specimen_collected' },
+            include: { patient: true, labOrders: { include: { specimen: true, results: true, test: true } } },
+          }),
+        ]).then((results: any[]) => [results.slice(0, -1), results[results.length - 1]]);
+        await this.audit.log({ tenantId, actorUserId, action: 'encounter.collect-specimen', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: 'specimen_collected', collectedLabOrderCount: pendingOrders.length }, correlationId });
+        return updatedEncounter;
+      }
+    }
+
     const labOrderId = body.labOrderId ?? (
       await this.prisma.labOrder.findFirst({ where: { encounterId, tenantId, status: 'ordered' } })
     )?.id;
@@ -398,14 +531,14 @@ export class EncountersService {
     await this.assertLimsEnabled(tenantId);
     const encounter = await this.getEncounterOrThrow(tenantId, encounterId);
 
-    if (!VALID_TRANSITIONS[encounter.status]?.includes('resulted')) {
+    if (!['specimen_collected', 'specimen_received', 'resulted'].includes(encounter.status)) {
       throw new ConflictException(`Cannot enter result for encounter in status '${encounter.status}'`);
     }
 
     const labOrder = await this.prisma.labOrder.findFirst({ where: { id: body.labOrderId, encounterId, tenantId } });
     if (!labOrder) throw new NotFoundException('Lab order not found in this encounter');
 
-    const [, updatedEncounter] = await this.prisma.$transaction([
+    const [, , updatedEncounter] = await this.prisma.$transaction([
       this.prisma.labResult.create({
         data: {
           tenantId,
@@ -423,7 +556,7 @@ export class EncountersService {
         data: { status: 'resulted' },
         include: { patient: true, labOrders: { include: { specimen: true, results: true } } },
       }),
-    ]).then(([_res, _order, enc]) => [_res, enc]);
+    ]).then((results: any[]) => results);
 
     await this.audit.log({ tenantId, actorUserId, action: 'encounter.result', entityType: 'Encounter', entityId: encounterId, before: { status: encounter.status }, after: { status: 'resulted', labOrderId: body.labOrderId }, correlationId });
     return updatedEncounter;
@@ -435,6 +568,13 @@ export class EncountersService {
 
     if (encounter.status !== 'resulted') {
       throw new ConflictException(`Cannot verify encounter in status '${encounter.status}' (must be 'resulted')`);
+    }
+
+    const incompleteOrders = encounter.labOrders.filter((order: any) =>
+      !['resulted', 'verified', 'cancelled'].includes(order.status),
+    );
+    if (incompleteOrders.length > 0) {
+      throw new ConflictException('Cannot verify until every non-cancelled test has a result');
     }
 
     // Mark all resulted lab orders as verified

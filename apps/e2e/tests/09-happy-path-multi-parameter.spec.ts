@@ -88,6 +88,15 @@ test.describe('Happy path — multi-parameter workflow', () => {
 
     await page.getByRole('button', { name: 'Save All Results' }).click();
     await expect(page.locator('text=Results saved')).toBeVisible({ timeout: 15_000 });
+    const afterSave = await apiGet<{ labOrders: Array<{ id: string; status?: string; results?: Array<{ value?: string }> }> }>(
+      `/encounters/${encounter.id}`,
+      accessToken,
+    );
+    expect(afterSave.labOrders).toHaveLength(expectedOrderCount);
+    for (const order of afterSave.labOrders) {
+      expect(order.results?.[0]?.value).toBe('5.5');
+      expect(['resulted', 'verified']).toContain(order.status);
+    }
     t.mark('results_saved');
 
     flushTimings('multi-param:enter-results', t.finish());
@@ -131,6 +140,20 @@ test.describe('Happy path — multi-parameter workflow', () => {
     await expect(
       page.locator('text=PUBLISHED').or(page.getByRole('link', { name: /Download/i })).first(),
     ).toBeVisible({ timeout: 60_000 });
+    let report: any;
+    for (let i = 0; i < 60 && !report; i++) {
+      const documentResponse = await apiGet<any>(`/documents?encounterId=${encounter.id}`, accessToken);
+      const documents = Array.isArray(documentResponse)
+        ? documentResponse
+        : (documentResponse.data || documentResponse.items || []);
+      report = documents.find((doc: any) => doc.type === 'LAB_REPORT' && ['RENDERED', 'PUBLISHED'].includes(doc.status));
+      if (!report) await new Promise((resolve) => setTimeout(resolve, 1_000));
+    }
+    expect(report).toBeTruthy();
+    const reportPayload = typeof report.payloadJson === 'string' ? report.payloadJson : JSON.stringify(report.payloadJson);
+    expect(reportPayload).toContain(TEST_CODE_1);
+    expect(reportPayload).toContain(TEST_CODE_2);
+    expect(reportPayload).toContain('5.5');
     t.mark('done');
 
     flushTimings('multi-param:verify-publish', t.finish());
