@@ -11,6 +11,11 @@ and print behavior.
 ## Evidence
 
 - Restore package used: `runtime/backups/full/vexel-full-20260920_011824.tar.gz`.
+- The same package was independently verified on a disposable PostgreSQL
+  target with `scripts/verify-full-backup-isolated.sh`: manifest and MinIO
+  archive validation passed, and the restored target contained tenants=2,
+  patients=156, encounters=146, documents=192. The live stack and volumes
+  were not used by this isolated check.
 - The restore was protected by a pre-snapshot and reached `Restore COMPLETE` in
   `runtime/data/logs/restore_full_20260920_014231.log`.
 - PostgreSQL and MinIO were restored; post-restore counts were tenants=2,
