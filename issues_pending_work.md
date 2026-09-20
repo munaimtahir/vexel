@@ -52,7 +52,8 @@ sign-off; no 329-test production import was performed.
   329-test catalogue import is **BLOCKED pending clinical/business sign-off**.
 - Owner/demo-user UAT must be completed using the rotated secrets through the
   approved secret-sharing channel.
-- Final external GitHub Actions confirmation remains a post-push gate.
+- GitHub Actions confirmation passed for commit `530247b`; only human UAT and
+  sign-off remain externally controlled.
 - The old visit-level command aliases and legacy encounter pages remain as
   compatibility routes while active navigation is migrated to the per-test
   command family; this is a follow-up hardening item, not a reason to import
@@ -92,7 +93,8 @@ the original audit record; the status below is the current source of truth.
 
 - These items are now addressed or superseded by the closure update above.
 - The catalogue import and owner UAT remain intentionally open gates.
-- The remote GitHub Actions confirmation remains a post-push gate.
+- The remote GitHub Actions confirmation passed for commit `530247b` in CI run
+  `35507403052`.
 
 ---
 

@@ -49,6 +49,9 @@ and print behavior.
 - Refresh-token replay proof: the same rotated refresh token was rejected with
   HTTP 401 after a successful refresh, and the API now records an
   `auth.refresh.reuse_detected` audit event for matching revoked tokens.
+- GitHub Actions confirmation passed for commit `530247b` in CI run
+  `35507403052`: SDK freshness, lint, UI color-lint, Admin/Operator contract
+  parity, typecheck, build, API unit tests, and SDK unit tests all passed.
 
 ## Operational fixes included
 
@@ -68,7 +71,7 @@ and print behavior.
 2. Owner/demo-user UAT using the rotated secrets through the approved secret
    sharing channel. The executable sign-off sheet is
    `docs/audits/20260920_go_live_closure/G8_UAT_SIGNOFF.md`.
-3. External GitHub Actions confirmation after the final commit is pushed.
+3. Human operator/verifier UAT and sign-off using the supplied checklist.
 
 ## Explicitly retained follow-ups
 
@@ -77,5 +80,4 @@ and print behavior.
   the five legacy encounter URLs are redirect-only compatibility routes and no
   longer call deprecated APIs. Backend aliases remain only for existing
   integrations.
-- Owner/demo-user UAT and external GitHub Actions confirmation require actions
-  outside this local implementation session.
+- Owner/demo-user UAT requires human action outside this implementation session.
