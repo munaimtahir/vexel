@@ -41,6 +41,9 @@ and print behavior.
   document version.
 - Refresh-token lookup proof: login and refresh returned HTTP 200 after the
   indexed `tokenLookupHash` migration was applied.
+- Refresh-token replay proof: the same rotated refresh token was rejected with
+  HTTP 401 after a successful refresh, and the API now records an
+  `auth.refresh.reuse_detected` audit event for matching revoked tokens.
 
 ## Operational fixes included
 

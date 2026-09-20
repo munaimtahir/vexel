@@ -124,7 +124,25 @@ export class AuthService {
       }
     }
 
-    if (!matchedRecord) throw new UnauthorizedException('Invalid or expired refresh token');
+    if (!matchedRecord) {
+      // A previously rotated token must remain unusable, but a matching
+      // revoked digest is still useful evidence of refresh-token replay.
+      const revokedCandidate = await this.prisma.refreshToken.findFirst({
+        where: { tokenLookupHash: lookupHash, revokedAt: { not: null } },
+        include: { user: true },
+      });
+      if (revokedCandidate && await bcrypt.compare(refreshTokenRaw, revokedCandidate.token)) {
+        await this.auditService.log({
+          tenantId: revokedCandidate.user.tenantId,
+          actorUserId: revokedCandidate.userId,
+          action: 'auth.refresh.reuse_detected',
+          entityType: 'RefreshToken',
+          entityId: revokedCandidate.id,
+          correlationId,
+        });
+      }
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
 
     const user = matchedRecord.user;
     if (!user || user.status !== 'active') {

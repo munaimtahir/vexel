@@ -22,6 +22,7 @@ describe('AuthService (Tenant-Aware and Hardened)', () => {
       refreshToken: {
         create: jest.fn(),
         findFirst: jest.fn(),
+        findMany: jest.fn().mockResolvedValue([]),
         update: jest.fn(),
         updateMany: jest.fn(),
       },
@@ -126,6 +127,32 @@ describe('AuthService (Tenant-Aware and Hardened)', () => {
       await expect(service.refresh('refresh-raw')).rejects.toThrow(
         new UnauthorizedException('User is inactive or disabled'),
       );
+    });
+
+    it('rejects and audits replay of a rotated refresh token', async () => {
+      const tokenHash = await bcrypt.hash('refresh-raw', 10);
+      (prisma.refreshToken.findFirst as jest.Mock)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({
+          id: 'rt-revoked',
+          userId: 'user-1',
+          token: tokenHash,
+          tokenLookupHash: createHash('sha256').update('refresh-raw').digest('hex'),
+          revokedAt: new Date(),
+          user: { tenantId: 'tenant-A' },
+        } as any);
+
+      await expect(service.refresh('refresh-raw', 'corr-reuse')).rejects.toThrow(
+        new UnauthorizedException('Invalid or expired refresh token'),
+      );
+      expect(audit.log).toHaveBeenCalledWith({
+        tenantId: 'tenant-A',
+        actorUserId: 'user-1',
+        action: 'auth.refresh.reuse_detected',
+        entityType: 'RefreshToken',
+        entityId: 'rt-revoked',
+        correlationId: 'corr-reuse',
+      });
     });
   });
 
